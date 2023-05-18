@@ -19,7 +19,7 @@
   
 BaselineEvalSampleSizes.GCL <- function(sillyvec, group_names, groupvec, mixsize, scenarios = round(seq(.01, 1, .01), 2), maxprop = 0.5, seed = 56){
   
-  if(sum(str_detect(group_names, "\\W"))>0){
+  if(sum(stringr::str_detect(group_names, "\\W"))>0){
     
     stop("Special characters and spaces were detected in your group_names. 
           Using spaces and delimiters other than underscore in your group names may cause function errors later in your analysis.")
@@ -53,7 +53,7 @@ BaselineEvalSampleSizes.GCL <- function(sillyvec, group_names, groupvec, mixsize
       nr <- as.numeric(mixsize - rs)
       
       samps <- c(rs, rmultinom(n = 1, size = nr, prob = rep(1/(ngroups - 1), ngroups - 1))[ , 1]) %>% 
-        purrr::set_names(c(g, setdiff(group_names, g)))
+        purrr::set_names(c(g, lubridate::setdiff(group_names, g)))
       
       tibble::tibble(test_group = g, scenario = p, repunit = names(samps), samps = samps)
       
