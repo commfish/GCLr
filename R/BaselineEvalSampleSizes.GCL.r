@@ -62,6 +62,3 @@ BaselineEvalSampleSizes.GCL <- function(sillyvec, group_names, groupvec, mixsize
   }) %>% dplyr::bind_rows()
     
 }
-  
-  
- 

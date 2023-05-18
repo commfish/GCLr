@@ -16,7 +16,7 @@
 #' @examples
 #' baseline <- read_csv("V:/Analysis/5_Coastwide/Chum/NPen2WA_Chum_baseline/rubias/baseline/NPen2Wa_Chum_227pops_91loci_base.csv")
 #' ConfusionMatrices_out <- ConfusionMatrices.GCL(reference = baseline, gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
-#'
+
 ConfusionMatrices.GCL <- function(reference, gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop")[1]){
     
   start <- Sys.time()
