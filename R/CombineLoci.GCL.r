@@ -10,6 +10,8 @@
 #'
 #' @param delim the separator in the combined locus name, either a period (.) which is the default or an underscore (_)
 #'
+#' @export
+#' 
 #' @note This function requires a LocusControl object. Run CreateLocusControl.GCL prior to this function. Also requires dplyr version >= 1.0.0
 #'
 #' @examples

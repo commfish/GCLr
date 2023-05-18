@@ -6,6 +6,8 @@
 #' @param gen_start_col The first column containing genetic data in the baseline object. The default is 5, unless the baseline object is modified with additional variables.
 #' @param output A character vector specifying the summary tibbles to produce. Must be one or more of the following: "pop_pop", "pop_group", "group_group". The default is "group_group".
 #'
+#' @export
+#'
 #' @return A named list of tibbles in long format:
 #'   \describe{
 #'     \item{group_group}{A tibble containing the following variables: repunit (known repunit/ reporting group), inferred_repunit (inferred repunit), and mean_group_group_scaled_like (average probability of each individual from a group originating from a pop in that group).}

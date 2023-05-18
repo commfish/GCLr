@@ -11,6 +11,8 @@
 #'                where sample sizes for the test_group do not exceed 50% of the fish in the baseline for that group.
 #' @param seed An integer to set the seed for rmultinom(), so sample sizes are reproducible.
 #'
+#' @export
+#' 
 #' @return The output of this function is a tibble with 4 variables: test_group, scenario, repunit, and samps.
 #'         For each test_group and scenario, the number of rows will be length(group_names).
 #'
