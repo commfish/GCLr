@@ -1,9 +1,9 @@
 Package: GCLr
-Title: Genetic Analysis Tools for Baseline Developement and Mixed Stock Analysis
+Title: Genetic Analysis Tools for Baseline Developement and Genetic Stock Identification
 Version: 0.0.0.9000
 Authors@R: 
     person("Andy", "Barclay", , "andy.barclay@alaska.gov", role = c("aut", "cre"))
-Description: Genetic analysis tools for baseline developement and mixed stock analysis.
+Description: Genetic analysis tools for baseline developement and genetic stock identification.
 Imports: tidyverse, ape, parallel, doParallel, RJDBC, lubridate, foreach, 
          rubias, hierfstat, genepop, leaflet, mapview, plotly, rgdal, gplots, 
          exifr, sf, leafpop, htmlwidgets, HardyWeinberg, grid, tools, abind,
