@@ -1,40 +1,26 @@
+#' Save Nexus file that includes a phylogenetic tree. 
+#'
+#' This function is a wrapper for \code{ape::write.nexus} and creates a Nexus format tree file including tip labels and branch colors, which can be opened and modified in FigTree. FigTree can be downloaded from GitHub: [FigTree Releases](https://github.com/rambaut/figtree/releases)
+#'
+#' @param tree a phylogenetic tree object (class = "phylo") produced by the ape package
+#' @param file the file path with file name including .nex extension
+#' @param groupvec a numeric vector indicating the group affiliation of each tip label
+#' @param group.col a character vector of R colors() with a length of max(groupvec) to color the branches
+#' @param tip.labs A character vector with the same length as groupvec to label the tips of the tree. tip.labs cannot have spaces to work in FigTree. If tip.labs contains spaces, this function will replace them with an underscore.
+#' @param sep Delimiter used to replace spaces in tip.labs. If spaces are left in tip.labs (called TAXALABLES in the NEXUS file) when FigTree opens the file, an error message will pop up saying the number of taxa is greater than ntaxa.
+#'
+#' @examples
+#' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
+#' save_nexus_color_tree(tree = FstTree, file = "Susitna_Chinook_tree.nex", groupvec = groupvec, group.col = grcol, tip.labs = Final_Pops$location)
+#' 
+#' @import dplyr
+#' @import ape
+#' 
+#'
+#' @export
+
 save_nexus_color_tree <- function(tree, file, groupvec, group.col, tip.labs, sep = "_"){
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   This function is a wrapper for ape::write.nexus() and creates a Nexus format tree file including tip labels and branch colors, 
-  #   which can be opened and modified in FigTree.
-  #
-  #   FigTree can be downloaded from GitHub: https://github.com/rambaut/figtree/releases
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   tree - a phylogenetic tree object (class = "phylo") produced by the ape package
-  #
-  #   file - the file path with file name including .nex extension
-  #
-  #   groupvec - a numeric vector indicating the group affiliation of each tip label
-  #
-  #   group.col - character vector of R colors() length of max(groupvec) to color the branches
-  #
-  #   tip.labs - a character vector same length as groupvec to label the tips of the tree.
-  #              Note: tip.labs cannot have spaces to work in FigTree.  If tip.labs contains spaces,
-  #                    this function will replace them with an underscore.
-  #
-  #   sep - delimiter used to replace spaces in the tip.labs; if spaces are left in the tip.labs (called TAXALABLES in the NEXUS file), when FigTree opens the file 
-  #         an error message will pop up saying the number of taxa is greater than ntaxa.
-  #              
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #  A nexus tree file
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-  #
-  #   save_nexus_color_tree(tree = FstTree, file = "Susitna_Chinook_tree.nex", groupvec = groupvec, group.col = grcol, tip.labs = Final_Pops$location)
-  # 
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  
+
   if(!length(tree$tip.label)==length(tip.labs)){
     
     stop(paste0("The tip.labs supplied is not the same length as the number of tips on the tree: ", length(tree$tip.label)))
@@ -59,14 +45,7 @@ save_nexus_color_tree <- function(tree, file, groupvec, group.col, tip.labs, sep
 
   ape::write.nexus(phy = tree, file = file)
 
-  #Function to get Hexadecimal color codes
-  GetColorHexadecimal <- function(color){
   
-    c <- col2rgb(color)
-    
-    cbind(color, sprintf("#%02X%02X%02X", c[1], c[2], c[3]), sprintf("%3d %3d %3d", c[1], c[2], c[3]))
-    
-  }
     
   if(is.numeric(group.col)){
   
@@ -76,11 +55,11 @@ save_nexus_color_tree <- function(tree, file, groupvec, group.col, tip.labs, sep
           
   GrCol <- group.col
           
-  black <- GetColorHexadecimal("black")[2]
+  black <- GCLr::col2hex("black")$hex
           
   hexcol <- sapply(GrCol, function(col){
     
-    GetColorHexadecimal(col)[2]
+    GCLr::col2hex(col)$hex
     
     })
        
@@ -111,7 +90,7 @@ save_nexus_color_tree <- function(tree, file, groupvec, group.col, tip.labs, sep
       
   }
       
-  tree <- gsub(x=tree,pattern="):",replacement=paste(")[&!color=",black,"]:",sep=''))
+  tree <- gsub(x = tree, pattern = "):", replacement = paste(")[&!color=",black,"]:", sep = ''))
       
   nexfile[treerow] <- tree
       
@@ -124,4 +103,3 @@ save_nexus_color_tree <- function(tree, file, groupvec, group.col, tip.labs, sep
   write.table(nexfile, file = file, quote = FALSE, row.names = FALSE, col.names = FALSE )
  
 }
-
