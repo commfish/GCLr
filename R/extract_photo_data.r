@@ -1,41 +1,40 @@
+#' Extract photo data from photos taken on a GPS enabled device and plot on map.
+#'
+#' This function extracts file name, latitude, longitude, and date and time when the photo was taken from photos taken on a digital device with GPS capability. If the device used to take the photos did not have GPS capability, then only the file name and data and time take will be extracted and a message will print in the console.
+#' The interactive map contains points for each photo containing GPS coordinates. When you hover over the point, the image file name is displayed, and if you click on a point, the image appears in a popup window.  
+#'
+#' @param folder The path to where the photos are located. The folder must contain files that have ".jpg" extensions.
+#' @param data.file The name of the output data file including .csv extension. If set to NULL, no file is written.
+#' @param plot.map If TRUE, then an interactive map will appear in the plot window (see details).
+#' @param map.file The name of the output map widget file including .html extension. If set to NULL, then no file is written. 
+#'                 If you do not supply the full file path, the file will be saved to the supplied photos folder (see details). 
+#'
+#' @details Most smart phones record GPS coordinates when taking photos and a lot of newer digital cameras also have GPS capability. However, most devices have to be set up to record this information. For instance, on an iphone you need to have location services turned on or it won't record the location of a photo. 
+#'          One issue with this function is that the rotation of the popup image on the map is not always correct in the plot window; however, it appears to be correct in the .html file. Not sure why this happens or how to fix this issue.
+#'          Another thing to note is that `plot.map` and `map.file` work independently, so you can produce a map file without plotting in R or plot in R and don't produce a file.
+#'
+#' @return A tibble containing the following variables: FileName, latitude, longitude, date, time.
+#'
+#' @examples
+#' extract_photo_data(folder = "V:\\Library\\Media\\Photos\\2018 Trips\\Coho Baseline\\Glacier Cr", 
+#'                    data.file = "PhotoData.csv", 
+#'                    plot.map = TRUE, 
+#'                    map.file = "PhotoData_map.html")
+#'
+#' @import dplyr
+#' @import tidyr
+#' @import leaflet
+#' @import leafpop
+#' @import sf
+#' @import readr
+#' @import htmlwidgets
+#' @import exifr
+#' @import magrittr
+#'
+#' @export
+
 extract_photo_data <- function(folder, data.file = NULL, plot.map = TRUE, map.file = NULL){
   
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function extracts file name, latitude, longitude, and date and time when the photo was taken from photos taken on a digital device. 
-  #
-  # If the device used to take the photos did not have GPS capability, then only the file name and data and time take will be extracted and a message will print in the console.
-  #  Note: most smart phones record GPS coordinates when taking photos and a lot of newer digital cameras also have GPS capability.
-  #
-  # The function returns a tibble of the data, and, depending on how you set up the arguments, writes a .csv file of the data and an interactive leaflet map.
-  # The interactive map contains points for each photo containing GPS coordinates. When you hover over the point, the image file name is displayed, and if you click on a point, 
-  # the image appears in a popup window.  
-  #
-  #  Note: the rotation of the popup image is not always correct in the plot window; however, it appears to be correct in .html file. Not sure why or how to fix this issue.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   folder - the path to where the photos are located. The folder must contain files that have ".jpg" extensions.
-  #   data.file - the name of the output data file including .csv extension. If set to NULL, no file is written.
-  #   plot.map - if TRUE, then an interactive map will appear in the plot window.
-  #   map.file - the name of the output map widget file including .html extension. If set to NULL, then no file is written. 
-  #              If you do not supply the full file path, the file will be saved to the supplied photos folder. 
-  #              
-  #
-  #   **Note: `plot.map` and `map.file` work independently.**
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function returns a tibble containing the following variables: FileName, latitude, longitude, date, time.
-  #   If plot.map = TRUE an interactive map appears in the plot window.
-  #   If map.file is supplied, then an interactive map html is written.
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # 
-  # extract_photo_data(folder = "V:\\Library\\Media\\Photos\\2018 Trips\\Coho Baseline\\Glacier Cr", 
-  #                       data.file = "PhotoData.csv", 
-  #                       plot.map = TRUE, 
-  #                       map.file = "PhotoData_map.html")
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
   setwd(folder)
   
   files <- list.files(folder, pattern = "*.jpg", full.names = FALSE, ignore.case = TRUE) #Get file names with .JPG extension
