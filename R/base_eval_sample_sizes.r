@@ -27,7 +27,7 @@
 #' base_eval_sample_sizes(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), groupvec = Final_Pops$group %>% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
 #'
 #' @import magrittr
-#' @import dyplyr
+#' @import dplyr
 #' @import purrr
 #' @import tibble
 #'
