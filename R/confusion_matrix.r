@@ -1,8 +1,8 @@
 #' Create confusion matrices 
 #'
-#' This function is a wrapper for rubias::self_assign(). It takes the genetic likelihood profile produced by rubias::self_assign() and summarizes it into tibbles at the group by group, group by pop, and pop by pop level. This genetic likelihood profile is intended to show how well populations/reporting groups are differentiated by the markers at hand. These probabilities can give an idea of potential misallocation and where. This function can aid in marker selection.
+#' This function is a wrapper for \code{rubias::self_assign}. It takes the genetic likelihood profile produced by rubias::self_assign() and summarizes it into tibbles at the group by group, group by pop, and pop by pop level. This genetic likelihood profile is intended to show how well populations/reporting groups are differentiated by the markers at hand. These probabilities can give an idea of potential misallocation and where. This function can aid in marker selection.
 #'
-#' @param reference A rubias baseline object created by create_rubias_base().
+#' @param reference A rubias baseline object created by \code{create_rubias_base}.
 #' 
 #' @param gen_start_col The first column containing genetic data in the baseline object. This will usually be the default unless the baseline object is modified with additional variables.
 #'
