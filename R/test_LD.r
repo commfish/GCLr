@@ -1,40 +1,48 @@
+#' Perform LD Testing in Parallel
+#'
+#' This function performs LD testing using \code{genepop::test_LD} in parallel. It takes a list of genepop files with n populations per file and tests for LD. The results are combined into a single summary object containing p-values for each locus pair and population.
+#'
+#' @param path The folder where the genepop files are located and where the results will be written
+#' 
+#' @param genepopFiles The names of the genepop files located in the specified path
+#' 
+#' @param dememorizations Integer value indicating the length of the dememorization step of the Markov chain algorithm
+#' 
+#' @param batches Integer value indicating the number of batches
+#' 
+#' @param iterations Integer value indicating the iterations per batch
+#' 
+#' @param ncores The number of cores for multicoring using \code{doParallel} and \code{foreach}. Default is the number of available cores minus 1.
+#'
+#' @return A summarized tibble with the following columns:
+#'    \itemize{
+#'     \item \code{Locus_pair} - Combined locus pairs
+#'     \item \code{Pop} - Population name
+#'     \item \code{Pvalue} - P-value for LD test
+#'     }
+#'
+#' @examples
+#' source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions
+#'
+#' gcl2genepop(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, ncores = 8, npops = 5) 
+#'
+#' my.files <- list.files(path = "GENEPOP", pattern = "(Pop)\\d+(to)\\d+(.gen.txt)") # The regular expression in the pattern argument finds the generic file names produced by \code{GCLr::gcl2genepop} when npops is supplied.
+#'
+#' genepop::test_LD(genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 18)
+#'
+#' @import doParallel
+#' @import foreach
+#' @import fs
+#' @import genepop
+#' @import magrittr
+#' @import readr
+#' @import stringr
+#' @import tidyr
+#' @import tibble
+#' @import dplyr
+
 test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, iterations = 5000, ncores = parallel::detectCores() - 1){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function performs LD testing, using genepop::test_LD(), in parallel. 
-  #   You can supply genepop files with n pops per file which are then tested for LD (these can be produced using gcl2genepop by supplying npops argument).  
-  #   These DIS files are then combined into a single summary object containing p-valuse for each locus pair and population.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   path - the folder where the genepop files are located and where the results will be written
-  #
-  #   genepopFiles - the names of the genepop files located 
-  #
-  #   ncores - the number of cores for mulitcoring using doParallel and foreach. default = number of avaialble cores - 1
-  #
-  #   dememorizations - integer; length of dememorization step of Markov chain algorithm
-  #
-  #   batches	- integer; Number of batches
-  #
-  #   iterations - integer; Iterations per batch
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #    When makeGenepops = TRUE, writes out a GENEPOP file with n pops per file.
-  #    Writes out a GENEPOP DIS file with n pops per file. 
-  #    Writes out a summarized GENEPOP DIS file with all results. 
-  #
-  # Examples~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-  # source(paste0(path.expand("~/R/"), "Functions.R"))#GCL functions
-  #
-  # gcl2genepop(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, ncores = 8, npops = 5) 
-  #
-  # my.files <- list.files(path = "GENEPOP", pattern = "(Pop)\\d+(to)\\d+(.gen.txt)") #The regular expression in the pattern argument finds the generic file names produced by gcl2genepop when npops is supplied.
-  #
-  # test_LD (genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 18)
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+
   if(ncores > parallel::detectCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
@@ -102,7 +110,7 @@ test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, 
     
     sillyvec = get.sillys(f) #This function extracts the silly codes from the genepop input file
     
-    read_genepop_dis(file = paste0(f, ".DIS"), loci = loci, sillyvec = sillyvec)
+    GCLr::read_genepop_dis(file = paste0(f, ".DIS"), loci = loci, sillyvec = sillyvec)
     
     } %>% dplyr::bind_cols()#Combine results into a single DF
   

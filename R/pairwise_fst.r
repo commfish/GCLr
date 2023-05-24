@@ -1,38 +1,33 @@
-pairwise_fst <- function(sillyvec, loci, inputfile, popnames = NULL, ncores = 4){
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   This function generates a matrix of pairwise Fst values using the genepop package.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   sillyvec - a vector of silly codes without the ".gcl" extention (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART10")). 
-  #
-  #   loci - a character vector of locus names
-  # 
-  #   inputfile - the file path of the genepop input file including .txt extension.
-  #
-  #   popnames - optional vector of population names corresponding to sillys in sillyvec to add as the dimnames of the output maxtrix. e.g., dimnames(ouput.matrix) <- list(popnames, popnames)
-  #              If popnames is not supplied, sillyvec will be used as the dimnames e.g., dimnames(ouput.matrix) <- list(sillyvec, sillyvec)
-  #   
-  #   ncores - a numeric vector of length one indicating the number of cores to use
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # 
-  #  a matrix of pairwise fst values
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   source(paste0(path.expand("~/R/"), "Functions.R"))#GCL functions
-  #
-  #   load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-  #
-  #   PWFST <- pairwise_fst(sillyvec = sillyvec31, loci = loci82, inputfile = "genepop/Susitna31pops82loci.txt", ncores = 8)
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+#' Create Pairwise Fst Matrix
+#'
+#' This function generates a matrix of pairwise Fst values using the \code{genepop} package.
+#'
+#' @param sillyvec a vector of silly codes without the ".gcl" extension (e.g., sillyvec <- c("KQUART06", "KQUART08", "KQUART10"))
+#' 
+#' @param loci a character vector of locus names
+#' 
+#' @param inputfile the file path of the \code{genepop} input file including the .txt extension
+#' 
+#' @param popnames optional vector of population names corresponding to sillyvec in sillyvec to add as the dimnames of the output matrix. If popnames is not supplied, sillyvec will be used as the dimnames.
+#' 
+#' @param ncores a numeric vector of length one indicating the number of cores to use
+#'
+#' @return a matrix of pairwise Fst values.
+#'
+#' @examples
+#' source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions
+#' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
+#' PWFST <- pairwise_fst(sillyvec = sillyvec31, loci = loci82, inputfile = "genepop/Susitna31pops82loci.txt", ncores = 8)
+#'
+#' @import genepop
+#'
+#' @export
 
+pairwise_fst <- function(sillyvec, loci, inputfile, popnames = NULL, ncores = 4){
+ 
   if(!file.exists(inputfile)){
     
-    gcl2genepop(sillyvec = sillyvec, loci = loci, path = inputfile, ncores = ncores)
+    GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = inputfile, ncores = ncores)
     
   }
   
@@ -44,7 +39,7 @@ pairwise_fst <- function(sillyvec, loci, inputfile, popnames = NULL, ncores = 4)
     
   }
   
- output <- read_genepop_pwfst(file = paste0(inputfile, ".MIG"), popnames = popnames)
+ output <- GCLr::read_genepop_pwfst(file = paste0(inputfile, ".MIG"), popnames = popnames)
  
  return(output)
   

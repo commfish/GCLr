@@ -1,40 +1,42 @@
+#' Get Temporal Collections for Hierarchical ANOVA
+#'
+#' This function retrieves temporal collections from a vector of pooled sillys for hierarchical ANOVA. 
+#' 
+#' @note Single-silly pops and sillys with sample sizes < "min.samps" will not be included in the output.
+#'
+#' @param sillyvec a vector of pooled silly codes (a.k.a. pooled pops) without the ".gcl" extension
+#' 
+#' @param region an optional tibble containing two numeric variables: 
+#'             \itemize{
+#'               \item \code{pop_no} - the position number for each population in sillyvec
+#'               \item \code{region} - the region number for each population in sillyvec
+#'               }
+#'               
+#' @param min.samps the minimum number of samples for including a collection
+#' 
+#' @param sep the separator used when pooling collections into populations; default is "."
+#'
+#' @return a tibble with the following variables:
+#'    \itemize{ 
+#'      \item \code{silly} - non-pooled silly codes,
+#'      \item \code{spop} - numbers indicating the population affiliation for each collection,
+#'       \item \code{sregion} - numbers indicating the regional affiliation for each collection
+#'    }
+#'
+#' @examples
+#' load("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline_new.Rdata")
+#' source(paste0(path.expand("~/R/"), "Functions.R"))#GCL functions
+#' sillyvec <- Final_Pops$collection
+#' region <- Final_Pops %>% select(pop = order, region = region)
+#' temporal_collections(sillyvec = sillyvec, region = region, min.samps = 50, sep = ".")
+#'
+#' @import magrittr
+#' @import dplyr
+#' @import tibble
+#' 
+#' @export 
+
 temporal_collections <- function(sillyvec, region = NULL, min.samps = 50, sep = "."){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #  Get temporal collections from a vector of pooled sillys for hierarchical ANOVA.
-  #  Single-silly pops and sillys with sample sizes < "min.samps" will be removed.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   sillyvec - a vector of pooled silly codes (AKA pooled pops) without the ".gcl" extention (e.g. sillyvec <- c("KQUART06.KQUART08.KQUART10")). 
-  #
-  #   region - optional; a tibble containing two numeric variables: 1) pop_no; the position number for each population in sillyvec
-  #                                                                 2) region; the region number for each population in sillyvec
-  #
-  #   min.samples - the minimum number of samples for including a collection 
-  #
-  #   sep - the separator used when pooling collections into populations; default is "."
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   Returns a tibble with the following variables: silly; non-pooled silly codes, 
-  #                                                  pop; numbers indicating the population affiliation for each collection, 
-  #                                                  region; numbers indicating the regional affiliation for each collection 
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   load("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline_new.Rdata")
-  # 
-  #   source(paste0(path.expand("~/R/"), "Functions.R"))#GCL functions
-  #   
-  #   sillyvec <- Final_Pops$collection
-  #     
-  #   region <- Final_Pops %>% select(pop = order, region = region)
-  #     
-  #   temporal_collections (sillyvec = sillyvec, region = region, min.samps = 50, sep = ".")  
-  # 
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
   
   if(!all(sillyvec %in% stringr::str_remove(string = objects(pattern = "\\.gcl", pos = -1, envir = .GlobalEnv), pattern = "\\.gcl"))) {  # Do all sillys exist in the environment?
     
@@ -50,9 +52,9 @@ temporal_collections <- function(sillyvec, region = NULL, min.samps = 50, sep = 
     
     tcol0 <- base::strsplit(silly, split = paste0("\\", sep))[[1]]
     
-    tcol <- silly_n(tcol0) %>% 
+    tcol <- GCLr::silly_n(tcol0) %>% 
       dplyr::filter(n >= min.samps) %>% 
-      pull(silly)
+      dplyr::pull(silly)
     
     if(length(tcol) < 2){
       
@@ -76,4 +78,3 @@ temporal_collections <- function(sillyvec, region = NULL, min.samps = 50, sep = 
   return(tc)
   
 }
-

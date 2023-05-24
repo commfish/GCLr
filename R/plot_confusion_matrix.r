@@ -1,43 +1,40 @@
+#' Plot Confusion Matrix
+#'
+#' This function takes the output object from \code{confusion_matrix()} and plots a confusion matrix in a heatmap using \code{ggplot2::geom_tile()}.
+#'
+#' @param confusion_matrix a list of confusion matrix tibble(s) produced by \code[confusion_matrix()}
+#' 
+#' @param plot a character vector of length 1 indicating the type of matrix you want to plot
+#' 
+#' @param group_names an optional vector of group names used to keep groups in order; if NULL, the groups will be ordered alphabetically
+#' 
+#' @param pop_names an optional vector of population names used to keep pops in order; if NULL, the pops will be ordered alphabetically.
+#' 
+#' @param high_color the color used for high "mean scale likelihood" values by \code{ggplot2::scale_fill_gradient()}. Either supply hexadecimal or color name from \code{colors()}.
+#' 
+#' @param low_color The color used for low values by \code{ggplot2::scale_fill_gradient()}. Either supply hexadecimal or color name from \code{colors()}.
+#' 
+#' @param text_color The color used by \code{ggplot2::geom_text()} to color the Mean Scaled Likelihood values on the plot.
+#'
+#' @return A heatmap of mean scaled likelihood.
+#'
+#' @examples
+#' baseline <- read_csv("V:/Analysis/5_Coastwide/Chum/NPen2WA_Chum_baseline/rubias/baseline/NPen2Wa_Chum_227pops_91loci_base.csv") 
+#' ConfusionMatrices_out <- confusion_matrix(reference = baseline , gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
+#' groups <- baseline$repunit %>% unique()
+#' pops <- baseline$collection %>% unique()
+#' plot_confusion_matrix(confusion_matrix = ConfusionMatrices_out, group_names = groups, pop_names = NULL, plot = c("group_group", "pop_group", "pop_pop")[1], high_color = "darkblue", low_color = "lightblue", text_color = "yellow")
+#'
+#' @import magrittr
+#' @import ggplot2
+#' @import dplyr
+#' @import readr
+#' @import colors
+#' 
+#' @export
+
 plot_confusion_matrix <- function(confusion_matrix, plot = c("group_group", "pop_group", "pop_pop")[1], group_names = NULL, pop_names = NULL, high_color = "#132B43", low_color = "#56B1F7", text_color = "yellow"){  
   
-  ####################################################################################################################################################################################################################################################################
-  #
-  # This function takes the output object from confusion_matrix() and plots a confusion matrix in a heatmap using ggplot2::geom_tile().
-  # 
-  # Input parameters~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # 
-  # confusion_matrix - a list of confusion matrix tibble(s) produced by confusion_matrix()
-  #
-  # plot - a chactater vector of lengh == 1 indicating the type of matrix you want to plot.
-  #
-  # group_names - an optional vector of group names used to keep groups in order; if NULL, the groups will be ordered alphabetically
-  #
-  # pop_names - an optional vector of population names used to keep pops in order; if NULL, the pops will be ordered alphabetically
-  #
-  # high_color - the color used for high "mean scale likelihood values by ggplot2:: scale_fill_gradient(); either supply hexadecimal or color name from colors()
-  #
-  # low_color - the color used for low values by ggplot2:: scale_fill_gradient(); either supply hexadecimal or color name from colors()
-  # 
-  # text_color - the color used by ggplot2::geom_text() to color the Mean Scaled Likelihood values on the plot.
-  #
-  # Output~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # 
-  # A heatmap of mean scaled likelihood
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  # baseline <- read_csv("V:/Analysis/5_Coastwide/Chum/NPen2WA_Chum_baseline/rubias/baseline/NPen2Wa_Chum_227pops_91loci_base.csv") 
-  # 
-  # ConfusionMatrices_out <- confusion_matrix(reference = baseline , gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
-  # 
-  # groups <- baseline$repunit %>% unique()
-  # pops <- baseline$collection %>% unique()
-  #
-  # plot_confusion_matrix(confusion_matrix = ConfusionMatrices_out, group_names = groups, pop_names = NULL, plot = c("group_group", "pop_group", "pop_pop")[1], high_color = "darkblue", low_color = "lightblue", text_color = "yellow")
-  #
-  ####################################################################################################################################################################################################################################################################
-
-
   if(!plot %in% names(confusion_matrix)){
     
     stop(paste0("The supplied confusion_matrix list object does not contain a tibble named '", plot, "'"))

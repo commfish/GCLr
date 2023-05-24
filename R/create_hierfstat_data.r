@@ -1,47 +1,33 @@
+#' Create a hierfstat data object
+#'
+#' This function creates a hierfstat data object using the provided inputs. The hierfstat data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as `varcomp` and `varcomp.glob` from the hierfstat package.
+#'
+#' @param sillyvec a vector of silly codes without the ".gcl" extension
+#' @param region optional; a numeric vector indicating the regional affiliation for each silly in sillyvec. Include this argument when computing hierarchical F statistics.
+#' @param pop a numeric vector indicating the population affiliation for each silly in sillyvec. If there is only one silly per population in sillyvec, then this should be a sequence of numbers of length sillyvec.
+#' @param loci a character vector of locus names.
+#' @param ncores a numeric value indicating the number of cores to use.
+#'
+#' @return This function returns a hierfstat data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
+#'
+#' @examples
+#' sillyvec <- c("KQUART06", "KQUART08", "KQUART10")
+#' region <- c(1, 2, 3)
+#' pop <- c(1, 1, 2)
+#' loci <- c("locus1", "locus2", "locus3")
+#' ncores <- 4
+#' create_hierfstat_data(sillyvec, region, pop, loci, ncores)
+#'
+#' @import magrittr
+#' @import dplyr
+#' @import tidyr
+#' @import purrr
+#' @import foreach
+#' @import doParallel
+#'
+#' @export
+
 create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   Create a hierfstat data object.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   sillyvec - a vector of silly codes without the ".gcl" extention (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART10")). 
-  #
-  #   region - optional; a numeric vector of numbers indicating the regional affiliation for each silly in sillyvec; 
-  #                      include this argument when computing hierarchical F statistics.
-  #
-  #   pop - a numeric vector indicating the pop affiliation for each silly in sillyvec.
-  #         if there is only one silly per population in in sillyvec, then this is a sequence of numbers the length of sillyvec - i.e., seq(length(sillyvec)).
-  #
-  #   loci - a character vector of locus names
-  #
-  #   ncores - a numeric vector of length one indicating the number of cores to use
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   Returns a hierfstat data object containing region (if supplied), population, and sub population numbers and genotypes in single-column format.
-  #   
-  #   Note: leading zeros are dropped from the genotypes (e.g., 0102 == 102), but hierfstat functions account for this.
-  #
-  #   Note: If is.null(region), the object will not contain a region column.  The region and sub population columns are intended for computing hierarchical F statistics (i.e., hierfstat::varcomp, hierfstat::varcomp.glob), 
-  #         and they will need to be removed from the object if supplying to hierfstat functions that compute population-level statistics.
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   load("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline_new.Rdata")
-  # 
-  #   source(paste0(path.expand("~/R/"), "Functions.R"))#GCL functions
-  # 
-  #   sillyvec104 <- Final_Pops$collection
-  # 
-  #   region <- Final_Pops %>% select(pop = order, region = region)
-  # 
-  #   temporal_collections <- temporal_collections(sillyvec = sillyvec104, region = region, min.samps = 50, sep = ".")
-  # 
-  #   fstat.dat <- create_hierfstat_data(sillyvec = temporal_collections$silly, region = temporal_collections$region, pop = temporal_collections$pop, loci = loci81, ncores = 8)
-  # 
-  #   hierfstat::varcomp.glob(levels = fstat.dat[,1:3], loci = fstat.dat[,-c(1:3)])
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   if(!exists("LocusControl")){
     

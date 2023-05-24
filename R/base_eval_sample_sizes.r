@@ -18,7 +18,6 @@
 #' 
 #' @details The maxprop argument should be set to avoid oversampling populations, so the allele frequencies . For example, if maxprop = 0.5, the output tibble will only contain scenarios where sample sizes for the test_group do no exceed 50% of the fish in the baseline for that group.
 #'
-#' @export
 #' 
 #' @return a tibble with 4 variables: test_group, scenario, repunit, and samps. For each test_group and scenario, the number of rows will be length(group_names).
 #' 
@@ -27,7 +26,15 @@
 #' attach("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
 #' Final_Pops <- Final_Pops %>% mutate(group = factor(group, levels = unique(group)))
 #' base_eval_sample_sizes(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), groupvec = Final_Pops$group %>% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
-
+#'
+#' @import magrittr
+#' @import dyplyr
+#' @import purrr
+#' @import tibble
+#'
+#' @export
+#'
+#' 
 base_eval_sample_sizes <- function(sillyvec, group_names, groupvec, mixsize, scenarios = round(seq(.01, 1, .01), 2), maxprop = 0.5, seed = 56){
   
   
