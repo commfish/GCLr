@@ -1,13 +1,14 @@
 #' Summarize LD Results
 #'
-#' This function takes the output from \code{GCLr::test_LD()}, filters tests by the supplied significance level (alpha),
+#' This function takes the output from [GCLr::test_LD()], filters tests by the supplied significance level (alpha),
 #' and makes a bar plot of the proportion of pops with significant test results for each locus pair.
 #'
-#' @param LDresults The output from \code{GCLr::test_LD()}; a tibble with 3 variables:
+#' @param LDresults The output from [GCLr::test_LD()]; a tibble with 3 variables:
 #'                  \itemize{
 #'                     \item \code{Locus_pair}
 #'                     \item \code{Pop}
 #'                     \item \code{Pvalue}
+#'                     }
 #'                 
 #' @param alpha A numeric value indicating the significance level for filtering the Test_LD.gcl output; default is 0.05.
 #' 

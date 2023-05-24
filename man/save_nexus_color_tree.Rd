@@ -20,7 +20,7 @@ save_nexus_color_tree(tree, file, groupvec, group.col, tip.labs, sep = "_")
 \item{sep}{Delimiter used to replace spaces in tip.labs. If spaces are left in tip.labs (called TAXALABLES in the NEXUS file) when FigTree opens the file, an error message will pop up saying the number of taxa is greater than ntaxa.}
 }
 \description{
-This function is a wrapper for \code{ape::write.nexus} and creates a Nexus format tree file including tip labels and branch colors, which can be opened and modified in FigTree. FigTree can be downloaded from GitHub: \href{https://github.com/rambaut/figtree/releases}{FigTree Releases}
+This function is a wrapper for \code{\link[ape:write.nexus]{ape::write.nexus()}} and creates a Nexus format tree file including tip labels and branch colors, which can be opened and modified in FigTree. FigTree can be downloaded from GitHub: \href{https://github.com/rambaut/figtree/releases}{FigTree Releases}
 }
 \examples{
 load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")

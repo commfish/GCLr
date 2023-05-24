@@ -24,7 +24,7 @@ test_LD(
 
 \item{iterations}{Integer value indicating the iterations per batch}
 
-\item{ncores}{The number of cores for multicoring using \code{doParallel} and \code{foreach}. Default is the number of available cores minus 1.}
+\item{ncores}{The number of cores for multicoring using \link{doParallel} and \link{foreach}. Default is the number of available cores minus 1.}
 }
 \value{
 A summarized tibble with the following columns:
@@ -35,14 +35,14 @@ A summarized tibble with the following columns:
 }
 }
 \description{
-This function performs LD testing using \code{genepop::test_LD} in parallel. It takes a list of genepop files with n populations per file and tests for LD. The results are combined into a single summary object containing p-values for each locus pair and population.
+This function performs LD testing using \code{\link[genepop:Linkage]{genepop::test_LD()}} in parallel. It takes a list of genepop files with n populations per file and tests for LD. The results are combined into a single summary object containing p-values for each locus pair and population.
 }
 \examples{
 source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions
 
 gcl2genepop(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, ncores = 8, npops = 5) 
 
-my.files <- list.files(path = "GENEPOP", pattern = "(Pop)\\\\d+(to)\\\\d+(.gen.txt)") # The regular expression in the pattern argument finds the generic file names produced by \code{GCLr::gcl2genepop} when npops is supplied.
+my.files <- list.files(path = "GENEPOP", pattern = "(Pop)\\\\d+(to)\\\\d+(.gen.txt)") # The regular expression in the pattern argument finds the generic file names produced by [GCLr::gcl2genepop()] when npops is supplied.
 
 genepop::test_LD(genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 18)
 

@@ -1,6 +1,6 @@
 #' Save Nexus file that includes a phylogenetic tree. 
 #'
-#' This function is a wrapper for \code{ape::write.nexus} and creates a Nexus format tree file including tip labels and branch colors, which can be opened and modified in FigTree. FigTree can be downloaded from GitHub: [FigTree Releases](https://github.com/rambaut/figtree/releases)
+#' This function is a wrapper for [ape::write.nexus()] and creates a Nexus format tree file including tip labels and branch colors, which can be opened and modified in FigTree. FigTree can be downloaded from GitHub: [FigTree Releases](https://github.com/rambaut/figtree/releases)
 #'
 #' @param tree a phylogenetic tree object (class = "phylo") produced by the ape package
 #' @param file the file path with file name including .nex extension

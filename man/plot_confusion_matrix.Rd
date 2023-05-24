@@ -15,7 +15,7 @@ plot_confusion_matrix(
 )
 }
 \arguments{
-\item{confusion_matrix}{a list of confusion matrix tibble(s) produced by \code{confusion_matrix}}
+\item{confusion_matrix}{a list of confusion matrix tibble(s) produced by \code{\link[=confusion_matrix]{confusion_matrix()}}}
 
 \item{plot}{a character vector of length 1 indicating the type of matrix you want to plot}
 
@@ -23,17 +23,17 @@ plot_confusion_matrix(
 
 \item{pop_names}{an optional vector of population names used to keep pops in order; if NULL, the pops will be ordered alphabetically.}
 
-\item{high_color}{the color used for high "mean scale likelihood" values by \code{ggplot2::scale_fill_gradient}. Either supply hexadecimal or R color name from \code{colors()}..}
+\item{high_color}{the color used for high "mean scale likelihood" values by \code{\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradient()}}. Either supply hexadecimal or R color name from \code{\link[=colors]{colors()}}.}
 
-\item{low_color}{The color used for low values by \code{ggplot2::scale_fill_gradient}. Either supply hexadecimal or color name from \code{colors()}.}
+\item{low_color}{The color used for low values by \code{\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradient()}}. Either supply hexadecimal or color name from \code{\link[=colors]{colors()}}.}
 
-\item{text_color}{The color used by \code{ggplot2::geom_text} to color the Mean Scaled Likelihood values on the plot.}
+\item{text_color}{The color used by \code{\link[ggplot2:geom_text]{ggplot2::geom_text()}} to color the Mean Scaled Likelihood values on the plot.}
 }
 \value{
 A heatmap of mean scaled likelihood.
 }
 \description{
-This function takes the output object from \code{confusion_matrix} and plots a confusion matrix in a heatmap using \code{ggplot2::geom_tile}.
+This function takes the output object from \code{\link[=confusion_matrix]{confusion_matrix()}} and plots a confusion matrix in a heatmap using \code{ggplot2::geom_tile}.
 }
 \examples{
 baseline <- read_csv("V:/Analysis/5_Coastwide/Chum/NPen2WA_Chum_baseline/rubias/baseline/NPen2Wa_Chum_227pops_91loci_base.csv") 

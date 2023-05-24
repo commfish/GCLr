@@ -7,6 +7,13 @@
 summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
 }
 \arguments{
+\item{LDresults}{The output from \code{\link[=test_LD]{test_LD()}}; a tibble with 3 variables:
+\itemize{
+\item \code{Locus_pair}
+\item \code{Pop}
+\item \code{Pvalue}
+}}
+
 \item{alpha}{A numeric value indicating the significance level for filtering the Test_LD.gcl output; default is 0.05.}
 
 \item{prop_sign_pops}{A numeric value indicating the proportion of populations with significant test results; default is 0.5.
@@ -16,7 +23,7 @@ Only locus pairs that have > prop_sign_pops will be plotted.}
 An interactive bar plot with the proportion of populations with significant tests on the y-axis and the locus pairs on the x-axis.
 }
 \description{
-This function takes the output from \code{GCLr::test_LD()}, filters tests by the supplied significance level (alpha),
+This function takes the output from \code{\link[=test_LD]{test_LD()}}, filters tests by the supplied significance level (alpha),
 and makes a bar plot of the proportion of pops with significant test results for each locus pair.
 }
 \examples{
