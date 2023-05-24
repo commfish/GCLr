@@ -23,7 +23,6 @@
 #' col2hex(color = "red")
 #' 
 #' @export
-#' 
 col2hex <- function(color){
   
   c <- grDevices::col2rgb(color)

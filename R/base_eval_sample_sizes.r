@@ -17,7 +17,6 @@
 #' @param seed integer to set the seed for rmultinom(), so sample sizes are reproducible
 #' 
 #' @details The maxprop argument should be set to avoid oversampling populations, so the allele frequencies . For example, if maxprop = 0.5, the output tibble will only contain scenarios where sample sizes for the test_group do no exceed 50% of the fish in the baseline for that group.
-#'
 #' 
 #' @return a tibble with 4 variables: test_group, scenario, repunit, and samps. For each test_group and scenario, the number of rows will be length(group_names).
 #' 
@@ -33,8 +32,6 @@
 #' @import tibble
 #'
 #' @export
-#'
-#' 
 base_eval_sample_sizes <- function(sillyvec, group_names, groupvec, mixsize, scenarios = round(seq(.01, 1, .01), 2), maxprop = 0.5, seed = 56){
   
   
