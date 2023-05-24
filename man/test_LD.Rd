@@ -14,9 +14,9 @@ test_LD(
 )
 }
 \arguments{
-\item{path}{The folder where the genepop files are located and where the results will be written}
+\item{path}{The folder where the \pkg{genepop} files are located and where the results will be written}
 
-\item{genepopFiles}{The names of the genepop files located in the specified path}
+\item{genepopFiles}{The names of the \pgk{genepop} files located in the specified path}
 
 \item{dememorizations}{Integer value indicating the length of the dememorization step of the Markov chain algorithm}
 
@@ -24,7 +24,7 @@ test_LD(
 
 \item{iterations}{Integer value indicating the iterations per batch}
 
-\item{ncores}{The number of cores for multicoring using \link{doParallel} and \link{foreach}. Default is the number of available cores minus 1.}
+\item{ncores}{The number of cores for multicoring using \pkg{doParallel} and \pkg{foreach}. Default is the number of available cores minus 1.}
 }
 \value{
 A summarized tibble with the following columns:
@@ -35,7 +35,7 @@ A summarized tibble with the following columns:
 }
 }
 \description{
-This function performs LD testing using \code{\link[genepop:Linkage]{genepop::test_LD()}} in parallel. It takes a list of genepop files with n populations per file and tests for LD. The results are combined into a single summary object containing p-values for each locus pair and population.
+This function performs LD testing using \code{\link[genepop:Linkage]{genepop::test_LD()}} in parallel. It takes a list of \pkg{genepop} files with n populations per file and tests for LD. The results are combined into a single summary object containing p-values for each locus pair and population.
 }
 \examples{
 source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions

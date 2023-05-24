@@ -11,8 +11,8 @@ temporal_collections(sillyvec, region = NULL, min.samps = 50, sep = ".")
 
 \item{region}{an optional tibble containing two numeric variables:
 \itemize{
-\item \code{pop_no} - the position number for each population in sillyvec
-\item \code{region} - the region number for each population in sillyvec
+\item \code{pop_no}: the position number for each population in sillyvec
+\item \code{region}: the region number for each population in sillyvec
 }}
 
 \item{min.samps}{the minimum number of samples for including a collection}
@@ -22,9 +22,9 @@ temporal_collections(sillyvec, region = NULL, min.samps = 50, sep = ".")
 \value{
 a tibble with the following variables:
 \itemize{
-\item \code{silly} - non-pooled silly codes,
-\item \code{spop} - numbers indicating the population affiliation for each collection,
-\item \code{sregion} - numbers indicating the regional affiliation for each collection
+\item \code{silly}: non-pooled silly codes,
+\item \code{spop}: numbers indicating the population affiliation for each collection,
+\item \code{sregion}: numbers indicating the regional affiliation for each collection
 }
 }
 \description{

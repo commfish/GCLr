@@ -12,10 +12,15 @@ hierfstat_global_stats(levels, genotypes)
 \item{genotypes}{A data frame containing the genotypes in single-column numeric format (e.g., 101, 102, 202).}
 }
 \value{
-A list containing 3 tibbles: \code{loci} - variance components by locus,  \code{overall} - variance components summed over all loci, \code{F} - hierarchical F-statistics (see \code{hierfstat::varcomp.glob} documentation).
+A list containing 3 tibbles:
+\itemize{
+\item \code{loci} - variance components by locus,
+\item \code{overall} - variance components summed over all loci,
+\item \code{F} - hierarchical F-statistics (see \code{\link[hierfstat:varcomp.glob]{hierfstat::varcomp.glob()}} documentation).
+}
 }
 \description{
-This is a wrapper function for \code{hierfstat::varcomp.glob()}. This wrapper will compute variance components and hierarchical F-statistics for haploid and diploid loci and combine the results into a single output.
+This is a wrapper function for \code{\link[hierfstat:varcomp.glob]{hierfstat::varcomp.glob()}}. This wrapper will compute variance components and hierarchical F-statistics for haploid and diploid loci and combine the results into a single output.
 }
 \examples{
 load("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline_new.Rdata")

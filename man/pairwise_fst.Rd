@@ -11,9 +11,9 @@ pairwise_fst(sillyvec, loci, inputfile, popnames = NULL, ncores = 4)
 
 \item{loci}{a character vector of locus names}
 
-\item{inputfile}{the file path of the \code{genepop} input file including the .txt extension}
+\item{inputfile}{the file path of the \pkg{genepop} input file including the .txt extension}
 
-\item{popnames}{optional vector of population names corresponding to sillyvec in sillyvec to add as the dimnames of the output matrix. If popnames is not supplied, sillyvec will be used as the dimnames.}
+\item{popnames}{optional vector of population names corresponding to \code{sillyvec} to add as the dimnames of the output matrix. If \code{popnames} is not supplied, \code{sillyvec} will be used as the dimnames.}
 
 \item{ncores}{a numeric vector of length one indicating the number of cores to use}
 }
@@ -21,7 +21,7 @@ pairwise_fst(sillyvec, loci, inputfile, popnames = NULL, ncores = 4)
 a matrix of pairwise Fst values.
 }
 \description{
-This function generates a matrix of pairwise Fst values using the \code{genepop} package.
+This function generates a matrix of pairwise Fst values using the \pkg{genepop} package.
 }
 \examples{
 source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions

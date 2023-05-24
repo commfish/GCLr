@@ -22,13 +22,13 @@ plot_quick_tree(
 
 \item{inputfile}{the file path of the genepop input file including the .txt extension. If the file does not exist, then one will be created.}
 
-\item{popnames}{an optional vector of population names corresponding to sillyvec in order to add them as the dimnames of the output matrix. If not supplied, sillyvec will be used as the dimnames.}
+\item{popnames}{an optional vector of population names corresponding to \code{sillyvec} in order to add them as the dimnames of the output matrix. If not supplied, \code{sillyvec} will be used as the dimnames.}
 
 \item{ncores}{a numeric value indicating the number of cores to use}
 
-\item{groupvec}{a numeric vector indicating the group affiliation for each population in sillyvec}
+\item{groupvec}{a numeric vector indicating the group affiliation for each population in \code{sillyvec}}
 
-\item{regioncol}{a vector of colors of the same length as max(groupvec) (i.e., the number of groups). The colors can be hexadecimal, R color names, or the number corresponding to an R color name in \code{colors()}.}
+\item{regioncol}{a vector of colors of the same length as max(\code{groupvec}) (i.e., the number of groups). The colors can be hexadecimal, R color names, or the number corresponding to an R color name in \code{\link[=colors]{colors()}}.}
 
 \item{cex}{a numeric value giving the factor scaling of the tip labels (Character Expansion).}
 }

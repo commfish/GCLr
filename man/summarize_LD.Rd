@@ -14,7 +14,7 @@ summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
 \item \code{Pvalue}
 }}
 
-\item{alpha}{A numeric value indicating the significance level for filtering the Test_LD.gcl output; default is 0.05.}
+\item{alpha}{A numeric value indicating the significance level for filtering the \code{\link[=test_LD]{test_LD()}} output; default is 0.05.}
 
 \item{prop_sign_pops}{A numeric value indicating the proportion of populations with significant test results; default is 0.5.
 Only locus pairs that have > prop_sign_pops will be plotted.}

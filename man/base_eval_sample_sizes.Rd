@@ -17,9 +17,9 @@ base_eval_sample_sizes(
 \arguments{
 \item{sillyvec}{a character vector of silly codes without the ".gcl" extension (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART10")).}
 
-\item{group_names}{character vector of group names the length of max(groupvec)}
+\item{group_names}{character vector of group names the length of \code{max(groupvec)}}
 
-\item{groupvec}{a numeric vector indicating the group affiliation of each pop in sillyvec}
+\item{groupvec}{a numeric vector indicating the group affiliation of each pop in \code{sillyvec}}
 
 \item{mixsize}{a numeric vector of length 1; the sample size of each test mixture}
 
@@ -27,16 +27,16 @@ base_eval_sample_sizes(
 
 \item{maxprop}{a numeric vector of length 1; the maximum proportion of baseline individuals to select from each reporting group (see details).}
 
-\item{seed}{integer to set the seed for rmultinom(), so sample sizes are reproducible}
+\item{seed}{integer to set the seed for \code{\link[=rmultinom]{rmultinom()}}, so sample sizes are reproducible}
 }
 \value{
-a tibble with 4 variables: test_group, scenario, repunit, and samps. For each test_group and scenario, the number of rows will be length(group_names).
+a tibble with 4 variables: test_group, scenario, repunit, and samps. For each \code{test_group} and scenario, the number of rows will be \code{length(group_names)}.
 }
 \description{
 This function creates a tibble of sample sizes for creating baseline and mixture files for baseline evaluation tests.
 }
 \details{
-The maxprop argument should be set to avoid oversampling populations, so the allele frequencies . For example, if maxprop = 0.5, the output tibble will only contain scenarios where sample sizes for the test_group do no exceed 50\% of the fish in the baseline for that group.
+The \code{maxprop} argument should be set to avoid oversampling populations, so the allele frequencies . For example, if \code{maxprop} = 0.5, the output tibble will only contain scenarios where sample sizes for the test_group do no exceed 50\% of the fish in the baseline for that group.
 }
 \examples{
 

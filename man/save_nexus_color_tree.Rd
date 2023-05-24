@@ -7,13 +7,13 @@
 save_nexus_color_tree(tree, file, groupvec, group.col, tip.labs, sep = "_")
 }
 \arguments{
-\item{tree}{a phylogenetic tree object (class = "phylo") produced by the ape package}
+\item{tree}{a phylogenetic tree object (class = "phylo") produced by the \pkg{ape} package}
 
 \item{file}{the file path with file name including .nex extension}
 
 \item{groupvec}{a numeric vector indicating the group affiliation of each tip label}
 
-\item{group.col}{a character vector of R colors() with a length of max(groupvec) to color the branches}
+\item{group.col}{a character vector of R \code{\link[=colors]{colors()}} with a length of \code{max(groupvec)} to color the branches}
 
 \item{tip.labs}{A character vector with the same length as groupvec to label the tips of the tree. tip.labs cannot have spaces to work in FigTree. If tip.labs contains spaces, this function will replace them with an underscore.}
 
