@@ -1,10 +1,10 @@
 #' Perform LD Testing in Parallel
 #'
-#' This function performs LD testing using [genepop::test_LD()] in parallel. It takes a list of genepop files with n populations per file and tests for LD. The results are combined into a single summary object containing p-values for each locus pair and population.
+#' This function performs LD testing using [genepop::test_LD()] in parallel. It takes a list of \pkg{genepop} files with n populations per file and tests for LD. The results are combined into a single summary object containing p-values for each locus pair and population.
 #'
-#' @param path The folder where the genepop files are located and where the results will be written
+#' @param path The folder where the \pkg{genepop} files are located and where the results will be written
 #' 
-#' @param genepopFiles The names of the genepop files located in the specified path
+#' @param genepopFiles The names of the \pgk{genepop} files located in the specified path
 #' 
 #' @param dememorizations Integer value indicating the length of the dememorization step of the Markov chain algorithm
 #' 
@@ -12,7 +12,7 @@
 #' 
 #' @param iterations Integer value indicating the iterations per batch
 #' 
-#' @param ncores The number of cores for multicoring using [doParallel] and [foreach]. Default is the number of available cores minus 1.
+#' @param ncores The number of cores for multicoring using \pkg{doParallel} and \pkg{foreach}. Default is the number of available cores minus 1.
 #'
 #' @return A summarized tibble with the following columns:
 #'    \itemize{

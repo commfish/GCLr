@@ -1,8 +1,8 @@
 #' Plot a Colored Phylogenetic Tree
 #'
-#' This function is a wrapper for \code{ape::plot.phylo}. It takes a tree object created by \code{add_tree_color} and plots it with an optional scale.
+#' This function is a wrapper for [ape::plot.phylo()]. It takes a tree object created by [GCLr::add_tree_color()] and plots it with an optional scale.
 #'
-#' @param color.tree a color tree object created with \code{add_tree_color}.
+#' @param color.tree a color tree object created with [GCLr::add_tree_color()].
 #' 
 #' @param rm.neg.branch logical; if TRUE (default), negative branch lengths are removed.
 #' 
@@ -14,7 +14,7 @@
 #' 
 #' @param edge.width a numeric vector giving the width of the branches of the plotted phylogeny. If fewer widths are given than the length of edge, then these are recycled.
 #' 
-#' @param adj a numeric specifying the justification of the text strings of the labels: 0 (left-justification), 0.5 (centering), or 1 (right-justification). This option has no effect if type = "unrooted". If NULL (the default), the value is set with respect to the direction (see details in \code{?ape::plot.phylo}).
+#' @param adj a numeric specifying the justification of the text strings of the labels: 0 (left-justification), 0.5 (centering), or 1 (right-justification). This option has no effect if type = "unrooted". If NULL (the default), the value is set with respect to the direction (see details in [ape::plot.phylo()] documentation).
 #'
 #' @param cex a numeric value giving the factor scaling of the tip labels (Character Expansion).
 #' 
@@ -24,7 +24,7 @@
 #' 
 #' @param gen.dist the genetic distance used to produce the tree. If "fst", "FST", or "Fst" is supplied, the "F" will be italicized and the "ST" will be subscripted.
 #' 
-#' @param ... further arguments to be passed to \code{ape::plot.phylo}
+#' @param ... further arguments to be passed to [ape::plot.phylo()]
 #'
 #' @return This function plots a phylogenetic tree.
 #'

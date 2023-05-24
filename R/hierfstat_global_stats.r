@@ -1,13 +1,18 @@
 #' Compute global hierarchical F-statistics and variance components.
 #'
-#' This is a wrapper function for \code{hierfstat::varcomp.glob()}. This wrapper will compute variance components and hierarchical F-statistics for haploid and diploid loci and combine the results into a single output.
+#' This is a wrapper function for [hierfstat::varcomp.glob()]. This wrapper will compute variance components and hierarchical F-statistics for haploid and diploid loci and combine the results into a single output.
 #'
 #' @param levels A data frame containing the different levels (factors) from the outermost (e.g., region) to the innermost before the individual.
 #' 
 #' @param genotypes A data frame containing the genotypes in single-column numeric format (e.g., 101, 102, 202).
 #'
-#' @return A list containing 3 tibbles: \code{loci} - variance components by locus,  \code{overall} - variance components summed over all loci, \code{F} - hierarchical F-statistics (see \code{hierfstat::varcomp.glob} documentation).
-#'
+#' @return A list containing 3 tibbles: 
+#'     \itemize{
+#'       \item \code{loci} - variance components by locus,  
+#'       \item \code{overall} - variance components summed over all loci, 
+#'       \item \code{F} - hierarchical F-statistics (see [hierfstat::varcomp.glob()] documentation).
+#'     }
+#' 
 #' @examples
 #' load("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline_new.Rdata")
 #' 

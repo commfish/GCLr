@@ -1,6 +1,6 @@
 #' Extract photo data from photos taken on a GPS enabled device and plot on map.
 #'
-#' This function extracts file name, latitude, longitude, and date and time when the photo was taken from photos taken on a digital device with GPS capability. If the device used to take the photos did not have GPS capability, then only the file name and data and time take will be extracted and a message will print in the console.
+#' This function extracts file name, latitude, longitude, and date and time from photos taken on a digital device with GPS capability. If the device used to take the photos did not have GPS capability, then only the file name and data and time take will be extracted and a message will print in the console.
 #' The interactive map contains points for each photo containing GPS coordinates. When you hover over the point, the image file name is displayed, and if you click on a point, the image appears in a popup window.  
 #'
 #' @param folder The path to where the photos are located. The folder must contain files that have ".jpg" extensions.

@@ -2,10 +2,10 @@
 #'
 #' This function is a wrapper for [ape::write.nexus()] and creates a Nexus format tree file including tip labels and branch colors, which can be opened and modified in FigTree. FigTree can be downloaded from GitHub: [FigTree Releases](https://github.com/rambaut/figtree/releases)
 #'
-#' @param tree a phylogenetic tree object (class = "phylo") produced by the ape package
+#' @param tree a phylogenetic tree object (class = "phylo") produced by the \pkg{ape} package
 #' @param file the file path with file name including .nex extension
 #' @param groupvec a numeric vector indicating the group affiliation of each tip label
-#' @param group.col a character vector of R colors() with a length of max(groupvec) to color the branches
+#' @param group.col a character vector of R [colors()] with a length of \code{max(groupvec)} to color the branches
 #' @param tip.labs A character vector with the same length as groupvec to label the tips of the tree. tip.labs cannot have spaces to work in FigTree. If tip.labs contains spaces, this function will replace them with an underscore.
 #' @param sep Delimiter used to replace spaces in tip.labs. If spaces are left in tip.labs (called TAXALABLES in the NEXUS file) when FigTree opens the file, an error message will pop up saying the number of taxa is greater than ntaxa.
 #'

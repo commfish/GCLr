@@ -4,9 +4,9 @@
 #' 
 #' @param sillyvec a character vector of silly codes without the ".gcl" extension (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART10")). 
 #' 
-#' @param group_names character vector of group names the length of max(groupvec)
-#' 
-#' @param groupvec a numeric vector indicating the group affiliation of each pop in sillyvec
+#' @param group_names character vector of group names the length of \code{max(groupvec)}
+#'
+#' @param groupvec a numeric vector indicating the group affiliation of each pop in `sillyvec`
 #' 
 #' @param mixsize a numeric vector of length 1; the sample size of each test mixture
 #' 
@@ -14,11 +14,11 @@
 #' 
 #' @param  maxprop a numeric vector of length 1; the maximum proportion of baseline individuals to select from each reporting group (see details). 
 #' 
-#' @param seed integer to set the seed for rmultinom(), so sample sizes are reproducible
+#' @param seed integer to set the seed for [rmultinom()], so sample sizes are reproducible
 #' 
-#' @details The maxprop argument should be set to avoid oversampling populations, so the allele frequencies . For example, if maxprop = 0.5, the output tibble will only contain scenarios where sample sizes for the test_group do no exceed 50% of the fish in the baseline for that group.
+#' @details The `maxprop` argument should be set to avoid oversampling populations, so the allele frequencies . For example, if `maxprop` = 0.5, the output tibble will only contain scenarios where sample sizes for the test_group do no exceed 50% of the fish in the baseline for that group.
 #' 
-#' @return a tibble with 4 variables: test_group, scenario, repunit, and samps. For each test_group and scenario, the number of rows will be length(group_names).
+#' @return a tibble with 4 variables: test_group, scenario, repunit, and samps. For each `test_group` and scenario, the number of rows will be \code{length(group_names)}.
 #' 
 #' @examples
 #' 

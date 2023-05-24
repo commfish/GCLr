@@ -10,7 +10,7 @@
 #'                     \item \code{Pvalue}
 #'                     }
 #'                 
-#' @param alpha A numeric value indicating the significance level for filtering the Test_LD.gcl output; default is 0.05.
+#' @param alpha A numeric value indicating the significance level for filtering the [GCLr::test_LD()] output; default is 0.05.
 #' 
 #' @param prop_sign_pops A numeric value indicating the proportion of populations with significant test results; default is 0.5.
 #'                       Only locus pairs that have > prop_sign_pops will be plotted.

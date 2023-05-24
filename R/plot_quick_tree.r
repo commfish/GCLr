@@ -8,13 +8,13 @@
 #' 
 #' @param inputfile the file path of the genepop input file including the .txt extension. If the file does not exist, then one will be created.
 #' 
-#' @param popnames an optional vector of population names corresponding to sillyvec in order to add them as the dimnames of the output matrix. If not supplied, sillyvec will be used as the dimnames.
+#' @param popnames an optional vector of population names corresponding to `sillyvec` in order to add them as the dimnames of the output matrix. If not supplied, `sillyvec` will be used as the dimnames.
 #' 
 #' @param ncores a numeric value indicating the number of cores to use
 #' 
-#' @param groupvec a numeric vector indicating the group affiliation for each population in sillyvec
+#' @param groupvec a numeric vector indicating the group affiliation for each population in `sillyvec`
 #' 
-#' @param regioncol a vector of colors of the same length as max(groupvec) (i.e., the number of groups). The colors can be hexadecimal, R color names, or the number corresponding to an R color name in \code{colors()}.
+#' @param regioncol a vector of colors of the same length as max(`groupvec`) (i.e., the number of groups). The colors can be hexadecimal, R color names, or the number corresponding to an R color name in [colors()].
 #' 
 #' @param cex a numeric value giving the factor scaling of the tip labels (Character Expansion).
 #'

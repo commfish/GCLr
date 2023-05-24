@@ -1,14 +1,14 @@
 #' Create Pairwise Fst Matrix
 #'
-#' This function generates a matrix of pairwise Fst values using the \code{genepop} package.
+#' This function generates a matrix of pairwise Fst values using the \pkg{genepop} package.
 #'
 #' @param sillyvec a vector of silly codes without the ".gcl" extension (e.g., sillyvec <- c("KQUART06", "KQUART08", "KQUART10"))
 #' 
 #' @param loci a character vector of locus names
 #' 
-#' @param inputfile the file path of the \code{genepop} input file including the .txt extension
+#' @param inputfile the file path of the \pkg{genepop} input file including the .txt extension
 #' 
-#' @param popnames optional vector of population names corresponding to sillyvec in sillyvec to add as the dimnames of the output matrix. If popnames is not supplied, sillyvec will be used as the dimnames.
+#' @param popnames optional vector of population names corresponding to `sillyvec` to add as the dimnames of the output matrix. If `popnames` is not supplied, `sillyvec` will be used as the dimnames.
 #' 
 #' @param ncores a numeric vector of length one indicating the number of cores to use
 #'

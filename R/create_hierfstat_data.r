@@ -1,14 +1,14 @@
 #' Create a hierfstat data object
 #'
-#' This function creates a hierfstat data object using the provided inputs. The hierfstat data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as `varcomp` and `varcomp.glob` from the hierfstat package.
+#' This function creates a \pkg{hierfstat} data object using the provided inputs. The \pkg{hierfstat} data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as [varcomp()] and [varcomp.glob()] from the [hierfstat] package.
 #'
 #' @param sillyvec a vector of silly codes without the ".gcl" extension
-#' @param region optional; a numeric vector indicating the regional affiliation for each silly in sillyvec. Include this argument when computing hierarchical F statistics.
-#' @param pop a numeric vector indicating the population affiliation for each silly in sillyvec. If there is only one silly per population in sillyvec, then this should be a sequence of numbers of length sillyvec.
+#' @param region optional; a numeric vector indicating the regional affiliation for each silly in `sillyvec`. Include this argument when computing hierarchical F statistics.
+#' @param pop a numeric vector indicating the population affiliation for each silly in `sillyvec`. If there is only one silly per population in `sillyvec`, then this should be a sequence of numbers of length `sillyvec`.
 #' @param loci a character vector of locus names.
 #' @param ncores a numeric value indicating the number of cores to use.
 #'
-#' @return This function returns a hierfstat data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
+#' @return This function returns a [hierfstat] data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
 #'
 #' @examples
 #' sillyvec <- c("KQUART06", "KQUART08", "KQUART10")
