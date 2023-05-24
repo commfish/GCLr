@@ -1,8 +1,8 @@
 #' Plot Confusion Matrix
 #'
-#' This function takes the output object from \code{confusion_matrix()} and plots a confusion matrix in a heatmap using \code{ggplot2::geom_tile()}.
+#' This function takes the output object from \code{confusion_matrix} and plots a confusion matrix in a heatmap using \code{ggplot2::geom_tile}.
 #'
-#' @param confusion_matrix a list of confusion matrix tibble(s) produced by \code[confusion_matrix()}
+#' @param confusion_matrix a list of confusion matrix tibble(s) produced by \code{confusion_matrix}
 #' 
 #' @param plot a character vector of length 1 indicating the type of matrix you want to plot
 #' 
@@ -10,11 +10,11 @@
 #' 
 #' @param pop_names an optional vector of population names used to keep pops in order; if NULL, the pops will be ordered alphabetically.
 #' 
-#' @param high_color the color used for high "mean scale likelihood" values by \code{ggplot2::scale_fill_gradient()}. Either supply hexadecimal or color name from \code{colors()}.
+#' @param high_color the color used for high "mean scale likelihood" values by \code{ggplot2::scale_fill_gradient}. Either supply hexadecimal or R color name from \code{colors()}..
 #' 
-#' @param low_color The color used for low values by \code{ggplot2::scale_fill_gradient()}. Either supply hexadecimal or color name from \code{colors()}.
+#' @param low_color The color used for low values by \code{ggplot2::scale_fill_gradient}. Either supply hexadecimal or color name from \code{colors()}.
 #' 
-#' @param text_color The color used by \code{ggplot2::geom_text()} to color the Mean Scaled Likelihood values on the plot.
+#' @param text_color The color used by \code{ggplot2::geom_text} to color the Mean Scaled Likelihood values on the plot.
 #'
 #' @return A heatmap of mean scaled likelihood.
 #'
