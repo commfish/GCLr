@@ -1,23 +1,53 @@
+#' @title Calculate Failure Rates by Silly, Locus, Plate, and Project
+#'
+#' @description
+#' This function calculates failure rates by SILLY, locus, plate, and project.
+#' It should be run after the "remove_na_indv" step but before any other steps
+#' in the quality control (QC) process, such as removing duplicate fish,
+#' alternate fish, or missing fish. Note that this function does not connect to LOKI;
+#' it simply calculates failure rates (0's / total fish run) from the silly.gcl objects.
+#'
+#' @param sillyvec Character vector of SILLY codes in the project.
+#'
+#' @return A list of failure rates by SILLY, locus, plate, and project.
+#'
+#' @import dplyr
+#' @importFrom tidyr gather
+#' @importFrom plotly ggplotly
+#'
+#' @aliases failure_rate FailureRate.GCL.R
+#'
+#' @author krshedd
+#' @date 10/16/15
+#' @updated 09/05/18
+#'
+#' @details
+#'   The [GCLr::failure_rate()] function calculates failure rates by SILLY, locus, plate, and project. It performs the following steps:
+#'   - Pools all collections into one master silly using the [GCLr::pool_collections()] function
+#'   - Creates a tibble of Dose 1 scores and attributes from the master silly.
+#'   - Calculates failure rates by SILLY, locus, plate, and project using group_by and summarise functions from the `dplyr` package.
+#'   - Generates plots of failure rates by SILLY and locus, as well as by plate and locus, using `ggplot2` and `plotly` packages.
+#'   - Returns a list of failure rates and plots.
+#'
+#'   Note: This function relies on the [GCLr::pool_collections()] function from the GCL package.
+#'
+#' @seealso
+#'   \code{\link{remove_na_indv}}: Function to remove NA individuals
+#'   \code{\link{pool_collections}}: Function to pool collections
+#'
+#' @family QC Functions
+#'
+#' @examples
+#' failure_rate(sillyvec = c("SILLY1", "SILLY2", "SILLY3"))
+#' 
+#' @export
+
 failure_rate <- function(sillyvec) {
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  This function calculates failure rates by silly, loci, plate, and project
-#
-#  It is IMPORTANT to run this function after "remove_na_indv" but before any
-#  other steps in the qc (i.e. removing duplicate fish, alternate fish, 
-#  missing fish, etc.). This function does NOT connect to LOKI. It merely
-#  calculates failure rates (0's / total fish run) from the silly.gcl objects.
-#
-#  Argument(s):  
-#  sillyvec <- character vector of SILLYs in the project
-#
-#  Output:
-#  List of failure rate by SILLY, locus, and project
-#
-#  Written by Kyle Shedd 10/16/15  
-#  Updated for tidyverse by Kyle Shedd 9/5/18
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Check for the use of the old function name
+  if (match.call()[[1]] %in% c("FailureRate.GCL.R")) {
+    warning("The function name 'FailureRate.GCL.R' is deprecated. Please use 'failure_rate' instead.")
+  }
   
-  while(!require(tidyverse)){ install.packages("tidyverse") }
   
   # Pool all collections in to one master silly
   pool_collections(collections = sillyvec, loci = loci, newname = "master")
@@ -52,7 +82,7 @@ failure_rate <- function(sillyvec) {
     dplyr::mutate(project = project) %>% 
     dplyr::group_by(project) %>% 
     dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / n())
-    
+  
   # Plot failure rate by silly and locus
   fail_silly_plot <- plotly::ggplotly(
     ggplot(
@@ -61,7 +91,7 @@ failure_rate <- function(sillyvec) {
         dplyr::summarise(p_fail = sum(genotype == "0") / n()),
       aes(x = silly, y = locus)
     ) +
-      geom_tile (aes(fill = p_fail)) +
+      geom_tile(aes(fill = p_fail)) +
       scale_fill_gradientn(
         colours = colorRampPalette(colors = c("white", "black"))(101),
         values = seq(0.00, 1.00, by = 0.01),
@@ -84,7 +114,7 @@ failure_rate <- function(sillyvec) {
         dplyr::summarise(p_fail = sum(genotype == "0") / n()),
       aes(x = plate, y = locus)
     ) +
-      geom_tile (aes(fill = p_fail)) +
+      geom_tile(aes(fill = p_fail)) +
       scale_fill_gradientn(
         colours = colorRampPalette(colors = c("white", "black"))(101),
         values = seq(0.00, 1.00, by = 0.01),
