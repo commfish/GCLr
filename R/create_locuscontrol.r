@@ -1,35 +1,39 @@
+#' Create LocusControl Object
+#'
+#' This function connects to LOKI (GCL database) and creates a "LocusControl" object.
+#'
+#' @param markersuite The pre-defined name in LOKI for the set of markers for which you want genotypes (e.g., markersuite="KenaiChinook2010_40SNPs"). This set must be pre-defined in LOKI.
+#'                   
+#' @param locusnames a character vector of locus names spelled exactly the way they are in LOKI. Use "Locus Report Brief" in OceanAK to get the correct locus names.
+#' 
+#' @param username your state user name
+#' 
+#' @param password your password used to access LOKI - contact Eric Lardizabal if you don't have a password for LOKI
+#'
+#' @return This function assigns a tibble with the following columns: 
+#'   \itemize{
+#'     \item \code{Markersuite} (character): markersuite name.
+#'     \item \code{locusnames} (character): the locus name used by the GCL.
+#'     \item \code{Publishedlocusnames} (character): the locus name used in publications.
+#'     \item \code{nalleles} (integer): the number of alleles for each locus.
+#'     \item \code{ploidy} (integer): the ploidy of the locus (2 = diploid, 1 = haploid).
+#'     \item \code{alleles} (named list): named list of tibbles containing the alleles for each locus.
+#'   }
+#'   The tibble will be named "LocusControl" and assigned to your current workspace.
+#'   
+#' @import RJDBC
+#' @import magrittr
+#' @import tibble
+#' @import dplyr
+#' @import purrr
+#'
+#' @examples
+#' password <- "************"
+#' create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
+#'
+#' @export
+
 create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username, password){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  This function connects to LOKI and creates a "LocusControl" object  
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   markersuite - "markersuite" is the pre-defined name in LOKI for the set of markers for which you want genotypes (e.g. markersuite="KenaiChinook2010_40SNPs"). 
-  #                  This set must be pre-defined in LOKI (see Eric Lardizabal). 
-  #
-  #   locusnames - a character vector of locus names spelled exactly the way they are in LOKI.
-  #                Use Locus Report Brief in Ocean AK to get the correct locus names.
-  #
-  #   username - your state user name
-  #
-  #   password - your password used to access LOKI - see Eric Lardizabal if you don't have a passord for LOKI
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function assigns a tibble with the following columns: Markersuite <character>: markersuite name, 
-  #                                                              locusnames <character>: the locus name used by the GCL, 
-  #                                                              Publishedlocusnames<character>: the locus name used in publications,
-  #                                                              nalleles <int>: the number of alleles for each locus,
-  #                                                              ploidy <int>: the ploidy of the locus (2 = diploid, 1 = haploid),
-  #                                                              alleles <named list>: named list of tibbles containing the alleles for each locus
-  #   The tibble will be named "LocusControl"
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   password = "************"
-  # 
-  #   create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
   
   if(exists("LocusControl", where = 1)){
     

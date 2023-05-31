@@ -1,60 +1,59 @@
+#' Create Rubias Mixture and Baseline Files
+#'
+#' This function creates rubias mixture and baseline files for different test scenarios. These files are supplied to [GCLr::run_rubias_base_eval()] for producing baseline evaluation estimates.
+#' 
+#' @param sillyvec a vector of silly codes without the ".gcl" extension (e.g., sillyvec <- c("KQUART06","KQUART08","KQUART10"))
+#' 
+#' @param group_names A character vector of group names with a length equal to the maximum value in `groupvec`
+#' 
+#' @param loci A character vector of locus names as they are spelled in LOKI.
+#' 
+#' @param groupvec A numeric vector indicating the group affiliation of each population in `sillyvec`.
+#' 
+#' @param sample_sizes A tibble produce by [GCLr::base_eval_sample_sizes()] containing four variables (see details): 
+#'    \itemize{
+#'        \item `test_group`
+#'        \item `scenario`
+#'        \item `repunit`
+#'        \item `samps`
+#'    }
+#
+#' @param test_groups a character vector of groups to test
+#' 
+#' @param prprtnl If set to TRUE, the samples for each repunit will be selected in proportion to the number of samples in each population (default: FALSE).
+#' 
+#' @param base.path The file path where the baseline files will be written.
+#' 
+#' @param mix.path The file path where the mixture files will be written.
+#' 
+#' @param seed An integer to set the seed for the random sampler function sample().
+#' 
+#' @param ncores A numeric vector of length one indicating the number of cores to use.
+#' 
+#' @param file_type Whether to save the baseline and mixture files as .fst (default and faster) or .csv files.
+#'
+#' @details
+#' This function writes out rubias mixtures and baseline files for each test_group and scenario in sample_sizes. For a given test_group and scenario, the mixture file will contain randomly selected samples for each reporting group as defined in the sample_sizes tibble. The corresponding baseline file will contain all baseline samples except for those selected for the mixture.
+#' The function can write .csv or .fst files.  .fst files are compressed, so they save hard drive space, and they are faster to save and read back into R. .csv is also an option to make the function backwards compatible with older analyzes that produced .csv files.
+#'
+#' @examples
+#' attach("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
+#' Final_Pops <- Final_Pops %>% mutate(group = factor(group, levels = unique(group)))
+#' sample_sizes <- base_eval_sample_sizes(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), groupvec = Final_Pops$group %>% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5)
+#' create_rubias_base_eval(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), test_groups = (Final_Pops$group %>% levels())[1:2], loci = loci80, groupvec = Final_Pops$group %>% as.numeric(), sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
+#'
+#' @import magrittr
+#' @import dplyr
+#' @import doRNG
+#' @import foreach
+#' @import doParallel
+#' @import parallel
+#' @import stringr
+#' @import fst
+#' @import readr
+#' 
+#' @export
 create_rubias_base_eval <- function(sillyvec, group_names, loci, groupvec, sample_sizes, test_groups = group_names, prprtnl = FALSE, base.path = "rubias/baseline", mix.path = "rubias/mixture", seed = 123, ncores = 4, file_type = c("fst", "csv")[1]){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function creates rubias mixture and baseline files for different proof test scenarios.  
-  # 
-  # Input parameters~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-  #   sillyvec - a vector of silly codes without the ".gcl" extention (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART10")). 
-  #
-  #   group_names - character vector of group names the length of max(groupvec)
-  #
-  #   groupvec - numeric vector indicating the group affiliation of each pop in sillyvec
-  #
-  #   loci - character vector of locus names as they are spelled in LOKI - example: c("GTH2B-550", "NOD1", "Ots_100884-287")
-  #
-  #   test_groups - a character vector of groups to test
-  #
-  #   sample_sizes - a tibble containing 4 variables test_group, scenario, repunit, and samps
-  #    
-  #    Here's an example tibble for one mixture with 1% of samples going to the Upper_Susitna repunit (test_group) and the remaining  
-  #    samples spread among the 5 other repunits.
-  #     test_group    scenario repunit         samps
-  #     <chr>            <dbl> <chr>           <dbl>
-  #     Upper_Susitna     0.01 Upper_Susitna       2  #Notice Upper_Susitna has 2 samples selected for a 200 sample mixuture (2/200 = 0.01)
-  #     Upper_Susitna     0.01 Chulitna           39  #The remaining 198 samples are spread across the other reporting groups (repunits) 
-  #     Upper_Susitna     0.01 Talkeetna          47
-  #     Upper_Susitna     0.01 Eastern_Susitna    40
-  #     Upper_Susitna     0.01 Deshka             35
-  #     Upper_Susitna     0.01 Yentna             37
-  #
-  #    prprtnl - logical, if set to TRUE the samples for each repunit will be selected in proportion to the number of samples in each population. 
-  #              Setting prprtnl = TRUE helps avoid oversampling populations when a reporting group contains only a few populations with small sample sizes.
-  #
-  #    base.path - the file path where the baseline .csv files will be written
-  #
-  #    mix.path - the file path where the mixture .csv files will be written
-  #
-  #    seed - integer to set the seed for the random sampler function sample()
-  #
-  #    ncores - a numeric vector of length one indicating the number of cores to use
-  #   
-  #    file_type - whether you want the baseline and mixture files saved as .fst (default and much faster!) or .csv files. 
-  #                This was argument was added for backwards compatibility.  
-  #
-  # Output~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   This function writes out rubias mixtures and baseline .csv files for each test_group and scenario in sample_sizes. 
-  #   For a given test_group and scenario, the mixture file will contain randomly selected samples for each reporting group as defined in the sample_sizes tibble. 
-  #   The corresponding baseline file will contain all baseline samples except for those selected for the mixture.
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  attach("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-  #  Final_Pops <- Final_Pops %>% mutate(group = factor(group, levels = unique(group)))
-  #  sample_sizes <- base_eval_sample_sizes(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), groupvec = Final_Pops$group %>% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5)
-  # 
-  #  create_rubias_base_eval(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), test_groups = (Final_Pops$group %>% levels())[1:2], loci = loci80, groupvec = Final_Pops$group %>% as.numeric(), sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
   
   if(sum(is.na(match(loci, LocusControl$locusnames)))){
     
@@ -70,7 +69,7 @@ create_rubias_base_eval <- function(sillyvec, group_names, loci, groupvec, sampl
   
   start_time <- Sys.time()
   
-  if(sum(str_detect(group_names, "\\W"))>0){
+  if(sum(stringr::str_detect(group_names, "\\W"))>0){
     
     stop("Special characters and spaces were detected in your group_names. 
           Using spaces and delimiters other than underscore in your group names may cause function errors later in your analysis.")

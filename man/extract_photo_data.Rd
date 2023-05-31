@@ -24,7 +24,7 @@ This function extracts file name, latitude, longitude, and date and time from ph
 The interactive map contains points for each photo containing GPS coordinates. When you hover over the point, the image file name is displayed, and if you click on a point, the image appears in a popup window.
 }
 \details{
-Most smart phones record GPS coordinates when taking photos and a lot of newer digital cameras also have GPS capability. However, most devices have to be set up to record this information. For instance, on an iphone you need to have location services turned on or it won't record the location of a photo.
+Most smart phones record GPS coordinates when taking photos and a lot of newer digital cameras also have GPS capability. However, most devices have to be set up to record this information. For instance, on an iPhone you need to have location services turned on or it won't record the location of a photo.
 One issue with this function is that the rotation of the popup image on the map is not always correct in the plot window; however, it appears to be correct in the .html file. Not sure why this happens or how to fix this issue.
 Another thing to note is that \code{plot.map} and \code{map.file} work independently, so you can produce a map file without plotting in R or plot in R and don't produce a file.
 }

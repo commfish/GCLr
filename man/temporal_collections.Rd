@@ -31,7 +31,7 @@ a tibble with the following variables:
 This function retrieves temporal collections from a vector of pooled sillys for hierarchical ANOVA.
 }
 \note{
-Single-silly pops and sillys with sample sizes < "min.samps" will not be included in the output.
+Single-silly pops and sillys with sample sizes < \code{min.samps} will not be included in the output.
 }
 \examples{
 load("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline_new.Rdata")

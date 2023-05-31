@@ -1,43 +1,35 @@
+#' Combine Loci
+#'
+#' This function combines a set of markers into a single marker. 
+#'
+#' @param sillyvec A character vector of silly codes.
+#' @param markerset A vector of the set of loci you wish to combine.
+#' @param update Logical switch. If TRUE, the "LocusControl" object is updated and all "*.gcl" objects in "sillyvec" will be updated with the new marker. If FALSE, the "LocusControl" object is not updated and a temporary object called "*.temp.gcl" with the updated data is created.
+#' @param delim Specifies the separator between combined loci, either a period (.) which is the default or an underscore (_) so locus names will work in SPAM.
+#'
+#' @examples
+#' sillyvec <- c("KQUART06","KQUART08","KQUART09")
+#' markerset <- c("Ots_vatf-251", "Ots_ZR-575")
+#' combine_loci(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1])
+#' combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1])
+#'
+#' @details
+#' This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function. This function requires dplyr version 1.0.0 or higher.
+#'
+#' @import dplyr
+#' @import magrittr
+#' @import tidyr
+#' @import tidyselect
+#'
+#' @export
+
 combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1]){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function combines a set of markers into a single marker set. 
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   sillyvec - a character vector of silly codes (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART09"))
-  #
-  #   markerset - is a vector of the set of loci you wish to combine (e.g., c("Ots_vatf-251", "Ots_ZR-575"))
-  #
-  #   update - is a logical switch. If TRUE, the "LocusControl" object is updated and all "*.gcl" objects in "sillyvec" will be updated with the new marker.
-  #                                 If FALSE, the "LocusControl" object is not updated and a temporary object called "*.temp.gcl" with the updated data is created.  
-  #	
-  #   delim - specifies the separator between combined loci, either a period (.) which is the default or an underscore (_) so locus names will work in SPAM 
-  #	
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  
-  #   password = "************"
-  #
-  #   create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = password)
-  # 
-  #   loki2r(sillyvec = c("SLARS11O", "SSKWEN07", "SSKK594L", "SMOOT92"), username = "awbarclay", password = password)
-  #
-  #   combine_loci(sillyvec = c("SLARS11O", "SSKWEN07", "SSKK594L", "SMOOT92"), markerset = c("One_Cytb_17", "One_CO1","One_Cytb_26"), update = TRUE, delim = c(".","_")[1])
-  #   combine_loci(sillyvec = c("SLARS11O", "SSKWEN07", "SSKK594L", "SMOOT92"), markerset = c("One_MHC2_251", "One_MHC2_190"), update = TRUE, delim = c(".","_")[1])
-  #
-  # Note~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   This function requires a LocusControl object. Run create_locuscontrol prior to this function.
-  #   This function also requires dplyr version 1.0.0 or higher
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-  
+
   if(!all(markerset %in% LocusControl$locusnames)){
     
     stop(paste0("'", setdiff(markerset, LocusControl$locusnames), "' from argument 'markerset' not found in 'LocusControl' object!!!"))
     
   }
-  
   
   nmarkers <- length(markerset)  
   
@@ -123,7 +115,7 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
       
       new.gcl <- my.gcl %>% 
         tidyr::unite(col = {{newmarkername}}, tidyselect::all_of(sel_var), sep = '', remove = FALSE, na.rm = TRUE) %>%  # Had to add the {{}} around the col object for this to work. 
-        mutate(!!rlang::sym(newmarkername) := dplyr::case_when(nchar(!!rlang::sym(newmarkername)) < maxchar ~ NA_character_,  # Added this mutate case_when to replace any genotypes with less than maxchar with NA's. Maybe there is a better way?
+        dplyr::mutate(!!rlang::sym(newmarkername) := dplyr::case_when(nchar(!!rlang::sym(newmarkername)) < maxchar ~ NA_character_,  # Added this mutate case_when to replace any genotypes with less than maxchar with NA's. Maybe there is a better way?
                                                                TRUE ~ !!rlang::sym(newmarkername)), 
                !!rlang::sym(newmarkername_1) := NA_character_) %>% 
         dplyr::relocate(!!rlang::sym(newmarkername), .after = tidyselect::last_col()) %>% 

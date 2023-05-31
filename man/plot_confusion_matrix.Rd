@@ -33,7 +33,7 @@ plot_confusion_matrix(
 A heatmap of mean scaled likelihood.
 }
 \description{
-This function takes the output object from \code{\link[=confusion_matrix]{confusion_matrix()}} and plots a confusion matrix in a heatmap using \code{ggplot2::geom_tile}.
+This function takes the output object from \code{\link[=confusion_matrix]{confusion_matrix()}} and plots a confusion matrix in a heatmap using \code{\link[ggplot2:geom_tile]{ggplot2::geom_tile()}}.
 }
 \examples{
 baseline <- read_csv("V:/Analysis/5_Coastwide/Chum/NPen2WA_Chum_baseline/rubias/baseline/NPen2Wa_Chum_227pops_91loci_base.csv") 

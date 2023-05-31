@@ -13,9 +13,9 @@ plot_baseline_eval(
 )
 }
 \arguments{
-\item{summary}{A baseline evaluation summary list produced by \link{summarize_rubias_baseline_eval}.}
+\item{summary}{A baseline evaluation summary list produced by \code{\link[=summarize_rubias_baseline_eval]{summarize_rubias_baseline_eval()}}.}
 
-\item{file}{A tibble produced by \link{base_eval_sample_sizes} containing the following variables:
+\item{file}{A tibble produced by \code{\link[=base_eval_sample_sizes]{base_eval_sample_sizes()}} containing the following variables:
 \itemize{
 \item \code{test_group}
 \item \code{scenario}
@@ -38,11 +38,10 @@ plot_baseline_eval(
 If \code{method == "MCMC"} or \code{"PB"}, the function produces a single page pdf file containing the plots and returns the faceted plots. If \code{method == "both"}, the function produces a two-page pdf file containing the plots for both methods and no plots are returned.
 }
 \description{
-This function takes the baseline evaluation summary object produced by \link{summarize_rubias_baseline_eval} and produces plots of correct allocation for each test_group with summary statistics placed in the upper left corner of each plot.
+This function takes the baseline evaluation summary object produced by \code{\link[=summarize_rubias_baseline_eval]{summarize_rubias_baseline_eval()}} and produces plots of correct allocation for each test_group with summary statistics placed in the upper left corner of each plot.
 }
 \details{
 The solid line on the plots indicates where the true proportion equals the estimated proportion. The two dotted lines indicate where the estimates fall within +/- 10\% of the true proportion.
-
 If a large number of \code{test_groups} are supplied, the faceted plots will become too small to see on one page. If so, you may need to supply a subset of \code{test_groups} to plot.
 This function is not intended for producing publication-ready plots; however, the code from this function can be copied and modified to produce plots formatted for publication.
 }

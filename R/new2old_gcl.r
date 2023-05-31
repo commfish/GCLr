@@ -1,31 +1,39 @@
+#' Convert New Style "*.gcl" objects to Old Style
+#'
+#' This function converts new style ".gcl" objects from tibbles to a list of arrays. The new style objects can be saved as ".gcl_new" before they are overwritten.
+#'
+#' @param sillyvec A character vector of silly codes with associated *.gcl objects that need to be converted
+#' 
+#' @param save_new whether you want the new objects overwritten without saving (TRUE) or assign the new objects to ".gcl_new" before overwriting (FALSE)
+#'
+#' @param ncores a numeric vector of length one indicating the number of cores to use
+#'
+#' @details This function checks if all the required objects exist in the environment and converts the new style tibble "*.gcl" objects to the old style list format. It performs various checks and transformations on the objects, and assigns the converted objects to the workspace.
+#'
+#' @examples
+#' .password <- "************"
+#' create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = .password) # make new Locus control
+#'
+#' sillyvec <- c("SGILL20D11", "SGILL20D6", "SGILL20D8")
+#' loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password)
+#'
+#' combine_loci(sillyvec = sillyvec, markerset = c("One_CO1","One_Cytb_17","One_Cytb_26"), update = TRUE)
+#'
+#' new2old.GCL(sillyvec = sillyvec, save_new = TRUE, ncores = 8)
+#'
+#' @import stringr
+#' @import magrittr
+#' @import dplyr
+#' @import tidyr
+#' @import janitor
+#' @import purrr
+#' @import foreach
+#' @import parallel
+#' @import doParallel
+#'
+#' @export
 new2old.GCL <- function(sillyvec, save_new = FALSE, ncores = 4){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function converts new style "*.gcl" objects from tibbles to a list of arrays. 
-  # The new style objects can be saved as *.gcl_new before they are overwritten.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   sillyvec - A character vector of silly codes with associated *.gcl objects that need to be converted.
-  #   save_new - logical; whether you want the new objects overwritten without saving 
-  #              (TRUE) or assign the new objects to *.gcl_new before overwriting (FALSE) 
-  #   ncores - a numeric vector of length one indicating the number of cores to use
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function assigns a converted *.gcl object to the current workspace.
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # .password <- "************"
-  # create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = .password) # make new Locus control
-  #
-  # sillyvec <- c("SGILL20D11", "SGILL20D6", "SGILL20D8")
-  # loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password)
-  #
-  # combine_loci(sillyvec = sillyvec, markerset = c("One_CO1","One_Cytb_17","One_Cytb_26"), update = TRUE)
-  #
-  # new2old.GCL(sillyvec = sillyvec, save_new = TRUE, ncores = 8)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  
+
   # Do all sillys exist in the environment?
   if(!all(sillyvec %in% stringr::str_remove(string = objects(pattern = "\\.gcl", pos = -1, envir = .GlobalEnv), pattern = "\\.gcl"))) {  
     
@@ -90,13 +98,13 @@ new2old.GCL <- function(sillyvec, save_new = FALSE, ncores = 4){
   all.gcl <- sapply(sillyvec_, function(silly){get(paste0(silly, ".gcl"), pos = 1)}, simplify = FALSE)
   
   alleles <- LocusControl$alleles %>% 
-    bind_rows(.id = "locus")
+    dplyr::bind_rows(.id = "locus")
   
   ploidy <- LocusControl %>% 
-    select(locusnames, ploidy) %>% 
-    rename(locus = locusnames)
+    dplyr::select(locusnames, ploidy) %>% 
+    dplyr::rename(locus = locusnames)
   
-  all_ploid <- left_join(alleles, ploidy, by = "locus")
+  all_ploid <- dplyr::left_join(alleles, ploidy, by = "locus")
   
   # Start parallel loop
   cl <- parallel::makePSOCKcluster(ncores)
