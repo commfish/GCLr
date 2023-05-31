@@ -6,6 +6,8 @@
 \title{Create a hierfstat data object}
 \usage{
 create_hierfstat_data(sillyvec, region = NULL, pop, loci, ncores = 4)
+
+create_hierfstat_data.GCL(sillyvec, region = NULL, pop, loci, ncores = 4)
 }
 \arguments{
 \item{sillyvec}{a vector of silly codes without the ".gcl" extension}
