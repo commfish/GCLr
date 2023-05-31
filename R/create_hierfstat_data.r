@@ -133,3 +133,8 @@ create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4
   return(output)
   
 }  
+
+#' @rdname create_hierfstat_data
+#' @export
+create_hierfstat_data.GCL <- create_hierfstat_data
+
