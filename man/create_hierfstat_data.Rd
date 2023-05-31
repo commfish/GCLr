@@ -24,7 +24,7 @@ create_hierfstat_data.GCL(sillyvec, region = NULL, pop, loci, ncores = 4)
 This function returns a \link{hierfstat} data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
 }
 \description{
-This function creates a \pkg{hierfstat} data object using the provided inputs. The \pkg{hierfstat} data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as \code{\link[=varcomp]{varcomp()}} and \code{\link[=varcomp.glob]{varcomp.glob()}} from the \link{hierfstat} package.
+This function creates a \pkg{hierfstat} data object using the provided inputs. The \code{hierfstat} data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as \code{\link[=varcomp]{varcomp()}} and \code{\link[=varcomp.glob]{varcomp.glob()}} from the \link{hierfstat} package.
 }
 \examples{
 sillyvec <- c("KQUART06", "KQUART08", "KQUART10")
