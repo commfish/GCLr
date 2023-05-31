@@ -1,6 +1,6 @@
 #' Create a hierfstat data object
 #'
-#' This function creates a \pkg{hierfstat} data object using the provided inputs. The \pkg{hierfstat} data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as [varcomp()] and [varcomp.glob()] from the [hierfstat] package.
+#' This function creates a \pkg{hierfstat} data object using the provided inputs. The `hierfstat` data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as [varcomp()] and [varcomp.glob()] from the [hierfstat] package.
 #'
 #' @param sillyvec a vector of silly codes without the ".gcl" extension
 #' @param region optional; a numeric vector indicating the regional affiliation for each silly in `sillyvec`. Include this argument when computing hierarchical F statistics.
@@ -30,6 +30,10 @@
 #' @export
 
 create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4){
+  
+  if (match.call()[[1]] %in% c("create_hierfstat_data.GCL")) {
+    warning("The function name 'create_hierfstat_data.GCL' is deprecated. Please use 'create_hierfstat_data' instead.")
+  }
 
   if(!exists("LocusControl")){
     
@@ -137,4 +141,3 @@ create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4
 #' @rdname create_hierfstat_data
 #' @export
 create_hierfstat_data.GCL <- create_hierfstat_data
-
