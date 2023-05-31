@@ -1,11 +1,9 @@
 #' Plot Baseline Evaluation Results
 #'
-#' This function takes the baseline evaluation summary object produced by [GCLr::summarize_rubias_baseline_eval] and produces plots of correct allocation for each test_group with summary statistics placed in the upper left corner of each plot.
-#' 
-#' The solid line on the plots indicates where the true proportion equals the estimated proportion. The two dotted lines indicate where the estimates fall within +/- 10% of the true proportion.
+#' This function takes the baseline evaluation summary object produced by [GCLr::summarize_rubias_baseline_eval()] and produces plots of correct allocation for each test_group with summary statistics placed in the upper left corner of each plot.
 #'
-#' @param summary A baseline evaluation summary list produced by [GCLr::summarize_rubias_baseline_eval].
-#' @param file A tibble produced by [GCLr::base_eval_sample_sizes] containing the following variables: 
+#' @param summary A baseline evaluation summary list produced by [GCLr::summarize_rubias_baseline_eval()].
+#' @param file A tibble produced by [GCLr::base_eval_sample_sizes()] containing the following variables: 
 #'    \itemize{
 #'        \item \code{test_group} 
 #'        \item \code{scenario}
@@ -33,8 +31,9 @@
 #' 
 #' plot_baseline_eval(summary = summary, file = "Baseline_eval_plots.pdf", method = "PB", test_groups = groups3, group_colors = c("green", "magenta", "red"))
 #'
-#' @details If a large number of \code{test_groups} are supplied, the faceted plots will become too small to see on one page. If so, you may need to supply a subset of \code{test_groups} to plot.
-#'          This function is not intended for producing publication-ready plots; however, the code from this function can be copied and modified to produce plots formatted for publication.
+#' @details The solid line on the plots indicates where the true proportion equals the estimated proportion. The two dotted lines indicate where the estimates fall within +/- 10% of the true proportion.
+#' If a large number of \code{test_groups} are supplied, the faceted plots will become too small to see on one page. If so, you may need to supply a subset of \code{test_groups} to plot.
+#' This function is not intended for producing publication-ready plots; however, the code from this function can be copied and modified to produce plots formatted for publication.
 #' 
 #' @import magrittr
 #' @import ggplot2

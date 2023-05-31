@@ -2,7 +2,7 @@
 #'
 #' This function retrieves temporal collections from a vector of pooled sillys for hierarchical ANOVA. 
 #' 
-#' @note Single-silly pops and sillys with sample sizes < "min.samps" will not be included in the output.
+#' @note Single-silly pops and sillys with sample sizes < `min.samps` will not be included in the output.
 #'
 #' @param sillyvec a vector of pooled silly codes (a.k.a. pooled pops) without the ".gcl" extension
 #' 

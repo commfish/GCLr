@@ -9,7 +9,7 @@
 #' @param map.file The name of the output map widget file including .html extension. If set to NULL, then no file is written. 
 #'                 If you do not supply the full file path, the file will be saved to the supplied photos folder (see details). 
 #'
-#' @details Most smart phones record GPS coordinates when taking photos and a lot of newer digital cameras also have GPS capability. However, most devices have to be set up to record this information. For instance, on an iphone you need to have location services turned on or it won't record the location of a photo. 
+#' @details Most smart phones record GPS coordinates when taking photos and a lot of newer digital cameras also have GPS capability. However, most devices have to be set up to record this information. For instance, on an iPhone you need to have location services turned on or it won't record the location of a photo. 
 #'          One issue with this function is that the rotation of the popup image on the map is not always correct in the plot window; however, it appears to be correct in the .html file. Not sure why this happens or how to fix this issue.
 #'          Another thing to note is that `plot.map` and `map.file` work independently, so you can produce a map file without plotting in R or plot in R and don't produce a file.
 #'

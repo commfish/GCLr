@@ -1,8 +1,8 @@
 #' Plot Confusion Matrix
 #'
-#' This function takes the output object from [confusion_matrix()] and plots a confusion matrix in a heatmap using \code{ggplot2::geom_tile}.
+#' This function takes the output object from [GCLr::confusion_matrix()] and plots a confusion matrix in a heatmap using [ggplot2::geom_tile()].
 #'
-#' @param confusion_matrix a list of confusion matrix tibble(s) produced by [confusion_matrix()]
+#' @param confusion_matrix a list of confusion matrix tibble(s) produced by [GCLr::confusion_matrix()]
 #' 
 #' @param plot a character vector of length 1 indicating the type of matrix you want to plot
 #' 
