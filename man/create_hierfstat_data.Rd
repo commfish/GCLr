@@ -2,6 +2,7 @@
 % Please edit documentation in R/create_hierfstat_data.r
 \name{create_hierfstat_data}
 \alias{create_hierfstat_data}
+\alias{create_hierfstat_data.GCL}
 \title{Create a hierfstat data object}
 \usage{
 create_hierfstat_data(sillyvec, region = NULL, pop, loci, ncores = 4)

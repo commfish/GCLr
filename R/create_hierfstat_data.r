@@ -24,6 +24,8 @@
 #' @import purrr
 #' @import foreach
 #' @import doParallel
+#' 
+#' @aliases create_hierfstat_data.GCL
 #'
 #' @export
 
