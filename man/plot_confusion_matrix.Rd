@@ -2,9 +2,20 @@
 % Please edit documentation in R/plot_confusion_matrix.r
 \name{plot_confusion_matrix}
 \alias{plot_confusion_matrix}
+\alias{plot_ConfusionMatrix.GCL}
 \title{Plot Confusion Matrix}
 \usage{
 plot_confusion_matrix(
+  confusion_matrix,
+  plot = c("group_group", "pop_group", "pop_pop")[1],
+  group_names = NULL,
+  pop_names = NULL,
+  high_color = "#132B43",
+  low_color = "#56B1F7",
+  text_color = "yellow"
+)
+
+plot_ConfusionMatrix.GCL(
   confusion_matrix,
   plot = c("group_group", "pop_group", "pop_pop")[1],
   group_names = NULL,

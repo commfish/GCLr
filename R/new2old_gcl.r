@@ -10,16 +10,6 @@
 #'
 #' @details This function checks if all the required objects exist in the environment and converts the new style tibble "*.gcl" objects to the old style list format. It performs various checks and transformations on the objects, and assigns the converted objects to the workspace.
 #'
-#' @examples
-#' .password <- "************"
-#' create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = .password) # make new Locus control
-#'
-#' sillyvec <- c("SGILL20D11", "SGILL20D6", "SGILL20D8")
-#' loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password)
-#'
-#' combine_loci(sillyvec = sillyvec, markerset = c("One_CO1","One_Cytb_17","One_Cytb_26"), update = TRUE)
-#'
-#' new2old.GCL(sillyvec = sillyvec, save_new = TRUE, ncores = 8)
 #'
 #' @import stringr
 #' @import magrittr
@@ -30,9 +20,21 @@
 #' @import foreach
 #' @import parallel
 #' @import doParallel
+#' 
+#'  @examples
+#' .password <- "************"
+#' create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = .password) # make new Locus control
+#'
+#' sillyvec <- c("SGILL20D11", "SGILL20D6", "SGILL20D8")
+#' loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password)
+#' combine_loci(sillyvec = sillyvec, markerset = c("One_CO1","One_Cytb_17","One_Cytb_26"), update = TRUE)
+#' new2old.GCL(sillyvec = sillyvec, save_new = TRUE, ncores = 8)
+#' 
+#' @aliases new2old_gcl.GCL
 #'
 #' @export
-new2old.GCL <- function(sillyvec, save_new = FALSE, ncores = 4){
+#' 
+new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
 
   # Do all sillys exist in the environment?
   if(!all(sillyvec %in% stringr::str_remove(string = objects(pattern = "\\.gcl", pos = -1, envir = .GlobalEnv), pattern = "\\.gcl"))) {  
@@ -238,3 +240,6 @@ new2old.GCL <- function(sillyvec, save_new = FALSE, ncores = 4){
   message(paste0("The following *.gcl objects have been converted to old-style lists:\n", paste0(sillyvec_, collapse = ", ")))
   
 }
+#' @rdname new2old_gcl
+#' @export
+new2old_gcl.GCL <- new2old_gcl  

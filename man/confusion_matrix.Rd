@@ -2,9 +2,16 @@
 % Please edit documentation in R/confusion_matrix.r
 \name{confusion_matrix}
 \alias{confusion_matrix}
+\alias{ConfusionMatrices.GCL}
 \title{Create confusion matrices}
 \usage{
 confusion_matrix(
+  reference,
+  gen_start_col = 5,
+  output = c("group_group", "pop_group", "pop_pop")[1]
+)
+
+ConfusionMatrices.GCL(
   reference,
   gen_start_col = 5,
   output = c("group_group", "pop_group", "pop_pop")[1]

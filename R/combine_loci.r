@@ -20,6 +20,8 @@
 #' @import magrittr
 #' @import tidyr
 #' @import tidyselect
+#' 
+#' @aliases CombineLoci.GCL
 #'
 #' @export
 
@@ -155,3 +157,6 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
   }   
   
 }
+#' @rdname combine_loci
+#' @export
+CombineLoci.GCL <- combine_loci  

@@ -36,6 +36,8 @@
 #' @import tibble
 #' @import purrr
 #' 
+#' @aliases HierFstats_global.GCL
+#' 
 #' @export
 
 hierfstat_global_stats <- function(levels, genotypes){
@@ -149,3 +151,6 @@ output <- list(loci = loc_out, overall = overall, F = F)
 return(output)                    
 
 }
+#' @rdname hierfstat_global_stats
+#' @export
+HierFstats_global.GCL <- hierfstat_global_stats  

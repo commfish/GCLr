@@ -34,6 +34,8 @@
 #' @import dplyr
 #' @import tibble
 #' 
+#' @aliases temporal_collections.GCL
+#' 
 #' @export 
 
 temporal_collections <- function(sillyvec, region = NULL, min.samps = 50, sep = "."){
@@ -78,3 +80,7 @@ temporal_collections <- function(sillyvec, region = NULL, min.samps = 50, sep = 
   return(tc)
   
 }
+
+#' @rdname temporal_collections
+#' @export
+temporal_collections.GCL <- temporal_collections  

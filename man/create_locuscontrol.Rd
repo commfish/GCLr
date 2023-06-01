@@ -2,9 +2,17 @@
 % Please edit documentation in R/create_locuscontrol.r
 \name{create_locuscontrol}
 \alias{create_locuscontrol}
+\alias{CreateLocusControl.GCL}
 \title{Create LocusControl Object}
 \usage{
 create_locuscontrol(markersuite = NULL, locusnames = NULL, username, password)
+
+CreateLocusControl.GCL(
+  markersuite = NULL,
+  locusnames = NULL,
+  username,
+  password
+)
 }
 \arguments{
 \item{markersuite}{The pre-defined name in LOKI for the set of markers for which you want genotypes (e.g., markersuite="KenaiChinook2010_40SNPs"). This set must be pre-defined in LOKI.}

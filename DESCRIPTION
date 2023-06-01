@@ -6,7 +6,7 @@ Authors@R:
 Description: Genetic analysis tools for baseline developement and genetic stock identification.
 Imports: tidyverse, ape, parallel, doParallel, RJDBC, lubridate, foreach, 
          rubias, hierfstat, genepop, leaflet, mapview, plotly, rgdal, gplots, 
-         exifr, sf, leafpop, htmlwidgets, HardyWeinberg, grid, tools, abind,
+         sf, leafpop, htmlwidgets, HardyWeinberg, grid, tools, abind,
          janitor, plotly, outliers, openxlsx, writexl, lattice, reshape2, fst, 
          BiocManager, HDInterval, xlsx, coda, fs, magick, doRNG
 License: `use_gpl3_license()`

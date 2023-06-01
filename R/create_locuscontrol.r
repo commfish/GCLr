@@ -31,6 +31,8 @@
 #' password <- "************"
 #' create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
 #'
+#' @aliases CreateLocusControl.GCL
+#'
 #' @export
 
 create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username, password){
@@ -42,41 +44,12 @@ create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username,
   }
   
   
-  # This copies the "odbc8.jar" file to the R folder on your computer if it doesn't exist there. This file contains the java odbc drivers needed for RJDBC
-  
-  if(!file.exists(path.expand("~/R"))){ 
-    
-    dir <- path.expand("~/R")
-    
-    dir.create(dir)
-    
-    bool <- file.copy(from ="V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar", to = path.expand("~/R/ojdbc8.jar"))
-    
-  } else {
-    
-    if(!file.exists(path.expand("~/R/ojdbc8.jar"))){
-      
-      bool <- file.copy(from = "V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar", to = path.expand("~/R/ojdbc8.jar"))
-      
-    }
-    
-  }
-  
+
   options(java.parameters = "-Xmx10g")
-  
-  if(file.exists("C:/Program Files/R/RequiredLibraries/ojdbc8.jar")) {
-    
-    drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = "C:/Program Files/R/RequiredLibraries/ojdbc8.jar", " ")#https://blogs.oracle.com/R/entry/r_to_oracle_database_connectivity    C:/app/awbarclay/product/11.1.0/db_1/jdbc/lib
-    
-  } else {
-    
-    drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = path.expand("~/R/ojdbc8.jar"), " ")
-    
-  } 
   
   url <- loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
+  con <- RJDBC::dbConnect(GCLr::drv, url = url, user = username, password = password)
   
   # Query by 'markersuite', else query by 'locusnames'
   
@@ -151,3 +124,7 @@ create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username,
   return(ans)
   
 }
+
+#' @rdname create_locuscontrol
+#' @export
+CreateLocusControl.GCL <- create_locuscontrol  

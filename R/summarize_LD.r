@@ -28,6 +28,8 @@
 #' @import ggplot2 
 #' @import plotly 
 #' 
+#' @aliases Summarize_LD.GCL
+#' 
 #' @export
 
 summarize_LD <- function(LDresults, alpha = 0.05, prop_sign_pops = 0.5){
@@ -71,6 +73,6 @@ summarize_LD <- function(LDresults, alpha = 0.05, prop_sign_pops = 0.5){
   
 }
 
-
-
-
+#' @rdname summarize_LD
+#' @export
+Summarize_LD.GCL <- summarize_LD

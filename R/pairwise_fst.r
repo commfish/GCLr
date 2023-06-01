@@ -20,6 +20,8 @@
 #' PWFST <- pairwise_fst(sillyvec = sillyvec31, loci = loci82, inputfile = "genepop/Susitna31pops82loci.txt", ncores = 8)
 #'
 #' @import genepop
+#' 
+#' @aliases PW_FST.GCL
 #'
 #' @export
 
@@ -44,3 +46,6 @@ pairwise_fst <- function(sillyvec, loci, inputfile, popnames = NULL, ncores = 4)
  return(output)
   
 }
+#' @rdname pairwise_fst
+#' @export
+PW_FST.GCL <- pairwise_fst  

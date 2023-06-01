@@ -76,6 +76,8 @@
 #' @import doParallel
 #' @import foreach
 #' @import readr
+#' 
+#' @aliases run_rubias_baseline_eval.GCL
 #'    
 #' @export
 
@@ -100,52 +102,7 @@ run_rubias_base_eval <- function(tests,
                                          seed = 56, 
                                          ncores = 4,
                                          file_type = c("fst", "csv")[1]){
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function is a wrapper for run_rubias_mix(). 
-  # This function runs baseline evaluation mixtures produced by create_rubias_base_eval()
-  # and multicores by test_group. (i.e., mixtures for each test group are run on a different core simultaineously).
-  # 
-  # This function is intended for use on a server that has many cores and a lot of RAM. 
-  # 
-  # Input parameters~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-  #   All inputs required for `run_rubias_mix` are passed on except for the path argument which is called out.path in this function.
-  #
-  #   tests - a tibble containing two variables: test_group (Chracter) and scenario (double) 
-  #           This tibble can be obtained by summarizing the output of base_eval_sample_sizes(), see example below.
-  #          
-  #   group_names - character vector of group_names, used to sort repunit as a factor
-  #
-  #
-  #   base.path - the file path where the baseline .csv files will be written
-  #
-  #   mix.path - the file path where the mixture .csv files will be written
-  #
-  #   out.path - character vector of where to save output from each mixture as a .csv
-  #
-  #   seed - integer to set the seed for the MCMC
-  #
-  #   ncores - a numeric vector of length one indicating the number of cores to use
-  #
-  #   file_type - whether your baseline and mixture input files are saved as .fst (default and much faster!) or .csv files. 
-  #               This was argument was added for backwards compatibility.  
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   Breaks the output into each `mixture_collection` and for each saves as .csv files:
-  #     1) collection level trace, wide format, collections in order of baseline (akin to .BOT file from BAYES)
-  #     2) repunit level trace, wide format, repunit in order of `group_names` (akin to .RGN file from BAYES)
-  #     3) straight dump of the `indiv_posteriors` tibble (without column `missing_loci`)
-  #     4) straight dump of the `bootstrapped_proportions`
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    attach("C:/Users/awbarclay/Documents/Analysis/Chinook/Susitna_Chinook_baseline_2020/run baseline eval tests/Susitna_Chinook_baseline_2020_noGTseq.Rdata")
-    Final_Pops <- Final_Pops %>% mutate(group = factor(group, levels = unique(group)))
-    sample_sizes <- base_eval_sample_sizes(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), groupvec = Final_Pops$group %>% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
-    create_rubias_base_eval(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), test_groups = Final_Pops$group %>% levels(), loci = loci80, groupvec = Final_Pops$group %>% as.numeric(), sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
-
-    tests <- sample_sizes %>% group_by(test_group, scenario) %>% summarize(test_group = test_group %>% unique(), scenario = scenario %>% unique(), .groups = "drop_last")#Total of 510 tests
-    run_rubias_base_eval(tests = tests, group_names = Final_Pops$group %>% levels(), gen_start_col = 5, base.path = "rubias/baseline",mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = 8)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+ 
   start_time <- Sys.time()
   
   
@@ -212,4 +169,6 @@ run_rubias_base_eval <- function(tests,
   Sys.time()-start_time
   
 }
-  
+#' @rdname run_rubias_base_eval
+#' @export
+run_rubias_baseline_eval.GCL <- run_rubias_base_eval  

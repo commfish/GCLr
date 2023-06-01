@@ -38,6 +38,8 @@
 #' @import rubias
 #' @import dplyr
 #' @import purrr
+#' 
+#' @aliases ConfusionMatrices.GCL
 #'
 #' @export
 
@@ -96,3 +98,7 @@ confusion_matrix <- function(reference, gen_start_col = 5, output = c("group_gro
   return(out_sum)
 
 }
+
+#' @rdname confusion_matrix
+#' @export
+ConfusionMatrices.GCL <- confusion_matrix

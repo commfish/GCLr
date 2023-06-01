@@ -38,6 +38,8 @@
 #'
 #' @import ape
 #' 
+#' @aliases PlotColorTree.GCL
+#' 
 #' @export
 
 plot_color_tree <- function(color.tree, rm.neg.branch = TRUE, type = "phylogram", scale = TRUE, show.tip.label = TRUE, edge.width = 3, adj = NULL, cex = 1, font = 1, label.offset = 0, gen.dist = "FST", ...){
@@ -69,3 +71,6 @@ plot_color_tree <- function(color.tree, rm.neg.branch = TRUE, type = "phylogram"
   }
     
 }
+#' @rdname plot_color_tree
+#' @export
+PlotColorTree.GCL <- plot_color_tree  

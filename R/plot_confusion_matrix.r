@@ -30,6 +30,8 @@
 #' @import dplyr
 #' @import readr
 #' 
+#' @aliases plot_ConfusionMatrix.GCL
+#' 
 #' @export
 
 plot_confusion_matrix <- function(confusion_matrix, plot = c("group_group", "pop_group", "pop_pop")[1], group_names = NULL, pop_names = NULL, high_color = "#132B43", low_color = "#56B1F7", text_color = "yellow"){  
@@ -138,6 +140,7 @@ plot_confusion_matrix <- function(confusion_matrix, plot = c("group_group", "pop
   print(hm) # Print the plot
   
 }
-  
-  
-  
+
+#' @rdname plot_confusion_matrix
+#' @export
+plot_ConfusionMatrix.GCL <- plot_confusion_matrix  

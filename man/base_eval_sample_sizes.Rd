@@ -2,9 +2,20 @@
 % Please edit documentation in R/base_eval_sample_sizes.r
 \name{base_eval_sample_sizes}
 \alias{base_eval_sample_sizes}
+\alias{BaselineEvalSampleSizes.GCL}
 \title{Get sample sizes for rubias baseline evaluation.}
 \usage{
 base_eval_sample_sizes(
+  sillyvec,
+  group_names,
+  groupvec,
+  mixsize,
+  scenarios = round(seq(0.01, 1, 0.01), 2),
+  maxprop = 0.5,
+  seed = 56
+)
+
+BaselineEvalSampleSizes.GCL(
   sillyvec,
   group_names,
   groupvec,

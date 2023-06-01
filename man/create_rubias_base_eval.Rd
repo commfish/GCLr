@@ -2,9 +2,25 @@
 % Please edit documentation in R/create_rubias_base_eval.r
 \name{create_rubias_base_eval}
 \alias{create_rubias_base_eval}
+\alias{CreateRubiasBaselineEval.GCL}
 \title{Create Rubias Mixture and Baseline Files}
 \usage{
 create_rubias_base_eval(
+  sillyvec,
+  group_names,
+  loci,
+  groupvec,
+  sample_sizes,
+  test_groups = group_names,
+  prprtnl = FALSE,
+  base.path = "rubias/baseline",
+  mix.path = "rubias/mixture",
+  seed = 123,
+  ncores = 4,
+  file_type = c("fst", "csv")[1]
+)
+
+CreateRubiasBaselineEval.GCL(
   sillyvec,
   group_names,
   loci,

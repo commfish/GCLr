@@ -2,9 +2,12 @@
 % Please edit documentation in R/summarize_LD.r
 \name{summarize_LD}
 \alias{summarize_LD}
+\alias{Summarize_LD.GCL}
 \title{Summarize LD Results}
 \usage{
 summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
+
+Summarize_LD.GCL(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
 }
 \arguments{
 \item{LDresults}{The output from \code{\link[=test_LD]{test_LD()}}; a tibble with 3 variables:

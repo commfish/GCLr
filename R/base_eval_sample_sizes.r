@@ -30,6 +30,8 @@
 #' @import dplyr
 #' @import purrr
 #' @import tibble
+#' 
+#' @aliases BaselineEvalSampleSizes.GCL
 #'
 #' @export
 base_eval_sample_sizes <- function(sillyvec, group_names, groupvec, mixsize, scenarios = round(seq(.01, 1, .01), 2), maxprop = 0.5, seed = 56){
@@ -78,6 +80,6 @@ base_eval_sample_sizes <- function(sillyvec, group_names, groupvec, mixsize, sce
   }) %>% dplyr::bind_rows()
     
 }
-  
-  
- 
+#' @rdname base_eval_sample_sizes
+#' @export
+BaselineEvalSampleSizes.GCL <- base_eval_sample_sizes

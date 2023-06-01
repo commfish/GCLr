@@ -2,9 +2,18 @@
 % Please edit documentation in R/plot_baseline_eval.r
 \name{plot_baseline_eval}
 \alias{plot_baseline_eval}
+\alias{plot_baseline_eval_summary.GCL}
 \title{Plot Baseline Evaluation Results}
 \usage{
 plot_baseline_eval(
+  summary,
+  file,
+  method = c("MCMC", "PB", "both"),
+  test_groups = NULL,
+  group_colors = NULL
+)
+
+plot_baseline_eval_summary.GCL(
   summary,
   file,
   method = c("MCMC", "PB", "both"),
