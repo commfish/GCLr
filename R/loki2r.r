@@ -1,3 +1,65 @@
+#' Pull Genotypes by Collection
+#'
+#' This function connects to LOKI and creates a .gcl object for each silly in `sillyvec` containing genotypes for each locus in LocusControl$locusnames.The default for this function is to only include fish that have been genotyped for all loci in `LocusControl$locusnames`; however, the function will include all fish when include_missing = TRUE, which is not recommended or needed for most analyses. If a silly has no fish with genotypes for the loci in `LocusControl`, no object will be created and a message will appear listing the sillys that had no data.
+#'
+#' @param sillyvec a character vector of silly codes without the .gcl extension.
+#' 
+#' @param username your state user name
+#' 
+#' @param password your password used to access LOKI; see Eric Lardizabal if you need to set up a password
+#' 
+#' @param test_type the test type ("SNP" or "GTSNP") you would like to pull from Loki. (default = "SNP")
+#' 
+#' @param include_missing whether to include all fish even if they were never genotyped for all loci in LocusControl (default = FALSE)
+#'
+#' @return This function assigns a tibble with the following columns for each silly:
+#' 
+#'    \itemize{
+#'        \item `Columns 1-19:`
+#'            \itemize{
+#'                \item `FK_FISH_ID (double): fish ID numbers for each individual`
+#'                \item `COLLECTION_ID (double): the unique collection ID number for each individual`
+#'                \item `SILLY_CODE (character): the silly code for each individual`
+#'                \item `PLATE_ID (character): the extraction plate ID for each individual`
+#'                \item `PK_TISSUE_TYPE (character): the tissue type extracted for DNA for each individual`
+#'                \item `CAPTURE_LOCATION (character): the location where each individual was captured for sampling`
+#'                \item `CAPTURE_DATE (date): the date each individual was captured (e.g., May 5, 2020 = "2020-05-05")`
+#'                \item `END_CAPTURE_DATE (date): the last collection date for a silly (e.g., May 5, 2020 = "2020-05-05")`
+#'                \item `MESH_SIZE (character): the mesh size of the net used to capture (harvest) each individual`
+#'                \item `MESH_SIZE_COMMENT (character): comments about mesh size`
+#'                \item `LATITUDE (double): the latitude where each individual was captured in decimal degrees`
+#'                \item `LONGITUDE (double): the longitude where each individual was captured in decimal degrees`
+#'                \item `AGENCY (character): the name of the agency or organization that collected each individual`
+#'                \item `VIAL_BARCODE (character): the barcode on the collection vial`
+#'                \item `DNA_TRAY_CODE (character): the barcode on the collection tray/card`
+#'                \item `DNA_TRAY_WELL_CODE (double): the unique number assigned to each position in the collection tray/card for each individual (e.g., positions A1-A10 = codes 1-10)`
+#'                \item `DNA_TRAY_WELL_POS (character): the position in the collection tray/card (e.g., A1, A2, B1, B2, etc.)`
+#'                \item `CONTAINER_ARRAY_TYPE_ID (double): the number code for the collection container (e.g., tray or card)`
+#'                \item` SillySource (double): the original silly code and fish ID for each individual (e.g., KQUART06_1). When pulled from loki this will be the SILLY_CODE and FK_FISH_ID`
+#'            }
+#'      \item `Columns 20+`
+#'          \itemize
+#'              \item `genotypes with a column for each alelle for each locus
+#'    }
+#'    
+#' @note This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function.
+#'    
+#' @examples
+#'   create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username ="awbarclay", password = .password)#Locus control
+#'   sillyvec <- c("SUCIWS06", "SUCIWS07", "SUCIWS08", "SUCIWS09", "SUCIWS10", "SUCIWS11", "SUCIWS12", "SUCIWS13", "SCIMA22")
+#'   loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE)
+#'    
+#' @import RJDBC
+#' @import magrittr
+#' @import dplyr
+#' @import purrr
+#' @import tidyr
+#' 
+#' @aliases LOKI2R.GCL
+#'   
+#' @export            
+
+
 loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "MSAT")[1], include_missing = FALSE){
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,13 +122,6 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   #   If one or more *.gcl objects have no data for one or more loci, the function returns a tibble of loci with missing data for each *.gcl object.
   # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #  
-  #   .password = "************"
-  #
-  #   create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username ="awbarclay", password = .password)#Locus control
-  #
-  #   sillyvec <- c("SUCIWS06", "SUCIWS07", "SUCIWS08", "SUCIWS09", "SUCIWS10", "SUCIWS11", "SUCIWS12", "SUCIWS13", "SCIMA22")
-  #
-  #   loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE)
   #
   # Note~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #
@@ -86,44 +141,13 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
     
   }
   
-  
-  # This copies the "odbc8.jar" file to the R folder on your computer if it doesn't exist there. This file contains the java odbc drivers needed for RJDBC
-  
-  if(!file.exists(path.expand("~/R"))){
-    
-    dir <- path.expand("~/R")
-    
-    dir.create(dir)
-    
-    bool <- file.copy(from = "V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar", to = path.expand("~/R/ojdbc8.jar"))
-    
-  } else {
-    
-    if(!file.exists(path.expand("~/R/ojdbc8.jar"))){
-      
-      bool <- file.copy(from = "V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar", to = path.expand("~/R/ojdbc8.jar"))
-      
-    }
-    
-  }
-  
   start.time <- Sys.time() 
   
   options(java.parameters = "-Xmx10g")
   
-  if(file.exists("C:/Program Files/R/RequiredLibraries/ojdbc8.jar")) {
-    
-    drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = "C:/Program Files/R/RequiredLibraries/ojdbc8.jar", " ")#https://blogs.oracle.com/R/entry/r_to_oracle_database_connectivity    C:/app/awbarclay/product/11.1.0/db_1/jdbc/lib
-    
-  } else {
-    
-    drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = path.expand("~/R/ojdbc8.jar"), " ")
-    
-  }
-  
   url <- loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  con <- RJDBC::dbConnect(drv, url = url, user = username, password = password) #The database connection
+  con <- RJDBC::dbConnect(GCLr::drv, url = url, user = username, password = password) #The database connection
   
   loci <- LocusControl$locusnames
   
@@ -168,8 +192,8 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   if(test_type == "SNP" & sum(test_types == "GTSNP")>0){
     
     GTSNP_sillys <- dataAll %>% 
-      filter(TEST_TYPE == "GTSNP") %>% 
-      pull(SILLY_CODE) %>% 
+      dplyr::filter(TEST_TYPE == "GTSNP") %>% 
+      dplyr::pull(SILLY_CODE) %>% 
       unique()
     
   }
@@ -177,14 +201,14 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   if(test_type == "GTSNP" & sum(test_types == "SNP")>0){
     
     SNP_sillys <- dataAll %>% 
-      filter(TEST_TYPE == "SNP") %>% 
-      pull(SILLY_CODE) %>% 
+      dplyr::filter(TEST_TYPE == "SNP") %>% 
+      dplyr::pull(SILLY_CODE) %>% 
       unique()
     
   }
   
-  dataAll <- filter(dataAll, TEST_TYPE == test_type) %>% 
-    select(-TEST_TYPE)# Filter dataAll for the supplied test_type
+  dataAll <- dplyr::filter(dataAll, TEST_TYPE == test_type) %>% 
+    dplyr::select(-TEST_TYPE)# Filter dataAll for the supplied test_type
     
   # what sillys have no data for any of these loci?
   missing_sillys <- setdiff(sillyvec, dataAll$SILLY_CODE %>% unique()) #Find which sillys had no data for any loci in LocusControl
@@ -372,3 +396,6 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   print(fulltime)
   
 }
+#' @rdname loki2r
+#' @export
+LOKI2R.GCL <- loki2r  
