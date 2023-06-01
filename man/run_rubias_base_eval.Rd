@@ -100,16 +100,16 @@ run_rubias_baseline_eval.GCL(
 \item{file_type}{The file type of the baseline and mixture input files, either "fst" or "csv" (default: "fst")(see details).}
 }
 \value{
-Breaks the output into each \code{mixture_collection} and for each saves the following as .csv or .fst files:
+This function breaks up the \emph{rubias} output by mixture_collection and for each mixture the following are saved as .csv or .fst files:
 \itemize{
-\item \code {collection level trace, wide format, collections in order of baseline (akin to .BOT file from BAYES)}
-\item \code {repunit level trace, wide format, repunit in order of \code{group_names} (akin to .RGN file from BAYES)}
-\item \code {straight dump of the \code{indiv_posteriors} tibble (without column \code{missing_loci})}
-\item \code {straight dump of the \code{bootstrapped_proportions}}
+\item collection level trace, wide format, collections in order of baseline (akin to .BOT file from BAYES)
+\item repunit level trace, wide format, repunit in order of \code{group_names} (akin to .RGN file from BAYES)
+\item straight dump of the \code{indiv_posteriors} tibble (without column \code{missing_loci})
+\item straight dump of the \code{bootstrapped_proportions}
 }
 }
 \description{
-This function is a wrapper for \code{\link[=run_rubias_mix]{run_rubias_mix()}}. It runs baseline evaluation mixtures produced by \link{create_rubias_base_eval} and multicores by test group. i.e., mixtures for a test group are run on a different core simultaneously.
+This function is a wrapper for \code{\link[=run_rubias_mix]{run_rubias_mix()}}. It runs baseline evaluation mixtures produced by \code{\link[=create_rubias_base_eval]{create_rubias_base_eval()}} and multicores by test group. i.e., mixtures for a test group are run on a different core simultaneously.
 It is designed for use on a server with many cores and ample RAM.
 }
 \details{
