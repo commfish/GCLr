@@ -99,9 +99,10 @@ run_rubias_baseline_eval.GCL(
 \value{
 This function breaks up the \emph{rubias} output by mixture_collection and for each mixture the following are saved as .csv or .fst files:
 \itemize{
-\item collection level trace, wide format, collections in order of baseline (akin to .BOT file from BAYES)
-\item repunit level trace, wide format, repunit in order of \code{group_names} (akin to .RGN file from BAYES)
-\item straight dump of the \code{indiv_posteriors} tibble without column \code{missing_loci}
+\item collection level trace, wide format, collections in order of baseline - akin to .BOT file from BAYES
+\item repunit level trace, wide format, repunit in order of \code{group_names} - akin to .RGN file from BAYES
+\item straight dump of the \code{indiv_posteriors} tibble - without column \code{missing_loci}
+\item straight dump of the \code{indiv_posteriors} tibble - without column \code{missing_loci}
 \item straight dump of the \code{bootstrapped_proportions}
 }
 }
