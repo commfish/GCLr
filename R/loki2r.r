@@ -36,12 +36,13 @@
 #'                \item `DNA_TRAY_WELL_POS (character): the position in the collection tray/card (e.g., A1, A2, B1, B2, etc.)`
 #'                \item `CONTAINER_ARRAY_TYPE_ID (double): the number code for the collection container (e.g., tray or card)`
 #'                \item `SillySource (double): the original silly code and fish ID for each individual (e.g., KQUART06_1). When pulled from loki this will be the SILLY_CODE and FK_FISH_ID`
-#'            }
-#'      \item `Columns 20+`
-#'          \itemize
-#'              \item `genotypes with a column for each alelle for each locus`
-#'    }
-#'    
+#'                }
+#'        \item `Columns 20+:`
+#'            \itemize{
+#'                \item `genotypes with a column for each alelle for each locus`
+#'              }
+#'      }
+#'                
 #' @note This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function.
 #'    
 #' @examples

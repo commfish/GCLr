@@ -56,11 +56,19 @@ This function assigns a tibble with the following columns for each silly:
 \item \verb{DNA_TRAY_WELL_CODE (double): the unique number assigned to each position in the collection tray/card for each individual (e.g., positions A1-A10 = codes 1-10)}
 \item \verb{DNA_TRAY_WELL_POS (character): the position in the collection tray/card (e.g., A1, A2, B1, B2, etc.)}
 \item \verb{CONTAINER_ARRAY_TYPE_ID (double): the number code for the collection container (e.g., tray or card)}
+<<<<<<< HEAD
 \item \verb{SillySource (double): the original silly code and fish ID for each individual (e.g., KQUART06_1). When pulled from loki this will be the SILLY_CODE and FK_FISH_ID}
 }
 \item \verb{Columns 20+}
 \itemize
 \item \verb{genotypes with a column for each alelle for each locus}
+=======
+\item\verb{ SillySource (double): the original silly code and fish ID for each individual (e.g., KQUART06_1). When pulled from loki this will be the SILLY_CODE and FK_FISH_ID}
+}
+\item \verb{Columns 20+}
+\itemize
+\item `genotypes with a column for each alelle for each locus
+>>>>>>> c1c109c66570c5e86f97792a918d20e095d79d12
 }
 }
 \description{
