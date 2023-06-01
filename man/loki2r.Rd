@@ -35,26 +35,26 @@ LOKI2R.GCL(
 \value{
 This function assigns a tibble with the following columns for each silly:
 \itemize{
-\item {\verb{FK_FISH_ID (double): fish ID numbers for each individual}}
-\item {\verb{COLLECTION_ID (double): the unique collection ID number for each individual}}
-\item {\verb{SILLY_CODE (character): the silly code for each individual}}
-\item {\verb{PLATE_ID (character): the extraction plate ID for each individual}}
-\item {\verb{PK_TISSUE_TYPE (character): the tissue type extracted for DNA for each individual}}
-\item {\verb{CAPTURE_LOCATION (character): the location where each individual was captured for sampling}}
-\item {\verb{CAPTURE_DATE (date): the date each individual was captured (e.g., May 5, 2020 = "2020-05-05")}}
-\item {\verb{END_CAPTURE_DATE (date): the last collection date for a silly (e.g., May 5, 2020 = "2020-05-05")}}
-\item {\verb{MESH_SIZE (character): the mesh size of the net used to capture (harvest) each individual}}
-\item {\verb{MESH_SIZE_COMMENT (character): comments about mesh size}}
-\item {\verb{LATITUDE (double): the latitude where each individual was captured in decimal degrees}}
-\item {\verb{LONGITUDE (double): the longitude where each individual was captured in decimal degrees}}
-\item {\verb{AGENCY (character): the name of the agency or organization that collected each individual}}
-\item {\verb{VIAL_BARCODE (character): the barcode on the collection vial}}
-\item {\verb{DNA_TRAY_CODE (character): the barcode on the collection tray/card}}
-\item {\verb{DNA_TRAY_WELL_CODE (double): the unique number assigned to each position in the collection tray/card for each individual (e.g., positions A1-A10 = codes 1-10)}}
-\item {\verb{DNA_TRAY_WELL_POS (character): the position in the collection tray/card (e.g., A1, A2, B1, B2, etc.)}}
-\item {\verb{CONTAINER_ARRAY_TYPE_ID (double): the number code for the collection container (e.g., tray or card)}}
-\item {\verb{SillySource (double): the original silly code and fish ID for each individual (e.g., KQUART06_1). When pulled from loki this will be the SILLY_CODE and FK_FISH_ID}}
-\item {\verb{genotypes with a column for each allele for each locus}}
+\item \code {\verb{FK_FISH_ID (double): fish ID numbers for each individual}}
+\item \code {\verb{COLLECTION_ID (double): the unique collection ID number for each individual}}
+\item \code {\verb{SILLY_CODE (character): the silly code for each individual}}
+\item \code {\verb{PLATE_ID (character): the extraction plate ID for each individual}}
+\item \code {\verb{PK_TISSUE_TYPE (character): the tissue type extracted for DNA for each individual}}
+\item \code {\verb{CAPTURE_LOCATION (character): the location where each individual was captured for sampling}}
+\item \code {\verb{CAPTURE_DATE (date): the date each individual was captured (e.g., May 5, 2020 = "2020-05-05")}}
+\item \code {\verb{END_CAPTURE_DATE (date): the last collection date for a silly (e.g., May 5, 2020 = "2020-05-05")}}
+\item \code {\verb{MESH_SIZE (character): the mesh size of the net used to capture (harvest) each individual}}
+\item \code {\verb{MESH_SIZE_COMMENT (character): comments about mesh size}}
+\item \code {\verb{LATITUDE (double): the latitude where each individual was captured in decimal degrees}}
+\item \code {\verb{LONGITUDE (double): the longitude where each individual was captured in decimal degrees}}
+\item \code {\verb{AGENCY (character): the name of the agency or organization that collected each individual}}
+\item \code {\verb{VIAL_BARCODE (character): the barcode on the collection vial}}
+\item \code {\verb{DNA_TRAY_CODE (character): the barcode on the collection tray/card}}
+\item \code {\verb{DNA_TRAY_WELL_CODE (double): the unique number assigned to each position in the collection tray/card for each individual (e.g., positions A1-A10 = codes 1-10)}}
+\item \code {\verb{DNA_TRAY_WELL_POS (character): the position in the collection tray/card (e.g., A1, A2, B1, B2, etc.)}}
+\item \code {\verb{CONTAINER_ARRAY_TYPE_ID (double): the number code for the collection container (e.g., tray or card)}}
+\item \code {\verb{SillySource (double): the original silly code and fish ID for each individual (e.g., KQUART06_1). When pulled from loki this will be the SILLY_CODE and FK_FISH_ID}}
+\item \code {\verb{genotypes with a column for each allele for each locus}}
 }
 }
 \description{
