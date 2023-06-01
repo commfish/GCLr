@@ -1,12 +1,9 @@
 #' Run Rubias Baseline Evaluation Tests
 #'
-#' This function is a wrapper for [GCLr::run_rubias_mix()]. It runs baseline evaluation mixtures produced by [GCLr::create_rubias_base_eval] and multicores by test group. i.e., mixtures for a test group are run on a different core simultaneously.
+#' This function is a wrapper for [GCLr::run_rubias_mix()]. It runs baseline evaluation mixtures produced by [GCLr::create_rubias_base_eval()] and multicores by test group. i.e., mixtures for a test group are run on a different core simultaneously.
 #' It is designed for use on a server with many cores and ample RAM.
 #'
-#' @param tests a tibble produced by [GCLr::base_eval_sample_sizes()] containing two variables: 
-#'    \itemize
-#'      \item \code{test_group} (character) 
-#'      \item \code{scenario} (double)
+#' @param tests a tibble produced by [GCLr::base_eval_sample_sizes()] containing `test_group` and `scenario`
 #'      
 #' @param group_names a character vector of group names, used to sort `repunit` as a factor
 #' 
@@ -51,12 +48,12 @@
 #' @details "MCMC" estimates mixing proportions and individual posterior probabilities of assignment through Markov-chain Monte Carlo conditional on the reference allele frequencies, while "PB" does the same with a parametric bootstrapping correction, and "BR" runs MCMC sweeps while simulating reference allele frequencies using the genotypes of mixture individuals and allocations from the previous sweep. All methods default to a uniform 1/(# collections or RUs) prior for the mixing proportions.
 #'          The function can read in .csv or .fst files.  .fst files are compressed, so they save hard drive space, and they are faster to save and read back into R. .csv is also an option to make the function backwards compatible with older analyzes that produced .csv files.
 #' 
-#' @return  Breaks the output into each `mixture_collection` and for each saves the following as .csv or .fst files:
+#' @return  This function breaks up the \emph{rubias} output by mixture_collection and for each mixture the following are saved as .csv or .fst files:
 #'    \itemize{
-#'        \item \code {collection level trace, wide format, collections in order of baseline (akin to .BOT file from BAYES)}
-#'        \item \code {repunit level trace, wide format, repunit in order of `group_names` (akin to .RGN file from BAYES)}
-#'        \item \code {straight dump of the `indiv_posteriors` tibble (without column `missing_loci`)}
-#'        \item \code {straight dump of the `bootstrapped_proportions`}
+#'        \item collection level trace, wide format, collections in order of baseline (akin to .BOT file from BAYES)
+#'        \item repunit level trace, wide format, repunit in order of `group_names` (akin to .RGN file from BAYES)
+#'        \item straight dump of the `indiv_posteriors` tibble without column `missing_loci`
+#'        \item straight dump of the `bootstrapped_proportions`
 #'    }
 #'
 #' @examples
