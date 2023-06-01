@@ -33,8 +33,7 @@ Returns \code{LocusControl} for all loci used in the project (including "loci", 
 }
 \description{
 This function is intended for use in the qc.R script. It pulls project genotypes to create "slim" .gcl objects for each silly and the LocusControl for all loci used in the project.
-
-\strong{Warning}: Genotypes (pre-October 2016) may not exist in the LOKI lookup table with a project name, so genotypes will have to be pulled by sillyvec and loci.
+Warning: Genotypes (pre-October 2016) may not exist in the LOKI lookup table with a project name, so genotypes will have to be pulled by sillyvec and loci.
 }
 \details{
 This function pulls project genotypes from LOKI database to create "slim" .gcl objects for each silly,
@@ -47,7 +46,4 @@ The function also requires the \code{ojdbc8.jar} file, which will be copied to t
 read_proj_geno(project_name = c("P014", "P015", "P016"), sillyvec = c("SCIMA18", "SCIMA17"), 
                loci = c("One_E2", "One_MHC2_251", "One_Cytb_17"), username = "awbarclay", password = "password")
 
-}
-\author{
-Kyle Shedd, Andy Barclay
 }

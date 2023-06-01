@@ -11,10 +11,6 @@
 #' @importFrom purrr map
 #' @importFrom readr write_csv
 #' 
-#' @author awbarclay
-#' @date 9/28/12
-#' @updated 10/05/18
-#' 
 #' @family QA scripts
 #' 
 #' @examples

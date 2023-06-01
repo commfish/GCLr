@@ -17,10 +17,6 @@
 #'
 #' @aliases failure_rate FailureRate.GCL.R
 #'
-#' @author krshedd
-#' @date 10/16/15
-#' @updated 09/05/18
-#'
 #' @details
 #'   The [GCLr::failure_rate()] function calculates failure rates by SILLY, locus, plate, and project. It performs the following steps:
 #'   - Pools all collections into one master silly using the [GCLr::pool_collections()] function

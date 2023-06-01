@@ -1,8 +1,7 @@
 #' @title Read Project Genotypes
 #'
 #' @description This function is intended for use in the qc.R script. It pulls project genotypes to create "slim" .gcl objects for each silly and the LocusControl for all loci used in the project.
-#' 
-#' **Warning**: Genotypes (pre-October 2016) may not exist in the LOKI lookup table with a project name, so genotypes will have to be pulled by sillyvec and loci.
+#'              Warning: Genotypes (pre-October 2016) may not exist in the LOKI lookup table with a project name, so genotypes will have to be pulled by sillyvec and loci.
 #'
 #' @param project_name A character vector of one or more project names as spelled in LOKI.
 #' @param sillyvec A character vector of SILLYs.
@@ -22,14 +21,19 @@
 #' The function also requires the `ojdbc8.jar` file, which will be copied to the appropriate location if it doesn't exist.
 #'
 #' @aliases read_project_genotypes.GCL.R, read_proj_geno
-#' @export
+#' 
+#' @import RJDBC
+#' @import tibble
+#' @import dplyr
+#' @import tidyr
+#' @import magrittr
 #' 
 #' @examples
 #' read_proj_geno(project_name = c("P014", "P015", "P016"), sillyvec = c("SCIMA18", "SCIMA17"), 
 #'                loci = c("One_E2", "One_MHC2_251", "One_Cytb_17"), username = "awbarclay", password = "password")
 #'
-#' @author Kyle Shedd, Andy Barclay
-#' @updated 1/11/19 (Kyle Shedd), 10/5/18 (Andy Barclay), 4/15/19 (Andy Barclay)
+#' @export
+
 read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, username, password) {
   # Warning for use of deprecated function name.
   if (match.call()[[1]] != quote(read_proj_geno)) {
@@ -54,11 +58,6 @@ read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, us
   {
     stop("The user must supply one of the following argument combinations:\n  1) sillyvec (for all loci and individuals for each silly),\n  2) sillyvec and loci (all individuals for supplied locus list), or\n  3) project_name (for all individuals and loci in a given project)")
   }
-  
-  # Requiring the tidyverse and RJDBC packages. Packages will be installed if the user doesn't have them installed
-  while (!require(tidyverse)) {install.packages("tidyverse") }
-  while (!require(RJDBC)) {install.packages("RJDBC") }
-  while (!require(tools)) {install.packages("tools") }
   
   # Making sure the ojdbc jar file exists on the users C drive. 
   # If no jar file exists it will be copied from the v drive to the appropriate location on the users C drive.
@@ -86,7 +85,7 @@ read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, us
   
   url <- loki_url()
   
-  con <- dbConnect(drv,url = url,user = username,password = password)
+  con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
   
   #~~~~~~~~~~~~~~~~
   # Get genotypes
@@ -112,7 +111,7 @@ read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, us
   # Filter for project_name again, if applicable
   if (!is.null(project_name)) {
     dataAll <- dataAll %>% 
-      filter(LAB_PROJECT_NAME == project_name)
+      dplyr::filter(LAB_PROJECT_NAME == project_name)
   }
   
   # Get list of unique sillys and assign `ProjectSillys` this is needed for qc script
@@ -147,9 +146,7 @@ read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, us
     tidyr::unite(GENO, ALLELE_1, ALLELE_2, sep = "/", remove = FALSE) %>% 
     dplyr::mutate(ALLELES = dplyr::case_when(PLOIDY == "D" ~ GENO,
                                              PLOIDY == "H" ~ ALLELE_1)) %>% 
-    dplyr::select(c(dplyr::all_of(attnames), "LOCUS", "ALLELE_1", "ALLELE_2", "ALLELES")) #%>% 
-  # dplyr::select(-PLOIDY) %>% 
-  # tidyr::spread(key = LOCUS, value = ALLELES)
+    dplyr::select(c(dplyr::all_of(attnames), "LOCUS", "ALLELE_1", "ALLELE_2", "ALLELES")) 
   
   message("Data successfully pulled from LOKI, building SILLY.gcl objects\n")
   

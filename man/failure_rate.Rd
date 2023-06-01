@@ -40,7 +40,4 @@ failure_rate(sillyvec = c("SILLY1", "SILLY2", "SILLY3"))
 \code{\link{remove_na_indv}}: Function to remove NA individuals
 \code{\link{pool_collections}}: Function to pool collections
 }
-\author{
-krshedd
-}
 \concept{QC Functions}
