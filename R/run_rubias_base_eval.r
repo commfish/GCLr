@@ -53,10 +53,10 @@
 #' 
 #' @return  Breaks the output into each `mixture_collection` and for each saves the following as .csv or .fst files:
 #'    \itemize{
-#'        \item {collection level trace, wide format, collections in order of baseline (akin to .BOT file from BAYES)}
-#'        \item {repunit level trace, wide format, repunit in order of `group_names` (akin to .RGN file from BAYES)}
-#'        \item {straight dump of the `indiv_posteriors` tibble (without column `missing_loci`)}
-#'        \item {straight dump of the `bootstrapped_proportions`}
+#'        \item \code {collection level trace, wide format, collections in order of baseline (akin to .BOT file from BAYES)}
+#'        \item \code {repunit level trace, wide format, repunit in order of `group_names` (akin to .RGN file from BAYES)}
+#'        \item \code {straight dump of the `indiv_posteriors` tibble (without column `missing_loci`)}
+#'        \item \code {straight dump of the `bootstrapped_proportions`}
 #'    }
 #'
 #' @examples
@@ -81,27 +81,8 @@
 #'    
 #' @export
 
-run_rubias_base_eval <- function(tests, 
-                                         group_names, 
-                                         gen_start_col = 5, 
-                                         base.path = "rubias/baseline", 
-                                         mix.path = "rubias/mixture",
-                                         out.path = "rubias/output", 
-                                         method = "MCMC", 
-                                         alle_freq_prior = list(const_scaled = 1), 
-                                         pi_prior = NA, 
-                                         pi_init = NULL, 
-                                         reps = 25000, 
-                                         burn_in = 5000, 
-                                         pb_iter = 100, 
-                                         prelim_reps = NULL, 
-                                         prelim_burn_in = NULL, 
-                                         sample_int_Pi = 10, 
-                                         sample_theta = TRUE, 
-                                         pi_prior_sum = 1, 
-                                         seed = 56, 
-                                         ncores = 4,
-                                         file_type = c("fst", "csv")[1]){
+run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", method = "MCMC", alle_freq_prior = list(const_scaled = 1), pi_prior = NA, 
+                                  pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100, prelim_reps = NULL, prelim_burn_in = NULL, sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1, seed = 56, ncores = 4, file_type = c("fst", "csv")[1]){
  
   start_time <- Sys.time()
   
@@ -169,6 +150,7 @@ run_rubias_base_eval <- function(tests,
   Sys.time()-start_time
   
 }
+
 #' @rdname run_rubias_base_eval
 #' @export
 run_rubias_baseline_eval.GCL <- run_rubias_base_eval  
