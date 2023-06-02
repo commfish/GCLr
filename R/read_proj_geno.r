@@ -14,13 +14,10 @@
 #' @return Returns `LocusControl` for all loci used in the project (including "loci", "nallales", "ploidy", "alleles").
 #'
 #' @details
-#' This function pulls project genotypes from LOKI database to create "slim" .gcl objects for each silly,
-#' along with the LocusControl for all loci used in the project.
-#' The function checks the combination of arguments to ensure the correct usage.
-#' It requires the `tidyverse`, `RJDBC`, and `tools` packages.
-#' The function also requires the `ojdbc8.jar` file, which will be copied to the appropriate location if it doesn't exist.
-#'
-#' @aliases read_project_genotypes.GCL.R, read_proj_geno
+#' This function pulls project genotypes from LOKI database to create "slim" .gcl objects for each silly, along with the LocusControl for all loci used in the project.
+#' The function checks the combination of arguments to ensure the correct usage. This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
+#' 
+#' @aliases read_project_genotypes.GCL.R
 #' 
 #' @import RJDBC
 #' @import tibble
@@ -35,11 +32,8 @@
 #' @export
 
 read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, username, password) {
-  # Warning for use of deprecated function name.
-  if (match.call()[[1]] != quote(read_proj_geno)) {
-    warning("The function name 'read_project_genotypes.GCL.R' is deprecated. Please use 'read_proj_geno' instead.")
-  }
-  # Recording function start time
+ 
+    # Recording function start time
   start.time <- Sys.time()
   
   if (exists("LocusControl", where = 1)) {
@@ -59,33 +53,15 @@ read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, us
     stop("The user must supply one of the following argument combinations:\n  1) sillyvec (for all loci and individuals for each silly),\n  2) sillyvec and loci (all individuals for supplied locus list), or\n  3) project_name (for all individuals and loci in a given project)")
   }
   
-  # Making sure the ojdbc jar file exists on the users C drive. 
-  # If no jar file exists it will be copied from the v drive to the appropriate location on the users C drive.
-  if (!file.exists(path.expand("~/R"))) {
-    dir <- path.expand("~/R")
-    dir.create(dir)
-    bool <- file.copy(from = "V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar",to = path.expand("~/R/ojdbc8.jar"))
-  } else {
-    if (!file.exists(path.expand("~/R/ojdbc8.jar"))) {
-      bool <- file.copy(from = "V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar",to = path.expand("~/R/ojdbc8.jar"))
-    }
-  }
-  
   # Setting default java.parameters
   options(java.parameters = "-Xmx10g")
-  
-  if (file.exists("C:/Program Files/R/RequiredLibraries/ojdbc8.jar")) {
-    drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = "C:/Program Files/R/RequiredLibraries/ojdbc8.jar", " ")  # https://blogs.oracle.com/R/entry/r_to_oracle_database_connectivity    C:/app/awbarclay/product/11.1.0/db_1/jdbc/lib
-  } else {
-    drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = path.expand("~/R/ojdbc8.jar"), " ")
-  }
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Connect to LOKI
   
-  url <- loki_url()
+  url <- GCLr::loki_url()
   
-  con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
+  con <- RJDBC::dbConnect(GCLr::drv, url = url, user = username, password = password)
   
   #~~~~~~~~~~~~~~~~
   # Get genotypes
@@ -246,3 +222,7 @@ read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, us
   fulltime <- stop.time - start.time
   print(fulltime) 
 }
+
+#' @rdname read_proj_geno
+#' @export
+read_project_genotypes.GCL <- read_proj_geno  

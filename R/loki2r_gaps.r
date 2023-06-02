@@ -1,65 +1,39 @@
+#' Create GCL Objects (GAPS)
+#'
+#' This function connects to LOKI and creates a ".gcl" object for each silly code in `sillyvec`. A "*.gcl" object is a Gene Conservation Laboratory genotypes object with associated sample attributes.
+#'
+#' @param sillyvec Vector of silly codes to pull from LOKI.
+#' @param username Username for LOKI connection.
+#' @param password Password for LOKI connection.
+#' 
+#' @return The runtime of the function in seconds.
+#' 
+#' @details This function requires the R package "RJDBC" for connecting to LOKI.
+#' It connects to LOKI using the provided \code{username} and \code{password}, and retrieves genotypes and sample attributes for each silly code in \code{sillyvec}.
+#' The genotypes and attributes are stored in separate "*.gcl" objects named after each silly code. This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
+#'
+#' @examples
+#' sillyvec <- c("KQUART06", "KQUART08", "KQUART09")
+#' username <- "jjasper"
+#' loki2r_gaps(sillyvec, username, password)
+#' 
+#' @aliases LOKI2R_GAPS.GCL
+#'
+#' @import RJDBC
+#' @import abind
+#' @import DBI
+#' 
+#' @export
+
 loki2r_gaps = function(sillyvec, username, password){
-  
-  ######################################################################################################################################################################################
-  ################  :WARNING:WARNING:WARNING:WARNING:WARNING:   ########################################################################################################################
-  ################ 	THIS FUNCTION REQUIRES THE PACKAGE "RJDBC"  ########################################################################################################################
-  #
-  #  This function connects to LOKI and creates a "*.gcl" object for each silly in sillyvec.  
-  # 
-  #  A "*.gcl" object is a Gene Conservation Laboratory genotypes object with associated sample attributes.  
-  #
-  #    "sillyvec" is a vector of silly codes you want to pull from LOKI (e.g. sillyvec=c("KQUART06","KQUART08","KQUART09")).
-  #
-  #  Locus Control is created with the converted "GAPS_Chinook_uSATs" markersuite
-  #
-  ######## Example/Intended ############################################################################################################################################################
-  #
-  #  sillyvec <- "KSALM95"
-  #  
-  #  username <- "jjasper"; password <- "********"
-  #
-  #  loki2r(sillyvec,username,password)
-  #
-  #  Written by AB, EL, & JJ,  10/06/2015
-  #  Updated by Andy Barclay 4/15/19; updated driver from ojdbc6.jar to ojdbc8.jar and changed the LOKI connection URL
-  #  to connect to the new Oracle cloud database.
-  ######################################################################################################################################################################################
-  
-  if(!file.exists(path.expand("~/R"))){
-    
-    dir<-path.expand("~/R")
-    
-    dir.create(dir)
-    
-    bool <- file.copy(from="V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar",to=path.expand("~/R/ojdbc8.jar"))
-    
-  } else {
-    
-    if(!file.exists(path.expand("~/R/ojdbc8.jar"))){
-      
-      bool <- file.copy(from="V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar",to=path.expand("~/R/ojdbc8.jar"))
-      
-    }
-    
-  }
-  
-  while(!require(RJDBC)) {install.packages("RJDBC")}
-  
-  while(!require(abind)) {install.packages("abind")}
-  
-  # while(!require(RODBC)) {install.packages("RODBC")}
-  
-  # while(!require(pryr)) {install.packages("pryr")}
-  
+
   start.time <- Sys.time() 
   
   options(java.parameters = "-Xmx10g")
   
-  drv <- JDBC("oracle.jdbc.OracleDriver", classPath = "~/R/ojdbc8.jar", " ")#https://blogs.oracle.com/R/entry/r_to_oracle_database_connectivity    C:/app/awbarclay/product/11.1.0/db_1/jdbc/lib
+  url <- GCLr::loki_url()
   
-  url <-loki_url()
-  
-  con <- dbConnect(drv,url=url,user=username,password=password)
+  con <- dbConnect(GCLr::drv, url = url, user = username, password = password)
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   markersuite <- "GAPS_Chinook_uSATs"
@@ -225,3 +199,7 @@ loki2r_gaps = function(sillyvec, username, password){
   
   return(fulltime)
 }
+
+#' @rdname loki2r_gaps
+#' @export
+LOKI2R_GAPS.GCL <- loki2r_gaps  

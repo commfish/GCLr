@@ -21,6 +21,8 @@
 #'   }
 #'   The tibble will be named "LocusControl" and assigned to your current workspace.
 #'   
+#' @note This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
+#'   
 #' @import RJDBC
 #' @import magrittr
 #' @import tibble
@@ -47,7 +49,7 @@ create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username,
 
   options(java.parameters = "-Xmx10g")
   
-  url <- loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
+  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
   con <- RJDBC::dbConnect(GCLr::drv, url = url, user = username, password = password)
   

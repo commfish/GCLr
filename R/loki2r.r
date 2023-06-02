@@ -1,4 +1,4 @@
-#' Pull Genotypes by Collection
+#' Create GCL Objects
 #'
 #' This function connects to LOKI and creates a .gcl object for each silly in `sillyvec` containing genotypes for each locus in LocusControl$locusnames.The default for this function is to only include fish that have been genotyped for all loci in `LocusControl$locusnames`; however, the function will include all fish when include_missing = TRUE, which is not recommended or needed for most analyses. If a silly has no fish with genotypes for the loci in `LocusControl`, no object will be created and a message will appear listing the sillys that had no data.
 #'
@@ -51,7 +51,7 @@
 #'                \item \code{genotypes} with a column for each allele for each locus
 #'              }
 #'                
-#' @note This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function.
+#' @note This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function. The function also requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
 #'    
 #' @examples
 #'   create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username ="awbarclay", password = .password)#Locus control
@@ -71,73 +71,6 @@
 
 loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "MSAT")[1], include_missing = FALSE){
   
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  This function connects to LOKI and creates a "*.gcl" object for each silly in sillyvec containing genotypes for each locus in LocusControl$locusnames.
-  #  The default for this function is to only include fish that have been genotyped for all loci in LocusControl$locusnames; 
-  #  however, the function will include all fish when include_missing = TRUE, which is not recommended or needed for most analyses. If a silly has no fish with genotypes for
-  #  the loci in LocusControl, no object will be created and a message will appear listing the sillys that had no data.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   sillyvec - a character vector of silly codes (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART09"))
-  #
-  #   username - your state user name
-  #
-  #   password - your password used to access LOKI - see Eric Lardizabal if you don't have a passord for LOKI
-  #
-  #   test_type - the test type ("SNP" or "GTSNP") you would like to pull from Loki - default is test_type = "SNP"
-  #               Note: This argument is a workaround. Some sillys in Loki contain data for both SNP and GTSNP test types. 
-  #                     If genotypes for both test types were pulled at the same time for the same individuals and loci, 
-  #                     this would cause the function to stop and throw an error message. 
-  #                     If you want data for both test types in your workspace, you will need to run 
-  #                     this function separately for each test type. If you pull data for both test types for the same
-  #                     silly code, you will need to rename your '.GCL' object for the first test type before pulling data 
-  #                     for the second test type, otherwise the first '.GCL' object will be overwritten.
-  #   
-  #   include_missing - logial; whether to include all fish even if they were never genotyped for all loci in LocusControl.
-  #                     
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   This function assigns a tibble with the following columns for each silly.
-  #
-  #               Columns 1-19
-  #                     FK_FISH_ID <double>: fish ID numbers for each individual  
-  #                     COLLECTION_ID <double>: the unique collection ID nubmer for each individual
-  #                     SILLY_CODE <character>: the silly code for each individual
-  #                     PLATE_ID <character>: the extraction plate ID for each individual
-  #                     PK_TISSUE_TYPE <character>: the tissue type extracted for DNA for each individual
-  #                     CAPTURE_LOCATION <character>: the location were each individual was captured for sampling
-  #                     CAPTURE_DATE <date>: the date each individual was captured (e.g. May 5, 2020 = "2020-05-05") 
-  #                     END_CAPTURE_DATE <date>: the last collection date for a silly (e.g. May 5, 2020 = "2020-05-05") 
-  #                     MESH_SIZE <character>: the mesh size of the net used to capture (harvest) each individual 
-  #                     MESH_SIZE_COMMENT <character>: comments about mesh size
-  #                     LATITUDE <double>: the latitude where each individual was captured in decimal degrees
-  #                     LONGITUDE <double>: the longitude where each individual was captured in decimal degrees
-  #                     AGENCY <character>: the name of the agency or organization that collected each individual
-  #                     VIAL_BARCODE <character>: the barcode on the collection vial
-  #                     DNA_TRAY_CODE <character>: the barcode on the collection tray/card
-  #                     DNA_TRAY_WELL_CODE <double>: the unique number assigned to each postion in the collection tray/card for each individual(e.g postions A1-A10 = codes 1-10, )
-  #                     DNA_TRAY_WELL_POS <character>: the postion in the collection tray/card (e.g. A1, A2, B1, B2, etc.)
-  #                     CONTAINER_ARRAY_TYPE_ID <double>: the number code for the collection container (e.g. tray or card)    
-  #                     SillySource <double>: the original silly code and fish ID for each individual (e.g. KQUART06_1). When pulled from loki this will be the SILLY_CODE and FK_FISH_ID
-  #                               
-  #               Columns 20+
-  #                     The remaining columns in the object will be the scores for all loci in the LocusControl object. 
-  #                     Each locus will have a column for each dose. The columns will be named after the locus with a number added to the locus name after dose 1 (e.g. dose 1 = GTH2B-550; dose 2 = GTH2B-550.1) 
-  #
-  #
-  #   The tibbles will be named after the silly code with a .gcl extension (e.g. KQUART06.gcl)
-  #
-  #   If one or more *.gcl objects have no data for one or more loci, the function returns a tibble of loci with missing data for each *.gcl object.
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  
-  #
-  # Note~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   This function requires a LocusControl object. Run create_locuscontrol prior to this function.
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-  
   if(!exists("LocusControl")){
     
     stop("'LocusControl' not yet built.")
@@ -154,7 +87,7 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   
   options(java.parameters = "-Xmx10g")
   
-  url <- loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
+  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
   con <- RJDBC::dbConnect(GCLr::drv, url = url, user = username, password = password) #The database connection
   

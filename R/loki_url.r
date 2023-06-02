@@ -1,15 +1,19 @@
+
+#' Build URL to connect to LOKI
+#' 
+#' This function builds the URL to connect to LOKI and is called by other GCL functions that connect to LOKI via [DBI::dbConnect()].
+#'
+#' @note this function is used in the background
+#' 
+#' @return The URL string used by [DBI::dbConnect()] to connect to the Oracle cloud database (LOKI)
+#' 
+#' @aliases LOKI_URL.GCL
+#' 
+#' @export
+#' 
 loki_url <- function(test.db = FALSE){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  This function builds the URL to connect to LOKI and is called on by other GCL 
-  #  functions that connect to LOKI via DBI::dbConnect.
-  # 
-  #  Output:
-  #  The URL string used by DBI::dbConnect to connect to the Oracle cloud database (LOKI)
-  #
-  #  Written by Andy Barclay 4/15/19
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+
+
   if(test.db == TRUE){
     
     host <- "soaora6-scan.us1.ocm.s7134325.oraclecloudatcustomer.com"
@@ -37,4 +41,7 @@ loki_url <- function(test.db = FALSE){
   return(url)
   
 }
-  
+
+#' @rdname loki_url
+#' @export
+LOKI_URL.GCL <- loki_url  

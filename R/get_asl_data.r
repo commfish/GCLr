@@ -1,88 +1,53 @@
+#' Get ASL Data From Loki
+#'
+#' This function connects to Loki and pulls the fish information (ASL data) for each silly in sillyvec. This pulls the same information as the "ASL Import" report in OceanAK.
+#'
+#' @param sillyvec a character vector of silly codes
+#' 
+#' @param username your state user name
+#' 
+#' @param password your password used to access Loki. Contact Eric Lardizabal if you don't have a password for Loki.
+#' 
+#' @param file The file path, including .csv extension, for writing out a csv file of the output. If set to NULL, no file will be saved.
+#' 
+#' @param import.vars Do you only want the variables allowed for the ASL importer? (default: TRUE)
+#'
+#' @return If `import.vars = TRUE`, the function outputs a tibble containing the following variables:
+#'    \itemize{
+#'        \item \code{Collection ID}
+#'        \item \code{Fish ID}
+#'        \item \code{Freshwater Age}
+#'        \item \code{Ocean Age}
+#'        \item \code{Sex}
+#'        \item \code{Length}
+#'        \item \code{Weight}
+#'        \item \code{Scale Card Number}
+#'        \item \code{Scale Card Position}
+#'        \item \code{ASL Number}
+#'    }
+#' If `import.vars = FALSE`, a variable for `silly code` is added to the output tibble.
+#'
+#' @examples
+#' get_asl_data(sillyvec = c("PPORTCH21", "PBARABCR21"), username = "awbarclay", password = password, import.vars = FALSE, file = "C:/Users/awbarclay/Documents/R/test_fish_table.csv")
+#'
+#' @details
+#' The output of this function can be used for creating an import file for the Loki ASL Data Importer. The the importer requires that all columns are in the correct order and spelled correctly. The importer will not work if you include silly code in the import file.  When writing the import file, make sure it does not contain NAs When writing the import file, make sure it does not contain NAs. (see example below) # Also, when using readr::write_csv to write out the tissue import file, make sure to change the eol argument to from the default "\n" to "\r\n" or the importer
+#' Also, if you use [readr::write_csv()] to write out the tissue import file, make sure to change the eol argument to from the default `\n` to `\r\n` or the importer will give you an error message about the header names.  e.g.,  `import_file %>% write_csv(file = "ImportFile.csv", na = "", eol = "\r\n")` 
+#' This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
+#'
+#' @aliases ASL_Import.GCL
+#' 
+#' @export 
+
 get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars = TRUE){
  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  This function connects to Loki and pulls the fish information (ASL data) for each silly in sillyvec.
-  #  This pulls the same information as the "ASL Import" report in OceanAK.
-  #  
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   sillyvec - a character vector of silly codes
-  #
-  #   username - your state user name
-  #
-  #   password - your password used to access Loki - see Eric Lardizabal if you don't have a password for LOKI
-  #
-  #   file - the file path, including .csv extension, for writing out a csv file of the output. 
-  #
-  #   import.vars - logical; do you only want the variables allowed for the ASL importer?
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   If import.vars = TRUE, the function outputs a tibble containing the following variables: 
-  #   Collection ID, Fish ID, Freshwater Age, Ocean Age, Sex, Length, Weight, Scale Card Number, Scale Card Position, ASL Number
-  #
-  #   If import.vars = FALSE, a variable for silly code is added to the output tibble.
-  #
-  #   If file is supplied, the tibble is written to a csv file with NAs removed.
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  
-  #   password = "************"
-  #
-  #   source("~/R/Functions.R")# Load GCL functions; your path may differ.
-  #
-  #   get_asl_data(sillyvec = c("PPORTCH21", "PBARABCR21"), username = "awbarclay", password = password, import.vars = FALSE, file = "C:/Users/awbarclay/Documents/R/test_fish_table.csv") #This example includes silly code in output.
-  #
-  # Note~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  # The output of this function is can be used for creating an import file for the Loki ASL Data Importer. 
-  #
-  # The the importer requires that all columns are in the correct order and spelled correctly. The importer will not work if you include silly code in the import file.
-  #
-  # When writing the import file, make sure it does not contain NAs. (see example below) 
-  #
-  # Also, when using readr::write_csv to write out the tissue import file, make sure to change the eol argument to from the default "\n" to "\r\n" or the importer
-  # will give you an error message about the header names.  e.g.,  import_file %>% write_csv(file = "ImportFile.csv", na = "", eol = "\r\n")
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-  
-  
-  # This copies the "odbc8.jar" file to the R folder on your computer if it doesn't exist there. This file contains the java odbc drivers needed for RJDBC
-  
-  if(!file.exists(path.expand("~/R"))){
-    
-    dir <- path.expand("~/R")
-    
-    dir.create(dir)
-    
-    bool <- file.copy(from = "V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar", to = path.expand("~/R/ojdbc8.jar"))
-    
-  } else {
-    
-    if(!file.exists(path.expand("~/R/ojdbc8.jar"))){
-      
-      bool <- file.copy(from = "V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar", to = path.expand("~/R/ojdbc8.jar"))
-      
-    }
-    
-  }
-  
   start.time <- Sys.time() 
   
   options(java.parameters = "-Xmx10g")
   
-  if(file.exists("C:/Program Files/R/RequiredLibraries/ojdbc8.jar")) {
-    
-    drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = "C:/Program Files/R/RequiredLibraries/ojdbc8.jar", " ")#https://blogs.oracle.com/R/entry/r_to_oracle_database_connectivity    C:/app/awbarclay/product/11.1.0/db_1/jdbc/lib
-    
-  } else {
-    
-    drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = path.expand("~/R/ojdbc8.jar"), " ")
-    
-  }
+  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  url <- loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
-  
-  con <- RJDBC::dbConnect(drv, url = url, user = username, password = password) #The database connection
+  con <- RJDBC::dbConnect(GCLr::drv, url = url, user = username, password = password) #The database connection
   
   qry <- paste("SELECT * FROM AKFINADM.V_GEN_SAMPLED_FISH_TISSUE WHERE SILLY_CODE IN (", paste0("'", sillyvec, "'", collapse = ","), ")", sep = "") #Query the tissues table to get collection IDs. Need to see if Eric can add silly code to the fish table.
   
@@ -135,7 +100,7 @@ get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars 
   
   if(!is.null(file)){
     
-    write_csv(output, file, na = "", eol = "\r\n") # Write out a csv file without NAs
+    readr::write_csv(output, file, na = "", eol = "\r\n") # Write out a csv file without NAs
     
   }
   
@@ -148,3 +113,8 @@ get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars 
   return(output)
   
 }
+
+
+#' @rdname get_asl_data
+#' @export
+ASL_Import.GCL <- get_asl_data  
