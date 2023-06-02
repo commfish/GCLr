@@ -125,7 +125,7 @@ plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both"), 
         ggplot2::theme(legend.position = "none", strip.text.x = ggplot2::element_text(size = 16), panel.spacing.y = ggplot2::unit(3, "lines"))+
         ggplot2::xlab("True Proportion") +
         ggplot2::ylab("Posterior Mean Reporting Group Proportion") +
-        ggplot2::ggtitle(paste0("Baseline evaluation test results: ", meth), subtitle = paste0(summary$estimates$total_samps %>% unique() %>% ceiling(), " sample mixtures")) 
+        ggplot2::ggtitle(paste0("Baseline evaluation test results: ", meth), subtitle = paste0(summary$estimates$total_samps %>% unique() %>% base::ceiling(), " sample mixtures")) 
       
       print(plot)
       
@@ -158,7 +158,7 @@ plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both"), 
       ggplot2::theme(legend.position = "none", strip.text.x = ggplot2::element_text(size = 16), panel.spacing.y = ggplot2::unit(3, "lines"))+
       ggplot2::xlab("True Proportion") +
       ggplot2::ylab("Posterior Mean Reporting Group Proportion") +
-      ggplot2::ggtitle(paste0("Baseline evaluation test results: ", meth), subtitle = paste0(summary$estimates$total_samps %>% unique() %>% ceiling(), " sample mixtures"))
+      ggplot2::ggtitle(paste0("Baseline evaluation test results: ", meth), subtitle = paste0(summary$estimates$total_samps %>% unique() %>% base::ceiling(), " sample mixtures"))
     
     print(plot)
     

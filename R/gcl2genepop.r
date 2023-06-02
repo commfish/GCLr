@@ -116,7 +116,7 @@ gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, nco
     
   }else(np <- npops)
   
-  sillylist <- split(sillyvec, ceiling(seq_along(sillyvec)/np))
+  sillylist <- split(sillyvec, base::ceiling(seq_along(sillyvec)/np))
   
   nalleles <- LocusControl %>% 
     dplyr::filter(locusnames %in% loci) %>% 
