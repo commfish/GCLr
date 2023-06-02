@@ -32,7 +32,7 @@
 #'
 #' @details
 #' The output of this function can be used for creating an import file for the Loki ASL Data Importer. The the importer requires that all columns are in the correct order and spelled correctly. The importer will not work if you include silly code in the import file.  When writing the import file, make sure it does not contain NAs When writing the import file, make sure it does not contain NAs. (see example below) # Also, when using readr::write_csv to write out the tissue import file, make sure to change the eol argument to from the default "\n" to "\r\n" or the importer
-#' Also, if you use [readr::write_csv()] to write out the tissue import file, make sure to change the eol argument to from the default `\n` to `\r\n` or the importer will give you an error message about the header names.  e.g.,  `import_file %>% write_csv(file = "ImportFile.csv", na = "", eol = "\r\n")` 
+#' Also, if you use [readr::write_csv()] to write out the tissue import file, make sure to change the eol argument to from the default \code{\n} to \code{\r\n} or the importer will give you an error message about the header names.  e.g.,  `import_file %>% write_csv(file = "ImportFile.csv", na = "", eol = "\r\n")` 
 #' This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
 #'
 #' @aliases ASL_Import.GCL
