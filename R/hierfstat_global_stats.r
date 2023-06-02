@@ -30,12 +30,6 @@
 #'
 #' hierfstat_global_stats(levels = fstat.dat[,1:3], genotypes = fstat.dat[,-c(1:3)])
 #'
-#' @import magrittr
-#' @import hierfstat
-#' @import dplyr
-#' @import tibble
-#' @import purrr
-#' 
 #' @aliases HierFstats_global.GCL
 #' 
 #' @export

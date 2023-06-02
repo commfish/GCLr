@@ -23,14 +23,7 @@
 #'   
 #' @note This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
 #'   
-#' @import RJDBC
-#' @import magrittr
-#' @import tibble
-#' @import dplyr
-#' @import purrr
-#'
 #' @examples
-#' password <- "************"
 #' create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
 #'
 #' @aliases CreateLocusControl.GCL

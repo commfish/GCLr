@@ -4,12 +4,6 @@
 #' @param files A vector of CSV files that you want to combine, including the file extension.
 #'
 #' @aliases CombineConflictsWithPlateID.GCL.r
-#' @import tidyverse
-#' @importFrom readr read_csv
-#' @importFrom dplyr bind_rows rename left_join mutate filter
-#' @importFrom tidyr unite
-#' @importFrom purrr map
-#' @importFrom readr write_csv
 #' 
 #' @family QA scripts
 #' 

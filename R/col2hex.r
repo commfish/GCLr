@@ -4,12 +4,6 @@
 #' 
 #' @param color an R color name
 #' 
-#' @import grDevices
-#' @import dplyr
-#' @import magrittr
-#' @import tibble
-#' @import tidyr
-#' 
 #' @return a tibble containing the following variables: 
 #'          \itemize{
 #'              \item \code{col}: R color name

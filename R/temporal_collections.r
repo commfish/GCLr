@@ -30,10 +30,6 @@
 #' region <- Final_Pops %>% select(pop = order, region = region)
 #' temporal_collections(sillyvec = sillyvec, region = region, min.samps = 50, sep = ".")
 #'
-#' @import magrittr
-#' @import dplyr
-#' @import tibble
-#' 
 #' @aliases temporal_collections.GCL
 #' 
 #' @export 

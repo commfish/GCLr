@@ -65,16 +65,6 @@
 #'    tests <- sample_sizes %>% group_by(test_group, scenario) %>% summarize(test_group = test_group %>% unique(), scenario = scenario %>% unique(), .groups = "drop_last")
 #'    run_rubias_base_eval(tests = tests, group_names = Final_Pops$group %>% levels(), gen_start_col = 5, base.path = "rubias/baseline",mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = 8)
 #'    
-#' @import rubias
-#' @import magrittr
-#' @import dplyr
-#' @import tidyr
-#' @import fst
-#' @import parallel
-#' @import doParallel
-#' @import foreach
-#' @import readr
-#' 
 #' @aliases run_rubias_baseline_eval.GCL
 #'    
 #' @export

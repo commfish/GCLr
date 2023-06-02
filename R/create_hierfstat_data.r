@@ -18,13 +18,6 @@
 #' ncores <- 4
 #' create_hierfstat_data(sillyvec, region, pop, loci, ncores)
 #'
-#' @import magrittr
-#' @import dplyr
-#' @import tidyr
-#' @import purrr
-#' @import foreach
-#' @import doParallel
-#' 
 #' @aliases create_hierfstat_data.GCL
 #'
 #' @export
@@ -41,7 +34,7 @@ create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4
     
   }
   
-  if(sum(is.na(match(loci,LocusControl$locusnames)))){
+  if(sum(is.na(match(loci, LocusControl$locusnames)))){
     
     stop(paste("'", loci[is.na(match(loci,LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     

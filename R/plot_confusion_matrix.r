@@ -24,11 +24,6 @@
 #' groups <- baseline$repunit %>% unique()
 #' pops <- baseline$collection %>% unique()
 #' plot_confusion_matrix(confusion_matrix = ConfusionMatrices_out, group_names = groups, pop_names = NULL, plot = c("group_group", "pop_group", "pop_pop")[1], high_color = "darkblue", low_color = "lightblue", text_color = "yellow")
-#'
-#' @import magrittr
-#' @import ggplot2
-#' @import dplyr
-#' @import readr
 #' 
 #' @aliases plot_ConfusionMatrix.GCL
 #' 

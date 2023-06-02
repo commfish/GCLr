@@ -42,16 +42,6 @@
 #' sample_sizes <- base_eval_sample_sizes(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), groupvec = Final_Pops$group %>% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5)
 #' create_rubias_base_eval(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), test_groups = (Final_Pops$group %>% levels())[1:2], loci = loci80, groupvec = Final_Pops$group %>% as.numeric(), sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
 #'
-#' @import magrittr
-#' @import dplyr
-#' @import doRNG
-#' @import foreach
-#' @import doParallel
-#' @import parallel
-#' @import stringr
-#' @import fst
-#' @import readr
-#' 
 #' @aliases CreateRubiasBaselineEval.GCL
 #' 
 #' @export

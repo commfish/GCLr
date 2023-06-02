@@ -23,11 +23,6 @@
 #' detach()
 #' summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
 #'
-#' @import magrittr
-#' @import dplyr
-#' @import ggplot2 
-#' @import plotly 
-#' 
 #' @aliases Summarize_LD.GCL
 #' 
 #' @export

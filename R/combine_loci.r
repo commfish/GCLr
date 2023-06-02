@@ -16,11 +16,6 @@
 #' @details
 #' This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function. This function requires dplyr version 1.0.0 or higher.
 #'
-#' @import dplyr
-#' @import magrittr
-#' @import tidyr
-#' @import tidyselect
-#' 
 #' @aliases CombineLoci.GCL
 #'
 #' @export

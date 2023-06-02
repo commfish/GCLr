@@ -19,8 +19,6 @@
 #' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
 #' PWFST <- pairwise_fst(sillyvec = sillyvec31, loci = loci82, inputfile = "genepop/Susitna31pops82loci.txt", ncores = 8)
 #'
-#' @import genepop
-#' 
 #' @aliases PW_FST.GCL
 #'
 #' @export

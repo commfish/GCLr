@@ -42,7 +42,6 @@ This function connects to LOKI (GCL database) and creates a "LocusControl" objec
 This function requires an OJDBC driver object, which is an object in the GCLr package called \link{drv}.
 }
 \examples{
-password <- "************"
 create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
 
 }

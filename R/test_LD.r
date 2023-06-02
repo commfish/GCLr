@@ -30,17 +30,6 @@
 #'
 #' genepop::test_LD(genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 18)
 #'
-#' @import doParallel
-#' @import foreach
-#' @import fs
-#' @import genepop
-#' @import magrittr
-#' @import readr
-#' @import stringr
-#' @import tidyr
-#' @import tibble
-#' @import dplyr
-#' 
 #' @aliases Test_LD.GCL
 #' 
 #' @export

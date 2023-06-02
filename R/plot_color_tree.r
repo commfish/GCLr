@@ -36,8 +36,6 @@
 #' colortree <- add_tree_color(tree = FstTree, currentnames = FstTree$tip.label, treenames = FstTree$tip.label, groupvec = groupvec, regioncol = grcol)
 #' plot_color_tree(color.tree = colortree, rm.neg.branch = TRUE, type = "phylogram", scale = TRUE, show.tip.label = TRUE, edge.width = 3, adj = 0.02, cex = 0.7, font = 1, label.offset = 0.001, gen.dist = "FST")
 #'
-#' @import ape
-#' 
 #' @aliases PlotColorTree.GCL
 #' 
 #' @export

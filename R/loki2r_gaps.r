@@ -19,10 +19,6 @@
 #' 
 #' @aliases LOKI2R_GAPS.GCL
 #'
-#' @import RJDBC
-#' @import abind
-#' @import DBI
-#' 
 #' @export
 
 loki2r_gaps = function(sillyvec, username, password){

@@ -11,11 +11,6 @@
 #'
 #' @return A list of failure rates by SILLY, locus, plate, and project.
 #'
-#' @import dplyr
-#' @importFrom tidyr gather
-#' @importFrom plotly ggplotly
-#'
-#' @aliases failure_rate FailureRate.GCL.R
 #'
 #' @details
 #'   The [GCLr::failure_rate()] function calculates failure rates by SILLY, locus, plate, and project. It performs the following steps:
@@ -35,6 +30,8 @@
 #'
 #' @examples
 #' failure_rate(sillyvec = c("SILLY1", "SILLY2", "SILLY3"))
+#' 
+#' @aliases failure_rate FailureRate.GCL.R
 #' 
 #' @export
 
