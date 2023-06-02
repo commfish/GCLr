@@ -5,8 +5,8 @@ Authors@R:
     person("Andy", "Barclay", , "andy.barclay@alaska.gov", role = c("aut", "cre"))
 Description: Genetic analysis tools for baseline developement and genetic stock identification.
 Imports: tidyverse, ape, parallel, doParallel, RJDBC, lubridate, foreach, 
-         rubias, hierfstat, genepop, leaflet, mapview, plotly, rgdal, gplots, 
-         sf, leafpop, htmlwidgets, HardyWeinberg, grid, tools, abind,
+         rubias, hierfstat, genepop, mapview, plotly, gplots, 
+         htmlwidgets, HardyWeinberg, grid, tools, abind,
          janitor, plotly, outliers, openxlsx, writexl, lattice, reshape2, fst, 
          BiocManager, HDInterval, xlsx, coda, fs, magick, doRNG
 License: `use_gpl3_license()`
