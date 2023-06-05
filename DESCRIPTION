@@ -4,11 +4,41 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Andy", "Barclay", , "andy.barclay@alaska.gov", role = c("aut", "cre"))
 Description: Genetic analysis tools for baseline developement and genetic stock identification.
-Imports: tidyverse, ape, parallel, doParallel, RJDBC, lubridate, foreach, 
-         rubias, hierfstat, genepop, mapview, plotly, gplots, 
-         htmlwidgets, HardyWeinberg, grid, tools, abind,
-         janitor, plotly, outliers, openxlsx, writexl, lattice, reshape2, fst, 
-         BiocManager, HDInterval, xlsx, coda, fs, magick, doRNG
+Imports: 
+    tidyverse,
+    ape,
+    parallel,
+    doParallel,
+    RJDBC,
+    lubridate,
+    foreach,
+    rubias,
+    hierfstat,
+    genepop,
+    mapview,
+    plotly,
+    gplots,
+    htmlwidgets,
+    HardyWeinberg,
+    grid,
+    tools,
+    abind,
+    janitor,
+    plotly,
+    outliers,
+    openxlsx,
+    writexl,
+    lattice,
+    reshape2,
+    fst,
+    BiocManager,
+    HDInterval,
+    xlsx,
+    coda,
+    fs,
+    magick,
+    doRNG,
+    magrittr
 License: `use_gpl3_license()`
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -16,4 +46,3 @@ RoxygenNote: 7.2.3
 LazyData: true
 URL: https://github.com/commfish/GCLr
 Logo: man//figures//logo.png
-
