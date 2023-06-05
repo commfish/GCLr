@@ -107,7 +107,7 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
     if(unique(myploidy)==2){ 
       
       sel_var <- lapply(markerset, function(mkr){
-        c(mkr,paste0(mkr, ".1"))
+        c(mkr, paste0(mkr, ".1"))
         }) %>% unlist() #Setting up order of variable to unite so the markers are in the same order as markerset
       
       new.gcl <- my.gcl %>% 

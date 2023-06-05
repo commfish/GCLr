@@ -224,10 +224,10 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
     silly_df0 <- sillydata %>%
       dplyr::arrange(LOCUS) %>%
       tidyr::pivot_longer(cols = c("ALLELE_1", "ALLELE_2"), values_to = "Allele") %>% 
-      dplyr::mutate(scores_header = case_when(name == "ALLELE_2" ~ paste0(LOCUS, ".1"), 
+      dplyr::mutate(scores_header = dplyr::case_when(name == "ALLELE_2" ~ paste0(LOCUS, ".1"), 
                                               TRUE ~ LOCUS)) %>% 
       dplyr::select(-LOCUS, -name) %>% 
-      tidyr::pivot_wider(names_from = scores_header, values_from = Allele, names_sep="" ) %>% 
+      tidyr::pivot_wider(names_from = scores_header, values_from = Allele, names_sep = "" ) %>% 
       dplyr::mutate(
         CAPTURE_DATE = lubridate::as_date(CAPTURE_DATE),
         END_CAPTURE_DATE = lubridate::as_date(END_CAPTURE_DATE),

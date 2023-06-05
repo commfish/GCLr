@@ -100,7 +100,7 @@ get_tissue_data <- function(sillyvec, username, password, file = NULL, import.va
   
   if(!is.null(file)){
     
-    write_csv(output, file, na = "") # Write out a csv file without NAs
+    readr::write_csv(output, file, na = "") # Write out a csv file without NAs
     
   }
   

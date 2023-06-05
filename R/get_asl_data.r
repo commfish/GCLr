@@ -56,8 +56,8 @@ get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars 
   qry <- paste("SELECT * FROM AKFINADM.V_GEN_SAMPLED_FISH_TISSUE WHERE SILLY_CODE IN (", paste0("'", sillyvec, "'", collapse = ","), ")", sep = "") #Query the tissues table to get collection IDs. Need to see if Eric can add silly code to the fish table.
   
   silly_collection_ID <- RJDBC::dbGetQuery(con, qry) %>% 
-    select(SILLY_CODE, FK_COLLECTION_ID) %>% 
-    distinct()#This gets the collection IDs.
+    dplyr::select(SILLY_CODE, FK_COLLECTION_ID) %>% 
+    dplyr::distinct()#This gets the collection IDs.
   
   collection_IDs <- silly_collection_ID$FK_COLLECTION_ID
   
@@ -68,7 +68,7 @@ get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars 
   discon <- RJDBC::dbDisconnect(con) # Disconnect from Loki
   
   dataAll <- dataAll0 %>% 
-    left_join(silly_collection_ID, by = "FK_COLLECTION_ID")# Adds silly code to ASL data
+    dplyr::left_join(silly_collection_ID, by = "FK_COLLECTION_ID")# Adds silly code to ASL data
   
   if(import.vars == TRUE){
     

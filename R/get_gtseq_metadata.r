@@ -28,8 +28,8 @@ get_gtseq_metadata <- function(project_name, dir, file_name, username, password,
   # Recording function start time
   start.time <- Sys.time()
   
-  # Checking to make sure a file path is supplied
-  if(!exists("path")|!length(grep("*.csv",path,value=FALSE))==1){stop("The user must supply a file path with csv extension for writing out the metadata table.")}
+  # Checking to make sure dir is supplied
+  if(!exists("dir")|!length(grep("*.csv", filename, value = FALSE)) == 1){stop("The user must supply a file path with csv extension for writing out the metadata table.")}
   
   # Setting default java.parameters
   options(java.parameters = "-Xmx10g")
@@ -48,7 +48,7 @@ get_gtseq_metadata <- function(project_name, dir, file_name, username, password,
   # Pull genotypes and concatenate alleles into one column with "/" separator
   dataAll0 <- RJDBC::dbGetQuery(con, gnoqry) %>% 
     dplyr::as_tibble() %>% 
-      dplyr::filter(LAB_PROJECT_NAME == project_name)
+    dplyr::filter(LAB_PROJECT_NAME == project_name)
 
   # Disconnect from LOKI
   discon <- RJDBC::dbDisconnect(con)
@@ -66,7 +66,7 @@ get_gtseq_metadata <- function(project_name, dir, file_name, username, password,
   
   # Write data to an excel csv file with no more than 1,048,575 rows
   loc <- dataAll %>% 
-    pull(LOCUS) %>% 
+    dplyr::pull(LOCUS) %>% 
     unique()
   
   n_indiv <- dim(dataAll %>% filter(LOCUS == loc[1]))[1]
@@ -92,7 +92,7 @@ get_gtseq_metadata <- function(project_name, dir, file_name, username, password,
   }
 
   # Open CSV file in excel if open.file is set to TRUE
-  if(open.file == TRUE){shell(path, wait = FALSE)}
+  if(open.file == TRUE){shell(paste(dir,"/", file_name, "_", i, ".csv", sep=''), wait = FALSE)}
   
   # Calculate the time it took the function to pull and write data and print time to console
   stop.time <- Sys.time() 
