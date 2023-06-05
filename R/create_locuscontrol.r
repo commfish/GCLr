@@ -42,7 +42,7 @@ create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username,
   
   url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  drvpath <- system.file("inst/extdata", "ojdbc8.jar", package="GCLr")
+  drvpath <- system.file("extdata", "ojdbc8.jar", package = "GCLr")
   
   drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = drvpath, " ")
   
