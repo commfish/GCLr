@@ -27,9 +27,13 @@ loki2r_gaps = function(sillyvec, username, password){
   
   options(java.parameters = "-Xmx10g")
   
-  url <- GCLr::loki_url()
+  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  con <- dbConnect(GCLr::drv, url = url, user = username, password = password)
+  drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
+  
+  drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = drvpath, " ")
+  
+  con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   markersuite <- "GAPS_Chinook_uSATs"

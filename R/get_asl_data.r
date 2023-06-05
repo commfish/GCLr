@@ -47,7 +47,11 @@ get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars 
   
   url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  con <- RJDBC::dbConnect(GCLr::drv, url = url, user = username, password = password) #The database connection
+  drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
+  
+  drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = drvpath, " ")
+  
+  con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
   
   qry <- paste("SELECT * FROM AKFINADM.V_GEN_SAMPLED_FISH_TISSUE WHERE SILLY_CODE IN (", paste0("'", sillyvec, "'", collapse = ","), ")", sep = "") #Query the tissues table to get collection IDs. Need to see if Eric can add silly code to the fish table.
   

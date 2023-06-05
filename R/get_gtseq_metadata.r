@@ -31,41 +31,17 @@ get_gtseq_metadata <- function(project_name, dir, file_name, username, password,
   # Checking to make sure a file path is supplied
   if(!exists("path")|!length(grep("*.csv",path,value=FALSE))==1){stop("The user must supply a file path with csv extension for writing out the metadata table.")}
   
-  
-  # Making sure the ojdbc jar file exists on the users C drive. 
-  # If no jar file exists it will be copied from the v drive to the appropriate location on the users C drive.
-  if(!file.exists(path.expand("~/R"))){
-    
-    dir<-path.expand("~/R")
-    dir.create(dir)
-    bool <- file.copy(from="V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar",to=path.expand("~/R/ojdbc8.jar"))
-    
-  } else {
-    
-    if(!file.exists(path.expand("~/R/ojdbc8.jar"))){
-      bool <- file.copy(from="V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar",to=path.expand("~/R/ojdbc8.jar"))
-      
-    }
-  }
-  
   # Setting default java.parameters
   options(java.parameters = "-Xmx10g")
   
-  if(file.exists("C:/Program Files/R/RequiredLibraries/ojdbc8.jar")) {
-    
-    drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath="C:/Program Files/R/RequiredLibraries/ojdbc8.jar", " ")#https://blogs.oracle.com/R/entry/r_to_oracle_database_connectivity    C:/app/awbarclay/product/11.1.0/db_1/jdbc/lib
-    
-  } else {
-    
-    drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath=path.expand("~/R/ojdbc8.jar"), " ")
-    
-  }
+  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  url <- loki_url()
+  drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
   
-  # Connect to LOKI
+  drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = drvpath, " ")
+  
   con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
-
+  
   # Creating java query
   gnoqry <- paste0("SELECT LAB_PROJECT_ID, LAB_PROJECT_NAME, SILLY_CODE, FK_FISH_ID, LOCUS, POSITIONS, HAPLO_ALLELES, HAPLO_COUNTS, GENOTYPE, SNP_ALLELES, PROBES, FWD_PRIMER_SEQ, DNA_PLATE_ID, DNA_PLATE_WELL_POS FROM AKFINADM.R_GTSEQ_GENO_METADATA GENO WHERE LAB_PROJECT_NAME IN (", paste0("'", project_name, "'", collapse = ","), ")") #The view for this query (AKFINADM.R_GTSEQ_GENO_METADATA) was created for this function on 5/12/20.
   

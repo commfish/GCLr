@@ -83,7 +83,11 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   
   url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  con <- RJDBC::dbConnect(GCLr::drv, url = url, user = username, password = password) #The database connection
+  drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
+  
+  drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = drvpath, " ")
+  
+  con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
   
   loci <- LocusControl$locusnames
   
