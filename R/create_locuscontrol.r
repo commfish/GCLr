@@ -32,7 +32,7 @@
 
 create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username, password){
   
-  if(exists("LocusControl", where = 1)){
+  if(exists("LocusControl", where = 1)) {
     
     stop("LocusControl already exists")
     
@@ -42,10 +42,10 @@ create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username,
   
   url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  drvpath <- system.file("extdata", "ojdbc8.jar", package = "GCLr")
+  drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
   
   drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = drvpath, " ")
-  
+   
   con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
   
   # Query by 'markersuite', else query by 'locusnames'
