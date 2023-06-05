@@ -19,11 +19,11 @@
 #' @export
 col2hex <- function(color){
   
-  c <- grDevices::col2rgb(color)
+  myc <- grDevices::col2rgb(color)
   
-  cbind(col, sprintf("#%02X%02X%02X", c[1], c[2], c[3]), sprintf("%03d %03d %03d", c[1], c[2], c[3])) %>% 
-    tibble::as_tibble() %>% 
-    dplyr::rename(hex = V2) %>%
-    tidyr::separate(V3, into = c("r", "g", "b"), sep = " ")
+  cbind(col = color, sprintf("#%02X%02X%02X", myc[1], myc[2], myc[3]), sprintf("%03d %03d %03d", myc[1], myc[2], myc[3])) %>% 
+    tibble::as_tibble(.name_repair = "universal") %>% 
+    dplyr::rename(hex = ...2) %>%
+    tidyr::separate(...3, into = c("r", "g", "b"), sep = " ")
   
 }
