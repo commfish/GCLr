@@ -24,19 +24,15 @@
 
 create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4){
   
-  if (match.call()[[1]] %in% c("create_hierfstat_data.GCL")) {
-    warning("The function name 'create_hierfstat_data.GCL' is deprecated. Please use 'create_hierfstat_data' instead.")
-  }
-
   if(!exists("LocusControl")){
     
     stop("'LocusControl' not yet built.")
     
   }
   
-  if(sum(is.na(match(loci, LocusControl$locusnames)))){
+  if(sum(is.na(match(loci, LocusControl$locusnames))) > 0){
     
-    stop(paste("'", loci[is.na(match(loci,LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    stop(paste("'", loci[is.na(match(loci, LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
   
@@ -69,6 +65,8 @@ create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4
   cl <- parallel::makePSOCKcluster(ncores)
   
   doParallel::registerDoParallel(cl, cores = ncores)  
+  
+  `%dopar%` <- foreach::`%dopar%`
   
   output <- foreach::foreach(silly = sillyvec, .packages = c("tidyverse")) %dopar% {
     

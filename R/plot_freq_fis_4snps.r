@@ -63,7 +63,6 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
 
   }
   
-  
   if(ncores > parallel::detectCores()) {ncores = parallel::detectCores()}
 
   ploidy <- LocusControl$ploidy[loci]
@@ -105,6 +104,8 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
   cl <- parallel::makePSOCKcluster(ncores)
   
   doParallel::registerDoParallel(cl, cores = ncores)  
+  
+  `%dopar%` <- foreach::`%dopar%`
   
   #Start parallel loop
   HWE_df <- foreach::foreach(silly = sillyvec, .export = "LocusControl", .packages = c("tidyverse", "HardyWeinberg")) %dopar% {

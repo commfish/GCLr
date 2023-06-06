@@ -142,6 +142,9 @@ gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, nco
     doParallel::registerDoParallel(cl, cores = ncores)  
     
     # multicore loop pop scores
+    
+    `%dopar%` <- foreach::`%dopar%`
+    
     scores_all <- foreach::foreach(silly = my.sillys, .packages = c("tidyverse", "tidyselect")) %dopar% {
       
       new.gcl <- my.gcl[[silly]]

@@ -87,6 +87,8 @@ test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, 
   
   doParallel::registerDoParallel(cl) 
   
+  `%dopar%` <- foreach::`%dopar%`
+  
   LDout <- foreach::foreach(f = genepopFiles, .packages ="magrittr", .export = c("read_genepop_dis")) %dopar% { 
     
     setwd(original_directory) # set the original WD at beginning of each loop.

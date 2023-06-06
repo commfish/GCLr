@@ -38,13 +38,11 @@ gcl2fstat <- function(sillyvec, loci, path, ncores = 4){
   }
   
   
-  if(sum(is.na(match(loci,LocusControl$locusnames)))){
+  if(sum(is.na(match(loci, LocusControl$locusnames)))){
     
-    stop(paste("'",loci[is.na(match(loci,LocusControl$locusnames))],"' from argument 'loci' not found in 'LocusControl' object!!!",sep=""))
+    stop(paste("'", loci[is.na(match(loci,LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
-  
-  
   
   if(ncores > parallel::detectCores()) {
     
@@ -75,6 +73,8 @@ gcl2fstat <- function(sillyvec, loci, path, ncores = 4){
   cl <- parallel::makePSOCKcluster(ncores)
   
   doParallel::registerDoParallel(cl, cores = ncores)  
+  
+  `%dopar%` <- foreach::`%dopar%`
   
   scores_all <- foreach::foreach(silly = sillyvec, .packages = c("tidyverse")) %dopar% {
     

@@ -76,8 +76,8 @@ gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, nc
     dplyr::bind_rows(.id = "locus")
   
   nalleles <- LocusControl %>% 
-    dplyr:: filter(locusnames%in%loci) %>% 
-    dplyr:: pull(nalleles) %>% 
+    dplyr::filter(locusnames%in%loci) %>% 
+    dplyr::pull(nalleles) %>% 
     purrr::set_names(loci)
   
   nloci <- length(loci)
@@ -151,6 +151,8 @@ gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, nc
   cl <- parallel::makePSOCKcluster(ncores)
   
   doParallel::registerDoParallel(cl, cores = ncores)  
+  
+  `%dopar%` <- foreach::`%dopar%`
   
   scores_all <- foreach::foreach(silly = sillyvec, .packages = c("tidyverse", "tidyselect")) %dopar% {
     

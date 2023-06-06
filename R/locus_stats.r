@@ -29,13 +29,16 @@ locus_stats <- function(sillyvec, loci, ncores = 4, ...){
   
   unused_args <- list(...)
   
-  if (names(unused_args) %in% c("fstatdir", "dir")){ 
+  if (!length(unused_args) == 0){ 
     
-    warning("This function no longer writes out an FSTAT .dat file; therefore; the 'fstatdir' and 'dir' arguemnts are no longer used. 
+    if(names(unused_args) %in% c("fstatdir", "dir")){
+      
+      warning("This function no longer writes out an FSTAT .dat file; therefore; the 'fstatdir' and 'dir' arguemnts are no longer used. 
             Use gcl2fstat to produce an FSTAT file if needed.")
+      
+      }
     
     }
-   
   
   if(!exists("LocusControl")) {
     
@@ -43,8 +46,7 @@ locus_stats <- function(sillyvec, loci, ncores = 4, ...){
     
   }
   
-  
-  if(ncores > detectCores()) {
+  if(ncores > parallel::detectCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
     
@@ -54,7 +56,7 @@ locus_stats <- function(sillyvec, loci, ncores = 4, ...){
   
   ploidy <- LocusControl$ploidy[loci]
   
-  dat <- create_hierfstat_data(sillyvec = sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = ncores)
+  dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = ncores)
 
   cl <- parallel::makePSOCKcluster(ncores)
   
@@ -62,6 +64,9 @@ locus_stats <- function(sillyvec, loci, ncores = 4, ...){
   
   #Get variance components
   #Start parallel loop
+  
+  `%dopar%` <- foreach::`%dopar%`
+  
   MyVC <- foreach::foreach(locus = loci, .packages = "hierfstat") %dopar% {
     
     diploid <- ploidy[locus]==2

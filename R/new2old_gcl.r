@@ -101,6 +101,8 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
   
   doParallel::registerDoParallel(cl, cores = ncores)  
   
+  `%dopar%` <- foreach::`%dopar%`
+  
   gcls <- foreach::foreach(silly = sillyvec_, .packages = c("tidyverse", "janitor"), .export = "LocusControl") %dopar% {
     
     my.gcl <- all.gcl[[silly]]

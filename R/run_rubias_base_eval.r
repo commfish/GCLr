@@ -83,6 +83,8 @@ run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.pa
   
   doParallel::registerDoParallel(cl, cores = ncores)
   
+  `%dopar%` <- foreach::`%dopar%`
+  
   foreach::foreach(g = test_groups, .export = "run_rubias_mix", .packages = c("tidyverse", "rubias", "readr")) %dopar% {
     
     scenario_names = tests %>% 
