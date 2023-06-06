@@ -99,6 +99,8 @@ create_rubias_base_eval <- function(sillyvec, group_names, loci, groupvec, sampl
   
   doRNG::registerDoRNG(seed = seed, once = TRUE) # This sets the seed for the %dorng% loop.
     
+  `%dorng%` <- doRNG::`%dorng%`
+  
   foreach::foreach(g = test_groups, .packages = c("tidyverse", "rubias")) %dorng% {
     
     #Test group scenarios
