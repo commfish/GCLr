@@ -118,9 +118,10 @@ get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars 
   
 }
 
-#' @rdname ""
 #' @export
 ASL_Import.GCL <- function(...){
+  
+  .Deprecated("myNewFun")
   
   get_asl_data(...)
   
