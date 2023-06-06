@@ -121,4 +121,8 @@ get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars 
 
 #' @rdname get_asl_data
 #' @export
-ASL_Import.GCL <- get_asl_data  
+ASL_Import.GCL <- function(...){
+  
+  get_asl_data(...)
+  
+}
