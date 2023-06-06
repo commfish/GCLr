@@ -3,6 +3,7 @@
 export("%>%")
 export(ASL_Import.GCL)
 export(BaselineEvalSampleSizes.GCL)
+export(CombineConflictsWithPlateID.GCL)
 export(CombineLoci.GCL)
 export(ConfusionMatrices.GCL)
 export(CreateLocusControl.GCL)

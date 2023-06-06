@@ -2,10 +2,12 @@
 % Please edit documentation in R/combine_conflicts.r
 \name{combine_conflicts}
 \alias{combine_conflicts}
-\alias{CombineConflictsWithPlateID.GCL.r}
+\alias{CombineConflictsWithPlateID.GCL}
 \title{Combine QC Conflict Reports and Add PLATE_ID Column}
 \usage{
 combine_conflicts(files)
+
+CombineConflictsWithPlateID.GCL(files)
 }
 \arguments{
 \item{files}{A vector of CSV files that you want to combine, including the file extension.}
