@@ -35,8 +35,6 @@
 #' Also, if you use [readr::write_csv()] to write out the tissue import file, make sure to change the eol argument to from the default \verb{\n} to \verb{\r\n} or the importer will give you an error message about the header names.  e.g.,  \verb{import_file %>% write_csv(file = "ImportFile.csv", na = "", eol = "\r\n")} 
 #' This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
 #'
-#' @aliases ASL_Import.GCL
-#' 
 #' @export 
 
 get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars = TRUE){
@@ -118,11 +116,6 @@ get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars 
   
 }
 
-
 #' @rdname get_asl_data
-#' @export
-ASL_Import.GCL <- function(...){
-  
-  get_asl_data(...)
-  
-}
+#' @aliases ASL_Import.GCL
+#' @name get_asl_data
