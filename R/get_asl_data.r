@@ -123,6 +123,6 @@ ASL_Import.GCL <- function(...){
   
   .Deprecated("get_asl_data")
   
-  get_asl_data(...)
+  get_asl_data(...) 
   
 }
