@@ -7,7 +7,7 @@
 \usage{
 get_asl_data(sillyvec, username, password, file = NULL, import.vars = TRUE)
 
-ASL_Import.GCL(sillyvec, username, password, file = NULL, import.vars = TRUE)
+ASL_Import.GCL(...)
 }
 \arguments{
 \item{sillyvec}{a character vector of silly codes}
