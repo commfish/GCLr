@@ -6,8 +6,6 @@
 \title{Get ASL Data From Loki}
 \usage{
 get_asl_data(sillyvec, username, password, file = NULL, import.vars = TRUE)
-
-ASL_Import.GCL(...)
 }
 \arguments{
 \item{sillyvec}{a character vector of silly codes}
@@ -48,4 +46,3 @@ This function requires an OJDBC driver object, which is an object in the GCLr pa
 get_asl_data(sillyvec = c("PPORTCH21", "PBARABCR21"), username = "awbarclay", password = password, import.vars = FALSE, file = "C:/Users/awbarclay/Documents/R/test_fish_table.csv")
 
 }
-\keyword{internal}
