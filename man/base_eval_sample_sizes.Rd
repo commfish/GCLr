@@ -14,16 +14,6 @@ base_eval_sample_sizes(
   maxprop = 0.5,
   seed = 56
 )
-
-BaselineEvalSampleSizes.GCL(
-  sillyvec,
-  group_names,
-  groupvec,
-  mixsize,
-  scenarios = round(seq(0.01, 1, 0.01), 2),
-  maxprop = 0.5,
-  seed = 56
-)
 }
 \arguments{
 \item{sillyvec}{a character vector of silly codes without the ".gcl" extension (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART10")).}

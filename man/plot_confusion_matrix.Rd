@@ -14,16 +14,6 @@ plot_confusion_matrix(
   low_color = "#56B1F7",
   text_color = "yellow"
 )
-
-plot_ConfusionMatrix.GCL(
-  confusion_matrix,
-  plot = c("group_group", "pop_group", "pop_pop")[1],
-  group_names = NULL,
-  pop_names = NULL,
-  high_color = "#132B43",
-  low_color = "#56B1F7",
-  text_color = "yellow"
-)
 }
 \arguments{
 \item{confusion_matrix}{a list of confusion matrix tibble(s) produced by \code{\link[=confusion_matrix]{confusion_matrix()}}}

@@ -6,8 +6,6 @@
 \title{Create GCL Objects (GAPS)}
 \usage{
 loki2r_gaps(sillyvec, username, password)
-
-LOKI2R_GAPS.GCL(sillyvec, username, password)
 }
 \arguments{
 \item{sillyvec}{Vector of silly codes to pull from LOKI.}
@@ -25,7 +23,7 @@ This function connects to LOKI and creates a ".gcl" object for each silly code i
 \details{
 This function requires the R package "RJDBC" for connecting to LOKI.
 It connects to LOKI using the provided \code{username} and \code{password}, and retrieves genotypes and sample attributes for each silly code in \code{sillyvec}.
-The genotypes and attributes are stored in separate "*.gcl" objects named after each silly code. This function requires an OJDBC driver object, which is an object in the GCLr package called \link{drv}.
+The genotypes and attributes are stored in separate "*.gcl" objects named after each silly code.
 }
 \examples{
 sillyvec <- c("KQUART06", "KQUART08", "KQUART09")

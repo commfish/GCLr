@@ -12,14 +12,6 @@ plot_baseline_eval(
   test_groups = NULL,
   group_colors = NULL
 )
-
-plot_baseline_eval_summary.GCL(
-  summary,
-  file,
-  method = c("MCMC", "PB", "both"),
-  test_groups = NULL,
-  group_colors = NULL
-)
 }
 \arguments{
 \item{summary}{A baseline evaluation summary list produced by \code{\link[=summarize_rubias_baseline_eval]{summarize_rubias_baseline_eval()}}.}

@@ -13,15 +13,6 @@ test_LD(
   iterations = 5000,
   ncores = parallel::detectCores() - 1
 )
-
-Test_LD.GCL(
-  path,
-  genepopFiles,
-  dememorizations = 10000,
-  batches = 100,
-  iterations = 5000,
-  ncores = parallel::detectCores() - 1
-)
 }
 \arguments{
 \item{path}{The folder where the \code{genepop} files are located and where the results will be written}

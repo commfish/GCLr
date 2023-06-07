@@ -6,8 +6,6 @@
 \title{Compute global hierarchical F-statistics and variance components.}
 \usage{
 hierfstat_global_stats(levels, genotypes)
-
-HierFstats_global.GCL(levels, genotypes)
 }
 \arguments{
 \item{levels}{A data frame containing the different levels (factors) from the outermost (e.g., region) to the innermost before the individual.}

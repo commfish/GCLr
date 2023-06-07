@@ -6,8 +6,6 @@
 \title{Combine QC Conflict Reports and Add PLATE_ID Column}
 \usage{
 combine_conflicts(files)
-
-CombineConflictsWithPlateID.GCL(files)
 }
 \arguments{
 \item{files}{A vector of CSV files that you want to combine, including the file extension.}

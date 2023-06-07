@@ -28,30 +28,6 @@ run_rubias_base_eval(
   ncores = 4,
   file_type = c("fst", "csv")[1]
 )
-
-run_rubias_baseline_eval.GCL(
-  tests,
-  group_names,
-  gen_start_col = 5,
-  base.path = "rubias/baseline",
-  mix.path = "rubias/mixture",
-  out.path = "rubias/output",
-  method = "MCMC",
-  alle_freq_prior = list(const_scaled = 1),
-  pi_prior = NA,
-  pi_init = NULL,
-  reps = 25000,
-  burn_in = 5000,
-  pb_iter = 100,
-  prelim_reps = NULL,
-  prelim_burn_in = NULL,
-  sample_int_Pi = 10,
-  sample_theta = TRUE,
-  pi_prior_sum = 1,
-  seed = 56,
-  ncores = 4,
-  file_type = c("fst", "csv")[1]
-)
 }
 \arguments{
 \item{tests}{a tibble produced by \code{\link[=base_eval_sample_sizes]{base_eval_sample_sizes()}} containing \code{test_group} and \code{scenario}}

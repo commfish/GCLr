@@ -6,13 +6,6 @@
 \title{Create LocusControl Object}
 \usage{
 create_locuscontrol(markersuite = NULL, locusnames = NULL, username, password)
-
-CreateLocusControl.GCL(
-  markersuite = NULL,
-  locusnames = NULL,
-  username,
-  password
-)
 }
 \arguments{
 \item{markersuite}{The pre-defined name in LOKI for the set of markers for which you want genotypes (e.g., markersuite="KenaiChinook2010_40SNPs"). This set must be pre-defined in LOKI.}
@@ -37,9 +30,6 @@ The tibble will be named "LocusControl" and assigned to your current workspace.
 }
 \description{
 This function connects to LOKI (GCL database) and creates a "LocusControl" object.
-}
-\note{
-This function requires an OJDBC driver object, which is an object in the GCLr package called \link{drv}.
 }
 \examples{
 create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)

@@ -6,8 +6,6 @@
 \title{Convert New Style "*.gcl" objects to Old Style}
 \usage{
 new2old_gcl(sillyvec, save_new = FALSE, ncores = 4)
-
-new2old_gcl.GCL(sillyvec, save_new = FALSE, ncores = 4)
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes with associated *.gcl objects that need to be converted}

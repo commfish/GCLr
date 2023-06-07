@@ -19,21 +19,6 @@ create_rubias_base_eval(
   ncores = 4,
   file_type = c("fst", "csv")[1]
 )
-
-CreateRubiasBaselineEval.GCL(
-  sillyvec,
-  group_names,
-  loci,
-  groupvec,
-  sample_sizes,
-  test_groups = group_names,
-  prprtnl = FALSE,
-  base.path = "rubias/baseline",
-  mix.path = "rubias/mixture",
-  seed = 123,
-  ncores = 4,
-  file_type = c("fst", "csv")[1]
-)
 }
 \arguments{
 \item{sillyvec}{a vector of silly codes without the ".gcl" extension (e.g., sillyvec <- c("KQUART06","KQUART08","KQUART10"))}

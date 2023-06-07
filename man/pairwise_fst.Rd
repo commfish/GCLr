@@ -6,8 +6,6 @@
 \title{Create Pairwise Fst Matrix}
 \usage{
 pairwise_fst(sillyvec, loci, inputfile, popnames = NULL, ncores = 4)
-
-PW_FST.GCL(sillyvec, loci, inputfile, popnames = NULL, ncores = 4)
 }
 \arguments{
 \item{sillyvec}{a vector of silly codes without the ".gcl" extension (e.g., sillyvec <- c("KQUART06", "KQUART08", "KQUART10"))}

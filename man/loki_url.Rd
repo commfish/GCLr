@@ -6,8 +6,6 @@
 \title{Build URL to connect to LOKI}
 \usage{
 loki_url(test.db = FALSE)
-
-LOKI_URL.GCL(test.db = FALSE)
 }
 \value{
 The URL string used by \code{\link[DBI:dbConnect]{DBI::dbConnect()}} to connect to the Oracle cloud database (LOKI)
@@ -18,3 +16,4 @@ This function builds the URL to connect to LOKI and is called by other GCL funct
 \note{
 this function is used in the background
 }
+\keyword{internal}

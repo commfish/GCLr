@@ -19,21 +19,6 @@ plot_color_tree(
   gen.dist = "FST",
   ...
 )
-
-PlotColorTree.GCL(
-  color.tree,
-  rm.neg.branch = TRUE,
-  type = "phylogram",
-  scale = TRUE,
-  show.tip.label = TRUE,
-  edge.width = 3,
-  adj = NULL,
-  cex = 1,
-  font = 1,
-  label.offset = 0,
-  gen.dist = "FST",
-  ...
-)
 }
 \arguments{
 \item{color.tree}{a color tree object created with \code{\link[=add_tree_color]{add_tree_color()}}.}

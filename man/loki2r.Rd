@@ -12,14 +12,6 @@ loki2r(
   test_type = c("SNP", "GTSNP", "MSAT")[1],
   include_missing = FALSE
 )
-
-LOKI2R.GCL(
-  sillyvec,
-  username,
-  password,
-  test_type = c("SNP", "GTSNP", "MSAT")[1],
-  include_missing = FALSE
-)
 }
 \arguments{
 \item{sillyvec}{a character vector of silly codes without the .gcl extension.}
@@ -76,7 +68,7 @@ This function assigns a tibble with the following columns for each silly:
 This function connects to LOKI and creates a .gcl object for each silly in \code{sillyvec} containing genotypes for each locus in LocusControl$locusnames.The default for this function is to only include fish that have been genotyped for all loci in \code{LocusControl$locusnames}; however, the function will include all fish when include_missing = TRUE, which is not recommended or needed for most analyses. If a silly has no fish with genotypes for the loci in \code{LocusControl}, no object will be created and a message will appear listing the sillys that had no data.
 }
 \note{
-This function requires a LocusControl object. Run \code{\link[=create_locuscontrol]{create_locuscontrol()}} prior to this function. The function also requires an OJDBC driver object, which is an object in the GCLr package called \link{drv}.
+This function requires a LocusControl object. Run \code{\link[=create_locuscontrol]{create_locuscontrol()}} prior to this function.
 }
 \examples{
   create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username ="awbarclay", password = .password)#Locus control

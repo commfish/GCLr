@@ -3,18 +3,9 @@
 \name{read_proj_geno}
 \alias{read_proj_geno}
 \alias{read_project_genotypes.GCL.R}
-\alias{read_project_genotypes.GCL}
 \title{Read Project Genotypes}
 \usage{
 read_proj_geno(
-  project_name = NULL,
-  sillyvec = NULL,
-  loci = NULL,
-  username,
-  password
-)
-
-read_project_genotypes.GCL(
   project_name = NULL,
   sillyvec = NULL,
   loci = NULL,
@@ -46,7 +37,7 @@ Warning: Genotypes (pre-October 2016) may not exist in the LOKI lookup table wit
 }
 \details{
 This function pulls project genotypes from LOKI database to create "slim" .gcl objects for each silly, along with the LocusControl for all loci used in the project.
-The function checks the combination of arguments to ensure the correct usage. This function requires an OJDBC driver object, which is an object in the GCLr package called \link{drv}.
+The function checks the combination of arguments to ensure the correct usage.
 }
 \examples{
 read_proj_geno(project_name = c("P014", "P015", "P016"), sillyvec = c("SCIMA18", "SCIMA17"), 

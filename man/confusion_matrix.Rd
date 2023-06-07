@@ -10,12 +10,6 @@ confusion_matrix(
   gen_start_col = 5,
   output = c("group_group", "pop_group", "pop_pop")[1]
 )
-
-ConfusionMatrices.GCL(
-  reference,
-  gen_start_col = 5,
-  output = c("group_group", "pop_group", "pop_pop")[1]
-)
 }
 \arguments{
 \item{reference}{A rubias baseline object created by \code{\link[=create_rubias_base]{create_rubias_base()}}.}

@@ -6,8 +6,6 @@
 \title{Get Temporal Collections for Hierarchical ANOVA}
 \usage{
 temporal_collections(sillyvec, region = NULL, min.samps = 50, sep = ".")
-
-temporal_collections.GCL(sillyvec, region = NULL, min.samps = 50, sep = ".")
 }
 \arguments{
 \item{sillyvec}{a vector of pooled silly codes (a.k.a. pooled pops) without the ".gcl" extension}

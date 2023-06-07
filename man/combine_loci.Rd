@@ -6,8 +6,6 @@
 \title{Combine Loci}
 \usage{
 combine_loci(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1])
-
-CombineLoci.GCL(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1])
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes.}

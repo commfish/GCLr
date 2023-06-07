@@ -15,17 +15,6 @@ plot_quick_tree(
   regioncol = NULL,
   cex = 1
 )
-
-Plot_QuickFSTtree.GCL(
-  sillyvec,
-  loci,
-  inputfile,
-  popnames = NULL,
-  ncores = 4,
-  groupvec = NULL,
-  regioncol = NULL,
-  cex = 1
-)
 }
 \arguments{
 \item{sillyvec}{a vector of silly codes without the ".gcl" extension.}
