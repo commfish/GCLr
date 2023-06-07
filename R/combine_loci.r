@@ -14,9 +14,7 @@
 #' 
 #' LocusControl <- GCLr::LocusControl
 #' 
-#' GCLr::combine_loci(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1], update = FALSE)
-#' 
-#' GCLr::combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1], update = FALSE)
+#' GCLr::combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1])
 #'
 #' @details
 #' This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function. This function requires dplyr version 1.0.0 or higher.

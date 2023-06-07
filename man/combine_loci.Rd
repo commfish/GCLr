@@ -29,8 +29,6 @@ markerset <- c("One_GPDH", "One_GPDH")
 
 LocusControl <- GCLr::LocusControl
 
-GCLr::combine_loci(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1], update = FALSE)
-
-GCLr::combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1], update = FALSE)
+GCLr::combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1])
 
 }
