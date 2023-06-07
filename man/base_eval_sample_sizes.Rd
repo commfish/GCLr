@@ -41,8 +41,8 @@ The \code{maxprop} argument should be set to avoid oversampling populations, so 
 }
 \examples{
 
-attach("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-Final_Pops <- Final_Pops \%>\% mutate(group = factor(group, levels = unique(group)))
-base_eval_sample_sizes(sillyvec = Final_Pops$silly, group_names = Final_Pops$group \%>\% levels(), groupvec = Final_Pops$group \%>\% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
+
+
+base_eval_sample_sizes(sillyvec = GCLr::baseline, group_names = Final_Pops$group \%>\% levels(), groupvec = Final_Pops$group \%>\% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
 
 }
