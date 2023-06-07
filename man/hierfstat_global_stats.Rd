@@ -24,20 +24,19 @@ A list containing 3 tibbles:
 This is a wrapper function for \code{\link[hierfstat:varcomp.glob]{hierfstat::varcomp.glob()}}. This wrapper will compute variance components and hierarchical F-statistics for haploid and diploid loci and combine the results into a single output.
 }
 \examples{
-load("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline_new.Rdata")
+sillyvec <- GCLr::base2gcl(GCLr::baseline)
 
-source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions
+region <- GCLr::baseline \%>\%
+  dplyr::group_by(collection) \%>\%
+  dplyr::filter(dplyr::row_number()==1) \%>\%
+  dplyr::pull(repunit) \%>\%
+  factor() \%>\%
+  as.numeric()
 
-sillyvec104 <- Final_Pops$collection
+loci <- GCLr::LocusControl$locusnames
 
-region <- Final_Pops \%>\% select(pop = order, region = region)
+fstat.dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = seq_along(sillyvec), loci =  GCLr::LocusControl$locusnames, ncores = 4)
 
-temporal_collections <- temporal_collections(sillyvec = sillyvec104, region = region, min.samps = 50, sep = ".")
-
-combine_loci(sillyvec = sillyvec187, markerset = c("Oki_102213-604", "Oki_101119-1006")) # Combining two loci to test haploid calcs
-
-fstat.dat <- create_hierfstat_data(sillyvec = temporal_collections$silly, region = temporal_collections$region, pop = temporal_collections$pop, loci = c("Oki_102213-604.Oki_101119-1006", loci81), ncores = 8)
-
-hierfstat_global_stats(levels = fstat.dat[,1:3], genotypes = fstat.dat[,-c(1:3)])
+hierfstat_global_stats(levels = fstat.dat[ ,1:3], genotypes = fstat.dat[ ,-c(1:3)])
 
 }

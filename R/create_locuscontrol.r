@@ -22,8 +22,9 @@
 #'   The tibble will be named "LocusControl" and assigned to your current workspace.
 #'   
 #' @examples
+#' \dontrun{
 #' create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
-#'
+#'}
 #' @aliases CreateLocusControl.GCL
 #'
 #' @export

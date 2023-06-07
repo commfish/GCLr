@@ -29,7 +29,10 @@
 #' @family QC Functions
 #'
 #' @examples
-#' failure_rate(sillyvec = c("SILLY1", "SILLY2", "SILLY3"))
+#' 
+#' sillyvec <- GCLr::base2gcl(GCLr::baseline)
+#' 
+#' GCLr::failure_rate(sillyvec = sillyvec)
 #' 
 #' @aliases FailureRate.GCL.R
 #' 

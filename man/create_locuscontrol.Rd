@@ -32,6 +32,7 @@ The tibble will be named "LocusControl" and assigned to your current workspace.
 This function connects to LOKI (GCL database) and creates a "LocusControl" object.
 }
 \examples{
+\dontrun{
 create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
-
+}
 }

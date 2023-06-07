@@ -59,9 +59,25 @@ This function writes out rubias mixtures and baseline files for each test_group 
 The function can write .csv or .fst files.  .fst files are compressed, so they save hard drive space, and they are faster to save and read back into R. .csv is also an option to make the function backwards compatible with older analyzes that produced .csv files.
 }
 \examples{
-attach("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-Final_Pops <- Final_Pops \%>\% mutate(group = factor(group, levels = unique(group)))
-sample_sizes <- base_eval_sample_sizes(sillyvec = Final_Pops$silly, group_names = Final_Pops$group \%>\% levels(), groupvec = Final_Pops$group \%>\% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5)
-create_rubias_base_eval(sillyvec = Final_Pops$silly, group_names = Final_Pops$group \%>\% levels(), test_groups = (Final_Pops$group \%>\% levels())[1:2], loci = loci80, groupvec = Final_Pops$group \%>\% as.numeric(), sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
+\dontrun{
+sillyvec <- GCLr::base2gcl(GCLr::baseline)
+
+group_names <- GCLr::baseline$repunit \%>\%
+  unique()
+
+groupvec <- GCLr::baseline \%>\%
+  dplyr::group_by(collection) \%>\%
+  dplyr::filter(dplyr::row_number()==1) \%>\%
+  dplyr::pull(repunit) \%>\%
+  factor() \%>\%
+  as.numeric()
+
+loci <- GCLr::LocusControl$locusnames# 
+
+sample_sizes <- base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5)
+
+create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
+
+}
 
 }
