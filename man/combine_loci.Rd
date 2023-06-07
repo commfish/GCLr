@@ -23,9 +23,14 @@ This function combines a set of markers into a single marker.
 This function requires a LocusControl object. Run \code{\link[=create_locuscontrol]{create_locuscontrol()}} prior to this function. This function requires dplyr version 1.0.0 or higher.
 }
 \examples{
-sillyvec <- c("KQUART06","KQUART08","KQUART09")
-markerset <- c("Ots_vatf-251", "Ots_ZR-575")
+sillyvec <- GCLr::base2gcl(GCLr::baseline)
+
+markerset <- c("One_GPDH", "One_GPDH")
+
+LocusControl <- GCLr::LocusControl
+
 combine_loci(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1])
+
 combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1])
 
 }

@@ -22,9 +22,9 @@
 #' 
 #' @examples
 #' 
+#' sillyvec <- GCLr::base2gcl(GCLr::baseline)
 #' 
-#' 
-#' base_eval_sample_sizes(sillyvec = GCLr::baseline, group_names = Final_Pops$group %>% levels(), groupvec = Final_Pops$group %>% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
+#' base_eval_sample_sizes(sillyvec = sillyvec, group_names = GCLr::baseline$repunit %>% unique(), groupvec = GCLr::baseline$repunit %>% factor() %>% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
 #'
 #' @aliases BaselineEvalSampleSizes.GCL
 #'
