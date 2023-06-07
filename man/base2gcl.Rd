@@ -18,8 +18,3 @@ This function creates a \code{.gcl} object for each collection in a \emph{rubias
 \details{
 This function is a quick way of creating \code{.gcl} objects from a \emph{rubias} baseline object. The objects will contain the same variables as \code{.gcl} objects produced by \link{loki2r} and \link{loki2r_gaps} for compatibility with the \link{GCLr} package; however, most of the attribute variables will contain NAs.
 }
-\examples{
-
-GCLr::base2gcl(base = GCLr::baseline)
-
-}
