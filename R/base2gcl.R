@@ -9,7 +9,7 @@
 #' @details
 #' This function is a quick way of creating `.gcl` objects from a \emph{rubias} baseline object. The objects will contain the same variables as `.gcl` objects produced by [GCLr::loki2r] and [GCLr::loki2r_gaps] for compatibility with the [GCLr] package; however, most of the attribute variables will contain NAs.  
 #' 
-#' @example
+#' @examples
 #' 
 #' GCLr::base2gcl(base = GCLr::baseline)
 #'
