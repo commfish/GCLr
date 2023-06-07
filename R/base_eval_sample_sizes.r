@@ -24,7 +24,17 @@
 #' 
 #' sillyvec <- GCLr::base2gcl(GCLr::baseline)
 #' 
-#' base_eval_sample_sizes(sillyvec = sillyvec, group_names = GCLr::baseline$repunit %>% unique(), groupvec = GCLr::baseline$repunit %>% factor() %>% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
+#' group_names <- GCLr::baseline$repunit %>% 
+#'   unique()
+#' 
+#' groupvec <- GCLr::baseline %>%
+#'   dplyr::group_by(collection) %>%
+#'   dplyr::filter(dplyr::row_number()==1) %>%
+#'   dplyr::pull(repunit) %>%
+#'   factor() %>%
+#'   as.numeric()
+#' 
+#' GCLr::base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
 #'
 #' @aliases BaselineEvalSampleSizes.GCL
 #'
