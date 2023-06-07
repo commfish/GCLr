@@ -28,7 +28,6 @@
 #' @aliases Plot_QuickFSTtree.GCL
 #' 
 #' @export
-
 plot_quick_tree <- function(sillyvec, loci, inputfile, popnames = NULL, ncores = 4, groupvec = NULL, regioncol = NULL, cex = 1){
   
   pwfst <- GCLr::pairwise_fst(sillyvec = sillyvec, loci = loci, inputfile = inputfile, popnames = popnames, ncores = ncores)
@@ -58,6 +57,3 @@ plot_quick_tree <- function(sillyvec, loci, inputfile, popnames = NULL, ncores =
   plot_color_tree(color.tree = colortree, cex = cex)
   
 }
-#' @rdname plot_quick_tree
-#' @export
-Plot_QuickFSTtree.GCL <- plot_quick_tree  

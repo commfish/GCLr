@@ -51,7 +51,7 @@
 #'                \item \code{genotypes} with a column for each allele for each locus
 #'              }
 #'                
-#' @note This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function. The function also requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
+#' @note This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function.
 #'    
 #' @examples
 #'   create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username ="awbarclay", password = .password)#Locus control
@@ -61,8 +61,6 @@
 #' @aliases LOKI2R.GCL
 #'   
 #' @export            
-
-
 loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "MSAT")[1], include_missing = FALSE){
   
   if(!exists("LocusControl")){
@@ -336,6 +334,3 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   print(fulltime)
   
 }
-#' @rdname loki2r
-#' @export
-LOKI2R.GCL <- loki2r  

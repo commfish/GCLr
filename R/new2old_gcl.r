@@ -21,7 +21,6 @@
 #' @aliases new2old_gcl.GCL
 #'
 #' @export
-#' 
 new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
 
   # Do all sillys exist in the environment?
@@ -230,6 +229,3 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
   message(paste0("The following *.gcl objects have been converted to old-style lists:\n", paste0(sillyvec_, collapse = ", ")))
   
 }
-#' @rdname new2old_gcl
-#' @export
-new2old_gcl.GCL <- new2old_gcl  

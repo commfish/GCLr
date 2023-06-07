@@ -10,7 +10,7 @@
 #' 
 #' @details This function requires the R package "RJDBC" for connecting to LOKI.
 #' It connects to LOKI using the provided \code{username} and \code{password}, and retrieves genotypes and sample attributes for each silly code in \code{sillyvec}.
-#' The genotypes and attributes are stored in separate "*.gcl" objects named after each silly code. This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
+#' The genotypes and attributes are stored in separate "*.gcl" objects named after each silly code.
 #'
 #' @examples
 #' sillyvec <- c("KQUART06", "KQUART08", "KQUART09")
@@ -20,7 +20,6 @@
 #' @aliases LOKI2R_GAPS.GCL
 #'
 #' @export
-
 loki2r_gaps = function(sillyvec, username, password){
 
   start.time <- Sys.time() 
@@ -183,7 +182,4 @@ loki2r_gaps = function(sillyvec, username, password){
   
   return(fulltime)
 }
-
-#' @rdname loki2r_gaps
-#' @export
-LOKI2R_GAPS.GCL <- loki2r_gaps  
+ 

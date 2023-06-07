@@ -33,7 +33,6 @@
 #' @aliases Test_LD.GCL
 #' 
 #' @export
-
 test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, iterations = 5000, ncores = parallel::detectCores() - 1){
 
   if(ncores > parallel::detectCores()) {
@@ -138,7 +137,3 @@ test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, 
   return(output)
   
 }  
-
-#' @rdname test_LD
-#' @export
-Test_LD.GCL <- test_LD

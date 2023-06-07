@@ -26,7 +26,6 @@
 #' @aliases Summarize_LD.GCL
 #' 
 #' @export
-
 summarize_LD <- function(LDresults, alpha = 0.05, prop_sign_pops = 0.5){
  
   npops <- length(LDresults$Pop %>% unique())
@@ -67,7 +66,3 @@ summarize_LD <- function(LDresults, alpha = 0.05, prop_sign_pops = 0.5){
                      ggplot2::ggtitle(label = my.text))
   
 }
-
-#' @rdname summarize_LD
-#' @export
-Summarize_LD.GCL <- summarize_LD

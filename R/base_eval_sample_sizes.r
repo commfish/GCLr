@@ -75,6 +75,3 @@ base_eval_sample_sizes <- function(sillyvec, group_names, groupvec, mixsize, sce
   }) %>% dplyr::bind_rows()
     
 }
-#' @rdname base_eval_sample_sizes
-#' @export
-BaselineEvalSampleSizes.GCL <- base_eval_sample_sizes

@@ -77,7 +77,3 @@ combine_conflicts <- function(files) {
   assign(x = "combined_conflicts", value = concordance_join, pos = 1)
   
 }
-
-#' @rdname combine_conflicts
-#' @export
-CombineConflictsWithPlateID.GCL <- combine_conflicts

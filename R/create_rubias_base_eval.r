@@ -192,6 +192,3 @@ create_rubias_base_eval <- function(sillyvec, group_names, loci, groupvec, sampl
   Sys.time()-start_time
   
 }
-#' @rdname create_rubias_base_eval
-#' @export
-CreateRubiasBaselineEval.GCL <- create_rubias_base_eval  

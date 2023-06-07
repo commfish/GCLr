@@ -169,7 +169,3 @@ plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both"), 
   if(!method=="both"){plot}
   
 }
-
-#' @rdname plot_baseline_eval
-#' @export
-plot_baseline_eval_summary.GCL <- plot_baseline_eval

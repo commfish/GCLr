@@ -21,15 +21,12 @@
 #'   }
 #'   The tibble will be named "LocusControl" and assigned to your current workspace.
 #'   
-#' @note This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
-#'   
 #' @examples
 #' create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
 #'
 #' @aliases CreateLocusControl.GCL
 #'
 #' @export
-
 create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username, password){
   
   if(exists("LocusControl", where = 1)) {
@@ -121,7 +118,3 @@ create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username,
   return(ans)
   
 }
-
-#' @rdname create_locuscontrol
-#' @export
-CreateLocusControl.GCL <- create_locuscontrol  

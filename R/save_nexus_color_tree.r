@@ -16,7 +16,6 @@
 #' @aliases NexusColorTree.GCL
 #'
 #' @export
-
 save_nexus_color_tree <- function(tree, file, groupvec, group.col, tip.labs, sep = "_"){
 
   if(!length(tree$tip.label)==length(tip.labs)){
@@ -101,7 +100,3 @@ save_nexus_color_tree <- function(tree, file, groupvec, group.col, tip.labs, sep
   write.table(nexfile, file = file, quote = FALSE, row.names = FALSE, col.names = FALSE )
  
 }
-
-#' @rdname save_nexus_color_tree
-#' @export
-NexusColorTree.GCL <- save_nexus_color_tree

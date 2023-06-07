@@ -15,7 +15,7 @@
 #'
 #' @details
 #' This function pulls project genotypes from LOKI database to create "slim" .gcl objects for each silly, along with the LocusControl for all loci used in the project.
-#' The function checks the combination of arguments to ensure the correct usage. This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
+#' The function checks the combination of arguments to ensure the correct usage.
 #' 
 #' @aliases read_project_genotypes.GCL.R
 #' 
@@ -24,7 +24,6 @@
 #'                loci = c("One_E2", "One_MHC2_251", "One_Cytb_17"), username = "awbarclay", password = "password")
 #'
 #' @export
-
 read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, username, password) {
  
     # Recording function start time
@@ -53,9 +52,13 @@ read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, us
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Connect to LOKI
   
-  url <- GCLr::loki_url()
+  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  con <- RJDBC::dbConnect(GCLr::drv, url = url, user = username, password = password)
+  drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
+  
+  drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = drvpath, " ")
+  
+  con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
   
   #~~~~~~~~~~~~~~~~
   # Get genotypes
@@ -216,7 +219,3 @@ read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, us
   fulltime <- stop.time - start.time
   print(fulltime) 
 }
-
-#' @rdname read_proj_geno
-#' @export
-read_project_genotypes.GCL <- read_proj_geno  

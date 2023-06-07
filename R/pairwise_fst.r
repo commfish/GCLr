@@ -22,7 +22,6 @@
 #' @aliases PW_FST.GCL
 #'
 #' @export
-
 pairwise_fst <- function(sillyvec, loci, inputfile, popnames = NULL, ncores = 4){
  
   if(!file.exists(inputfile)){
@@ -44,6 +43,3 @@ pairwise_fst <- function(sillyvec, loci, inputfile, popnames = NULL, ncores = 4)
  return(output)
   
 }
-#' @rdname pairwise_fst
-#' @export
-PW_FST.GCL <- pairwise_fst  

@@ -69,6 +69,3 @@ plot_color_tree <- function(color.tree, rm.neg.branch = TRUE, type = "phylogram"
   }
     
 }
-#' @rdname plot_color_tree
-#' @export
-PlotColorTree.GCL <- plot_color_tree  

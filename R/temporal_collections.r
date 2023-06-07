@@ -33,7 +33,6 @@
 #' @aliases temporal_collections.GCL
 #' 
 #' @export 
-
 temporal_collections <- function(sillyvec, region = NULL, min.samps = 50, sep = "."){
   
   if(!all(sillyvec %in% stringr::str_remove(string = objects(pattern = "\\.gcl", pos = -1, envir = .GlobalEnv), pattern = "\\.gcl"))) {  # Do all sillys exist in the environment?
@@ -76,7 +75,3 @@ temporal_collections <- function(sillyvec, region = NULL, min.samps = 50, sep = 
   return(tc)
   
 }
-
-#' @rdname temporal_collections
-#' @export
-temporal_collections.GCL <- temporal_collections  

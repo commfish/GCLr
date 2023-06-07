@@ -1,4 +1,3 @@
-
 #' Build URL to connect to LOKI
 #' 
 #' This function builds the URL to connect to LOKI and is called by other GCL functions that connect to LOKI via [DBI::dbConnect()].
@@ -9,10 +8,8 @@
 #' 
 #' @aliases LOKI_URL.GCL
 #' 
-#' @export
-#' 
+#' @keywords internal
 loki_url <- function(test.db = FALSE){
-
 
   if(test.db == TRUE){
     
@@ -41,7 +38,3 @@ loki_url <- function(test.db = FALSE){
   return(url)
   
 }
-
-#' @rdname loki_url
-#' @export
-LOKI_URL.GCL <- loki_url  

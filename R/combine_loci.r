@@ -19,7 +19,6 @@
 #' @aliases CombineLoci.GCL
 #'
 #' @export
-
 combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1]){
 
   if(!all(markerset %in% LocusControl$locusnames)){
@@ -152,6 +151,3 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
   }   
   
 }
-#' @rdname combine_loci
-#' @export
-CombineLoci.GCL <- combine_loci  
