@@ -24,18 +24,33 @@ A list containing 3 tibbles:
 This is a wrapper function for \code{\link[hierfstat:varcomp.glob]{hierfstat::varcomp.glob()}}. This wrapper will compute variance components and hierarchical F-statistics for haploid and diploid loci and combine the results into a single output.
 }
 \examples{
-sillyvec <- GCLr::base2gcl(GCLr::baseline)
+newbase <- GCLr::baseline \%>\% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
 
-region <- GCLr::baseline \%>\%
+sillyvec <- GCLr::base2gcl(newbase)
+
+pop <- newbase \%>\%
   dplyr::group_by(collection) \%>\%
   dplyr::filter(dplyr::row_number()==1) \%>\%
   dplyr::pull(repunit) \%>\%
   factor() \%>\%
   as.numeric()
 
-loci <- GCLr::LocusControl$locusnames
+region <- newbase \%>\%
+  dplyr::group_by(collection) \%>\%
+  dplyr::filter(dplyr::row_number()==1) \%>\% 
+  dplyr::mutate(region = dplyr::case_when(repunit == "KenaiOther"~1,
+                                          TRUE~2)) \%>\%
+  dplyr::pull(region)
 
-fstat.dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = seq_along(sillyvec), loci =  GCLr::LocusControl$locusnames, ncores = 4)
+loci <- GCLr::baseline[,-c(1:5)] \%>\%
+  names() \%>\%
+  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+  unique()
+
+LocusControl <- GCLr::LocusControl
+
+fstat.dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4) \%>\% 
+  dplyr::mutate(region = factor(region), pop = factor(pop), spop = factor(spop))
 
 hierfstat_global_stats(levels = fstat.dat[ ,1:3], genotypes = fstat.dat[ ,-c(1:3)])
 

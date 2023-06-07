@@ -25,17 +25,31 @@ This function returns a \link{hierfstat} data object containing region (if suppl
 This function creates a \code{hierfstat} data object using the provided inputs. The \code{hierfstat} data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as \code{\link[=varcomp]{varcomp()}} and \code{\link[=varcomp.glob]{varcomp.glob()}} from the \code{hierfstat} package.
 }
 \examples{
-sillyvec <- GCLr::base2gcl(GCLr::baseline)
+newbase <- GCLr::baseline \%>\% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
 
-region <- GCLr::baseline \%>\%
+sillyvec <- GCLr::base2gcl(newbase)
+
+pop <- newbase \%>\%
   dplyr::group_by(collection) \%>\%
   dplyr::filter(dplyr::row_number()==1) \%>\%
   dplyr::pull(repunit) \%>\%
   factor() \%>\%
   as.numeric()
 
-loci <- GCLr::LocusControl$locusnames
+region <- newbase \%>\%
+  dplyr::group_by(collection) \%>\%
+  dplyr::filter(dplyr::row_number()==1) \%>\% 
+  dplyr::mutate(region = dplyr::case_when(repunit == "KenaiOther"~1,
+                                          TRUE~2)) \%>\%
+  dplyr::pull(region)
 
-GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = seq_along(sillyvec), loci =  GCLr::LocusControl$locusnames, ncores = 4)
+loci <- GCLr::baseline[,-c(1:5)] \%>\%
+  names() \%>\%
+  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+  unique()
+
+LocusControl <- GCLr::LocusControl
+
+GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4)
 
 }
