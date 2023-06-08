@@ -26,7 +26,7 @@ sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
 markerset <- c("One_GPDH", "One_GPDH")
 
-LocusControl <- GCLr::ex_LocusControl
+LocusControl <- assign(x = "LocusControl", value = GCLr::ex_LocusControl)
 
 GCLr::combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1])
 
