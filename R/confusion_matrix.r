@@ -40,7 +40,7 @@ confusion_matrix <- function(reference, gen_start_col = 5, output = c("group_gro
   start <- Sys.time()
   
   rubias_sa <- rubias::self_assign(reference = baseline, gen_start_col = gen_start_col) %>% 
-    select(-missing_loci, -n_miss_loci, -n_non_miss_loci, -z_score, -log_likelihood)
+    dplyr::select(-missing_loci, -n_miss_loci, -n_non_miss_loci, -z_score, -log_likelihood)
   
   pop_pop <- function(rubias_sa){
     
