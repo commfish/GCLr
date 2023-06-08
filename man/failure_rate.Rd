@@ -34,7 +34,7 @@ Note: This function relies on the \code{\link[=pool_collections]{pool_collection
 }
 \examples{
 
-sillyvec <- GCLr::base2gcl(GCLr::baseline)
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
 GCLr::failure_rate(sillyvec = sillyvec)
 

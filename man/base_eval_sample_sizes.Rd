@@ -41,12 +41,12 @@ The \code{maxprop} argument should be set to avoid oversampling populations, so 
 }
 \examples{
 
-sillyvec <- GCLr::base2gcl(GCLr::baseline)
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
-group_names <- GCLr::baseline$repunit \%>\% 
+group_names <- GCLr::ex_baseline$repunit \%>\% 
   unique()
 
-groupvec <- GCLr::baseline \%>\%
+groupvec <- GCLr::ex_baseline \%>\%
   dplyr::group_by(collection) \%>\%
   dplyr::filter(dplyr::row_number()==1) \%>\%
   dplyr::pull(repunit) \%>\%

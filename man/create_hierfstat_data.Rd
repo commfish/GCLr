@@ -25,7 +25,7 @@ This function returns a \link{hierfstat} data object containing region (if suppl
 This function creates a \code{hierfstat} data object using the provided inputs. The \code{hierfstat} data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as \code{\link[=varcomp]{varcomp()}} and \code{\link[=varcomp.glob]{varcomp.glob()}} from the \code{hierfstat} package.
 }
 \examples{
-newbase <- GCLr::baseline \%>\% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
+newbase <- GCLr::ex_baseline \%>\% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
 
 sillyvec <- GCLr::base2gcl(newbase)
 
@@ -43,12 +43,12 @@ region <- newbase \%>\%
                                           TRUE~2)) \%>\%
   dplyr::pull(region)
 
-loci <- GCLr::baseline[,-c(1:5)] \%>\%
+loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
   names() \%>\%
   gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
   unique()
 
-LocusControl <- GCLr::LocusControl
+LocusControl <- GCLr::ex_LocusControl
 
 GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4)
 

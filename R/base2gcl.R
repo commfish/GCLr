@@ -11,7 +11,7 @@
 #' 
 #' @examples
 #' 
-#' GCLr::base2gcl(base = GCLr::baseline)
+#' GCLr::base2gcl(base = GCLr::ex_baseline)
 #'
 #' @export
 base2gcl <- function(base){

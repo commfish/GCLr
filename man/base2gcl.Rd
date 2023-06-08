@@ -20,6 +20,6 @@ This function is a quick way of creating \code{.gcl} objects from a \emph{rubias
 }
 \examples{
 
-GCLr::base2gcl(base = GCLr::baseline)
+GCLr::base2gcl(base = GCLr::ex_baseline)
 
 }

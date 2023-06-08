@@ -11,7 +11,7 @@
 #' @return This function returns a [hierfstat] data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
 #'
 #' @examples
-#' newbase <- GCLr::baseline %>% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
+#' newbase <- GCLr::ex_baseline %>% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
 #' 
 #' sillyvec <- GCLr::base2gcl(newbase)
 #' 
@@ -29,12 +29,12 @@
 #'                                           TRUE~2)) %>%
 #'   dplyr::pull(region)
 #' 
-#' loci <- GCLr::baseline[,-c(1:5)] %>%
+#' loci <- GCLr::ex_baseline[,-c(1:5)] %>%
 #'   names() %>%
 #'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
 #'   unique()
 #' 
-#' LocusControl <- GCLr::LocusControl
+#' LocusControl <- GCLr::ex_LocusControl
 #' 
 #' GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4)
 #' 

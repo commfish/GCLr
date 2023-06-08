@@ -8,11 +8,11 @@
 #' @param delim Specifies the separator between combined loci, either a period (.) which is the default or an underscore (_) so locus names will work in SPAM.
 #'
 #' @examples
-#' sillyvec <- GCLr::base2gcl(GCLr::baseline)
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 #' 
 #' markerset <- c("One_GPDH", "One_GPDH")
 #' 
-#' LocusControl <- GCLr::LocusControl
+#' LocusControl <- GCLr::ex_LocusControl
 #' 
 #' GCLr::combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1])
 #'

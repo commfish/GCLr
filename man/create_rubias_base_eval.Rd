@@ -60,23 +60,23 @@ The function can write .csv or .fst files.  .fst files are compressed, so they s
 }
 \examples{
 \dontrun{
-sillyvec <- GCLr::base2gcl(GCLr::baseline)
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
-group_names <- GCLr::baseline$repunit \%>\%
+group_names <- GCLr::ex_baseline$repunit \%>\%
   unique()
 
-groupvec <- GCLr::baseline \%>\%
+groupvec <- GCLr::ex_baseline \%>\%
   dplyr::group_by(collection) \%>\%
   dplyr::filter(dplyr::row_number()==1) \%>\%
   dplyr::pull(repunit) \%>\%
   factor() \%>\%
   as.numeric()
 
-loci <- GCLr::LocusControl$locusnames# 
+loci <- GCLr::ex_LocusControl$locusnames
 
-sample_sizes <- base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5)
+sample_sizes <- GCLr::base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5)
 
-create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
+GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
 
 }
 

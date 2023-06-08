@@ -32,7 +32,7 @@
 #'
 #' @examples
 #' 
-#' GCLr::confusion_matrix(reference = GCLr::baseline , gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
+#' GCLr::confusion_matrix(reference = GCLr::ex_baseline , gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
 #'
 #' @aliases ConfusionMatrices.GCL
 #'
