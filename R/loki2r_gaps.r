@@ -5,6 +5,7 @@
 #' @param sillyvec Vector of silly codes to pull from LOKI.
 #' @param username Username for LOKI connection.
 #' @param password Password for LOKI connection.
+#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
 #' 
 #' @return The runtime of the function in seconds.
 #' 
@@ -13,12 +14,13 @@
 #' The genotypes and attributes are stored in separate "*.gcl" objects named after each silly code.
 #'
 #' @examples
+#' \dontrun{
 #' sillyvec <- c("KQUART06", "KQUART08", "KQUART09")
-#' username <- "jjasper"
-#' loki2r_gaps(sillyvec, username, password)
+#' loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password, LocusControl = GCLr::LocusControl)
+#' }
 #' 
 #' @export
-loki2r_gaps = function(sillyvec, username, password){
+loki2r_gaps <- function(sillyvec, username, password, LocusControl = LocusControl){
 
   start.time <- Sys.time() 
   

@@ -4,7 +4,14 @@
 \alias{create_hierfstat_data}
 \title{Create a hierfstat data object}
 \usage{
-create_hierfstat_data(sillyvec, region = NULL, pop, loci, ncores = 4)
+create_hierfstat_data(
+  sillyvec,
+  region = NULL,
+  pop,
+  loci,
+  ncores = 4,
+  LocusControl = LocusControl
+)
 }
 \arguments{
 \item{sillyvec}{a vector of silly codes without the ".gcl" extension}
@@ -16,6 +23,8 @@ create_hierfstat_data(sillyvec, region = NULL, pop, loci, ncores = 4)
 \item{loci}{a character vector of locus names.}
 
 \item{ncores}{a numeric value indicating the number of cores to use.}
+
+\item{LocusControl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
 }
 \value{
 This function returns a \link{hierfstat} data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
@@ -47,8 +56,6 @@ loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
   gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
   unique()
 
-LocusControl <- GCLr::ex_LocusControl
-
-GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4)
+GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4, LocusControl = GCLr::ex_LocusControl)
 
 }

@@ -9,7 +9,8 @@ loki2r(
   username,
   password,
   test_type = c("SNP", "GTSNP", "MSAT")[1],
-  include_missing = FALSE
+  include_missing = FALSE,
+  LocusControl = LocusControl
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ loki2r(
 \item{test_type}{the test type ("SNP" or "GTSNP") you would like to pull from Loki. (default = "SNP")}
 
 \item{include_missing}{whether to include all fish even if they were never genotyped for all loci in LocusControl (default = FALSE)}
+
+\item{LocusControl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
 }
 \value{
 This function assigns a tibble with the following columns for each silly:
@@ -70,8 +73,9 @@ This function connects to LOKI and creates a .gcl object for each silly in \code
 This function requires a LocusControl object. Run \code{\link[=create_locuscontrol]{create_locuscontrol()}} prior to this function.
 }
 \examples{
-  create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username ="awbarclay", password = .password)#Locus control
+\dontrun{
   sillyvec <- c("SUCIWS06", "SUCIWS07", "SUCIWS08", "SUCIWS09", "SUCIWS10", "SUCIWS11", "SUCIWS12", "SUCIWS13", "SCIMA22")
-  loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE)
+  loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE, LocusControl = LocusControl)
+}
    
 }

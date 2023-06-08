@@ -4,7 +4,13 @@
 \alias{combine_loci}
 \title{Combine Loci}
 \usage{
-combine_loci(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1])
+combine_loci(
+  sillyvec,
+  markerset,
+  update = TRUE,
+  delim = c(".", "_")[1],
+  LocusControl = LocusControl
+)
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes.}
@@ -14,6 +20,8 @@ combine_loci(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1])
 \item{update}{Logical switch. If TRUE, the "LocusControl" object is updated and all "\emph{.gcl" objects in "sillyvec" will be updated with the new marker. If FALSE, the "LocusControl" object is not updated and a temporary object called "}.temp.gcl" with the updated data is created.}
 
 \item{delim}{Specifies the separator between combined loci, either a period (.) which is the default or an underscore (_) so locus names will work in SPAM.}
+
+\item{LocusControl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
 }
 \description{
 This function combines a set of markers into a single marker.
@@ -26,8 +34,6 @@ sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
 markerset <- c("One_GPDH", "One_GPDH")
 
-LocusControl <- assign(x = "LocusControl", value = GCLr::ex_LocusControl)
-
-GCLr::combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1])
+GCLr::combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1], LocusControl = GCLr::ex_LocusControl)
 
 }

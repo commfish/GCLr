@@ -5,6 +5,8 @@
 #' @param levels A data frame containing the different levels (factors) from the outermost (e.g., region) to the innermost before the individual.
 #' 
 #' @param genotypes A data frame containing the genotypes in single-column numeric format (e.g., 101, 102, 202).
+#' 
+#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
 #'
 #' @return A list containing 3 tibbles: 
 #'     \itemize{
@@ -37,15 +39,13 @@
 #'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
 #'   unique()
 #' 
-#' LocusControl <- GCLr::LocusControl
-#' 
-#' fstat.dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4) %>% 
+#' fstat.dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4, LocusControl = GCLr::ex_LocusControl) %>% 
 #'   dplyr::mutate(region = factor(region), pop = factor(pop), spop = factor(spop))
 #' 
 #' hierfstat_global_stats(levels = fstat.dat[ ,1:3], genotypes = fstat.dat[ ,-c(1:3)])
 #'
 #' @export
-hierfstat_global_stats <- function(levels, genotypes){
+hierfstat_global_stats <- function(levels, genotypes, LocusControl = LocusControl){
   
   if(!exists("LocusControl")){
     
