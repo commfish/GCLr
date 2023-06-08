@@ -23,8 +23,6 @@
 #' detach()
 #' summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
 #'
-#' @aliases Summarize_LD.GCL
-#' 
 #' @export
 summarize_LD <- function(LDresults, alpha = 0.05, prop_sign_pops = 0.5){
  

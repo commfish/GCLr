@@ -38,8 +38,6 @@
 #' 
 #' GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4)
 #' 
-#' @aliases create_hierfstat_data.GCL
-#'
 #' @export
 create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4){
   

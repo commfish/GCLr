@@ -2,7 +2,6 @@
 % Please edit documentation in R/plot_color_tree.r
 \name{plot_color_tree}
 \alias{plot_color_tree}
-\alias{PlotColorTree.GCL}
 \title{Plot a Colored Phylogenetic Tree}
 \usage{
 plot_color_tree(

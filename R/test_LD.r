@@ -30,8 +30,6 @@
 #'
 #' genepop::test_LD(genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 18)
 #'
-#' @aliases Test_LD.GCL
-#' 
 #' @export
 test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, iterations = 5000, ncores = parallel::detectCores() - 1){
 

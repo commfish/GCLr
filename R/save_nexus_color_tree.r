@@ -13,8 +13,6 @@
 #' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
 #' save_nexus_color_tree(tree = FstTree, file = "Susitna_Chinook_tree.nex", groupvec = groupvec, group.col = grcol, tip.labs = Final_Pops$location)
 #' 
-#' @aliases NexusColorTree.GCL
-#'
 #' @export
 save_nexus_color_tree <- function(tree, file, groupvec, group.col, tip.labs, sep = "_"){
 

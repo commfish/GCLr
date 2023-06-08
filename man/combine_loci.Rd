@@ -2,7 +2,6 @@
 % Please edit documentation in R/combine_loci.r
 \name{combine_loci}
 \alias{combine_loci}
-\alias{CombineLoci.GCL}
 \title{Combine Loci}
 \usage{
 combine_loci(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1])

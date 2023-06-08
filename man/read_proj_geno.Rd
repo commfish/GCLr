@@ -2,7 +2,6 @@
 % Please edit documentation in R/read_proj_geno.r
 \name{read_proj_geno}
 \alias{read_proj_geno}
-\alias{read_project_genotypes.GCL.R}
 \title{Read Project Genotypes}
 \usage{
 read_proj_geno(

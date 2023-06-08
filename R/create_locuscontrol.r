@@ -25,7 +25,6 @@
 #' \dontrun{
 #' create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
 #'}
-#' @aliases CreateLocusControl.GCL
 #'
 #' @export
 create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username, password){

@@ -2,7 +2,6 @@
 % Please edit documentation in R/save_nexus_color_tree.r
 \name{save_nexus_color_tree}
 \alias{save_nexus_color_tree}
-\alias{NexusColorTree.GCL}
 \title{Save Nexus file that includes a phylogenetic tree.}
 \usage{
 save_nexus_color_tree(tree, file, groupvec, group.col, tip.labs, sep = "_")

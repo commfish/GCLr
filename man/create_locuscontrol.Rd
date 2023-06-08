@@ -2,7 +2,6 @@
 % Please edit documentation in R/create_locuscontrol.r
 \name{create_locuscontrol}
 \alias{create_locuscontrol}
-\alias{CreateLocusControl.GCL}
 \title{Create LocusControl Object}
 \usage{
 create_locuscontrol(markersuite = NULL, locusnames = NULL, username, password)
@@ -35,4 +34,5 @@ This function connects to LOKI (GCL database) and creates a "LocusControl" objec
 \dontrun{
 create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
 }
+
 }

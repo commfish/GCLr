@@ -35,8 +35,6 @@
 #' If a large number of \code{test_groups} are supplied, the faceted plots will become too small to see on one page. If so, you may need to supply a subset of \code{test_groups} to plot.
 #' This function is not intended for producing publication-ready plots; however, the code from this function can be copied and modified to produce plots formatted for publication.
 #' 
-#' @aliases plot_baseline_eval_summary.GCL
-#' 
 #' @export
 plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both"), test_groups = NULL, group_colors = NULL){
   

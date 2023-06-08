@@ -25,8 +25,6 @@
 #' pops <- baseline$collection %>% unique()
 #' plot_confusion_matrix(confusion_matrix = ConfusionMatrices_out, group_names = groups, pop_names = NULL, plot = c("group_group", "pop_group", "pop_pop")[1], high_color = "darkblue", low_color = "lightblue", text_color = "yellow")
 #' 
-#' @aliases plot_ConfusionMatrix.GCL
-#' 
 #' @export
 plot_confusion_matrix <- function(confusion_matrix, plot = c("group_group", "pop_group", "pop_pop")[1], group_names = NULL, pop_names = NULL, high_color = "#132B43", low_color = "#56B1F7", text_color = "yellow"){  
   

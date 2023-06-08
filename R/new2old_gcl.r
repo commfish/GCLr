@@ -18,8 +18,6 @@
 #' combine_loci(sillyvec = sillyvec, markerset = c("One_CO1","One_Cytb_17","One_Cytb_26"), update = TRUE)
 #' new2old.GCL(sillyvec = sillyvec, save_new = TRUE, ncores = 8)
 #' 
-#' @aliases new2old_gcl.GCL
-#'
 #' @export
 new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
 

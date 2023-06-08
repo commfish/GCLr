@@ -36,8 +36,6 @@
 #' 
 #' GCLr::base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
 #'
-#' @aliases BaselineEvalSampleSizes.GCL
-#'
 #' @export
 base_eval_sample_sizes <- function(sillyvec, group_names, groupvec, mixsize, scenarios = round(seq(.01, 1, .01), 2), maxprop = 0.5, seed = 56){
   

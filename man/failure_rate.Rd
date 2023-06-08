@@ -2,7 +2,6 @@
 % Please edit documentation in R/failure_rate.r
 \name{failure_rate}
 \alias{failure_rate}
-\alias{FailureRate.GCL.R}
 \title{Calculate Failure Rates by Silly, Locus, Plate, and Project}
 \usage{
 failure_rate(sillyvec)

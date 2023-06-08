@@ -17,8 +17,6 @@
 #' This function pulls project genotypes from LOKI database to create "slim" .gcl objects for each silly, along with the LocusControl for all loci used in the project.
 #' The function checks the combination of arguments to ensure the correct usage.
 #' 
-#' @aliases read_project_genotypes.GCL.R
-#' 
 #' @examples
 #' read_proj_geno(project_name = c("P014", "P015", "P016"), sillyvec = c("SCIMA18", "SCIMA17"), 
 #'                loci = c("One_E2", "One_MHC2_251", "One_Cytb_17"), username = "awbarclay", password = "password")

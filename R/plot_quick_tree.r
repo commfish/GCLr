@@ -25,8 +25,6 @@
 #' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
 #' plot_quick_tree(sillyvec = sillyvec31, loci = loci82, inputfile = "genepop/Susitna31pops82loci.txt", popnames = treenames31, ncores = 8, groupvec = groupvec4, regioncol = grcol4, cex = 0.75)
 #'
-#' @aliases Plot_QuickFSTtree.GCL
-#' 
 #' @export
 plot_quick_tree <- function(sillyvec, loci, inputfile, popnames = NULL, ncores = 4, groupvec = NULL, regioncol = NULL, cex = 1){
   

@@ -58,8 +58,6 @@
 #'   sillyvec <- c("SUCIWS06", "SUCIWS07", "SUCIWS08", "SUCIWS09", "SUCIWS10", "SUCIWS11", "SUCIWS12", "SUCIWS13", "SCIMA22")
 #'   loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE)
 #'    
-#' @aliases LOKI2R.GCL
-#'   
 #' @export            
 loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "MSAT")[1], include_missing = FALSE){
   

@@ -4,10 +4,6 @@
 #'
 #' @param files A vector of CSV files that you want to combine, including the file extension.
 #'
-#' @aliases CombineConflictsWithPlateID.GCL
-#' 
-#' @family QA scripts
-#' 
 #' @examples
 #' combine_conflicts(files = c("CM31 qc 01 Import Results.csv", "CM31 qc 02 Import Results.csv", "CM31 qc Plate3 Imports.csv"))
 #' 

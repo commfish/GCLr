@@ -2,7 +2,6 @@
 % Please edit documentation in R/run_rubias_base_eval.r
 \name{run_rubias_base_eval}
 \alias{run_rubias_base_eval}
-\alias{run_rubias_baseline_eval.GCL}
 \title{Run Rubias Baseline Evaluation Tests}
 \usage{
 run_rubias_base_eval(

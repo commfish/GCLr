@@ -2,7 +2,6 @@
 % Please edit documentation in R/new2old_gcl.r
 \name{new2old_gcl}
 \alias{new2old_gcl}
-\alias{new2old_gcl.GCL}
 \title{Convert New Style "*.gcl" objects to Old Style}
 \usage{
 new2old_gcl(sillyvec, save_new = FALSE, ncores = 4)

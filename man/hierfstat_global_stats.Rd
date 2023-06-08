@@ -2,7 +2,6 @@
 % Please edit documentation in R/hierfstat_global_stats.r
 \name{hierfstat_global_stats}
 \alias{hierfstat_global_stats}
-\alias{HierFstats_global.GCL}
 \title{Compute global hierarchical F-statistics and variance components.}
 \usage{
 hierfstat_global_stats(levels, genotypes)

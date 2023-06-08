@@ -58,8 +58,6 @@
 #' 
 #' }
 #'
-#' @aliases CreateRubiasBaselineEval.GCL
-#' 
 #' @export
 create_rubias_base_eval <- function(sillyvec, group_names, loci, groupvec, sample_sizes, test_groups = group_names, prprtnl = FALSE, base.path = "rubias/baseline", mix.path = "rubias/mixture", seed = 123, ncores = 4, file_type = c("fst", "csv")[1]){
   

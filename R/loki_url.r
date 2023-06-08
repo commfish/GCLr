@@ -6,8 +6,6 @@
 #' 
 #' @return The URL string used by [DBI::dbConnect()] to connect to the Oracle cloud database (LOKI)
 #' 
-#' @aliases LOKI_URL.GCL
-#' 
 #' @keywords internal
 loki_url <- function(test.db = FALSE){
 

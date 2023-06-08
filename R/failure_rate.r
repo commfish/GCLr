@@ -34,8 +34,6 @@
 #' 
 #' GCLr::failure_rate(sillyvec = sillyvec)
 #' 
-#' @aliases FailureRate.GCL.R
-#' 
 #' @export
 failure_rate <- function(sillyvec) {
 

@@ -2,7 +2,6 @@
 % Please edit documentation in R/loki_url.r
 \name{loki_url}
 \alias{loki_url}
-\alias{LOKI_URL.GCL}
 \title{Build URL to connect to LOKI}
 \usage{
 loki_url(test.db = FALSE)

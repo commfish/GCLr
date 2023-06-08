@@ -2,7 +2,6 @@
 % Please edit documentation in R/plot_confusion_matrix.r
 \name{plot_confusion_matrix}
 \alias{plot_confusion_matrix}
-\alias{plot_ConfusionMatrix.GCL}
 \title{Plot Confusion Matrix}
 \usage{
 plot_confusion_matrix(

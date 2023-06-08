@@ -17,8 +17,6 @@
 #' username <- "jjasper"
 #' loki2r_gaps(sillyvec, username, password)
 #' 
-#' @aliases LOKI2R_GAPS.GCL
-#'
 #' @export
 loki2r_gaps = function(sillyvec, username, password){
 

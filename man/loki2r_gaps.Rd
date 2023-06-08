@@ -2,7 +2,6 @@
 % Please edit documentation in R/loki2r_gaps.r
 \name{loki2r_gaps}
 \alias{loki2r_gaps}
-\alias{LOKI2R_GAPS.GCL}
 \title{Create GCL Objects (GAPS)}
 \usage{
 loki2r_gaps(sillyvec, username, password)

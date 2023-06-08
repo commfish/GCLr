@@ -2,7 +2,6 @@
 % Please edit documentation in R/temporal_collections.r
 \name{temporal_collections}
 \alias{temporal_collections}
-\alias{temporal_collections.GCL}
 \title{Get Temporal Collections for Hierarchical ANOVA}
 \usage{
 temporal_collections(sillyvec, region = NULL, min.samps = 50, sep = ".")

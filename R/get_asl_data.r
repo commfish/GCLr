@@ -34,8 +34,6 @@
 #' The output of this function can be used for creating an import file for the Loki ASL Data Importer. The the importer requires that all columns are in the correct order and spelled correctly. The importer will not work if you include silly code in the import file.  When writing the import file, make sure it does not contain NAs When writing the import file, make sure it does not contain NAs. (see example below) # Also, when using readr::write_csv to write out the tissue import file, make sure to change the eol argument to from the default \verb{\\n} to \verb{\\r\\n} or the importer
 #' Also, if you use [readr::write_csv()] to write out the tissue import file, make sure to change the eol argument to from the default \verb{\n} to \verb{\r\n} or the importer will give you an error message about the header names.  e.g.,  \verb{import_file %>% write_csv(file = "ImportFile.csv", na = "", eol = "\r\n")} 
 #'
-#' @aliases ASL_Import.GCL
-#'
 #' @export 
 get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars = TRUE){
  

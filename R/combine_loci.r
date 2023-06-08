@@ -19,8 +19,6 @@
 #' @details
 #' This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function. This function requires dplyr version 1.0.0 or higher.
 #'
-#' @aliases CombineLoci.GCL
-#'
 #' @export
 combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1]){
 

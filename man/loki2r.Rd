@@ -2,7 +2,6 @@
 % Please edit documentation in R/loki2r.r
 \name{loki2r}
 \alias{loki2r}
-\alias{LOKI2R.GCL}
 \title{Create GCL Objects}
 \usage{
 loki2r(

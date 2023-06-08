@@ -2,7 +2,6 @@
 % Please edit documentation in R/plot_quick_tree.r
 \name{plot_quick_tree}
 \alias{plot_quick_tree}
-\alias{Plot_QuickFSTtree.GCL}
 \title{Plot Quick Phylogenetic Tree}
 \usage{
 plot_quick_tree(

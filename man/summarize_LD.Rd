@@ -2,7 +2,6 @@
 % Please edit documentation in R/summarize_LD.r
 \name{summarize_LD}
 \alias{summarize_LD}
-\alias{Summarize_LD.GCL}
 \title{Summarize LD Results}
 \usage{
 summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)

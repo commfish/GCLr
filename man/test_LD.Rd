@@ -2,7 +2,6 @@
 % Please edit documentation in R/test_LD.r
 \name{test_LD}
 \alias{test_LD}
-\alias{Test_LD.GCL}
 \title{Perform LD Testing in Parallel}
 \usage{
 test_LD(

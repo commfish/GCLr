@@ -44,8 +44,6 @@
 #' 
 #' hierfstat_global_stats(levels = fstat.dat[ ,1:3], genotypes = fstat.dat[ ,-c(1:3)])
 #'
-#' @aliases HierFstats_global.GCL
-#' 
 #' @export
 hierfstat_global_stats <- function(levels, genotypes){
   

@@ -2,7 +2,6 @@
 % Please edit documentation in R/pairwise_fst.r
 \name{pairwise_fst}
 \alias{pairwise_fst}
-\alias{PW_FST.GCL}
 \title{Create Pairwise Fst Matrix}
 \usage{
 pairwise_fst(sillyvec, loci, inputfile, popnames = NULL, ncores = 4)
