@@ -1,34 +1,38 @@
+#' Combine "*.gcl" Objects
+#'
+#' This function combines "*.gcl" objects into a new one called "newname.gcl".
+#'
+#' @param collections A character vector of silly codes without the ".gcl" extension.
+#' 
+#' @param loci A character vector of locus names.
+#' 
+#' @param IDs A named list of FK_FISH_ID
+#'             These will be used to subset each collection before pooling. If no IDs are supplied, all individuals from each collection are used.
+#'             
+#' @param newname The name of the new "*.gcl" created. Do not provide the ".gcl" extension. If no name is supplied, then the newname defaults to
+#'               the collection names collapsed with a period between each name (e.g., "KQUART06.KQUART08.KQUART09").
+#'
+#' @details
+#' This function is useful for pooling collections from the same location into a single population ("pooled collection") and for producing "pooled mixture" objects for mixed stock analysis.
+#'
+#' @return assigns a new "pooled collection" to your workspace
+#' 
+#' @examples
+#' newbase <- GCLr::ex_baseline %>% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
+#' 
+#' sillyvec <- GCLr::base2gcl(newbase)
+#' 
+#' loci <- GCLr::ex_baseline[,-c(1:5)] %>%
+#'   names() %>%
+#'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
+#'   unique()
+#'   
+#' pool_collections(collections = sillyvec[1:2], loci = loci, IDs = NULL, newname =  paste(sillyvec[1:2], collapse = "."))
+#' 
+#' @export
 pool_collections <- function(collections, loci = LocusControl$locusnames, IDs = NULL, newname = paste(collections, collapse = ".")){
   
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function combines "*.gcl" objects into a new one called "newname.gcl".
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   collections - a character vector of silly codes without the ".gcl" extention (e.g. collections <- c("KQUART06","KQUART08","KQUART10")). 
-  #                 Collections can be a single silly if you want create a new ".gcl" with only fish supplied in IDs.
-  #
-  #   loci - a character vector of locus names
-  # 
-  #   IDs - a named list of FK_FISH_ID vectors (either character or numeric), each vector is associated with and named after a member of "collections".
-  #         These will be used to subset each collection before pooling. If no IDs are supplied all individuals from each collection are used.
-  #
-  #   newname - is the name of the new "*.gcl" created. Do not provide ".gcl" extention. If no name supplied then the newname defaults to
-  #             the collection names collapsed with a period between each name (e.g. "KQUART06.KQUART08.KQUART09")
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #    Assigns a new "pooled collection" to your workspace
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data_test.RData")
-  # 
-  #   pool_collections(collections = c("KQUART06","KQUART08","KQUART10"), loci = loci557, IDs = list(KQUART06 = 3:12, KQUART08 = 1:10, KQUART10 = 1:4), newname = "QuartzCr")
-  #
-  # Note~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function is also useful for producing "pooled mixture" objects for mixed stock analysis. 
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  if(!exists("LocusControl")){
+   if(!exists("LocusControl")){
     
     stop("'LocusControl' not yet built.")
     
