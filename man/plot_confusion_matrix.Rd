@@ -36,7 +36,7 @@ A heatmap of mean scaled likelihood.
 This function takes the output object from \code{\link[=confusion_matrix]{confusion_matrix()}} and plots a confusion matrix in a heatmap using \code{\link[ggplot2:geom_tile]{ggplot2::geom_tile()}}.
 }
 \examples{
-baseline <- read_csv("V:/Analysis/5_Coastwide/Chum/NPen2WA_Chum_baseline/rubias/baseline/NPen2Wa_Chum_227pops_91loci_base.csv") 
+baseline <- GCLr::ex_baseline
 ConfusionMatrices_out <- confusion_matrix(reference = baseline , gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
 groups <- baseline$repunit \%>\% unique()
 pops <- baseline$collection \%>\% unique()
