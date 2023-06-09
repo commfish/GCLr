@@ -5,23 +5,22 @@
 #' @param sillyvec Vector of silly codes to pull from LOKI.
 #' @param username Username for LOKI connection.
 #' @param password Password for LOKI connection.
+#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
 #' 
 #' @return The runtime of the function in seconds.
 #' 
 #' @details This function requires the R package "RJDBC" for connecting to LOKI.
 #' It connects to LOKI using the provided \code{username} and \code{password}, and retrieves genotypes and sample attributes for each silly code in \code{sillyvec}.
-#' The genotypes and attributes are stored in separate "*.gcl" objects named after each silly code. This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
+#' The genotypes and attributes are stored in separate "*.gcl" objects named after each silly code.
 #'
 #' @examples
+#' \dontrun{
 #' sillyvec <- c("KQUART06", "KQUART08", "KQUART09")
-#' username <- "jjasper"
-#' loki2r_gaps(sillyvec, username, password)
+#' loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password, LocusControl = GCLr::LocusControl)
+#' }
 #' 
-#' @aliases LOKI2R_GAPS.GCL
-#'
 #' @export
-
-loki2r_gaps = function(sillyvec, username, password){
+loki2r_gaps <- function(sillyvec, username, password, LocusControl = LocusControl){
 
   start.time <- Sys.time() 
   
@@ -40,7 +39,7 @@ loki2r_gaps = function(sillyvec, username, password){
   
   lociqry <- paste0("SELECT * FROM AKFINADM.V_LOCUS_MARKERSUITE WHERE SUITE_NAME = '", markersuite, "'")
   
-  locidata <- dbGetQuery(con, lociqry)
+  locidata <- RJDBC::dbGetQuery(con, lociqry)
   
   locusnames <- as.character(locidata$LOCUS_NAME)
   
@@ -48,18 +47,12 @@ loki2r_gaps = function(sillyvec, username, password){
   
   nloci <- length(locusnames)
   
-  # ploidyqry = paste0("SELECT PLOIDY, LOCUS_NAME FROM AKFINADM.LOCUS_LOOKUP WHERE LOCUS_NAME IN ","'",locusnames,"'")
-  
-  # ploidy = sapply(ploidyqry,function(qry){2^(as.character(sqlQuery(channel,query = qry)$PLOIDY[1])=="D")})
-  
-  # names(ploidy) = locusnames
-  
   ploidy <- sapply(locusnames, function(locus) {
     qry <- paste0("SELECT PLOIDY, LOCUS_NAME FROM AKFINADM.LOCUS_LOOKUP WHERE LOCUS_NAME IN ", "'", locus, "'")
-    2^(as.character(dbGetQuery(con, qry)$PLOIDY[1]) == "D")
+    2^(as.character(RJDBC::dbGetQuery(con, qry)$PLOIDY[1]) == "D")
   } )
   
-  ConTable <- dbGetQuery(con, "SELECT * FROM AKFINADM.GAPS_ALLELE_CONVERSION")
+  ConTable <- RJDBC::dbGetQuery(con, "SELECT * FROM AKFINADM.GAPS_ALLELE_CONVERSION")
   
   ConTable$VALUE_ADFG <- as.numeric(ConTable$VALUE_ADFG)  # this is crucial for allele sorting so that "99" is at the front, not the back of the allele list
   
@@ -93,11 +86,11 @@ loki2r_gaps = function(sillyvec, username, password){
     
     collectionIDqry = paste0("SELECT * FROM AKFINADM.GEN_COLLECTIONS WHERE SILLY_CODE=","'",silly,"'")
     
-    collectionID = dbGetQuery(con, collectionIDqry)$COLLECTION_ID
+    collectionID = RJDBC::dbGetQuery(con, collectionIDqry)$COLLECTION_ID
     
     gnoqry = paste0("SELECT * FROM AKFINADM.V_GAPS_GENOTYPES WHERE SUITE_NAME = '", markersuite, "' AND FK_COLLECTION_ID IN (", collectionID, ") ORDER BY LOCUS, FK_COLLECTION_ID,FK_FISH_ID")
     
-    my.gno = dbGetQuery(con, gnoqry)
+    my.gno = RJDBC::dbGetQuery(con, gnoqry)
     
     if(nrow(my.gno) == 0) {
       
@@ -123,11 +116,7 @@ loki2r_gaps = function(sillyvec, username, password){
     
     includeIND = apply(scoredIND, 1, sum) == nloci
     
-    #fishID=fishID[includeIND]
-    
-    #nind=length(fishID)
-    
-    scores = abind(tapply(X = my.gno$ALLELE1_CONV, INDEX = data.frame(my.gno$FK_FISH_ID, my.gno$LOCUS),
+    scores = abind::abind(tapply(X = my.gno$ALLELE1_CONV, INDEX = data.frame(my.gno$FK_FISH_ID, my.gno$LOCUS),
                           FUN = function(allele) {as.character(allele)} )[fishID, loci, drop = FALSE],
                    tapply(X = my.gno$ALLELE2_CONV, INDEX = data.frame(my.gno$FK_FISH_ID, my.gno$LOCUS),
                           FUN = function(allele) {as.character(allele)} )[fishID, loci, drop = FALSE], along = 3)
@@ -151,23 +140,17 @@ loki2r_gaps = function(sillyvec, username, password){
     
     attrbtqry = paste0("SELECT * FROM AKFINADM.GEN_SAMPLED_FISH_TISSUE WHERE FK_COLLECTION_ID=", collectionID)
     
-    attributes = dbGetQuery(con, attrbtqry)
+    attributes = RJDBC::dbGetQuery(con, attrbtqry)
     
     if(nrow(attributes) == 0) {
       attributes = data.frame(array(NA, c(nind, ncol(attributes)), dimnames = list(fishID, dimnames(attributes)[[2]])))
       attributes$FK_FISH_ID = as.numeric(fishID)
       attributes$FK_COLLECTION_ID = rep(collectionID, nind)
     }
-    
-    # plateIDqry = paste0("SELECT FK_PLATE_ID FROM AKFINADM.GEN_DNA_WELL WHERE SILLY_CODE=", paste0("'", silly, "'"), " AND FISH_NO=", fishID)
-    # 
-    # plateID = sapply(plateIDqry, function(qry) {IDs = unlist(dbGetQuery(con, qry)); if(length(IDs) == 0) {IDs=NA}; nIDs = length(IDs); if(nIDs == 1) {return(IDs)}; if(nIDs > 1){return(paste(IDs[1:nIDs], collapse = "/"))} })
-    # 
-    # names(plateID)=fishID
-    
+
     plateID = sapply(fishID, function(fshID){
       qry <- paste0("SELECT FK_PLATE_ID FROM AKFINADM.GEN_DNA_WELL WHERE SILLY_CODE=", paste0("'", silly, "'"), " AND FISH_NO=", fshID)
-      IDs = unlist(dbGetQuery(con, qry))
+      IDs = unlist(RJDBC::dbGetQuery(con, qry))
       if(length(IDs) == 0) {IDs=NA}
       nIDs = length(IDs)
       if(nIDs == 1) {return(IDs)}
@@ -189,7 +172,7 @@ loki2r_gaps = function(sillyvec, username, password){
     message(paste0(silly, ".gcl created ", match(silly, sillyvec), " of ", length(sillyvec), " completed."))
   }  # silly
   
-  discon <- dbDisconnect(con)
+  discon <- RJDBC::dbDisconnect(con)
   
   stop.time <- Sys.time()
   
@@ -199,7 +182,4 @@ loki2r_gaps = function(sillyvec, username, password){
   
   return(fulltime)
 }
-
-#' @rdname loki2r_gaps
-#' @export
-LOKI2R_GAPS.GCL <- loki2r_gaps  
+ 

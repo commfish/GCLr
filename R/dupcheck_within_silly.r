@@ -128,6 +128,8 @@ dupcheck_within_silly <- function(sillyvec, loci = LocusControl$locusnames, quan
     
   }, simplify = FALSE) 
   
+  `%dopar%` <- foreach::`%dopar%`
+  
   # Start if NULL quantile
   if(is.null(quantile)){
     

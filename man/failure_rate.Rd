@@ -2,7 +2,6 @@
 % Please edit documentation in R/failure_rate.r
 \name{failure_rate}
 \alias{failure_rate}
-\alias{FailureRate.GCL.R}
 \title{Calculate Failure Rates by Silly, Locus, Plate, and Project}
 \usage{
 failure_rate(sillyvec)
@@ -33,7 +32,10 @@ The \code{\link[=failure_rate]{failure_rate()}} function calculates failure rate
 Note: This function relies on the \code{\link[=pool_collections]{pool_collections()}} function from the GCL package.
 }
 \examples{
-failure_rate(sillyvec = c("SILLY1", "SILLY2", "SILLY3"))
+
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+
+GCLr::failure_rate(sillyvec = sillyvec)
 
 }
 \seealso{

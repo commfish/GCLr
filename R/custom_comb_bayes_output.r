@@ -92,6 +92,8 @@ custom_comb_bayes_output <- function(groupvec, group_names, maindir, mixvec, ext
   cl <- parallel::makePSOCKcluster(ncores)
   
   doParallel::registerDoParallel(cl, cores = ncores)  
+  
+  `%dopar%` <- foreach::`%dopar%`
     
   output0 <- foreach::foreach(mix = mixvec, .packages = c("tidyverse")) %dopar% { #mixvec loop
       

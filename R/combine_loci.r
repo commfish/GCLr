@@ -6,21 +6,20 @@
 #' @param markerset A vector of the set of loci you wish to combine.
 #' @param update Logical switch. If TRUE, the "LocusControl" object is updated and all "*.gcl" objects in "sillyvec" will be updated with the new marker. If FALSE, the "LocusControl" object is not updated and a temporary object called "*.temp.gcl" with the updated data is created.
 #' @param delim Specifies the separator between combined loci, either a period (.) which is the default or an underscore (_) so locus names will work in SPAM.
+#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
 #'
 #' @examples
-#' sillyvec <- c("KQUART06","KQUART08","KQUART09")
-#' markerset <- c("Ots_vatf-251", "Ots_ZR-575")
-#' combine_loci(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1])
-#' combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1])
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+#' 
+#' markerset <- c("One_GPDH", "One_GPDH")
+#' 
+#' GCLr::combine_loci(sillyvec, markerset, update = FALSE, delim = c(".", "_")[1], LocusControl = GCLr::ex_LocusControl)
 #'
 #' @details
 #' This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function. This function requires dplyr version 1.0.0 or higher.
 #'
-#' @aliases CombineLoci.GCL
-#'
 #' @export
-
-combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1]){
+combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1], LocusControl = LocusControl){
 
   if(!all(markerset %in% LocusControl$locusnames)){
     
@@ -55,7 +54,7 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
   
   Publishedlocusnames <- c(Publishedlocusnames, purrr::set_names(NA, newmarkername))
   
-  newalleles <- get_phenotypes(markerset)
+  newalleles <- GCLr::get_phenotypes(markerset, LocusControl)
   
   maxchar <- max(nchar(newalleles))
   
@@ -107,7 +106,7 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
     if(unique(myploidy)==2){ 
       
       sel_var <- lapply(markerset, function(mkr){
-        c(mkr,paste0(mkr, ".1"))
+        c(mkr, paste0(mkr, ".1"))
         }) %>% unlist() #Setting up order of variable to unite so the markers are in the same order as markerset
       
       new.gcl <- my.gcl %>% 
@@ -152,6 +151,3 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
   }   
   
 }
-#' @rdname combine_loci
-#' @export
-CombineLoci.GCL <- combine_loci  

@@ -2,25 +2,9 @@
 % Please edit documentation in R/plot_color_tree.r
 \name{plot_color_tree}
 \alias{plot_color_tree}
-\alias{PlotColorTree.GCL}
 \title{Plot a Colored Phylogenetic Tree}
 \usage{
 plot_color_tree(
-  color.tree,
-  rm.neg.branch = TRUE,
-  type = "phylogram",
-  scale = TRUE,
-  show.tip.label = TRUE,
-  edge.width = 3,
-  adj = NULL,
-  cex = 1,
-  font = 1,
-  label.offset = 0,
-  gen.dist = "FST",
-  ...
-)
-
-PlotColorTree.GCL(
   color.tree,
   rm.neg.branch = TRUE,
   type = "phylogram",

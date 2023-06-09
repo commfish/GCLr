@@ -19,16 +19,13 @@
 #' @return A heatmap of mean scaled likelihood.
 #'
 #' @examples
-#' baseline <- read_csv("V:/Analysis/5_Coastwide/Chum/NPen2WA_Chum_baseline/rubias/baseline/NPen2Wa_Chum_227pops_91loci_base.csv") 
+#' baseline <- GCLr::ex_baseline
 #' ConfusionMatrices_out <- confusion_matrix(reference = baseline , gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
 #' groups <- baseline$repunit %>% unique()
 #' pops <- baseline$collection %>% unique()
 #' plot_confusion_matrix(confusion_matrix = ConfusionMatrices_out, group_names = groups, pop_names = NULL, plot = c("group_group", "pop_group", "pop_pop")[1], high_color = "darkblue", low_color = "lightblue", text_color = "yellow")
 #' 
-#' @aliases plot_ConfusionMatrix.GCL
-#' 
 #' @export
-
 plot_confusion_matrix <- function(confusion_matrix, plot = c("group_group", "pop_group", "pop_pop")[1], group_names = NULL, pop_names = NULL, high_color = "#132B43", low_color = "#56B1F7", text_color = "yellow"){  
   
   if(!plot %in% names(confusion_matrix)){
@@ -135,7 +132,3 @@ plot_confusion_matrix <- function(confusion_matrix, plot = c("group_group", "pop
   print(hm) # Print the plot
   
 }
-
-#' @rdname plot_confusion_matrix
-#' @export
-plot_ConfusionMatrix.GCL <- plot_confusion_matrix  

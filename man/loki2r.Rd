@@ -2,7 +2,6 @@
 % Please edit documentation in R/loki2r.r
 \name{loki2r}
 \alias{loki2r}
-\alias{LOKI2R.GCL}
 \title{Create GCL Objects}
 \usage{
 loki2r(
@@ -10,15 +9,8 @@ loki2r(
   username,
   password,
   test_type = c("SNP", "GTSNP", "MSAT")[1],
-  include_missing = FALSE
-)
-
-LOKI2R.GCL(
-  sillyvec,
-  username,
-  password,
-  test_type = c("SNP", "GTSNP", "MSAT")[1],
-  include_missing = FALSE
+  include_missing = FALSE,
+  LocusControl = LocusControl
 )
 }
 \arguments{
@@ -31,6 +23,8 @@ LOKI2R.GCL(
 \item{test_type}{the test type ("SNP" or "GTSNP") you would like to pull from Loki. (default = "SNP")}
 
 \item{include_missing}{whether to include all fish even if they were never genotyped for all loci in LocusControl (default = FALSE)}
+
+\item{LocusControl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
 }
 \value{
 This function assigns a tibble with the following columns for each silly:
@@ -76,11 +70,12 @@ This function assigns a tibble with the following columns for each silly:
 This function connects to LOKI and creates a .gcl object for each silly in \code{sillyvec} containing genotypes for each locus in LocusControl$locusnames.The default for this function is to only include fish that have been genotyped for all loci in \code{LocusControl$locusnames}; however, the function will include all fish when include_missing = TRUE, which is not recommended or needed for most analyses. If a silly has no fish with genotypes for the loci in \code{LocusControl}, no object will be created and a message will appear listing the sillys that had no data.
 }
 \note{
-This function requires a LocusControl object. Run \code{\link[=create_locuscontrol]{create_locuscontrol()}} prior to this function. The function also requires an OJDBC driver object, which is an object in the GCLr package called \link{drv}.
+This function requires a LocusControl object. Run \code{\link[=create_locuscontrol]{create_locuscontrol()}} prior to this function.
 }
 \examples{
-  create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username ="awbarclay", password = .password)#Locus control
+\dontrun{
   sillyvec <- c("SUCIWS06", "SUCIWS07", "SUCIWS08", "SUCIWS09", "SUCIWS10", "SUCIWS11", "SUCIWS12", "SUCIWS13", "SCIMA22")
-  loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE)
+  loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE, LocusControl = LocusControl)
+}
    
 }

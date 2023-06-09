@@ -30,10 +30,7 @@
 #'
 #' genepop::test_LD(genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 18)
 #'
-#' @aliases Test_LD.GCL
-#' 
 #' @export
-
 test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, iterations = 5000, ncores = parallel::detectCores() - 1){
 
   if(ncores > parallel::detectCores()) {
@@ -87,6 +84,8 @@ test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, 
   
   doParallel::registerDoParallel(cl) 
   
+  `%dopar%` <- foreach::`%dopar%`
+  
   LDout <- foreach::foreach(f = genepopFiles, .packages ="magrittr", .export = c("read_genepop_dis")) %dopar% { 
     
     setwd(original_directory) # set the original WD at beginning of each loop.
@@ -136,7 +135,3 @@ test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, 
   return(output)
   
 }  
-
-#' @rdname test_LD
-#' @export
-Test_LD.GCL <- test_LD

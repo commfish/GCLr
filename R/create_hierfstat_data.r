@@ -7,36 +7,48 @@
 #' @param pop a numeric vector indicating the population affiliation for each silly in `sillyvec`. If there is only one silly per population in `sillyvec`, then this should be a sequence of numbers of length `sillyvec`.
 #' @param loci a character vector of locus names.
 #' @param ncores a numeric value indicating the number of cores to use.
+#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
 #'
 #' @return This function returns a [hierfstat] data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
 #'
 #' @examples
-#' sillyvec <- c("KQUART06", "KQUART08", "KQUART10")
-#' region <- c(1, 2, 3)
-#' pop <- c(1, 1, 2)
-#' loci <- c("locus1", "locus2", "locus3")
-#' ncores <- 4
-#' create_hierfstat_data(sillyvec, region, pop, loci, ncores)
-#'
-#' @aliases create_hierfstat_data.GCL
-#'
+#' newbase <- GCLr::ex_baseline %>% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
+#' 
+#' sillyvec <- GCLr::base2gcl(newbase)
+#' 
+#' pop <- newbase %>%
+#'   dplyr::group_by(collection) %>%
+#'   dplyr::filter(dplyr::row_number()==1) %>%
+#'   dplyr::pull(repunit) %>%
+#'   factor() %>%
+#'   as.numeric()
+#' 
+#' region <- newbase %>%
+#'   dplyr::group_by(collection) %>%
+#'   dplyr::filter(dplyr::row_number()==1) %>% 
+#'   dplyr::mutate(region = dplyr::case_when(repunit == "KenaiOther"~1,
+#'                                           TRUE~2)) %>%
+#'   dplyr::pull(region)
+#' 
+#' loci <- GCLr::ex_baseline[,-c(1:5)] %>%
+#'   names() %>%
+#'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
+#'   unique()
+#' 
+#' GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4, LocusControl = GCLr::ex_LocusControl)
+#' 
 #' @export
-
-create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4){
+create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4, LocusControl = LocusControl){
   
-  if (match.call()[[1]] %in% c("create_hierfstat_data.GCL")) {
-    warning("The function name 'create_hierfstat_data.GCL' is deprecated. Please use 'create_hierfstat_data' instead.")
-  }
-
   if(!exists("LocusControl")){
     
     stop("'LocusControl' not yet built.")
     
   }
   
-  if(sum(is.na(match(loci, LocusControl$locusnames)))){
+  if(sum(is.na(match(loci, LocusControl$locusnames))) > 0){
     
-    stop(paste("'", loci[is.na(match(loci,LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    stop(paste("'", loci[is.na(match(loci, LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
   
@@ -69,6 +81,8 @@ create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4
   cl <- parallel::makePSOCKcluster(ncores)
   
   doParallel::registerDoParallel(cl, cores = ncores)  
+  
+  `%dopar%` <- foreach::`%dopar%`
   
   output <- foreach::foreach(silly = sillyvec, .packages = c("tidyverse")) %dopar% {
     
@@ -130,7 +144,3 @@ create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4
   return(output)
   
 }  
-
-#' @rdname create_hierfstat_data
-#' @export
-create_hierfstat_data.GCL <- create_hierfstat_data

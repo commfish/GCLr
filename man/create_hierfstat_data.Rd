@@ -2,12 +2,16 @@
 % Please edit documentation in R/create_hierfstat_data.r
 \name{create_hierfstat_data}
 \alias{create_hierfstat_data}
-\alias{create_hierfstat_data.GCL}
 \title{Create a hierfstat data object}
 \usage{
-create_hierfstat_data(sillyvec, region = NULL, pop, loci, ncores = 4)
-
-create_hierfstat_data.GCL(sillyvec, region = NULL, pop, loci, ncores = 4)
+create_hierfstat_data(
+  sillyvec,
+  region = NULL,
+  pop,
+  loci,
+  ncores = 4,
+  LocusControl = LocusControl
+)
 }
 \arguments{
 \item{sillyvec}{a vector of silly codes without the ".gcl" extension}
@@ -19,6 +23,8 @@ create_hierfstat_data.GCL(sillyvec, region = NULL, pop, loci, ncores = 4)
 \item{loci}{a character vector of locus names.}
 
 \item{ncores}{a numeric value indicating the number of cores to use.}
+
+\item{LocusControl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
 }
 \value{
 This function returns a \link{hierfstat} data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
@@ -27,11 +33,29 @@ This function returns a \link{hierfstat} data object containing region (if suppl
 This function creates a \code{hierfstat} data object using the provided inputs. The \code{hierfstat} data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as \code{\link[=varcomp]{varcomp()}} and \code{\link[=varcomp.glob]{varcomp.glob()}} from the \code{hierfstat} package.
 }
 \examples{
-sillyvec <- c("KQUART06", "KQUART08", "KQUART10")
-region <- c(1, 2, 3)
-pop <- c(1, 1, 2)
-loci <- c("locus1", "locus2", "locus3")
-ncores <- 4
-create_hierfstat_data(sillyvec, region, pop, loci, ncores)
+newbase <- GCLr::ex_baseline \%>\% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
+
+sillyvec <- GCLr::base2gcl(newbase)
+
+pop <- newbase \%>\%
+  dplyr::group_by(collection) \%>\%
+  dplyr::filter(dplyr::row_number()==1) \%>\%
+  dplyr::pull(repunit) \%>\%
+  factor() \%>\%
+  as.numeric()
+
+region <- newbase \%>\%
+  dplyr::group_by(collection) \%>\%
+  dplyr::filter(dplyr::row_number()==1) \%>\% 
+  dplyr::mutate(region = dplyr::case_when(repunit == "KenaiOther"~1,
+                                          TRUE~2)) \%>\%
+  dplyr::pull(region)
+
+loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
+  names() \%>\%
+  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+  unique()
+
+GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4, LocusControl = GCLr::ex_LocusControl)
 
 }

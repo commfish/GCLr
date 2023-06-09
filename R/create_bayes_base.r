@@ -30,7 +30,7 @@ create_bayes_base <- function(sillyvec, loci, dir, baseline_name, ncores = 4){
   
   filename <- paste(dir, "\\", baseline_name, ".bse", sep = "")
   
-  y <- calc_freq_pop(sillyvec = sillyvec, loci = loci, ncores = ncores)
+  y <- GCLr::calc_freq_pop(sillyvec = sillyvec, loci = loci, ncores = ncores)
   
   bse0 <- y %>%
     dplyr::group_by(silly, locus) %>% 

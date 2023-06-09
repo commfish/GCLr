@@ -29,20 +29,15 @@
 #' @family QC Functions
 #'
 #' @examples
-#' failure_rate(sillyvec = c("SILLY1", "SILLY2", "SILLY3"))
 #' 
-#' @aliases failure_rate FailureRate.GCL.R
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+#' 
+#' GCLr::failure_rate(sillyvec = sillyvec)
 #' 
 #' @export
-
 failure_rate <- function(sillyvec) {
-  # Check for the use of the old function name
-  if (match.call()[[1]] %in% c("FailureRate.GCL.R")) {
-    warning("The function name 'FailureRate.GCL.R' is deprecated. Please use 'failure_rate' instead.")
-  }
-  
-  
-  # Pool all collections in to one master silly
+
+    # Pool all collections in to one master silly
   pool_collections(collections = sillyvec, loci = loci, newname = "master")
   
   # Tibble of Dose 1 scores and attributes

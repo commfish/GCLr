@@ -31,19 +31,16 @@
 #'   }
 #'
 #' @examples
-#' baseline <- read_csv("V:/Analysis/5_Coastwide/Chum/NPen2WA_Chum_baseline/rubias/baseline/NPen2Wa_Chum_227pops_91loci_base.csv")
-#' ConfusionMatrices_out <- confusion_matrix(reference = baseline , gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
-#'
-#' @aliases ConfusionMatrices.GCL
+#' 
+#' GCLr::confusion_matrix(reference = GCLr::ex_baseline , gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
 #'
 #' @export
-
 confusion_matrix <- function(reference, gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop")[1]){
   
   start <- Sys.time()
   
   rubias_sa <- rubias::self_assign(reference = baseline, gen_start_col = gen_start_col) %>% 
-    select(-missing_loci, -n_miss_loci, -n_non_miss_loci, -z_score, -log_likelihood)
+    dplyr::select(-missing_loci, -n_miss_loci, -n_non_miss_loci, -z_score, -log_likelihood)
   
   pop_pop <- function(rubias_sa){
     
@@ -93,7 +90,3 @@ confusion_matrix <- function(reference, gen_start_col = 5, output = c("group_gro
   return(out_sum)
 
 }
-
-#' @rdname confusion_matrix
-#' @export
-ConfusionMatrices.GCL <- confusion_matrix

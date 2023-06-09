@@ -2,17 +2,16 @@
 % Please edit documentation in R/hierfstat_global_stats.r
 \name{hierfstat_global_stats}
 \alias{hierfstat_global_stats}
-\alias{HierFstats_global.GCL}
 \title{Compute global hierarchical F-statistics and variance components.}
 \usage{
-hierfstat_global_stats(levels, genotypes)
-
-HierFstats_global.GCL(levels, genotypes)
+hierfstat_global_stats(levels, genotypes, LocusControl = LocusControl)
 }
 \arguments{
 \item{levels}{A data frame containing the different levels (factors) from the outermost (e.g., region) to the innermost before the individual.}
 
 \item{genotypes}{A data frame containing the genotypes in single-column numeric format (e.g., 101, 102, 202).}
+
+\item{LocusControl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
 }
 \value{
 A list containing 3 tibbles:
@@ -26,20 +25,32 @@ A list containing 3 tibbles:
 This is a wrapper function for \code{\link[hierfstat:varcomp.glob]{hierfstat::varcomp.glob()}}. This wrapper will compute variance components and hierarchical F-statistics for haploid and diploid loci and combine the results into a single output.
 }
 \examples{
-load("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline_new.Rdata")
+newbase <- GCLr::baseline \%>\% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
 
-source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions
+sillyvec <- GCLr::base2gcl(newbase)
 
-sillyvec104 <- Final_Pops$collection
+pop <- newbase \%>\%
+  dplyr::group_by(collection) \%>\%
+  dplyr::filter(dplyr::row_number()==1) \%>\%
+  dplyr::pull(repunit) \%>\%
+  factor() \%>\%
+  as.numeric()
 
-region <- Final_Pops \%>\% select(pop = order, region = region)
+region <- newbase \%>\%
+  dplyr::group_by(collection) \%>\%
+  dplyr::filter(dplyr::row_number()==1) \%>\% 
+  dplyr::mutate(region = dplyr::case_when(repunit == "KenaiOther"~1,
+                                          TRUE~2)) \%>\%
+  dplyr::pull(region)
 
-temporal_collections <- temporal_collections(sillyvec = sillyvec104, region = region, min.samps = 50, sep = ".")
+loci <- GCLr::baseline[,-c(1:5)] \%>\%
+  names() \%>\%
+  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+  unique()
 
-combine_loci(sillyvec = sillyvec187, markerset = c("Oki_102213-604", "Oki_101119-1006")) # Combining two loci to test haploid calcs
+fstat.dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4, LocusControl = GCLr::ex_LocusControl) \%>\% 
+  dplyr::mutate(region = factor(region), pop = factor(pop), spop = factor(spop))
 
-fstat.dat <- create_hierfstat_data(sillyvec = temporal_collections$silly, region = temporal_collections$region, pop = temporal_collections$pop, loci = c("Oki_102213-604.Oki_101119-1006", loci81), ncores = 8)
-
-hierfstat_global_stats(levels = fstat.dat[,1:3], genotypes = fstat.dat[,-c(1:3)])
+hierfstat_global_stats(levels = fstat.dat[ ,1:3], genotypes = fstat.dat[ ,-c(1:3)])
 
 }

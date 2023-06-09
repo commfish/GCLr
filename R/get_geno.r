@@ -123,7 +123,7 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, path, us
     proj <- RJDBC::dbGetQuery(con, projqry) %>% 
       tibble::as_tibble() 
     
-    dataAll <- left_join(geno, proj, by = c("LAB_PROJECT_NAME", "SILLY_CODE", "FK_FISH_ID" = "FISH_NO"))
+    dataAll <- dplyr::left_join(geno, proj, by = c("LAB_PROJECT_NAME", "SILLY_CODE", "FK_FISH_ID" = "FISH_NO"))
     
     dataAll <- dataAll %>% 
       dplyr::mutate(DNA_PLATE_ID = PLATE_ID) %>% 
@@ -154,7 +154,7 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, path, us
   
    
   # Disconnect from LOKI
-  discon <- DBI::dbDisconnect(con)
+  discon <- RJDBC::dbDisconnect(con)
   
   # Checking to see if no data was pulled for a given project. If true, the function will stop and print an error message in the console.
   if(nrow(dataAll) == 0 & exists("project_name")){

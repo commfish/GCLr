@@ -2,9 +2,11 @@
 #'
 #' This function connects to LOKI (GCL database) and creates a "LocusControl" object.
 #'
-#' @param markersuite The pre-defined name in LOKI for the set of markers for which you want genotypes (e.g., markersuite="KenaiChinook2010_40SNPs"). This set must be pre-defined in LOKI.
+#' @param markersuite optional; the pre-defined name in LOKI for the set of markers for which you want genotypes (e.g., markersuite="KenaiChinook2010_40SNPs"). This set must be pre-defined in LOKI. 
 #'                   
-#' @param locusnames a character vector of locus names spelled exactly the way they are in LOKI. Use "Locus Report Brief" in OceanAK to get the correct locus names.
+#' @param locusnames optional; a character vector of locus names spelled exactly the way they are in LOKI. Use "Locus Report Brief" in OceanAK to get the correct locus names.
+#' 
+#' @param species optional; argument to find markersuite by species. (i.e. sockeye, chinook, chum, coho; default = NULL)
 #' 
 #' @param username your state user name
 #' 
@@ -21,16 +23,19 @@
 #'   }
 #'   The tibble will be named "LocusControl" and assigned to your current workspace.
 #'   
-#' @note This function requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
+#' @details
+#' There are three ways to create a LocusControl object using this function: 1) supply a markersuite name, 2) supply a list of locusnames (this will become a user-defined markersuite), or 3) supply the species name and select from a list of available markersuites in the console.
+#' Only one of these three ways can be used at a time, so make sure the arguments you aren't using are NULL (see examples)
 #'   
 #' @examples
-#' create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
-#'
-#' @aliases CreateLocusControl.GCL
+#' \dontrun{
+#' create_locuscontrol(markersuite = "Sockeye2011_96SNPs", locusnames = NULL, species = NULL, username = "awbarclay", password = password)
+#' create_locuscontrol(markersuite = NULL, locusnames = NULL, species = NULL username = "awbarclay", password = password)
+#' create_locuscontrol(markersuite = NULL, locusnames = c("One_ACBP-79","One_agt-132","One_aldB-152","One_apoe-83" ), species = NULL, username = "awbarclay", password = password)
+#'}
 #'
 #' @export
-
-create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username, password){
+create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, species = NULL, username, password){
   
   if(exists("LocusControl", where = 1)) {
     
@@ -38,9 +43,39 @@ create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username,
     
   }
   
+  if(is.null(markersuite) & is.null(locusnames) & is.null(species)){
+    
+    stop("The user must supply one of the following arguments: markersuite, locusnames, species")
+    
+  }
+  
+  if(!is.null(markersuite) & !is.null(locusnames) & !is.null(species)){
+    
+    stop("The user must supply only one of the following arguements: markersuite, locusnames, species")
+    
+  }
+  
+  if(!is.null(markersuite) & !is.null(locusnames) & is.null(species)){
+    
+    stop("The user must supply only one of the following arguements: markersuite, locusnames, species")
+    
+  }
+  
+  if(!is.null(markersuite) & is.null(locusnames) & !is.null(species)){
+    
+    stop("The user must supply only one of the following arguements: markersuite, locusnames, species")
+    
+  }
+  
+  if(is.null(markersuite) & !is.null(locusnames) & !is.null(species)){
+    
+    stop("The user must supply only one of the following arguements: markersuite, locusnames, species")
+    
+  }
+  
   options(java.parameters = "-Xmx10g")
   
-  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
+  url <- GCLr:::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
   drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
 
@@ -48,10 +83,24 @@ create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username,
    
   con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
   
+  if(!is.null(species)){
+    
+    lociqry <- "SELECT * FROM AKFINADM.V_LOCUSQRY"  # Query locus information of markers in markersuite.
+    
+    mkrsuites <- RJDBC::dbGetQuery(con, lociqry)
+    
+    options <- mkrsuites %>% 
+      tibble::as_tibble() %>% 
+      dplyr::filter(grepl(pattern = species, x = SUITE_NAME, ignore.case = TRUE)) %>% 
+      dplyr::pull(SUITE_NAME) %>% 
+      unique()
+    
+    markersuite <- select.list(options, "Select a markersuite:", multiple = FALSE)
+    
+  }
+  
   # Query by 'markersuite', else query by 'locusnames'
-  
-  if(is.null(markersuite) & is.null(locusnames)) {stop("Need to provide either 'locusnames' or 'markersuite'")}
-  
+ 
   if(is.null(locusnames) & !is.null(markersuite)) {
     
     lociqry <- paste("SELECT * FROM AKFINADM.V_LOCUSQRY WHERE SUITE_NAME = '", markersuite, "'", sep = "")  # Query locus information of markers in markersuite.
@@ -121,7 +170,3 @@ create_locuscontrol <- function(markersuite = NULL, locusnames = NULL, username,
   return(ans)
   
 }
-
-#' @rdname create_locuscontrol
-#' @export
-CreateLocusControl.GCL <- create_locuscontrol  

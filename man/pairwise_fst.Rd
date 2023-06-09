@@ -2,12 +2,9 @@
 % Please edit documentation in R/pairwise_fst.r
 \name{pairwise_fst}
 \alias{pairwise_fst}
-\alias{PW_FST.GCL}
 \title{Create Pairwise Fst Matrix}
 \usage{
 pairwise_fst(sillyvec, loci, inputfile, popnames = NULL, ncores = 4)
-
-PW_FST.GCL(sillyvec, loci, inputfile, popnames = NULL, ncores = 4)
 }
 \arguments{
 \item{sillyvec}{a vector of silly codes without the ".gcl" extension (e.g., sillyvec <- c("KQUART06", "KQUART08", "KQUART10"))}
@@ -27,8 +24,14 @@ a matrix of pairwise Fst values.
 This function generates a matrix of pairwise Fst values using the \pkg{genepop} package.
 }
 \examples{
-source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions
-load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-PWFST <- pairwise_fst(sillyvec = sillyvec31, loci = loci82, inputfile = "genepop/Susitna31pops82loci.txt", ncores = 8)
+
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+
+loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
+  names() \%>\%
+  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+  unique()
+  
+pairwise_fst(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), ncores = 4)
 
 }

@@ -2,12 +2,9 @@
 % Please edit documentation in R/get_asl_data.r
 \name{get_asl_data}
 \alias{get_asl_data}
-\alias{ASL_Import.GCL}
 \title{Get ASL Data From Loki}
 \usage{
 get_asl_data(sillyvec, username, password, file = NULL, import.vars = TRUE)
-
-ASL_Import.GCL(sillyvec, username, password, file = NULL, import.vars = TRUE)
 }
 \arguments{
 \item{sillyvec}{a character vector of silly codes}
@@ -42,7 +39,6 @@ This function connects to Loki and pulls the fish information (ASL data) for eac
 \details{
 The output of this function can be used for creating an import file for the Loki ASL Data Importer. The the importer requires that all columns are in the correct order and spelled correctly. The importer will not work if you include silly code in the import file.  When writing the import file, make sure it does not contain NAs When writing the import file, make sure it does not contain NAs. (see example below) # Also, when using readr::write_csv to write out the tissue import file, make sure to change the eol argument to from the default \verb{\\n} to \verb{\\r\\n} or the importer
 Also, if you use \code{\link[readr:write_delim]{readr::write_csv()}} to write out the tissue import file, make sure to change the eol argument to from the default \verb{\n} to \verb{\r\n} or the importer will give you an error message about the header names.  e.g.,  \verb{import_file \%>\% write_csv(file = "ImportFile.csv", na = "", eol = "\r\n")}
-This function requires an OJDBC driver object, which is an object in the GCLr package called \link{drv}.
 }
 \examples{
 get_asl_data(sillyvec = c("PPORTCH21", "PBARABCR21"), username = "awbarclay", password = password, import.vars = FALSE, file = "C:/Users/awbarclay/Documents/R/test_fish_table.csv")

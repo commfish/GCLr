@@ -40,13 +40,12 @@ fishers_test <- function(freq, loci, tests){
     
     )
   
-  #Looping through tests with lapply - may want to use foreach %dopar% if this is too slow for people.
   output <- lapply(tests, function(test){
     
     my.test.freq <- freq %>% 
       dplyr::filter(silly%in%test)
     
-    fisher_compute(freq = my.test.freq, loci = loci)
+    GCLr::fisher_compute(freq = my.test.freq, loci = loci)
     
     }) %>% 
     dplyr::bind_rows() %>%

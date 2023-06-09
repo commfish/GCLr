@@ -2,19 +2,9 @@
 % Please edit documentation in R/test_LD.r
 \name{test_LD}
 \alias{test_LD}
-\alias{Test_LD.GCL}
 \title{Perform LD Testing in Parallel}
 \usage{
 test_LD(
-  path,
-  genepopFiles,
-  dememorizations = 10000,
-  batches = 100,
-  iterations = 5000,
-  ncores = parallel::detectCores() - 1
-)
-
-Test_LD.GCL(
   path,
   genepopFiles,
   dememorizations = 10000,

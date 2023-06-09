@@ -72,6 +72,8 @@ summarize_rubias_base_eval <- function(mixvec, sample_sizes, method = c("MCMC", 
     
     parallel::clusterExport(cl = cl, varlist = "custom_comb_rubias_output") # For some reason custom_comb_rubias_output() couldn't be found within the foreach loop, this solves that issue.
     
+    `%dopar%` <- foreach::`%dopar%`
+    
     estimates <- foreach::foreach(bias_corr = c(TRUE, FALSE), .packages = "tidyverse", .export = "custom_comb_rubias_output") %dopar% {
       
       custom_comb_rubias_output(rubias_output = NULL, mixvec = mixvec, group_names = group_names, group_names_new = group_names_new,

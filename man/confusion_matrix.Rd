@@ -2,16 +2,9 @@
 % Please edit documentation in R/confusion_matrix.r
 \name{confusion_matrix}
 \alias{confusion_matrix}
-\alias{ConfusionMatrices.GCL}
 \title{Create confusion matrices}
 \usage{
 confusion_matrix(
-  reference,
-  gen_start_col = 5,
-  output = c("group_group", "pop_group", "pop_pop")[1]
-)
-
-ConfusionMatrices.GCL(
   reference,
   gen_start_col = 5,
   output = c("group_group", "pop_group", "pop_pop")[1]
@@ -51,7 +44,7 @@ Named list of tibble(s) in long format:
 This function is a wrapper for \code{\link[rubias:self_assign]{rubias::self_assign()}}. It takes the genetic likelihood profile produced by \code{\link[rubias:self_assign]{rubias::self_assign()}} and summarizes it into tibbles at the group by group, group by pop, and pop by pop level. This genetic likelihood profile is intended to show how well populations/reporting groups are differentiated by the markers at hand. These probabilities can give an idea of potential misallocation and where. This function can aid in marker selection.
 }
 \examples{
-baseline <- read_csv("V:/Analysis/5_Coastwide/Chum/NPen2WA_Chum_baseline/rubias/baseline/NPen2Wa_Chum_227pops_91loci_base.csv")
-ConfusionMatrices_out <- confusion_matrix(reference = baseline , gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
+
+GCLr::confusion_matrix(reference = GCLr::ex_baseline , gen_start_col = 5, output = c("group_group", "pop_group", "pop_pop"))
 
 }

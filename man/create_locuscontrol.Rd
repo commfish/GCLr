@@ -2,22 +2,22 @@
 % Please edit documentation in R/create_locuscontrol.r
 \name{create_locuscontrol}
 \alias{create_locuscontrol}
-\alias{CreateLocusControl.GCL}
 \title{Create LocusControl Object}
 \usage{
-create_locuscontrol(markersuite = NULL, locusnames = NULL, username, password)
-
-CreateLocusControl.GCL(
+create_locuscontrol(
   markersuite = NULL,
   locusnames = NULL,
+  species = NULL,
   username,
   password
 )
 }
 \arguments{
-\item{markersuite}{The pre-defined name in LOKI for the set of markers for which you want genotypes (e.g., markersuite="KenaiChinook2010_40SNPs"). This set must be pre-defined in LOKI.}
+\item{markersuite}{optional; the pre-defined name in LOKI for the set of markers for which you want genotypes (e.g., markersuite="KenaiChinook2010_40SNPs"). This set must be pre-defined in LOKI.}
 
-\item{locusnames}{a character vector of locus names spelled exactly the way they are in LOKI. Use "Locus Report Brief" in OceanAK to get the correct locus names.}
+\item{locusnames}{optional; a character vector of locus names spelled exactly the way they are in LOKI. Use "Locus Report Brief" in OceanAK to get the correct locus names.}
+
+\item{species}{optional; argument to find markersuite by species. (i.e. sockeye, chinook, chum, coho; default = NULL)}
 
 \item{username}{your state user name}
 
@@ -38,10 +38,15 @@ The tibble will be named "LocusControl" and assigned to your current workspace.
 \description{
 This function connects to LOKI (GCL database) and creates a "LocusControl" object.
 }
-\note{
-This function requires an OJDBC driver object, which is an object in the GCLr package called \link{drv}.
+\details{
+There are three ways to create a LocusControl object using this function: 1) supply a markersuite name, 2) supply a list of locusnames (this will become a user-defined markersuite), or 3) supply the species name and select from a list of available markersuites in the console.
+Only one of these three ways can be used at a time, so make sure the arguments you aren't using are NULL (see examples)
 }
 \examples{
-create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
+\dontrun{
+create_locuscontrol(markersuite = "Sockeye2011_96SNPs", locusnames = NULL, species = NULL, username = "awbarclay", password = password)
+create_locuscontrol(markersuite = NULL, locusnames = NULL, species = NULL username = "awbarclay", password = password)
+create_locuscontrol(markersuite = NULL, locusnames = c("One_ACBP-79","One_agt-132","One_aldB-152","One_apoe-83" ), species = NULL, username = "awbarclay", password = password)
+}
 
 }

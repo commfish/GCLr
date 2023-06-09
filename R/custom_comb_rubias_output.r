@@ -81,6 +81,8 @@ custom_comb_rubias_output <- function(rubias_output = NULL, mixvec = NULL, group
     stop("Need to provide `group_names` if introducing a new `groupvec`, hoser!!!")
   }
   
+  `%dopar%` <- foreach::`%dopar%`
+  
   #~~~~~~~~~~~~~~~~
   ## If no rubias_output, make from .csv files
   if(is.null(rubias_output)) {

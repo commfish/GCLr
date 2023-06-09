@@ -134,6 +134,8 @@ dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, 
   
   doParallel::registerDoParallel(cl, cores = ncores)  
   
+  `%dopar%` <- foreach::`%dopar%`
+  
   dupcheck0 <- foreach::foreach(silly = BetweenSillys, .export = c("loci"), .packages = c("tidyverse","rubias")) %dopar% {
     
     new.gcl <- my.between[[silly]] %>%

@@ -18,10 +18,7 @@
 #' combine_loci(sillyvec = sillyvec, markerset = c("One_CO1","One_Cytb_17","One_Cytb_26"), update = TRUE)
 #' new2old.GCL(sillyvec = sillyvec, save_new = TRUE, ncores = 8)
 #' 
-#' @aliases new2old_gcl.GCL
-#'
 #' @export
-#' 
 new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
 
   # Do all sillys exist in the environment?
@@ -100,6 +97,8 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
   cl <- parallel::makePSOCKcluster(ncores)
   
   doParallel::registerDoParallel(cl, cores = ncores)  
+  
+  `%dopar%` <- foreach::`%dopar%`
   
   gcls <- foreach::foreach(silly = sillyvec_, .packages = c("tidyverse", "janitor"), .export = "LocusControl") %dopar% {
     
@@ -228,6 +227,3 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
   message(paste0("The following *.gcl objects have been converted to old-style lists:\n", paste0(sillyvec_, collapse = ", ")))
   
 }
-#' @rdname new2old_gcl
-#' @export
-new2old_gcl.GCL <- new2old_gcl  

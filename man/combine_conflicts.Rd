@@ -2,7 +2,6 @@
 % Please edit documentation in R/combine_conflicts.r
 \name{combine_conflicts}
 \alias{combine_conflicts}
-\alias{CombineConflictsWithPlateID.GCL.r}
 \title{Combine QC Conflict Reports and Add PLATE_ID Column}
 \usage{
 combine_conflicts(files)
@@ -17,4 +16,3 @@ This function combines QC conflict reports and adds a column of PLATE_IDs associ
 combine_conflicts(files = c("CM31 qc 01 Import Results.csv", "CM31 qc 02 Import Results.csv", "CM31 qc Plate3 Imports.csv"))
 
 }
-\concept{QA scripts}

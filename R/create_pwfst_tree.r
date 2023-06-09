@@ -102,6 +102,8 @@ create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, re
   
   doParallel::registerDoParallel(cl, cores = ncores)  
 
+  `%dopar%` <- foreach::`%dopar%`
+  
   vc <- foreach::foreach(pair = pairnames, .packages = "hierfstat") %dopar% {
     
     sillys <- pairs[, pair]

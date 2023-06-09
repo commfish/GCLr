@@ -23,10 +23,7 @@
 #' detach()
 #' summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
 #'
-#' @aliases Summarize_LD.GCL
-#' 
 #' @export
-
 summarize_LD <- function(LDresults, alpha = 0.05, prop_sign_pops = 0.5){
  
   npops <- length(LDresults$Pop %>% unique())
@@ -61,13 +58,9 @@ summarize_LD <- function(LDresults, alpha = 0.05, prop_sign_pops = 0.5){
     dplyr::rename(`Locus Pair` = Locus_pair, `Proportion of Populations` = prop_pops_LD)
   
   plotly::ggplotly(plot_df %>% 
-                     ggplot2::ggplot(aes(x = `Locus Pair`, y = `Proportion of Populations`))+
+                     ggplot2::ggplot(ggplot2::aes(x = `Locus Pair`, y = `Proportion of Populations`))+
                      ggplot2::geom_bar(stat = "identity")+
                      ggplot2::ylim(0, 1)+
                      ggplot2::ggtitle(label = my.text))
   
 }
-
-#' @rdname summarize_LD
-#' @export
-Summarize_LD.GCL <- summarize_LD

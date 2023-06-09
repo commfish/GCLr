@@ -11,6 +11,8 @@
 #' @param test_type the test type ("SNP" or "GTSNP") you would like to pull from Loki. (default = "SNP")
 #' 
 #' @param include_missing whether to include all fish even if they were never genotyped for all loci in LocusControl (default = FALSE)
+#' 
+#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
 #'
 #' @return This function assigns a tibble with the following columns for each silly:
 #'    \itemize{
@@ -51,19 +53,16 @@
 #'                \item \code{genotypes} with a column for each allele for each locus
 #'              }
 #'                
-#' @note This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function. The function also requires an OJDBC driver object, which is an object in the GCLr package called [GCLr::drv]. 
+#' @note This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function.
 #'    
 #' @examples
-#'   create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username ="awbarclay", password = .password)#Locus control
+#' \dontrun{
 #'   sillyvec <- c("SUCIWS06", "SUCIWS07", "SUCIWS08", "SUCIWS09", "SUCIWS10", "SUCIWS11", "SUCIWS12", "SUCIWS13", "SCIMA22")
-#'   loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE)
+#'   loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE, LocusControl = LocusControl)
+#' }
 #'    
-#' @aliases LOKI2R.GCL
-#'   
 #' @export            
-
-
-loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "MSAT")[1], include_missing = FALSE){
+loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "MSAT")[1], include_missing = FALSE, LocusControl = LocusControl){
   
   if(!exists("LocusControl")){
     
@@ -224,10 +223,10 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
     silly_df0 <- sillydata %>%
       dplyr::arrange(LOCUS) %>%
       tidyr::pivot_longer(cols = c("ALLELE_1", "ALLELE_2"), values_to = "Allele") %>% 
-      dplyr::mutate(scores_header = case_when(name == "ALLELE_2" ~ paste0(LOCUS, ".1"), 
+      dplyr::mutate(scores_header = dplyr::case_when(name == "ALLELE_2" ~ paste0(LOCUS, ".1"), 
                                               TRUE ~ LOCUS)) %>% 
       dplyr::select(-LOCUS, -name) %>% 
-      tidyr::pivot_wider(names_from = scores_header, values_from = Allele, names_sep="" ) %>% 
+      tidyr::pivot_wider(names_from = scores_header, values_from = Allele, names_sep = "" ) %>% 
       dplyr::mutate(
         CAPTURE_DATE = lubridate::as_date(CAPTURE_DATE),
         END_CAPTURE_DATE = lubridate::as_date(END_CAPTURE_DATE),
@@ -336,6 +335,3 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   print(fulltime)
   
 }
-#' @rdname loki2r
-#' @export
-LOKI2R.GCL <- loki2r  

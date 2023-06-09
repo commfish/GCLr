@@ -52,6 +52,9 @@ calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4){
   doParallel::registerDoParallel(cl, cores = ncores)  
   
   # Start parallel loop
+  
+  `%dopar%` <- foreach::`%dopar%`
+  
   freqs <- foreach::foreach(silly = sillyvec, .packages = c("tidyverse")) %dopar% {
     
     my.gcl <- all.gcl[[silly]]
