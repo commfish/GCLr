@@ -54,7 +54,7 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
   
   Publishedlocusnames <- c(Publishedlocusnames, purrr::set_names(NA, newmarkername))
   
-  newalleles <- get_phenotypes(markerset)
+  newalleles <- GCLr::get_phenotypes(markerset, LocusControl)
   
   maxchar <- max(nchar(newalleles))
   
