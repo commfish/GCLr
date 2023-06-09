@@ -80,7 +80,7 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   
   options(java.parameters = "-Xmx10g")
   
-  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
+  url <- GCLr:::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
   drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
   

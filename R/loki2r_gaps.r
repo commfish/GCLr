@@ -16,7 +16,7 @@
 #' @examples
 #' \dontrun{
 #' sillyvec <- c("KQUART06", "KQUART08", "KQUART09")
-#' loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password, LocusControl = GCLr::LocusControl)
+#' loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password, LocusControl = LocusControl)
 #' }
 #' 
 #' @export
@@ -26,7 +26,7 @@ loki2r_gaps <- function(sillyvec, username, password, LocusControl = LocusContro
   
   options(java.parameters = "-Xmx10g")
   
-  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
+  url <- GCLr:::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
   drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
   

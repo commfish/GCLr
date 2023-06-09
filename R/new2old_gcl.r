@@ -11,12 +11,10 @@
 #' @details This function checks if all the required objects exist in the environment and converts the new style tibble "*.gcl" objects to the old style list format. It performs various checks and transformations on the objects, and assigns the converted objects to the workspace.
 #'
 #' @examples
-#' create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = .password) 
-#'
-#' sillyvec <- c("SGILL20D11", "SGILL20D6", "SGILL20D8")
-#' loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password)
-#' combine_loci(sillyvec = sillyvec, markerset = c("One_CO1","One_Cytb_17","One_Cytb_26"), update = TRUE)
-#' new2old.GCL(sillyvec = sillyvec, save_new = TRUE, ncores = 8)
+#' \dontrun{
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+#' GCLr::new2old.GCL(sillyvec = sillyvec, save_new = TRUE, ncores = 8)
+#' }
 #' 
 #' @export
 new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){

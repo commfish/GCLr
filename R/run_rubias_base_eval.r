@@ -58,12 +58,13 @@
 #'    }
 #'
 #' @examples
-#'    attach("C:/Users/awbarclay/Documents/Analysis/Chinook/Susitna_Chinook_baseline_2020/run baseline eval tests/Susitna_Chinook_baseline_2020_noGTseq.Rdata")
-#'    Final_Pops <- Final_Pops %>% mutate(group = factor(group, levels = unique(group)))
-#'    sample_sizes <- base_eval_sample_sizes(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), groupvec = Final_Pops$group %>% as.numeric(), scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
-#'    create_rubias_base_eval(sillyvec = Final_Pops$silly, group_names = Final_Pops$group %>% levels(), test_groups = Final_Pops$group %>% levels(), loci = loci80, groupvec = Final_Pops$group %>% as.numeric(), sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
+#' \dontrun{
+#'    sample_sizes <- GCLr::base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
+#'    GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
 #'    tests <- sample_sizes %>% group_by(test_group, scenario) %>% summarize(test_group = test_group %>% unique(), scenario = scenario %>% unique(), .groups = "drop_last")
-#'    run_rubias_base_eval(tests = tests, group_names = Final_Pops$group %>% levels(), gen_start_col = 5, base.path = "rubias/baseline",mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = 8)
+#'    GCLr::run_rubias_base_eval(tests = tests, group_names = Final_Pops$group %>% levels(), gen_start_col = 5, base.path = "rubias/baseline",mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = 8)
+#' 
+#' }
 #'    
 #' @export
 run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", method = "MCMC", alle_freq_prior = list(const_scaled = 1), pi_prior = NA, 

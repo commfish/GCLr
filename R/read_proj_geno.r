@@ -50,7 +50,7 @@ read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, us
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Connect to LOKI
   
-  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
+  url <- GCLr:::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
   drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
   

@@ -29,12 +29,19 @@
 #' @return This function plots a phylogenetic tree.
 #'
 #' @examples
-#' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-#' Fst36 <- read_genepop_pwfst(file = "GENEPOP/Sustina36pops84loci.MIG", popnames = Pooling_1_pops$location)
-#' FstTree <- ape::nj(Fst36)
-#' groupvec <- factor(Pooling_1_pops$group, unique(Pooling_1_pops$group)) %>% as.numeric()
-#' colortree <- add_tree_color(tree = FstTree, currentnames = FstTree$tip.label, treenames = FstTree$tip.label, groupvec = groupvec, regioncol = grcol)
-#' plot_color_tree(color.tree = colortree, rm.neg.branch = TRUE, type = "phylogram", scale = TRUE, show.tip.label = TRUE, edge.width = 3, adj = 0.02, cex = 0.7, font = 1, label.offset = 0.001, gen.dist = "FST")
+#' groupvec <- GCLr::ex_baseline %>%
+#'   dplyr::group_by(collection) %>%
+#'   dplyr::filter(dplyr::row_number()==1) %>%
+#'   dplyr::pull(repunit) %>%
+#'   factor() %>%
+#'   as.numeric()
+#' 
+#' pwfst <- GCLr::read_genepop_pwfst(file = system.file("genepop", "ex_genepop.txt.MIG", package = "GCLr"), popnames = paste0("Pop", seq(14)))
+#'  
+#' FstTree <- ape::nj(pwfst)
+#'  
+#' colortree <- GCLr::add_tree_color(tree = FstTree , currentnames = FstTree$tip.label, treenames = FstTree$tip.label, groupvec = groupvec, regioncol = c("red", "green", "blue"))
+#' GCLr::plot_color_tree(color.tree = colortree, rm.neg.branch = TRUE, type = "phylogram", scale = TRUE, show.tip.label = TRUE, edge.width = 3, adj = 0.02, cex = 0.7, font = 1, label.offset = 0.001, gen.dist = "FST")
 #'
 #' @export
 

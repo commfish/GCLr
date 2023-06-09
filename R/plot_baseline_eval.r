@@ -22,6 +22,16 @@
 #' @return If \code{method == "MCMC"} or \code{"PB"}, the function produces a single page pdf file containing the plots and returns the faceted plots. If \code{method == "both"}, the function produces a two-page pdf file containing the plots for both methods and no plots are returned.
 #'
 #' @examples
+#' 
+#' \dontrun{
+#'    sample_sizes <- GCLr::base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
+#'    GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
+#'    tests <- sample_sizes %>% group_by(test_group, scenario) %>% summarize(test_group = test_group %>% unique(), scenario = scenario %>% unique(), .groups = "drop_last")
+#'    GCLr::run_rubias_base_eval(tests = tests, group_names = Final_Pops$group %>% levels(), gen_start_col = 5, base.path = "rubias/baseline",mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = 8)
+#'    summary <- GCLr::summarize_rubias_base_eval(mixvec = mixvec, sample_sizes = sample_sizes, method = "both", group_names = NULL, group_names_new = NULL, groupvec = NULL, groupvec_new = NULL, path = path, alpha = 0.1, burn_in = 5000, threshold = 5e-7, ncores = 8)
+#' 
+#'    GCLr::plot_baseline_eval(summary = summary, file = "Baseline_eval_plots.pdf", method = "PB", test_groups = groups3, group_colors = c("green", "magenta", "red"))
+#' }
 #' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
 #' require(tidyverse)
 #' tests <- sample_sizes %>% group_by(test_group, scenario) %>% summarize(test_group = test_group %>% unique(), scenario = scenario %>% unique(), .groups = "drop_last")#Total of 510 tests  #

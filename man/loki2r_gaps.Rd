@@ -29,7 +29,7 @@ The genotypes and attributes are stored in separate "*.gcl" objects named after 
 \examples{
 \dontrun{
 sillyvec <- c("KQUART06", "KQUART08", "KQUART09")
-loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password, LocusControl = GCLr::LocusControl)
+loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password, LocusControl = LocusControl)
 }
 
 }

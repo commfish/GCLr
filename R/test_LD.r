@@ -22,13 +22,9 @@
 #'     }
 #'
 #' @examples
-#' source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions
-#'
-#' gcl2genepop(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, ncores = 8, npops = 5) 
-#'
-#' my.files <- list.files(path = "GENEPOP", pattern = "(Pop)\\d+(to)\\d+(.gen.txt)") # The regular expression in the pattern argument finds the generic file names produced by [GCLr::gcl2genepop()] when npops is supplied.
-#'
-#' genepop::test_LD(genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 18)
+#' \dontrun{
+#' GCLr::test_LD(genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 18)
+#' }
 #'
 #' @export
 test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, iterations = 5000, ncores = parallel::detectCores() - 1){

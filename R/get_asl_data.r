@@ -28,7 +28,9 @@
 #' If `import.vars = FALSE`, a variable for `silly code` is added to the output tibble.
 #'
 #' @examples
+#' \dontrun{
 #' get_asl_data(sillyvec = c("PPORTCH21", "PBARABCR21"), username = "awbarclay", password = password, import.vars = FALSE, file = "C:/Users/awbarclay/Documents/R/test_fish_table.csv")
+#' }
 #'
 #' @details
 #' The output of this function can be used for creating an import file for the Loki ASL Data Importer. The the importer requires that all columns are in the correct order and spelled correctly. The importer will not work if you include silly code in the import file.  When writing the import file, make sure it does not contain NAs When writing the import file, make sure it does not contain NAs. (see example below) # Also, when using readr::write_csv to write out the tissue import file, make sure to change the eol argument to from the default \verb{\\n} to \verb{\\r\\n} or the importer
@@ -41,7 +43,7 @@ get_asl_data <- function(sillyvec, username, password, file = NULL, import.vars 
   
   options(java.parameters = "-Xmx10g")
   
-  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
+  url <- GCLr:::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
   drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
   

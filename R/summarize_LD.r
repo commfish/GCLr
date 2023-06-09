@@ -18,10 +18,10 @@
 #' @return An interactive bar plot with the proportion of populations with significant tests on the y-axis and the locus pairs on the x-axis.
 #'
 #' @examples
-#' attach("V:/Analysis/5_Coastwide/Chum/Baseline for South Peninsula MSA/South_AK_Peninsula_chum_baseline analysis.Rdata")
-#' LDresults <- LD
-#' detach()
-#' summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
+#' \dontrun{
+#' LDresults <- GCLr::test_LD(genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 4)
+#' GCLr::summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
+#' }
 #'
 #' @export
 summarize_LD <- function(LDresults, alpha = 0.05, prop_sign_pops = 0.5){

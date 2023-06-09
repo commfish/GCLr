@@ -27,9 +27,9 @@ This function takes the output from \code{\link[=test_LD]{test_LD()}}, filters t
 and makes a bar plot of the proportion of pops with significant test results for each locus pair.
 }
 \examples{
-attach("V:/Analysis/5_Coastwide/Chum/Baseline for South Peninsula MSA/South_AK_Peninsula_chum_baseline analysis.Rdata")
-LDresults <- LD
-detach()
-summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
+\dontrun{
+LDresults <- GCLr::test_LD(genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 4)
+GCLr::summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
+}
 
 }
