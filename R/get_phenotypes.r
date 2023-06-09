@@ -1,26 +1,21 @@
-get_phenotypes <- function(markerset){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function gets all possible combinations of phenotypes for set of loci. 
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   markerset - is a vector of loci (e.g., c("Ots_vatf-251", "Ots_ZR-575"))
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  
-  #   password = "************"
-  #
-  #   create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", username = "awbarclay", password = password)
-  # 
-  #   get_phenotypes(markerset = c("Ots_vatf-251", "Ots_ZR-575"))
-  #
-  # Note~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   This function is called on by CombineLoci.gcl and requires a LocusControl object. Run create_locuscontrol prior to this function.
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+#' Get All Combinations of Phenotypes
+#' 
+#' This function gets all possible combinations of phenotypes for set of loci.
+#' 
+#' @param markerset is a vector of loci (e.g., c("Ots_vatf-251", "Ots_ZR-575"))
+#' 
+#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
+#' 
+#' @note this function is called on by [GCLr::combine_loci()] and requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function.
+#' 
+#' @return a vector of phenotypes
+#'
+#' @examples
+#' 
+#' GCLr::get_phenotypes(markerset = c("One_vatf-214", "One_ZNF-61"), LocusControl = GCLr::ex_LocusControl)
+#' 
+#' @export
+get_phenotypes <- function(markerset, LocusControl = LocusControl){
   
   alleles <- LocusControl$alleles[markerset]
   
