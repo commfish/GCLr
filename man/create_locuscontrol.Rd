@@ -4,12 +4,20 @@
 \alias{create_locuscontrol}
 \title{Create LocusControl Object}
 \usage{
-create_locuscontrol(markersuite = NULL, locusnames = NULL, username, password)
+create_locuscontrol(
+  markersuite = NULL,
+  locusnames = NULL,
+  species = NULL,
+  username,
+  password
+)
 }
 \arguments{
-\item{markersuite}{The pre-defined name in LOKI for the set of markers for which you want genotypes (e.g., markersuite="KenaiChinook2010_40SNPs"). This set must be pre-defined in LOKI.}
+\item{markersuite}{optional; the pre-defined name in LOKI for the set of markers for which you want genotypes (e.g., markersuite="KenaiChinook2010_40SNPs"). This set must be pre-defined in LOKI.}
 
-\item{locusnames}{a character vector of locus names spelled exactly the way they are in LOKI. Use "Locus Report Brief" in OceanAK to get the correct locus names.}
+\item{locusnames}{optional; a character vector of locus names spelled exactly the way they are in LOKI. Use "Locus Report Brief" in OceanAK to get the correct locus names.}
+
+\item{species}{optional; argument to find markersuite by species. (i.e. sockeye, chinook, chum, coho; default = NULL)}
 
 \item{username}{your state user name}
 
@@ -30,9 +38,13 @@ The tibble will be named "LocusControl" and assigned to your current workspace.
 \description{
 This function connects to LOKI (GCL database) and creates a "LocusControl" object.
 }
+\details{
+There are three ways to create a LocusControl object using this function.
+}
 \examples{
 \dontrun{
-create_locuscontrol(markersuite = "UCI_Chinook_GTSeq_557SNPs", locusnames = NULL, username = "awbarclay", password = password)
+create_locuscontrol(markersuite = "Sockeye2011_96SNPs", locusnames = NULL, species = NULL, username = "awbarclay", password = password)
+create_locuscontrol(markersuite = NULL, locusnames = NULL, species = NULL username = "awbarclay", password = password)
 }
 
 }
