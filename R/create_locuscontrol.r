@@ -24,15 +24,14 @@
 #'   The tibble will be named "LocusControl" and assigned to your current workspace.
 #'   
 #' @details
-#' There are three ways to create a LocusControl object using this function. 
-#' 
+#' There are three ways to create a LocusControl object using this function: 1) supply a markersuite name, 2) supply a list of locusnames (this will become a user-defined markersuite), or 3) supply the species name and select from a list of available markersuites in the console.
+#' Only one of these three ways can be used at a time, so make sure the arguments you aren't using are NULL (see examples)
 #'   
 #' @examples
 #' \dontrun{
 #' create_locuscontrol(markersuite = "Sockeye2011_96SNPs", locusnames = NULL, species = NULL, username = "awbarclay", password = password)
 #' create_locuscontrol(markersuite = NULL, locusnames = NULL, species = NULL username = "awbarclay", password = password)
-# create_locuscontrol(markersuite = NULL, locusnames = c("One_ACBP-79","One_agt-132","One_aldB-152","One_apoe-83" ), species = NULL, username = "awbarclay", password = password)
-#
+#' create_locuscontrol(markersuite = NULL, locusnames = c("One_ACBP-79","One_agt-132","One_aldB-152","One_apoe-83" ), species = NULL, username = "awbarclay", password = password)
 #'}
 #'
 #' @export
