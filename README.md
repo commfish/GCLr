@@ -1,14 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-![Package Logo](man/figures/logo.png)
+# GCLr <img src="man/figures/logo.png" align="right" height="100" /></a>
 
 This is a temporary README for the GCLr package. This document is
 intended as a guide help collaborators add package documentation to
 their assigned functions. The final README will be added after all
 functions have been documented.
 
-# Introduction
+## Introduction
 
 The purpose of this guide is to provide a brief tutorial on how to
 modify existing functions for inclusion in an R package. Below we
@@ -27,7 +27,7 @@ answers require manual intervention, but this is what we want. We’re
 using it as a tool to get the barebones documentation, before pushing
 the files back to the repo.
 
-## Repository
+### Repository
 
 The new repo is here: <https://github.com/commfish/GCLr> And functions
 are located here: <https://github.com/commfish/GCLr/tree/main/R>
@@ -37,7 +37,7 @@ on (i.e., not Kyle’s GH). They have been renamed and a few lines were
 removed, where necessary. They were uploaded to serve as a starting
 point, so we have records of the changes.
 
-## Installation
+### Installation
 
 You can install the package using devtools. After editing files, and
 pushing back to GitHub, it’s recommended to install again so you can see
@@ -54,14 +54,14 @@ library(devtools)
 devtools::install_github("commfish/GCL")
 ```
 
-# Roxygen syntax
+## Roxygen syntax
 
 In R package documentation, there are various tags that can be used to
 provide additional information about the function or package. They are
 identified via tags, and you can also use standard markdown formatting
 to make the documentation look cleaner, easier to read, etc.
 
-## Tags
+### Tags
 
 This section describes some of the commonly used tags, a few of which
 we’ve marked as mandatory. Feel free to include some or all of them
@@ -131,7 +131,7 @@ link to the some of the tags:
 
 14. @Author: Specifies who wrote the function.
 
-## Tips
+### Tips
 
 The purpose of this section is to outline a few additional tricks that
 we’ve found helpful in documenting the functions. Note that some of
@@ -184,7 +184,7 @@ package may not build properly.
 #'  } 
 ```
 
-# Example Using ChatGPT
+## Example Using ChatGPT
 
 Now, we’ll demonstrate an example workflow using ChatGPT. If you don’t
 have one, you can sign up for a free account here
@@ -270,7 +270,7 @@ Once you’ve completed the function, push it back to the repository and
 check it off your list on the repo issue. Please add comments or
 anything else you think would be useful to your tasks.
 
-# Big picture steps
+## Big picture steps
 
 1)  Copy function
 
