@@ -29,8 +29,9 @@ the files back to the repo.
 
 ### Repository
 
-The new repo is here: <https://github.com/commfish/GCLr> And functions
-are located here: <https://github.com/commfish/GCLr/tree/main/R>
+The new repo is here: <https://github.com/commfish/GCLr> 
+
+And functions are located here: <https://github.com/commfish/GCLr/tree/main/R>
 
 These are the latest and greatest files and what you should be working
 on (i.e., not Kyle’s GH). They have been renamed and a few lines were
@@ -160,10 +161,9 @@ package may not build properly.
     1.  This will link relevant functions and provide more information
         when referencing in the documentation.
     2.  An example can be seen in – \[GCL::summarize_LD()\]
-5.  Optional; Use to generate bulleted lists
+5.  Optional; Use "_\itemize{_" to generate bulleted lists
     1.  These make the documentation cleaner and easier to follow
-    2.  An example can be seen in – \[GCL::confusion_matrix()\] i.
-        Truncated version here:
+    2.  An example can be seen in – \[GCL::confusion_matrix()\] - with a truncated version here:
 
 ``` r
 
@@ -192,8 +192,8 @@ have one, you can sign up for a free account here
 modify the function. The best way to do this is to copy the entire
 function and paste it into the chat.
 
-Here is a suggested prompt – ***Convert the function documentation so it
-can be included in an R package. “paste the function here”***
+Here is a suggested prompt – 
+***Convert the function documentation so it can be included in an R package. “paste the function here”***
 
 Here are the general steps used to convert add_tree_color.r
 
