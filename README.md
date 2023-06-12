@@ -52,7 +52,7 @@ install.packages("devtools")
 
 library(devtools)
 
-devtools::install_github("commfish/GCL")
+devtools::install_github("commfish/GCLr")
 ```
 
 ## Roxygen syntax
