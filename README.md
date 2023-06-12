@@ -38,6 +38,16 @@ on (i.e., not Kyle’s GH). They have been renamed and a few lines were
 removed, where necessary. They were uploaded to serve as a starting
 point, so we have records of the changes.
 
+To edit the package functions, you'll have to clone the repository to your local computer. 
+Assuming you have rstudio and git, this can be done in RStudio via:
+
+    File > New Project > Version Control > Git
+        repository URL: https://github.com/commfish/GCLr/
+        Project directory name: (this should autofill but you can call it whatever you want)
+        Create project as subdirectory of: (where you want the files to go)_
+
+You should now see the project and can edit the files.
+
 ### Installation
 
 You can install the package using devtools. After editing files, and
