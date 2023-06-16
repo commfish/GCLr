@@ -38,7 +38,11 @@ Imports:
     fs,
     magick,
     doRNG,
-    magrittr
+    magrittr,
+    leaflet,
+    terra,
+    sf,
+    exifr
 License: `use_gpl3_license()`
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
