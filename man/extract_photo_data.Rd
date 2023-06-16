@@ -28,11 +28,12 @@ Most smart phones record GPS coordinates when taking photos and a lot of newer d
 Another thing to note is that \code{plot.map} and \code{map.file} arguments work independently, so you can produce a map file without plotting in R or plot in R and don't produce a file.
 }
 \examples{
- library.path <- .libPaths()
-
- extract_photo_data(folder =  paste0(library.path, "/GCLr/photos"),
-                   data.file = NULL,
+ 
+\dontrun{
+extract_photo_data(folder = "V:\\\\Library\\\\Media\\\\Photos\\\\2018 Trips\\\\Coho Baseline\\\\Glacier Cr",
+                   data.file = "PhotoData.csv",
                    plot.map = TRUE,
-                   map.file = NULL)
+                   map.file = "PhotoData_map.html")
 
+}
 }
