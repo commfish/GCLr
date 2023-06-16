@@ -15,14 +15,15 @@
 #' @return A tibble containing the following variables: FileName, latitude, longitude, date, time.
 #'
 #' @examples
-#'  library.path <- .libPaths()
-#' 
-#'  extract_photo_data(folder =  paste0(library.path, "/GCLr/photos"),
-#'                    data.file = NULL,
+#'  
+#' \dontrun{
+#' extract_photo_data(folder = "V:\\Library\\Media\\Photos\\2018 Trips\\Coho Baseline\\Glacier Cr",
+#'                    data.file = "PhotoData.csv",
 #'                    plot.map = TRUE,
-#'                    map.file = NULL)
-#'
-#' @export
+#'                    map.file = "PhotoData_map.html")
+#' 
+#' }
+##' @export
 extract_photo_data <- function(folder, data.file = NULL, plot.map = TRUE, map.file = NULL){
   
   setwd(folder)
