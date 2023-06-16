@@ -3,7 +3,7 @@
 \docType{data}
 \name{ex_baseline}
 \alias{ex_baseline}
-\title{Example \code{rubias} Baseline Data}
+\title{Example Rubias Baseline Data}
 \format{
 A tibble data frame with 2,443 rows and 190 columns:
 \describe{

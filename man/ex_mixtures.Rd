@@ -3,7 +3,7 @@
 \docType{data}
 \name{ex_mixtures}
 \alias{ex_mixtures}
-\title{Example \code{rubias} Mixture Data}
+\title{Example Rubias Mixture Data}
 \format{
 A tibble data frame with 1,517 rows and 190 columns:
 \describe{
@@ -18,6 +18,6 @@ A tibble data frame with 1,517 rows and 190 columns:
 ex_mixtures
 }
 \description{
-This is an example \code{rubias} mixture dataset conatining genotypes for 16 mixtures.
+This is an example \code{rubias} mixture dataset containing genotypes for 16 mixtures.
 }
 \keyword{datasets}
