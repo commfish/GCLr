@@ -1,4 +1,4 @@
-#' Example `rubias` Baseline Data
+#' Example Rubias Baseline Data
 #' 
 #' This is an example `rubias` baseline (aka reference) dataset containing genotypes for 14 baseline collections.  
 #' 

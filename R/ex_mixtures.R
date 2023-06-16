@@ -1,6 +1,6 @@
-#' Example `rubias` Mixture Data
+#' Example Rubias Mixture Data
 #' 
-#' This is an example `rubias` mixture dataset conatining genotypes for 16 mixtures.   
+#' This is an example `rubias` mixture dataset containing genotypes for 16 mixtures.   
 #' 
 #' @format A tibble data frame with 1,517 rows and 190 columns:
 #' \describe{
