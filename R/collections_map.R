@@ -59,7 +59,7 @@ collections_map <- function(input, file = NULL, select.basemap = FALSE, png = FA
       leaflet::addMiniMap( position = "bottomright") %>% 
       leaflet::addLegend("topright", colors = my.input$group_color %>% unique(), labels = my.input$group_name %>% unique,
                 opacity = 1) %>% 
-    leaflet::setMaxBounds(lng1 = minlong, lat1 = minlat, lng2 = maxlong, lat2 = maxlat)
+    leaflet::fitBounds(lng1 = minlong, lat1 = minlat, lng2 = maxlong, lat2 = maxlat, options = list(padding = c(.5, .5)))
   
   if(!is.null(file)){htmlwidgets::saveWidget(map, file = file)}
   
