@@ -4,7 +4,7 @@
 #' 
 #' @param file the file path to output the html map with .html extension (default = NULL) 
 #' @param input a `tibble` containing the following variables:
-#'  \itemize  {
+#'  \itemize{
 #'      \item{number}{unique collection number; if NULL, this will default to 1:length(location); this will appear when you hover your mouse pointer over a waypoint}
 #'      \item{location}{location name for each collection; this will pop up when you click on a waypoint}
 #'      \item{group_name}{reporting group name for each collection}
@@ -12,13 +12,13 @@
 #'      \item{latitude}{latitude in decimal degrees for each collection (see details)}
 #'      \item{longitude}{longitude in decimal degrees for each collection (see details)}
 #'  }
-#'  @param select.basemap if TRUE, select from a list of base maps in the console. If FALSE (default), basemap will be set to leaflet::providers$Esri.OceanBasemap
-#'  @param png save map as png (default: FALSE)
+#' @param select.basemap if TRUE, select from a list of base maps in the console. If FALSE (default), basemap will be set to leaflet::providers$Esri.OceanBasemap
+#' @param png save map as png (default: FALSE)
 #'  
-#'  @details
+#' @details
 #'  If file is set to NULL, the map will not be save to an html file. Either R color names or hexidecimal colors can be used by this function. This function only works with coordinates in decimal degrees format with a negative sign to indicate western longitudes (e.g. 61.1596, -149.8876). 
 #'  
-#'  @examples
+#' @examples
 #'  input <- tibble::tibble(number = 1:4,
 #'                  location = c("Juneau Creek", "Russian River", "Killey River", "Funny River"),
 #'                  group_name = c("Upper Kenai", "Upper Kenai", "Lower Kenai", "Lower Kenai"),
