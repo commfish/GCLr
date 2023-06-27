@@ -12,7 +12,7 @@
 #'      \item{latitude}{latitude in decimal degrees for each collection (see details)}
 #'      \item{longitude}{longitude in decimal degrees for each collection (see details)}
 #'  }
-#' @param select.basemap if TRUE, select from a list of base maps in the console. If FALSE (default), basemap will be set to leaflet::providers$Esri.OceanBasemap
+#' @param select.basemap if TRUE, select from a list of base maps in the console. If FALSE (default), basemap will be set to leaflet::providers$OpenStreetMap
 #' @param png save map as png (default: FALSE)
 #'  
 #' @details
@@ -41,7 +41,7 @@ collections_map <- function(input, file = NULL, select.basemap = FALSE, png = FA
   
   options <- names(leaflet::providers)
   
-  mapname <- if(select.basemap == TRUE){select.list(options, "Select a basemap:", multiple = FALSE)}else{"Esri.OceanBasemap"}
+  mapname <- if(select.basemap == TRUE){select.list(options, "Select a basemap:", multiple = FALSE)}else{"OpenStreetMap"}
   
   minlong <- min(my.input$longitude)
   

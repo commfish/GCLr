@@ -19,7 +19,7 @@ collections_map(input, file = NULL, select.basemap = FALSE, png = FALSE)
 
 \item{file}{the file path to output the html map with .html extension (default = NULL)}
 
-\item{select.basemap}{if TRUE, select from a list of base maps in the console. If FALSE (default), basemap will be set to leaflet::providers$Esri.OceanBasemap}
+\item{select.basemap}{if TRUE, select from a list of base maps in the console. If FALSE (default), basemap will be set to leaflet::providers$OpenStreetMap}
 
 \item{png}{save map as png (default: FALSE)}
 }
