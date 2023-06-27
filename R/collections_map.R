@@ -38,6 +38,7 @@ collections_map <- function(input, file = NULL, select.basemap = FALSE, png = FA
     dplyr::mutate(group_color = GCLr::col2hex(group_color)$hex,
            longitude = dplyr::case_when(longitude < 0 ~ longitude + 360,
                                  TRUE~longitude))
+  
   options <- names(leaflet::providers)
   
   mapname <- if(select.basemap == TRUE){select.list(options, "Select a basemap:", multiple = FALSE)}else{"Esri.OceanBasemap"}
@@ -60,9 +61,9 @@ collections_map <- function(input, file = NULL, select.basemap = FALSE, png = FA
                 opacity = 1) %>% 
     leaflet::setMaxBounds(lng1 = minlong, lat1 = minlat, lng2 = maxlong, lat2 = maxlat)
   
-  htmlwidgets::saveWidget(map, file = file)
+  if(!is.null(file)){htmlwidgets::saveWidget(map, file = file)}
   
-  if(png == TRUE){
+  if(!is.null(file) & png == TRUE){
     
     file <- gsub(".html", ".png", x = file)
     
