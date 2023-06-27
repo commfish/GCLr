@@ -35,7 +35,7 @@ collections_map <- function(input, file = NULL, select.basemap = FALSE, png = FA
   # Convert colors to hexadecimal - some R colors don't work in leaflet
   # Add 360 to longitudes < 0 so all points will show up on the map when centered on 180 degrees
   my.input <- input %>% 
-    mutate(group_color = GCLr::col2hex(group_color)$hex,
+    dplyr::mutate(group_color = GCLr::col2hex(group_color)$hex,
            longitude = dplyr::case_when(longitude < 0 ~ longitude + 360,
                                  TRUE~longitude))
   options <- names(leaflet::providers)
