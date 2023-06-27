@@ -133,15 +133,15 @@ genepop2gcl <- function(filename){
   # Separate genotypes into two variables
   nchar <- dat0 %>% 
     dplyr::select(all_of(loci)) %>% 
-    dplyr::summarize(across(everything(), .fns = base::nchar)) %>% 
+    dplyr::summarize(across(everything(), ~base::nchar(.))) %>% 
     max()
   
   for(locus in loci){
     
     dat0 <- dat0 %>%
       tidyr::separate(!!sym(locus), into = c(locus, paste0(locus, ".1")), sep = nchar/2, remove = FALSE) %>% 
-      dplyr::mutate(across(all_of(c(locus, paste0(locus, ".1"))), .fns = as.numeric)) %>% 
-      dplyr::mutate(across(all_of(c(locus, paste0(locus, ".1"))), .fns = as.character))
+      dplyr::mutate(across(all_of(c(locus, paste0(locus, ".1"))), ~as.numeric(.))) %>% 
+      dplyr::mutate(across(all_of(c(locus, paste0(locus, ".1"))), ~as.character(.)))
     
   }
   

@@ -66,8 +66,8 @@ create_bayes_mix <- function(mixvec, loci, dir, ncores = 4){
         
       comb_alleles0 <- scores0 %>%
         dplyr::select(tidyselect::all_of(variables)) %>% 
-        dplyr::mutate(dplyr::across(dplyr::everything(), .fns = factor, levels = my.alleles$call)) %>% 
-        dplyr::mutate(dplyr::across(dplyr::everything(), .fns = as.numeric)) %>% 
+        dplyr::mutate(dplyr::across(dplyr::everything(), ~factor(.x, levels = my.alleles$call))) %>% 
+        dplyr::mutate(dplyr::across(dplyr::everything(), ~as.numeric(.x))) %>% 
         tibble::as_tibble() %>% 
         dplyr::mutate(id = id) %>% 
         tidyr::pivot_longer(-id) %>% 

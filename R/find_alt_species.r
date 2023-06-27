@@ -159,10 +159,8 @@ find_alt_species <- function(sillyvec, species = "chum"){
     dplyr::mutate(silly_fish = gclobjectsAll$silly_fish) %>% # Pull in ID column
     dplyr::select(silly_fish, dplyr::everything()) %>% # Sort, IDs first followed by loci
     dplyr::mutate(dplyr::across(dplyr::all_of(AlternateGenotypes$AlternateMarker), 
-                                .fns = gsub, 
-                                pattern = "NANA", 
-                                replacement = NA) # Replace any NANA which were created by joining locus+locus.1 containing NAs
-                  )
+                                ~gsub(x = .x, pattern = "NANA", replacement = NA) # Replace any NANA which were created by joining locus+locus.1 containing NAs
+                  ))
   
  # Now calculations to find alternate spp.
   Alternate <- gclobjectsAllAlternate %>%
