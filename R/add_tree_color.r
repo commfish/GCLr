@@ -1,58 +1,50 @@
+#' @title Add Tree Color
+#'
+#' @desciption This function takes a tree object produced by [ape::nj()] and adds group colors to the branch lengths for each reporting groups.
+#' Additionally, this function can used to modified the tip labels with new name and optional symbols.
+#'
+#' @param tree A phylogenetic tree object (class = "phylo") produced by the ape package.
+#' @param currentnames A character vector of the tip labels (pop names) in the tree object.
+#' @param treenames A character vector of new tip labels (pop names) to replace current names.
+#' @param groupvec A numeric vector indicating the group affiliation for each population.
+#' @param regioncol A vector of colors the same length as max(`groupvec`) (i.e., the number of groups) (see details).
+#' @param regionpch A vector with the same structure as `regioncol`, but each element is an R pch (plot character) number.
+#' @param write_nexus Logical value indicating whether to write out a Nexus tree file that can be opened in FigTree.
+#' @param file When `write_nexus` = TRUE, the full file path for writing out a Nexus tree file including the .nex extension.
+#' 
+#' @details The colors in the `regioncol` argument can be hexadecimal, R color names, or the number corresponding to an R color name in colors().
+#'
+#' @return A new tree object with colors and tip labels.
+#'
+#' @examples
+#' attach("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline.Rdata")
+#' tree <- FstTree
+#' currentnames <- tree$tip.label
+#' treenames <- gsub(pattern = "\\)", x = gsub(pattern ="\\(", x = treenames104, replacement = ""), replacement = "")
+#' groupvec <- groupvec_11
+#' detach()
+#'
+#' r_colors <- c("purple", "blue", "forestgreen", "magenta", "red", "orange", "green", "yellow", "cyan", "gray", "brown") # R color names example
+#'
+#' hex_colors <- c("#A020F0FF", "#0000FFFF", "#228B22FF", "#FF00FFFF", "#FF0000FF", "#FFA500FF", "#00FF00FF", "#FFFF00FF", "#00FFFFFF", "#BEBEBEFF", "#A52A2AFF") # Hexadecimal colors example
+#'
+#' r_color_numbers <- match(r_colors, colors()) # R color numbers example
+#'
+#' colortree <- GCLr::add_tree_color(tree = tree,
+#'                             currentnames = currentnames,
+#'                             treenames = treenames,
+#'                             groupvec = groupvec,
+#'                             regioncol = r_color_numbers,
+#'                             regionpch = unique(groupvec),
+#'                             write_nexus = TRUE,
+#'                             file = "ColoredNexusTree.nex")
+#'
+#' ape::plot.phylo(x = colortree$tree, edge.color = colortree$color, edge.width = 3, use.edge.length = T, show.tip.label = T, adj = .02, cex = .7, font = 1, label.offset = 0.002)
+#' ape::tiplabels(pch = colortree$pch , offset = .0015, cex = .5)
+#'
+#' @export
 add_tree_color <- function(tree, currentnames, treenames, groupvec, regioncol, regionpch = NULL, write_nexus = FALSE, file = NULL){
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function takes a tree object produced by ape::nj() and adds group colors to the branch lengths for each reporting groups. 
-  # Additionally, this function can used to modified the tip labels with new name and optional symbols.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   tree - a phylogenetic tree object (class = "phylo") produced by the ape package
-  #
-  #   currentnames - a character vector of the tip labels (pop names) in the tree object
-  #   treenames - a character vector of new tip labels (pop names) to replace current names
-  #   groupvec - numeric vector indicating the group affiliation for each population
-  #   *Note: currentnames, treenames, and groupvec should be the same length and order.*
-  #
-  #   regioncol - is a vector of colors the same length as max(groupvec) (i.e. the number of groups).
-  #               The colors can be hexadecimal, R color names, or the number corresponding to an R color name in colors() 
-  #
-  #   regionpch - is a vector with the same structure as "regioncol", but each element is an R pch (plot character) number. 
-  #
-  #   write_nexus - when TRUE the function calls on save_nexus_color_tree() to write out a Nexus tree file that can be opened 
-  #                 in FigTree. FigTree can be downloaded from GitHub (https://github.com/rambaut/figtree/releases) 
-  #                 *Note: Nexus files do not support R plot characters (pch), so they will not be included in the file.*
-  #     
-  #   file - when write_nexus = TRUE, the full file path for writing out a Nexus tree file including the .nex extension.
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   Returns a new tree object with colors and tip labels.
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # attach("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline.Rdata")
-  # tree <- FstTree
-  # currentnames <- tree$tip.label
-  # treenames <- gsub(pattern = "\\)", x = gsub(pattern ="\\(", x = treenames104, replacement = ""), replacement = "")
-  # groupvec <- groupvec_11
-  # detach()
-  # 
-  # r_colors <- c("purple", "blue", "forestgreen","magenta", "red", "orange", "green", "yellow", "cyan", "gray", "brown") #R color names example
-  # 
-  # hex_colors <- c("#A020F0FF", "#0000FFFF", "#228B22FF", "#FF00FFFF", "#FF0000FF", "#FFA500FF", "#00FF00FF", "#FFFF00FF", "#00FFFFFF", "#BEBEBEFF", "#A52A2AFF") #Hexadecimal colors example
-  # 
-  # r_color_numbers <- match(r_colors, colors()) #R color numbers example
-  # 
-  # colortree <- add_tree_color(tree = tree,
-  #               currentnames = currentnames,
-  #               treenames = treenames,
-  #               groupvec = groupvec,
-  #               regioncol = r_color_numbers,
-  #               regionpch = unique(groupvec),
-  #               write_nexus = TRUE,
-  #               file = "ColoredNexusTree.nex")
-  # 
-  # ape::plot.phylo(x = colortree$tree, edge.color = colortree$color, edge.width = 3, use.edge.length = T, show.tip.label = T, adj = .02, cex = .7, font = 1, label.offset = 0.002)
-  # ape::tiplabels(pch = colortree$pch , offset = .0015, cex = .5)
-  # 
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+ 
   if(write_nexus == TRUE&is.null(file)){
     
     stop("A file path must be supplied when write_nexus = TRUE")
