@@ -1,4 +1,3 @@
-
 #' Summarize BAYES Individual Assignment .CLS Files
 #'
 #' This function summarizes BAYES individual assignment .CLS files.
@@ -39,110 +38,111 @@
 #'   thin <- 100
 #'   bayes_indiv_assign_summary(group_names, groupvec, mixnames, maindir, nchains, nreps, burn, thin)
 #'   }
-#'
-
-bayes_indiv_assign_summary <-
-  function(group_names, groupvec, mixnames, maindir, nchains, nreps, burn = 0.5, thin = 100) {
+#'   
+#' @export
+bayes_indiv_assign_summary <- function(group_names, groupvec, mixnames, maindir, nchains, nreps, burn = 0.5, thin = 100){
+  
+  names(mixnames) <- mixnames
+  
+  if(length(nchains) == 1){
     
-    names(mixnames) <- mixnames
+    nchains <- rep(nchains, length(mixnames))
     
-    if(length(nchains) == 1){
-      
-      nchains <- rep(nchains, length(mixnames))
-      
-      names(nchains) <- mixnames
-      
-    }
+    names(nchains) <- mixnames
     
-    if(length(nreps) == 1){
-      
-      nreps <- rep(nreps, length(mixnames))
-      
-      names(nreps) <- mixnames
-      
-    }
+  }
+  
+  if(length(nreps) == 1){
     
-    myoutputdirs <- sapply(mixnames, function(mixname){
-      
-      paste(maindir, mixname, sep = "/")
-      
-    }, simplify = FALSE)
+    nreps <- rep(nreps, length(mixnames))
     
-    myfilenames <- sapply(mixnames, function(mixname){
-      
-      paste(myoutputdirs[mixname], "/", mixnames[mixname], "Chain", seq(nchains[mixname]), "CLS.CLS", sep = "")
-      
-    }, simplify = FALSE)
+    names(nreps) <- mixnames
     
-    # Loop through mixtures
-    results <- lapply(mixnames, function(mix){
+  }
+  
+  myoutputdirs <- sapply(mixnames, function(mixname){
+    
+    paste(maindir, mixname, sep = "/")
+    
+  }, simplify = FALSE)
+  
+  myfilenames <- sapply(mixnames, function(mixname){
+    
+    paste(myoutputdirs[mixname], "/", mixnames[mixname], "Chain", seq(nchains[mixname]), "CLS.CLS", sep = "")
+    
+  }, simplify = FALSE)
+  
+  # Loop through mixtures
+  results <- lapply(mixnames, function(mix){
+    
+    testoutput <- readr::read_table(myfilenames[[mix]][1], col_names = FALSE, col_types = readr::cols(.default = readr::col_double()))
+    
+    mixsampsize <- dim(testoutput)[1]/floor(nreps[mix]/thin)
+    
+    chains <- paste0("Chain", seq(nchains[mix]))
+    
+    skip <- mixsampsize*floor(nreps[mix]*burn/thin)
+    
+    if(exists(paste(mix, ".gcl", sep = ''))) {
       
-      testoutput <- readr::read_table(myfilenames[[mix]][1], col_names = FALSE, col_types = readr::cols(.default = readr::col_double()))
+      my.gcl <- get(paste(mix, ".gcl", sep = ''))
       
-      mixsampsize <- dim(testoutput)[1]/floor(nreps[mix]/thin)
-      
-      chains <- paste0("Chain", seq(nchains[mix]))
-      
-      skip <- mixsampsize*floor(nreps[mix]*burn/thin)
-      
-      if(exists(paste(mix, ".gcl", sep = ''))) {
+      if(!tibble::is_tibble(my.gcl)) {
         
-        my.gcl <- get(paste(mix, ".gcl", sep = ''))
+        indnames <- my.gcl$attributes$FK_FISH_ID
         
-        if(!tibble::is_tibble(my.gcl)) {
-          
-          indnames <- my.gcl$attributes$FK_FISH_ID
-          
-        } else{
-          
-          indnames <- my.gcl$FK_FISH_ID
-          
-        }
+      } else{
         
-      } else {
-        
-        indnames <- seq(mixsampsize)
+        indnames <- my.gcl$FK_FISH_ID
         
       }
       
-      if(length(indnames) > mixsampsize){
-        
-        stop(paste0("The number of individuals in ", mix, ".gcl exceeds the number of individuals in the BAYES output. 
+    } else {
+      
+      indnames <- seq(mixsampsize)
+      
+    }
+    
+    if(length(indnames) > mixsampsize){
+      
+      stop(paste0("The number of individuals in ", mix, ".gcl exceeds the number of individuals in the BAYES output. 
                  Check the BAYES summary files to see if individuals were dropped from the analysis because they had 
                  a type or allele not observed in any of the baseline stocks. Remove the dropped individuals from the
                  mixture .gcl objects before running this function."))
-      }
-      
-      # Loop through chains
-      output <- lapply(chains, function(chain){
-        
-        readr::read_table(myfilenames[[mix]][match(chain, chains)], col_names = FALSE, skip = skip, col_types = readr::cols(.default = readr::col_double()) )
-        
-      }) %>% dplyr::bind_rows()# End chains loop 
-      
-      nits <- nrow(output)/mixsampsize
-      
-      C <- ncol(output)
-      
-      z <- apply(output, 1, which.max)
-      
-      tapply(X = z, INDEX = rep(seq(mixsampsize), nits), function(zz){
-        
-        tibble::as_tibble(tabulate(zz, C)/nits)
-        
-      }) %>% 
-        dplyr::bind_rows() %>% 
-        dplyr::mutate(group = factor(group_names[groupvec], levels = group_names)) %>% 
-        dplyr::group_by(group) %>% 
-        dplyr::summarize(dplyr::across(tidyselect:::where(is.numeric), sum), .groups = "drop") %>%
-        t() %>% 
-        janitor::row_to_names(row_number = 1) %>% 
-        tibble::as_tibble() %>% 
-        dplyr::mutate(mixname = mix, id = indnames) %>% 
-        dplyr::select(mixname, id, dplyr::all_of(group_names))
-      
-    }) %>% dplyr::bind_rows() # End mixture loop
+    }
     
-    return(results)
+    # Loop through chains
+    output <- lapply(chains, function(chain){
+      
+      readr::read_table(myfilenames[[mix]][match(chain, chains)], col_names = FALSE, skip = skip, col_types = readr::cols(.default = readr::col_double()) )
+      
+    }) %>% dplyr::bind_rows()# End chains loop 
     
-  }
+    nits <- nrow(output)/mixsampsize
+    
+    C <- ncol(output)
+    
+    z <- apply(output, 1, which.max)
+    
+    tapply(X = z, INDEX = rep(seq(mixsampsize), nits), function(zz){
+      
+      tibble::as_tibble(tabulate(zz, C)/nits)
+      
+    }) %>% 
+      dplyr::bind_rows() %>% 
+      dplyr::mutate(group = factor(group_names[groupvec], levels = group_names)) %>% 
+      dplyr::group_by(group) %>% 
+      dplyr::summarize(dplyr::across(tidyselect:::where(is.numeric), sum), .groups = "drop") %>%
+      t() %>% 
+      janitor::row_to_names(row_number = 1) %>% 
+      tibble::as_tibble() %>% 
+      dplyr::mutate(mixname = mix, id = indnames) %>% 
+      dplyr::select(mixname, id, dplyr::all_of(group_names))
+    
+  }) %>% dplyr::bind_rows() # End mixture loop
+  
+  return(results)
+  
+}
+
+    
