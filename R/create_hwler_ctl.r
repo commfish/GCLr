@@ -1,6 +1,6 @@
 #' @title Create HWLER Control Files
 #'
-#' @desciption This function creates HWLER control files for each chain based on the specified parameters.
+#' @description This function creates HWLER control files for each chain based on the specified parameters.
 #'
 #' @param sillyvec A character vector of population sillys used to create the baseline file.
 #' @param loci  character vector of the loci used to produce the baseline and mixture files.

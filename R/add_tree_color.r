@@ -1,8 +1,8 @@
 #' @title Add Tree Color
 #'
-#' @desciption This function takes a tree object produced by [ape::nj()] and adds group colors to the branch lengths for each reporting groups.
+#' @description This function takes a tree object produced by [ape::nj()] and adds group colors to the branch lengths for each reporting groups.
 #' Additionally, this function can used to modified the tip labels with new name and optional symbols.
-#'
+#' 
 #' @param tree A phylogenetic tree object (class = "phylo") produced by the ape package.
 #' @param currentnames A character vector of the tip labels (pop names) in the tree object.
 #' @param treenames A character vector of new tip labels (pop names) to replace current names.
