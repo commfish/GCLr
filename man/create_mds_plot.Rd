@@ -42,6 +42,8 @@ an interactive MDS plot
 This function takes a pairwise matrix of genetic distances (e.g. Fst, CSE, Nei's) and creates an interactive MDS plot that can be save as an .html.
 }
 \examples{
+
+\dontrun{
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
 loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
@@ -56,5 +58,7 @@ group_info <- GCLr::ex_baseline \%>\%
   dplyr::summarise(group = unique(repunit) \%>\% factor())
 
 GCLr::create_mds_plot(file = NULL, dist.mat = dist.mat, pop_names = group_info$collection, groupvec = group_info$group \%>\% as.numeric(), group_names = levels(group_info$group), group_colors = c("red", "blue", "green"), title = "Example MDS plot using pairwise Fst matrix", labels = TRUE, showlegend = TRUE)
+
+}
 
 }

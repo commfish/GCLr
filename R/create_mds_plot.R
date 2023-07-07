@@ -23,6 +23,8 @@
 #' @return an interactive MDS plot 
 #'
 #' @examples
+#' 
+#' \dontrun{
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 #' 
 #' loci <- GCLr::ex_baseline[,-c(1:5)] %>%
@@ -37,6 +39,8 @@
 #'   dplyr::summarise(group = unique(repunit) %>% factor())
 #' 
 #' GCLr::create_mds_plot(file = NULL, dist.mat = dist.mat, pop_names = group_info$collection, groupvec = group_info$group %>% as.numeric(), group_names = levels(group_info$group), group_colors = c("red", "blue", "green"), title = "Example MDS plot using pairwise Fst matrix", labels = TRUE, showlegend = TRUE)
+#' 
+#' }
 #' 
 #' @export
 create_mds_plot <- function(file, dist.mat, pop_names, groupvec, group_names, group_colors, title = NULL, labels = FALSE, showlegend = TRUE){
