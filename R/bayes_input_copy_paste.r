@@ -16,6 +16,8 @@
 #'
 #' @return This function has no explicit return value. It copies and pastes the files onto the server.
 #'
+#' @Author: Kyle Shedd
+#' 
 #' @examples
 #' \dontrun{
 #' bayes_input_copy_paste(origindir = "V:/Analysis/4_Westward/Sockeye/KMA Commercial Harvest 2014-2016/Mixtures/BAYES/Late August 89loci",
