@@ -1,34 +1,24 @@
+#' Convert ".gcl" Objects to FSTAT
+#'
+#' Write out an FSTAT input file from ".gcl" objects.
+#'
+#' @param sillyvec A character vector of silly codes to include in the FSTAT file.
+#' @param loci AA character vector of locus names to include in the FSTAT file.
+#' @param path The full file path to write out the FSTAT file; with "\\" or "/" separator between folders.
+#' @param ncores The number of cores for multithreading using [doParallel()] and [foreach()]. Default is 4. 
+#' 
+#' @details 
+#' This function requires a `LocusControl` object. Run [GCLr::create_locuscontrol()] prior to this function.
+#' 
+#' @return Writes out an FSTAT file to the specified path.
+#' 
+#' @examples
+#' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
+#' GCLr::gcl2fstat(sillyvec = sillyvec31, loci = loci82, path = "FSTAT/FSTATfile.dat", ncores = 8)
+#' 
+#' @export
 gcl2fstat <- function(sillyvec, loci, path, ncores = 4){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   Write out an FSTAT input file from "*.gcl" objects.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   sillyvec - a vector of silly codes without the ".gcl" extention (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART10")). 
-  #
-  #   loci - a character vector of locus names
-  #   
-  #   path - full file path to write out the FSTAT file with "\\" or "/" separator between folders 
-  #           example: "V:\\Analysis\\2_Central\\Chinook\\Cook Inlet\\2019\\2019_UCI_Chinook_baseline_hap_data\\FSTAT\\FSTATfile.dat"
-  #                   or "V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/FSTAT/FSTATfile.dat"
-  #
-  #   ncores - a numeric vector of length one indicating the number of cores to use
-  #
-  #   usat - logical vector of length 1, set to TRUE if loci are microsatellites
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   Writes out an FSTAT file to path.
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-  #
-  #   gcl2fstat(sillyvec = sillyvec31, loci = loci82, dir = "FSTAT", ncores = 8)
-  # 
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+
   start_time <- Sys.time()
   
   if(!exists("LocusControl")){

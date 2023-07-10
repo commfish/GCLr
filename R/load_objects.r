@@ -1,27 +1,20 @@
+#' Load R Objects
+#'
+#' This function loads R objects saved with [dput()] or [saveRDS()], serving as a wrapper for [dget()] and [readRDS()].
+#'
+#' @param path A character vector specifying the path where the objects to load reside.
+#' @param pattern Optional character vector argument to manually specify a pattern (i.e., specific object or regular expression). Accepts a list of patterns if you want to load multiple objects (e.g., \code{c("pattern1", "pattern2")}).
+#' @param rds Logical; if set to TRUE, the function will load files in RDS format. If set to FALSE, the function will load text files produced by [dput()]. The default is FALSE for backward compatibility.
+#' 
+#' @return A character vector of the objects loaded into the workspace.
+#' 
+#' @examples
+#' setwd("V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/")
+#' GCLr::load_objects(path = "Objects", pattern = "^loci") # Loads loci objects from "Objects" directory
+#' GCLr::load_objects(path = "Objects", pattern = c("^loci", "sample_size")) # Loads loci and sample size objects from "Objects" directory
+#' 
+#' @export
 load_objects <- function(path, pattern = NULL, rds = FALSE) {
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function loads R objects saved with `dput` or 'saveRDS', this is 
-  # a wrapper for 'dget' and 'readRDS'.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   path - character vector of where the objects you wish to load reside
-  #
-  #   pattern - optional argument so you can manually specify a pattern (i.e., specific object)
-  #             accepts a list of patterns if you want multiple objects: c("pattern1", "pattern2")
-  #
-  #   rds - logical; if set to TRUE the function will load files in rds format.
-  #                  if set to FALSE the function will load test files produced by 'dput'
-  #                  default is FALSE for backwards compatablity.
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   Returns a character vector of objects loaded
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # setwd("V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/")
-  # load_objects(path = "Objects", pattern = "^loci") - just loads loci objects from "Objects" dir
-  # load_objects(path = "Objects", pattern = c("^loci", "sample_size") - loads loci and sample size objects from "Objects" dir
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   if (!require("pacman")) {install.packages("pacman")}
   library(pacman)

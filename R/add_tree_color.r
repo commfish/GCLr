@@ -1,18 +1,15 @@
-#' @title Add Tree Color
+#' Add Tree Color
 #'
-#' @description This function takes a tree object produced by [ape::nj()] and adds group colors to the branch lengths for each reporting groups.
-#' Additionally, this function can used to modified the tip labels with new name and optional symbols.
-#' 
-#' @param tree A phylogenetic tree object (class = "phylo") produced by the ape package.
+#' This function takes a tree object produced by [ape::nj()] and adds group colors to the branch lengths for each reporting groups. Additionally, this function can used to modified the tip labels with new name and optional symbols.
+#'
+#' @param tree A phylogenetic tree object (class = "phylo") produced by the \pkg{ape} package.
 #' @param currentnames A character vector of the tip labels (pop names) in the tree object.
 #' @param treenames A character vector of new tip labels (pop names) to replace current names.
 #' @param groupvec A numeric vector indicating the group affiliation for each population.
-#' @param regioncol A vector of colors the same length as max(`groupvec`) (i.e., the number of groups) (see details).
+#' @param regioncol A vector of colors the same length as \code{max(groupvec)} (i.e., the number of groups). The colors can be hexadecimal, R color names, or the number corresponding to an R color name in [colors()].
 #' @param regionpch A vector with the same structure as `regioncol`, but each element is an R pch (plot character) number.
-#' @param write_nexus Logical value indicating whether to write out a Nexus tree file that can be opened in FigTree.
-#' @param file When `write_nexus` = TRUE, the full file path for writing out a Nexus tree file including the .nex extension.
-#' 
-#' @details The colors in the `regioncol` argument can be hexadecimal, R color names, or the number corresponding to an R color name in colors().
+#' @param write_nexus Logical value indicating whether to write out a Nexus tree file that can be opened in FigTree. FigTree can be downloaded from GitHub: [FigTree Releases](https://github.com/rambaut/figtree/releases).
+#' @param file When \code{write_nexus = TRUE}, the full file path for writing out a Nexus tree file including the .nex extension.
 #'
 #' @return A new tree object with colors and tip labels.
 #'
@@ -25,9 +22,7 @@
 #' detach()
 #'
 #' r_colors <- c("purple", "blue", "forestgreen", "magenta", "red", "orange", "green", "yellow", "cyan", "gray", "brown") # R color names example
-#'
 #' hex_colors <- c("#A020F0FF", "#0000FFFF", "#228B22FF", "#FF00FFFF", "#FF0000FF", "#FFA500FF", "#00FF00FF", "#FFFF00FF", "#00FFFFFF", "#BEBEBEFF", "#A52A2AFF") # Hexadecimal colors example
-#'
 #' r_color_numbers <- match(r_colors, colors()) # R color numbers example
 #'
 #' colortree <- GCLr::add_tree_color(tree = tree,

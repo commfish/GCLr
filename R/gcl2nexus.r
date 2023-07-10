@@ -1,40 +1,28 @@
+#' Convert ".gcl" Objects to NEXUS File
+#'
+#' Write out a NEXUS file in GDA input format from ".gcl" objects.
+#'
+#' @param sillyvec A character vector of silly codes to include in the NEXUS file.
+#' @param loci A character vector of locus names to include in the NEXUS file.
+#' @param path The full file path to write out the NEXUS file; with "\\" or "/" separator between folders.
+#' @param VialNums Logical; if TRUE (default), vial numbers will be included for each individual next to their silly code separated by an underscore (e.g., "KCRESC10_1"). If FALSE, only the SILLY code will be included for each individual (e.g., "KCRESC10").
+#' @param PopNames Optional character vector the same length as `sillyvec` to give populations new names. If NULL, `PopNames` defaults to `sillyvec`.
+#' @param ncores The number of cores for multithreading using [doParallel()] and [foreach()]. Default is 4. 
+#' 
+#' @details 
+#' This function requires a `LocusControl` object. Run [GCLr::create_locuscontrol()] prior to this function.
+#' 
+#' @return Writes out a NEXUS file to the specified path.
+#' 
+#' @examples
+#' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
+#' combine_loci(sillyvec31, markerset = c("Ots_U211", "Ots_U212-297"), update = TRUE)
+#' combine_loci(sillyvec31, markerset = c("Ots_UNKN4-150", "Ots_UNKN6-187"), update = TRUE)
+#' GCLr::gcl2nexus(sillyvec = sillyvec31, loci = c(loci80, "Ots_U211.Ots_U212-297", "Ots_UNKN4-150.Ots_UNKN6-187"), path = "nexusfile.nex", VialNums = TRUE, PopNames = Final_Pops$location, ncores = 8)
+#' 
+#' @export
 gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, ncores = 4){
 
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function creates a Nexus file in GDA input format from "*.gcl" objects.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   sillyvec - character vector of SILLYs - example: c(KCRES10", "KSTRA10", "KNIKOL12", "KNIKOL13")
-  #
-  #   loci - character vector of locus names as they are spelled in LOKI - example: c("GTH2B-550", "NOD1", "Ots_100884-287")
-  #
-  #   path - full file path to write out the GENEPOP file with "\\" or "/" separator between folders 
-  #           example: "V:\\Analysis\\2_Central\\Chinook\\Cook Inlet\\2019\\2019_UCI_Chinook_baseline_hap_data\\output\\nexusfile.nex"
-  #                   or "V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/output/nexusfile.nex"
-  # 
-  #   VialNums - logical; if TRUE (default), vial numbers will be included for each individual next to their silly code separated by an underscore (e.g. KCRESC10_1)
-  #                       if FALSE, only the silly code will be included for each individual.
-  #
-  #   PopNames - a character vector the same length as sillyvec to give populations new names. If no vector is given, PopNames defaults to "sillyvec". 
-  #
-  #   ncores - the number of cores for mulitcoring using doParallel and foreach. 
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #    Writes out a nexus file.
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-  # 
-  #  load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-  #  
-  #  #Combine some loci for example hapset
-  #  combine_loci(sillyvec31, markerset = c("Ots_U211", "Ots_U212-297"), update = TRUE)
-  #  combine_loci(sillyvec31, markerset = c("Ots_UNKN4-150", "Ots_UNKN6-187"), update = TRUE)
-  #
-  #   gcl2nexus(sillyvec = sillyvec31, loci = c(loci80, "Ots_U211.Ots_U212-297", "Ots_UNKN4-150.Ots_UNKN6-187") , path = "nexusfile.nex", VialNums = TRUE, PopNames = Final_Pops$location, ncores = 8)
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
   start_time <- Sys.time()
   
   if(!exists("LocusControl")){

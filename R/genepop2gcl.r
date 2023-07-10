@@ -1,27 +1,20 @@
+#' Convert GENEPOP File to ".gcl" Objects
+#'
+#' Create ".gcl" and `LocusControl` objects from a GENEPOP file.
+#'
+#' @param filename The full file path of the GENEPOP file.
+#' 
+#' @details 
+#' An allele conversion argument may be added in the future if there is a need (mainly for SNPs). This would require a conversion input file from the user to define the corresponding alleles for each locus (e.g., 1 = A, 2 = C, 3 = G, 4 = T).
+#' 
+#' @return Assigns ".gcl" and LocusControl objects to the current workspace and returns a vector of the ".gcl" objects created without the ".gcl" extension (i.e., `sillyvec`).
+#' 
+#' @examples
+#' sillyvec <- GCLr::genepop2gcl(filename = "V:/Analysis/2_Central/Coho/Cook Inlet/2013/mSat/GenepopCICohoData.gen")
+#' 
+#' @export
 genepop2gcl <- function(filename){
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function creates ".gcl" and LocusControl objects from a GENEPOP file. 
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   filename - the full file path of the GENEPOP file.
-  #
-  #   Note: An allele conversion argument may be added in the future if there is a need (mainly for SNPs).
-  #         This would require an conversion input file from the user to define the corresponding
-  #         alleles are for each locus (e.g., 1 = A, 2 = C, 3 = G, 4 = T).
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #  This function assigns ".gcl" and LocusControl objects to the current workspace.
-  #
-  #  This function returns a vector of the ".gcl" objects created without the .gcl extenstion (i.e., sillyvec).
-  # 
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  # sillyvec <- genepop2gcl(filename = "V:/Analysis/2_Central/Coho/Cook Inlet/2013/mSat/GenepopCICohoData.gen")
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+
   if(strsplit(filename, ".gen")==filename){
     
     stop("Genepop file needs a '.gen' extention, hoser!!!")
