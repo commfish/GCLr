@@ -16,7 +16,7 @@ add_tree_color(
 )
 }
 \arguments{
-\item{tree}{A phylogenetic tree object (class = "phylo") produced by the ape package.}
+\item{tree}{A phylogenetic tree object (class = "phylo") produced by the \pkg{ape} package.}
 
 \item{currentnames}{A character vector of the tip labels (pop names) in the tree object.}
 
@@ -24,23 +24,19 @@ add_tree_color(
 
 \item{groupvec}{A numeric vector indicating the group affiliation for each population.}
 
-\item{regioncol}{A vector of colors the same length as max(\code{groupvec}) (i.e., the number of groups) (see details).}
+\item{regioncol}{A vector of colors the same length as \code{max(groupvec)} (i.e., the number of groups). The colors can be hexadecimal, R color names, or the number corresponding to an R color name in \code{\link[=colors]{colors()}}.}
 
 \item{regionpch}{A vector with the same structure as \code{regioncol}, but each element is an R pch (plot character) number.}
 
-\item{write_nexus}{Logical value indicating whether to write out a Nexus tree file that can be opened in FigTree.}
+\item{write_nexus}{Logical value indicating whether to write out a Nexus tree file that can be opened in FigTree. FigTree can be downloaded from GitHub: \href{https://github.com/rambaut/figtree/releases}{FigTree Releases}.}
 
-\item{file}{When \code{write_nexus} = TRUE, the full file path for writing out a Nexus tree file including the .nex extension.}
+\item{file}{When \code{write_nexus = TRUE}, the full file path for writing out a Nexus tree file including the .nex extension.}
 }
 \value{
 A new tree object with colors and tip labels.
 }
 \description{
-This function takes a tree object produced by \code{\link[ape:nj]{ape::nj()}} and adds group colors to the branch lengths for each reporting groups.
-Additionally, this function can used to modified the tip labels with new name and optional symbols.
-}
-\details{
-The colors in the \code{regioncol} argument can be hexadecimal, R color names, or the number corresponding to an R color name in colors().
+This function takes a tree object produced by \code{\link[ape:nj]{ape::nj()}} and adds group colors to the branch lengths for each reporting groups. Additionally, this function can used to modified the tip labels with new name and optional symbols.
 }
 \examples{
 attach("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline.Rdata")
@@ -51,9 +47,7 @@ groupvec <- groupvec_11
 detach()
 
 r_colors <- c("purple", "blue", "forestgreen", "magenta", "red", "orange", "green", "yellow", "cyan", "gray", "brown") # R color names example
-
 hex_colors <- c("#A020F0FF", "#0000FFFF", "#228B22FF", "#FF00FFFF", "#FF0000FF", "#FFA500FF", "#00FF00FF", "#FFFF00FF", "#00FFFFFF", "#BEBEBEFF", "#A52A2AFF") # Hexadecimal colors example
-
 r_color_numbers <- match(r_colors, colors()) # R color numbers example
 
 colortree <- GCLr::add_tree_color(tree = tree,
