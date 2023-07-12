@@ -1,68 +1,55 @@
+#' Convert ".gcl" Objects to GENEPOP File
+#'
+#' Write out a GENEPOP input file from ".gcl" objects. 
+#'
+#' @param sillyvec A character vector of silly codes to include in the GENEPOP file.
+#' @param loci A character vector of locus names to include in the GENEPOP file.
+#' @param path The full file path to write out the GENEPOP file; with "\\" or "/" separator between folders.
+#' @param VialNums Logical; if TRUE (default), vial numbers will be included for each individual next to their silly code separated by an underscore (e.g., "KCRESC10_1"). If FALSE, only the silly code will be included for each individual (e.g., "KCRESC10").
+#' @param usat Logical; whether the data are from microsatellites (TRUE) or not (FALSE). This is included because GENEPOP only accepts numeric alleles; SNP alleles have to be converted from character to numeric, and microsatellite alleles are already numeric.
+#' @param ncores The number of cores for multithreading using [doParallel()] and [foreach()]. Default is 4. 
+#' @param npops Optional; the number of populations for each file. If supplied, multiple files with generic file names will be written out, with `npops` per file (see details).
+#' 
+#' @details
+#' This function requires a `LocusControl` object. Run [GCLr::create_locuscontrol()] prior to this function.
+#' The `npops` argument is useful when running Linkage Disequilibrium tests in \pkg{genepop} using the [GCLr::gcltest_LD] function so things finish faster. For example, if there are 10 pops in `sillyvec` and `npops` = 2, the following files will be written to the folder supplied in the `path` argument: Pops1to2.gen.txt, Pops3to4.gen.txt, Pops5to6.gen.txt, Pops7to8.gen.txt, Pops9to10.gen.txt 
+#' 
+#' @return Writes out a GENEPOP file to the specified path.
+#' 
+#' @examples
+#' source(paste0(path.expand("~/R/"), "Functions.R"))#GCL functions
+#'
+#' ### SNP
+#' attach("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline.RData")
+#' old2new_locuscontrol()
+#' sapply(sillyvec104, function(silly){assign(paste0(silly, ".gcl"), get(paste0(silly, ".gcl")), pos = -1, envir = .GlobalEnv)})
+#' sillyvec <- sillyvec104
+#' loci <- loci81
+#' detach()
+#' old2new_gcl(sillyvec)
+#' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = "GENEPOP/genepopfile.gen", VialNums = TRUE, usat = FALSE, ncores = 8, npops = NULL)
+#' 
+#' ### uSAT
+#' attach("V:/Analysis/2_Central/Chinook/Susitna-Watana/2017/Upper and Middle River Analysis/SuWuUpperMiddleRiverAnalysis_tidy.RData")
+#' sapply(Sillys, function(silly){assign(paste0(silly, ".gcl"), get(paste0(silly, ".gcl")), pos = -1, envir = .GlobalEnv)})
+#' sillyvec <- Sillys
+#' loci <- loci13
+#' LocusControl <- LocusControl
+#' detach()
+#' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = "V:/Analysis/2_Central/Chinook/Susitna-Watana/2017/Upper and Middle River Analysis/Genepop/genepopfile.gen", VialNums = TRUE, usat = TRUE, ncores = 4)
+#' 
+#' ### SNP with npops argument
+#' attach("C:/2019 coho baseline/2019_Cook_Inlet_coho_baseline_new.RData")
+#' LocusControl <- LocusControl
+#' sapply(sillyvec104, function(silly){assign(paste0(silly, ".gcl"), get(paste0(silly, ".gcl")), pos = -1, envir = .GlobalEnv)})
+#' sillyvec <- sillyvec104
+#' loci <- loci81
+#' detach()
+#' GCLr::gcl2genepop(sillyvec = sillyvec[1:36], loci = loci, path = "GENEPOP", VialNums = TRUE, usat = FALSE, ncores = 8, npops = 2)
+#' 
+#' @export
 gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, ncores = 4, npops = NULL){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   Write out a GENEPOP input file from "*.gcl" objects.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   sillyvec - character vector of SILLYs - example: c(KCRES10", "KSTRA10", "KNIKOL12", "KNIKOL13")
-  #
-  #   loci - character vector of locus names as they are spelled in LOKI - example: c("GTH2B-550", "NOD1", "Ots_100884-287")
-  #
-  #   path - full file path to write out the GENEPOP file with "\\" or "/" separator between folders 
-  #           example: "V:\\Analysis\\2_Central\\Chinook\\Cook Inlet\\2019\\2019_UCI_Chinook_baseline_hap_data\\GENEPOP\\genepopfile.gen"
-  #                   or "V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/GENEPOP/genepopfile.gen"
-  #           
-  #          When npops is supplied, only supply the path to the folder where the files will be written, files will be given generic names.
-  # 
-  #   VialNums - logical; if TRUE (default), vial numbers will be included for each individual next to their silly code separated by an underscore (e.g. KCRESC10_1)
-  #                       if FALSE, only the silly code will be included for each individual.
-  #
-  #   usat - logical; whether the data are from microsatellites (TRUE) or not (FALSE). 
-  #          This is included because GENEPOP only accepts numberic alleles; SNP alleles have to be converted from character to numeric and microsatellite alleles are already numeric.
-  #
-  #   ncores - the number of cores for mulitcoring using doParallel and foreach. 
-  #
-  #   npops - optional; the number of pops for each file.  If supplied, multiple files with generic file names will be written out with npops per file. 
-  #           For example, if there are 10 pops in sillyvec and npops = 2, the following files will be written to the folder supplied in the path argument: Pops1to2.gen.txt, Pops3to4.gen.txt, Pops5to6.gen.txt, Pops7to8.gen.txt, Pops9to10.gen.txt 
-  #           This argument is useful when running Linkage Disequilibrium tests in genepop using the gcltest_LD function so things finish faster. 
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #    Writes out a GENEPOP file to path.
-  #
-  # Examples~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-  #  
-  #  source(paste0(path.expand("~/R/"), "Functions.R"))#GCL functions
-  #
-  #  ### SNP
-  #  attach("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline.RData")
-  #  old2new_locuscontrol()
-  #  sapply(sillyvec104, function(silly){assign(paste0(silly, ".gcl"), get(paste0(silly, ".gcl")), pos = -1, envir = .GlobalEnv)})
-  #  sillyvec <- sillyvec104
-  #  loci <- loci81
-  #  detach()
-  #  old2new_gcl(sillyvec)
-  #  gcl2genepop(sillyvec = sillyvec, loci = loci, path = "GENEPOP/genepopfile.gen", VialNums = TRUE, usat = FALSE, ncores = 8, npops = NULL)
-  #
-  #  ### uSAT
-  #  attach("V:/Analysis/2_Central/Chinook/Susitna-Watana/2017/Upper and Middle River Analysis/SuWuUpperMiddleRiverAnalysis_tidy.RData")
-  #  sapply(Sillys, function(silly){assign(paste0(silly, ".gcl"), get(paste0(silly, ".gcl")), pos = -1, envir = .GlobalEnv)})
-  #  sillyvec <- Sillys
-  #  loci <- loci13
-  #  LocusControl <- LocusControl
-  #  detach()
-  #  gcl2genepop(sillyvec = sillyvec, loci = loci, path = "V:/Analysis/2_Central/Chinook/Susitna-Watana/2017/Upper and Middle River Analysis/Genepop/genepopfile.gen", VialNums = TRUE, usat = TRUE, ncores = 4)
-  #
-  #  ### SNP with npops argument
-  #  attach("C:/2019 coho baseline/2019_Cook_Inlet_coho_baseline_new.RData")
-  #  LocusControl <- LocusControl
-  #  sapply(sillyvec104, function(silly){assign(paste0(silly, ".gcl"), get(paste0(silly, ".gcl")), pos = -1, envir = .GlobalEnv)})
-  #  sillyvec <- sillyvec104
-  #  loci <- loci81
-  #  detach()
-  #  gcl2genepop(sillyvec = sillyvec[1:36], loci = loci, path = "GENEPOP", VialNums = TRUE, usat = FALSE, ncores = 8, npops = 2)
-  # 
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   start_time <- Sys.time()
   
   if(!exists("LocusControl")){
@@ -182,7 +169,7 @@ gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, nco
             dplyr::select(tidyselect::all_of(variables)) %>%
             tidyr::replace_na(replace = list(0, 0) %>% 
                                 purrr::set_names(variables)) %>%
-            dplyr::mutate(dplry::across(dplyr::everything(), .fns = ~stringr::str_pad(., width = maxchar, pad = "0", side = "left"))) %>% 
+            dplyr::mutate(dplry::across(dplyr::everything(), ~stringr::str_pad(string = ., width = maxchar, pad = "0", side = "left"))) %>% 
             tidyr::unite(col = !!rlang::as_name(loc), tidyselect::all_of(variables), sep = "")
           
         }) %>% 
@@ -212,12 +199,12 @@ gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, nco
           scores %>%
             tibble::as.tibble() %>% 
             dplyr::select(tidyselect::all_of(variables)) %>% 
-            dplyr::mutate(dplyr::across(dplyr::everything(), .fns = ~factor(., levels = my.alleles$call))) %>% 
-            dplyr::mutate(dplyr::across(dplyr::everything(), .fns = as.numeric)) %>% 
-            dplyr::mutate(dplyr::across(dplyr::everything(), .fns = as.character)) %>%
+            dplyr::mutate(dplyr::across(dplyr::everything(), ~factor(., levels = my.alleles$call))) %>% 
+            dplyr::mutate(dplyr::across(dplyr::everything(), ~as.numeric(.))) %>% 
+            dplyr::mutate(dplyr::across(dplyr::everything(), ~as.character(.))) %>%
             tidyr::replace_na(replace = list("0", "0") %>%
                                 purrr::set_names(variables)) %>%
-            dplyr::mutate(dplyr::across(dplyr::everything(), .fns = ~stringr::str_pad(., width = maxchar, pad = "0", side = "left"))) %>% 
+            dplyr::mutate(dplyr::across(dplyr::everything(), ~stringr::str_pad(., width = maxchar, pad = "0", side = "left"))) %>% 
             tidyr::unite(col = !!rlang::as_name(loc), tidyselect::all_of(variables), sep = "")
           
         }) %>% 

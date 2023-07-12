@@ -32,10 +32,14 @@ save_objects <- function(objects, path, rds = FALSE) {
   }
   
   empty <- sapply(objects, function(obj) {
+    x <- get(obj)
+    if (!is.null(attr(x = x, which = "problems"))) {
+      attr(x = x, which = "problems") <- NULL
+    }  # resolves issue with readr::read_csv not playing nicely with dget if attr-problems exist
     if (rds == FALSE) {
-      dput(get(obj), paste0(path, "/", obj, ".txt"))
+      dput(x, paste0(path, "/", obj, ".txt"))
     } else {
-      saveRDS(get(obj), paste0(path, "/", obj, ".rds"))
+      saveRDS(x, paste0(path, "/", obj, ".rds"))
     }
     
   })

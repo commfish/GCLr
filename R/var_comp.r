@@ -1,38 +1,33 @@
+#' Variance Components Calculation
+#'
+#' This function calculates the variance components of a three-level hierarchy. This function is intended to help with marker selection (i.e., going from a 96 to 24 SNP baseline).
+#' 
+#' @param sillyvec A character vector specifying the population silly codes for analysis.
+#' @param loci A character vector of locus names to include in the analysis. Can include haploid markers and/or combined loci.
+#' @param groupvec A numeric vector specifying the reporting group affiliation for each silly code.
+#' @param fstatfile Optional character string specifying the path to an existing FSTAT file (".dat"). If provided, the function verifies compatibility with the input data. Default is NULL.
+#' @param dir A character string specifying the directory where an FSTAT file (".dat") will be created. This argument is used only when `fstatfile` is NULL.
+#' 
+#' @details 
+#' The original function is "BackwardEliminationThetaP.GCL" in the temp folder.
+#' 
+#' @return A matrix containing the four variance components for each locus:
+#'   \itemize{
+#'     \item P: For populations (reporting groups in this case).
+#'     \item S: For subpopulations within populations (populations within reporting groups).
+#'     \item I: For individuals within subpopulations (individuals within populations).
+#'     \item G: For alleles within individuals (akin to heterozygosity).
+#'    }
+#'  Component definitions in () assume that you are running this function on silly codes that are populations. This function could also be run on silly codes that are collections, but the definitions in () would be different.
+#' 
+#' @examples
+#' GCLr::var_comp(sillyvec = Kodiak49Pops, loci = loci90, groupvec = Kodiak49GroupVec9, dir = "V:/WORK/Sockeye/Kodiak/Kodiak Afognak Baseline Look 2014/Kyle/ThetaP")
+#' 
+#' @references Weir, B.S. 1995. Genetic Data Analysis. Sinauer Associates, Inc. Sunderland, MA. (pg 184)
+#' 
+#' @export
 var_comp <- function(sillyvec, loci, groupvec, fstatfile = NULL, dir){
-  ####################################################################################################################################################################################################################################################################
-  #
-  # This function provides the variance componets of a 3 level hierarchy
-  # See GDA Weir, 1995. pg 184
-  # 
-  # Input parameters~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # 
-  # sillyvec = Kodiak49Pops
-  #   ~ The above definitions in () assume that you are running this on sillys that are pops
-  #   ~ This could also be done on sillys that are collections, but the meaning would be different
-  # loci = loci90
-  #   ~ Can include haploid markers and/or combined loci
-  # groupvec = Kodiak49GroupVec9
-  # file = "fstatfile.dat"
-  #   ~ If you already have an fstat.dat file, specify here, otherwise it defaults to NULL
-  # dir = "V:/WORK/Sockeye/Kodiak/Kodiak Afognak Baseline Look 2014/Kyle/ThetaP"
-  #   ~ This is the location that the function will first search for an "fstatfile.dat", if none is found, it will create one and put it there
-  # 
-  # Output~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function is intended to help with marker selection (i.e. going from a 96 -> 24 SNP baseline)
-  # Briefly the four variance components in the output (matrix) are:
-  #   P - for populations (RGs in our case)
-  #   S - for subpopulations within populations (populations within RGs in our case)
-  #   I - for individuals within subpopulations (individuals within populations in our case)
-  #   G - for alleles within individuals (akin to heterzygosity)
-  # 
-  #
-  # Created by Kyle Shedd on Thu Jul 30 15:26:28 2015
-  # Original function is "BackwardEliminationThetaP.GCL" in the temp folder
-  #
-  ####################################################################################################################################################################################################################################################################
-    
-  require("hierfstat")
-  
+
   names(sillyvec) <- NULL
   
   nloci=length(loci)

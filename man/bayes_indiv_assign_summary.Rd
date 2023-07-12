@@ -63,5 +63,5 @@ This function summarizes BAYES individual assignment .CLS files.
   thin <- 100
   bayes_indiv_assign_summary(group_names, groupvec, mixnames, maindir, nchains, nreps, burn, thin)
   }
-
+  
 }

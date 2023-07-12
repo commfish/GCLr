@@ -1,64 +1,45 @@
+#' Check for Duplicate Individuals Between ".gcl" Objects
+#'
+#' This function checks for duplicate individuals between silly code ".gcl" objects. It is mainly used for quality control purposes.
+#'
+#' @param KeySillys A character vector of silly codes without the ".gcl" extension.
+#' @param KeySillyIDs A named list of character vectors containing FK_FISH_IDs for each silly code in `KeySillys` to check against all silly codes in `BetweenSillys`. If NULL, all FK_FISH_IDs for each silly code in `KeySillys` are checked against all silly codes in `BetweenSillys`.
+#' @param BetweenSillys A character vector of silly codes without the ".gcl" extension.
+#' @param loci A character vector of locus names. If set to NULL, all loci in the ".gcl" objects will be used.
+#' @param minnonmissing The proportion of loci that a pair must share non-missing genotypes in order to be reported.
+#' @param minproportion The proportion of shared non-missing loci that must be shared between the individuals to be reported as a matching pair.
+#' @param ncores The number of cores to use in a \code{foreach::%dopar%} loop. If the number of cores exceeds the number on your device, then `ncores` defaults to [parallel::detectCores()].
+#' @param plot.results Logical value indicating whether to produce histograms of duplicate rates for each silly code in `KeySillyIDs`.
+#'
+#' @return A tibble that includes the duplicate individuals that exceeded `minproportion` or had the maximum duplicate rate, as well as duplicate individuals that came from the same original collection (i.e., project duplicates). The tibble includes the following variables:
+#'   \itemize{
+#'     \item Keysillyvial: The KeySilly_ID.
+#'     \item Betweensillyvial: The BetweenSilly_ID.
+#'     \item Keymissing: The number of loci without genotypes for each KeySilly_ID.
+#'     \item Betweenmissing: The number of loci without genotypes for each BetweenSilly_ID.
+#'     \item DuplicateRate: The proportion of duplicate genotypes between each KeySilly_ID and BetweenSilly_ID.
+#'   }
+#' The function also prints a histogram of duplicate rates for each silly code in `KeySillyIDs`. Each plot has a vertical red line indicating the `minproportion`, and the highest duplicate rate bar is labeled with the `BetweenSillyIDs` with that duplicate rate. The title of each plot indicates the `KeySillyID` that was checked for duplicates.
+#'
+#' @examples
+#' password <- "************"
+#' create_locuscontrol(markersuite = "CookInletChinook2013_43SNPs", username = "awbarclay", password = password)
+#' loki2r(sillyvec = c("KKILL05", "KKILL06", "KFUNN05", "KFUNN06"), username = "awbarclay", password = password)
+#' pool_collections(collections = c("KKILL05", "KFUNN05"), IDs = list(KKILL05 = KKILL05.gcl$FK_FISH_ID, KFUNN05 = c(9, 30)), newname = "KKILL05")
+#' pool_collections(collections = c("KFUNN06", "KKILL06"), IDs = list(KFUNN06 = KFUNN06.gcl$FK_FISH_ID, KKILL06 = c(101, 176)), newname = "KFUNN06")
+#' KKILL05.gcl <- KKILL05.gcl %>% mutate(SillySource = case_when(FK_FISH_ID %in% c(69, 70) ~ paste(SILLY_CODE, FK_FISH_ID, sep = "_"), TRUE ~ SillySource))
+#' KFUNN06.gcl <- KFUNN06.gcl %>% mutate(SillySource = case_when(FK_FISH_ID %in% c(184, 185) ~ paste(SILLY_CODE, FK_FISH_ID, sep = "_"), TRUE ~ SillySource))
+#' KKILL06qc.gcl <- KKILL06.gcl %>% mutate(SILLY_CODE = "KKILL06qc") %>% mutate(SillySource = paste(SILLY_CODE, FK_FISH_ID, sep ="_"))
+#' KFUNN05qc.gcl <- KFUNN05.gcl %>% mutate(SILLY_CODE = "KFUNN05qc") %>% mutate(SillySource = paste(SILLY_CODE, FK_FISH_ID, sep ="_"))
+#' KeySillys <- c("KKILL06qc", "KFUNN05qc")
+#' KeySillyIDs <- list(KKILL06qc = c(101, 176), KFUNN05qc = c(9, 30))
+#' BetweenSillys <- c("KKILL05", "KKILL06", "KFUNN05", "KFUNN06")
+#' loci <- LocusControl$locusnames
+#' results <- GCLr::dupcheck_among_sillys(KeySillys = c("KKILL06qc", "KFUNN05qc"), KeySillyIDs = list(KKILL06qc = c(101, 176), KFUNN05qc = c(9, 30)), BetweenSillys = c("KKILL05", "KKILL06", "KFUNN05", "KFUNN06"), loci = LocusControl$locusnames, minnonmissing = 0.6, minproportion = 0.9, ncores = 4)
+#'
+#' @export
 dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, loci, minnonmissing = 0.6, minproportion = 0.9, ncores = 4, plot.results = TRUE){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function check for duplicate individuals between silly ".gcl" objects. This function is mainly used for qc purposes. 
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   KeySillys - a vector of silly codes without the ".gcl" extension (e.g. KeySillys <-  c("KQUART06","KQUART08","KQUART10")). 
-  #
-  #   KeySillyIDs - a named list of character vector FK_FISH_IDs for each KeySilly to check against all sillys in BetweenSillys.(e.g. KeySillys <-  list(KQUART06 = c("25", "30") , KQUART08 =  ,KQUART10 =))
-  #                 If NULL (default), all FK_FISH_IDs for each silly in KeySillys are checked against all sillys in BetweenSillys
-  #
-  #   BetweenSillys - a vector of silly codes without the ".gcl" extension (e.g. BetweenSillys <-  c("KQUART06","KQUART08","KQUART10"))
-  #         
-  #   loci - vector of locus names; if set to NULL all loci in the ".gcl" objects will be used.
-  #
-  #   minnonmissing - the proportion of loci that a pair must share non missing in order to be reported (passed on to rubias::close_matching_samples())
-  #
-  #   minproportion - the proportion of shared non-missing loci that must be shared between the individuals to be reported as a matching pair (passed on to rubias::close_matching_samples()) 
-  #
-  #   ncores - the number of cores to use in a foreach %dopar% loop. If the number of core exceeds the number on your device, then ncores defaults to detectCores()
-  #
-  #   plot.results - logical; whether you want the function to produce histograms of duplicate rates for each KeySillyID
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  
-  #   Returns a tibble of with the following variables:  
-  #       Keysillyvial - e.g., KeySilly_ID 
-  #       Betweensillyvial - e.g., BetweenSilly_ID,
-  #       Keymissing - the number of loci without genotypes for each KeySilly_ID
-  #       Betweenmissing - the number of loci without genotypes for each BetweenSilly_ID, 
-  #       DuplicateRate - the proportion of duplicate genotypes between each KeySilly_ID and BetweenSilly_ID.
-  # 
-  #   The table includes the duplicates that exceeded minproportion or had the maximum duplicate rate 
-  #   and, for qc proposes, duplicates that came from the same original collection (i.e. project duplicates)
-  # 
-  #   The function also prints a histogram of duplicate rates for each KeySillyID. Each plot has a vertical red line indicating the "minproportion" and the 
-  #   highest duplicate rate bar is label with the BetweenSillyIDs with that duplicate rate. The title of each plot indicates the KeySillyID that was checked for duplicates.
-  # 
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  # password <- "************"
-  # 
-  #   create_locuscontrol(markersuite = "CookInletChinook2013_43SNPs", username = "awbarclay", password = password)
-  #   loki2r(sillyvec =  c("KKILL05","KKILL06", "KFUNN05", "KFUNN06"), username = "awbarclay", password = password)
-  #     
-  #     #Creating new sillys with duplicates for an example
-  #     pool_collections(collections = c("KKILL05", "KFUNN05"), IDs = list(KKILL05 = KKILL05.gcl$FK_FISH_ID, KFUNN05 = c(9, 30)), newname = "KKILL05")
-  #     pool_collections(collections = c("KFUNN06", "KKILL06"), IDs = list(KFUNN06 = KFUNN06.gcl$FK_FISH_ID, KKILL06 = c(101, 176)), newname = "KFUNN06")
-  #     KKILL05.gcl <- KKILL05.gcl %>% mutate(SillySource = case_when(FK_FISH_ID %in% c(69, 70) ~ paste(SILLY_CODE, FK_FISH_ID, sep = "_"), TRUE~SillySource))
-  #     KFUNN06.gcl <- KFUNN06.gcl %>% mutate(SillySource = case_when(FK_FISH_ID %in% c(184, 185) ~ paste(SILLY_CODE, FK_FISH_ID, sep = "_"), TRUE~SillySource))
-  #     KKILL06qc.gcl <- KKILL06.gcl %>% mutate(SILLY_CODE = "KKILL06qc") %>% mutate(SillySource = paste(SILLY_CODE, FK_FISH_ID, sep ="_"))
-  #     KFUNN05qc.gcl <- KFUNN05.gcl %>% mutate(SILLY_CODE = "KFUNN05qc") %>% mutate(SillySource = paste(SILLY_CODE, FK_FISH_ID, sep ="_"))
-  #     KeySillys <- c("KKILL06qc", "KFUNN05qc")
-  #     KeySillyIDs <- list(KKILL06qc = c(101, 176), KFUNN05qc = c(9, 30))
-  #     BetweenSillys = c("KKILL05", "KKILL06", "KFUNN05", "KFUNN06")
-  #     loci <- LocusControl$locusnames
-  #
-  #     results <- dupcheck_among_sillys(KeySillys = c("KKILL06qc", "KFUNN05qc"), KeySillyIDs = list(KKILL06qc = c(101, 176), KFUNN05qc = c(9, 30)), BetweenSillys = c("KKILL05", "KKILL06", "KFUNN05", "KFUNN06"), loci = LocusControl$locusnames, minnonmissing = 0.6, minproportion = 0.9, ncores = 4)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+
   if(!all(loci %in% LocusControl$locusnames)){
     
     stop(paste0("The following `loci` were not found in `LocusControl`:\n", paste(setdiff(loci, LocusControl$locusnames), collapse = "\n")))

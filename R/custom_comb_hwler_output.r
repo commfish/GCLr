@@ -1,20 +1,26 @@
+#' Custom Combine HWLER Output
+#'
+#' This function computes summary statistics from HWLER (Hardy-Weinberg and Linkage Equilibrium Sampler) output.
+#'
+#' @param groupvec A numeric vector indicating the reporting group affiliation for each population in the baseline, where `groupvec` is the same length as the number of populations in the known baseline..
+#' @param groupnames A character vector of group names corresponding to the groups in the baseline, where \code{length(groupnames) == max(groupvec)}.
+#' @param maindir Directory where the mixture folders are located, where the results for each mixture must be in their own folder with the same name as the mixture.
+#' @param mixvec A character vector of mixture silly codes, used to read in the HWLER output.
+#' @param ext Extension of the HWLER output file you want to read in and summarize, can either be "RGN" (reporting group estimates) or "BOT" (population estimates). Use "BOT" when resummarizing.
+#' @param burn Proportion of iterations to drop from the beginning of each chain. For example, for 40,000 iterations setting \code{burn = 0.5} (default) will drop the first 20,000 iterations.
+#' @param alpha Numeric constant specifying credibility intervals; default is 0.1, which gives 90% CIs (i.e., 5% and 95%).
+#' @param PosteriorOutput A logical value indicating whether to output the posterior values.
+#'
+#' @details 
+#' This function makes all accommodations for the extra baseline group.
+#' 
+#' @return A list of combined HWLER output for each mixture, including summary statistics and posterior output (if requested).
+#'
+#' @examples
+#' GCLr::custom_comb_hwler_output()
+#'
+#' @export
 custom_comb_hwler_output=function(groupvec, groupnames, maindir, mixvec, ext="BOT", burn=0.5, alpha=0.1,PosteriorOutput=TRUE){
-#######################################################################################################################################################################################################################################################################################################################################################################################################################################
-#
-#    Notice:  This function makes all accomodations for the extra baseline group.
-#
-#    "groupvec" is the same length as the number of populations in the KNOWN baseline.
-#
-#    "groupnames" is the same length as the number of groups in the KNOWN baseline.
-#  
-#
-#  
-#
-# 
-#
-#  
-#
-#######################################################################################################################################################################################################################################################################################################################################################################################################################################
 
   G=max(groupvec)
 

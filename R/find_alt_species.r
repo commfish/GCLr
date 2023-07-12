@@ -1,33 +1,30 @@
+#' Identify Alternate Species
+#'
+#' This function identifies the likelihood of incorrect species based on a few identifiable markers. Specifically, it works with chum and sockeye.
+#'
+#' @param sillyvec A character vector of silly codes (e.g., c("SYEHR07", "SWENA98", "STATS05")).
+#' @param species The species you are working with; options = sockeye, chum; default = chum.
+#' 
+#' @details 
+#' This function requires a `LocusControl` object and ."gcl" objects. Run [GCLr::create_locuscontrol[] and [GCLr::loki2r] prior to this function.
+#' The Alternate and Failed marker lists were text files in a random folder on a random network drive; marker lists were hard-coded into function so it doesn't relying on hidden files. In the future, if applicable, we can simply add more markers here.
+#' 
+#' @return A plot of Failed vs Alternate and a tibble containing:
+#'   \itemize{
+#'     \item silly_fish: The fish ID.
+#'     \item prop_alter: The proportion of alternate markers.
+#'     \item prop_fail: The proportion of failed markers.
+#'     \item num_alter: The number of non-missing alternate markers used for analyses.
+#'   }
+#'   
+#' @examples
+#' source("/R/Functions.GCL.R")
+#' source(file = "Examples/qcExample.R")
+#' wrong_spp <- GCLr::find_alt_species(sillyvec = sillys, species = "sockeye")
+#' 
+#' @export
 find_alt_species <- function(sillyvec, species = "chum"){
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function identifies the likelihood of incorrect species based on a few
-  #   identifiable markers. Specifically, it works with chum and sockeye. 
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   sillyvec - Is a vector of sillys (e.g., c("SYEHR07", "SWENA98", "STATS05"))
-  #   species - The species you are working with; options = sockeye, chum; default = chum
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   plot of Failed vs Alternate
-  #   tibble containing 1) silly_fish, 2) prop. alternate markers, 3) prop. failed markers, and 4) number of non-missing alternate markers used for analyses
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # 
-  # source("/R/Functions.GCL.R")
-  # source(file = "Examples/qcExample.R")
-  # wrong_spp <- find_alt_species(sillyvec = sillys, species = "sockeye")
-  #
-  # Note~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   This function requires a LocusControl object and gcls. Run create_locuscontrol
-  #   and loki2r prior to this function.
-  #
-  #   The Alternate and Failed marker lists were text files in a random folder on a random network drive. 
-  #   I hard-coded so we aren't relying on hidden files. In the future, if applicable, we can simply add more markers here. 
-  #   
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-  
+
   if(!exists("LocusControl")){
     
     stop("'LocusControl' not yet built.") # Check if LocusControl is present in environment
@@ -159,10 +156,8 @@ find_alt_species <- function(sillyvec, species = "chum"){
     dplyr::mutate(silly_fish = gclobjectsAll$silly_fish) %>% # Pull in ID column
     dplyr::select(silly_fish, dplyr::everything()) %>% # Sort, IDs first followed by loci
     dplyr::mutate(dplyr::across(dplyr::all_of(AlternateGenotypes$AlternateMarker), 
-                                .fns = gsub, 
-                                pattern = "NANA", 
-                                replacement = NA) # Replace any NANA which were created by joining locus+locus.1 containing NAs
-                  )
+                                ~gsub(x = .x, pattern = "NANA", replacement = NA) # Replace any NANA which were created by joining locus+locus.1 containing NAs
+                  ))
   
  # Now calculations to find alternate spp.
   Alternate <- gclobjectsAllAlternate %>%
