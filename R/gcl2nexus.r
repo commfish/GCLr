@@ -8,6 +8,7 @@
 #' @param VialNums Logical; if TRUE (default), vial numbers will be included for each individual next to their silly code separated by an underscore (e.g., "KCRESC10_1"). If FALSE, only the SILLY code will be included for each individual (e.g., "KCRESC10").
 #' @param PopNames Optional character vector the same length as `sillyvec` to give populations new names. If NULL, `PopNames` defaults to `sillyvec`.
 #' @param ncores The number of cores for multithreading using [doParallel()] and [foreach()]. Default is 4. 
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #' 
 #' @details 
 #' This function requires a `LocusControl` object. Run [GCLr::create_locuscontrol()] prior to this function.
@@ -25,15 +26,9 @@ gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, nc
 
   start_time <- Sys.time()
   
-  if(!exists("LocusControl")){
+  if(sum(is.na(match(loci, LocusCtl$locusnames)))){
     
-    stop("'LocusControl' not yet built.")
-    
-  }
-  
-  if(sum(is.na(match(loci,LocusControl$locusnames)))){
-    
-    stop(paste("'", loci[is.na(match(loci, LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    stop(paste("'", loci[is.na(match(loci, LocusCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
     }
   
@@ -52,7 +47,7 @@ gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, nc
   
   PopNames <- gsub(pattern = " ", x = PopNames, replacement = "_")
   
-  ploidy <- LocusControl %>% 
+  ploidy <- LocusCtl %>% 
     dplyr::filter(locusnames%in%loci) %>% 
     dplyr::pull(ploidy) %>% 
     purrr::set_names(loci) %>% 
@@ -60,10 +55,10 @@ gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, nc
   
   loci <- names(ploidy)
   
-  alleles <- LocusControl$alleles[loci] %>% 
+  alleles <- LocusCtl$alleles[loci] %>% 
     dplyr::bind_rows(.id = "locus")
   
-  nalleles <- LocusControl %>% 
+  nalleles <- LocusCtl %>% 
     dplyr::filter(locusnames%in%loci) %>% 
     dplyr::pull(nalleles) %>% 
     purrr::set_names(loci)
