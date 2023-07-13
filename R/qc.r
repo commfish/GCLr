@@ -50,7 +50,7 @@
 #' }
 #'
 #' @export
-QC <- function(dirqc, species, project, project_type, username, password, qcSummaryfile = paste("Project", project,"qc Summary R Script.xlsx"), conflict_rate = 0.10) {
+qc <- function(dirqc, species, project, project_type, username, password, qcSummaryfile = paste("Project", project,"qc Summary R Script.xlsx"), conflict_rate = 0.10) {
   #stop it from running automatically
   if (FALSE) {
    
