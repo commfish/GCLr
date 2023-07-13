@@ -12,7 +12,8 @@ dupcheck_among_sillys(
   minnonmissing = 0.6,
   minproportion = 0.9,
   ncores = 4,
-  plot.results = TRUE
+  plot.results = TRUE,
+  LocusCtl = LocusControl
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ dupcheck_among_sillys(
 \item{ncores}{The number of cores to use in a \link[foreach:foreach]{foreach::\%dopar\%} loop. If the number of cores exceeds the number on your device, then \code{ncores} defaults to \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
 \item{plot.results}{Logical value indicating whether to produce histograms of duplicate rates for each silly code in \code{KeySillyIDs}.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 A tibble that includes the duplicate individuals that exceeded \code{minproportion} or had the maximum duplicate rate, as well as duplicate individuals that came from the same original collection (i.e., project duplicates). The tibble includes the following variables:

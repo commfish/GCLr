@@ -4,12 +4,14 @@
 \alias{find_alt_species}
 \title{Identify Alternate Species}
 \usage{
-find_alt_species(sillyvec, species = "chum")
+find_alt_species(sillyvec, species = "chum", LocusCtl = LocusControl)
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes (e.g., c("SYEHR07", "SWENA98", "STATS05")).}
 
 \item{species}{The species you are working with; options = sockeye, chum; default = chum.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 A plot of Failed vs Alternate and a tibble containing:

@@ -36,7 +36,7 @@
 #' This list object is saved in `dir` using [base::dput()], and is named `paste(dir,"\\", length(sillyvec), "Pops", length(loci), "Loci_", "PairwiseFstTree.txt", sep = "")`
 #'
 #' @details Older versions of this function used to write out an FSTAT .dat file, but this is no longer the case. 
-#' The function now calls on [GCLR::create_hierfstat_data()] to create a \pkg{hierfstat} data object internally.
+#' The function now calls on [GCLr::create_hierfstat_data()] to create a \pkg{hierfstat} data object internally.
 #' Depending on the size of your baseline and number of bootstrap iterations, this function can take a while.
 #'
 #' @examples

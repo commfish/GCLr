@@ -11,7 +11,8 @@ gcl2genepop(
   VialNums = TRUE,
   usat = FALSE,
   ncores = 4,
-  npops = NULL
+  npops = NULL,
+  LocusCtl = LocusControl
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ gcl2genepop(
 \item{ncores}{The number of cores for multithreading using \code{\link[=doParallel]{doParallel()}} and \code{\link[=foreach]{foreach()}}. Default is 4.}
 
 \item{npops}{Optional; the number of populations for each file. If supplied, multiple files with generic file names will be written out, with \code{npops} per file (see details).}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 Writes out a GENEPOP file to the specified path.

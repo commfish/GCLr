@@ -4,7 +4,7 @@
 \alias{gcl2fstat}
 \title{Convert ".gcl" Objects to FSTAT}
 \usage{
-gcl2fstat(sillyvec, loci, path, ncores = 4)
+gcl2fstat(sillyvec, loci, path, ncores = 4, LocusCtl = LocusControl)
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes to include in the FSTAT file.}
@@ -14,6 +14,8 @@ gcl2fstat(sillyvec, loci, path, ncores = 4)
 \item{path}{The full file path to write out the FSTAT file; with "\\" or "/" separator between folders.}
 
 \item{ncores}{The number of cores for multithreading using \code{\link[=doParallel]{doParallel()}} and \code{\link[=foreach]{foreach()}}. Default is 4.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 Writes out an FSTAT file to the specified path.

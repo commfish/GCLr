@@ -16,7 +16,8 @@ create_hwler_ctl(
   seeds = matrix(sample(seq(10000), 3 * nchains), nrow = 3),
   thin = c(1, 1, 1),
   inputfortran,
-  switches = "T T T F T T T T T"
+  switches = "T T T F T T T T T",
+  LocusCtl = LocusControl
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ create_hwler_ctl(
 \item{inputfortran}{The input is in The Fortran format.}
 
 \item{switches}{A character string of logical switches, with default value "T T T F T T T T T" (see details).}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 Writes out HWLER control (.ctl) files.
