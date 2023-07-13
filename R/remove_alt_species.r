@@ -9,7 +9,7 @@
 #'
 #' @returns Returns a tibble showing which fish were removed and their stats (alternate and failed markers)
 #'
-#' @example 
+#' @examples 
 #' \dontrun{
 #'  source(file = "Examples/qcExample.R")
 #   wrong_spp <- GCLr::find_alt_species(sillyvec = sillys, species = "sockeye")
