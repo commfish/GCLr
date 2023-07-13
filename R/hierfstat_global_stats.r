@@ -6,7 +6,7 @@
 #' 
 #' @param genotypes A data frame containing the genotypes in single-column numeric format (e.g., 101, 102, 202).
 #' 
-#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()]
 #'
 #' @return A list containing 3 tibbles: 
 #'     \itemize{
@@ -45,27 +45,21 @@
 #' hierfstat_global_stats(levels = fstat.dat[ ,1:3], genotypes = fstat.dat[ ,-c(1:3)])
 #'
 #' @export
-hierfstat_global_stats <- function(levels, genotypes, LocusControl = LocusControl){
-  
-  if(!exists("LocusControl")){
-    
-    stop("'LocusControl' not yet built.")
-    
-  }
-  
+hierfstat_global_stats <- function(levels, genotypes, LocusCtl = LocusControl){
+
   loci <- names(genotypes)
   
-  if(sum(is.na(match(loci, LocusControl$locusnames)))){
+  if(sum(is.na(match(loci, LocusCtl$locusnames)))){
     
-    stop(paste("'", loci[is.na(match(loci, LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    stop(paste("'", loci[is.na(match(loci, LocusCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
   
-  diploid_loci <- LocusControl %>% 
+  diploid_loci <- LocusCtl %>% 
     dplyr::filter(ploidy ==2 & locusnames %in% loci) %>% 
     dplyr::pull(locusnames)
 
-  haploid_loci <- LocusControl %>%
+  haploid_loci <- LocusCtl %>%
     dplyr::filter(ploidy ==1 & locusnames %in% loci) %>% 
     dplyr::pull(locusnames)
 
