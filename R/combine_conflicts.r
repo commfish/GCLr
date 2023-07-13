@@ -3,7 +3,6 @@
 #'
 #' @param files A vector of CSV files that you want to combine, including the file extension.
 #'
-#' @aliases CombineConflictsWithPlateID.GCL.r
 #' 
 #' @family QA scripts
 #' 
