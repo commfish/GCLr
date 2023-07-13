@@ -87,7 +87,7 @@ qc <- function(dirqc, species, project, project_type, username, password, qcSumm
     qcfiles <- list.files(path = "Genotype Data Files", pattern = ".csv", full.names = TRUE, recursive = FALSE)
     
     if (project_type == "Biomark") {
-      GCLr::read_biomark_qc.r(qccsvFilepaths = qcfiles)
+      GCLr::read_biomark_qc(qccsvFilepaths = qcfiles)
     } else {
       if (project_type == "uSat") {
         GCLr::read_usat_qc(qccsvFilepaths = qcfiles)
@@ -340,7 +340,7 @@ qc <- function(dirqc, species, project, project_type, username, password, qcSumm
     #### Create Summary Tables ####
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    summary_table_1 <- dplyr::bind_cols(tibble(Silly = ProjectSillys), as_tibble(ProjectSillys_SampleSizes)) %>% 
+    summary_table_1 <- dplyr::bind_cols(tibble::tibble(Silly = ProjectSillys), tibble::as_tibble(ProjectSillys_SampleSizes)) %>% 
       dplyr::left_join(failure_rate$silly_failure_rate, by = c("Silly" = "silly")) %>% 
       dplyr::rename("Failure Rate" = fail) %>% 
       dplyr::mutate("Total qc Fish" = qcColSizeAll)
