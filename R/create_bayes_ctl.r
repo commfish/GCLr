@@ -20,8 +20,8 @@
 #' @param initmat Numeric matrix of initial starting values for each chain with, nrow(`initmat`) == length(`sillyvec`) & ncol(`initmat`) == nchains.
 #' @param seeds Matrix of random seeds containing 3 seeds per chain with, nrow(`seeds`) == 3 & ncol(`seeds`) == `nchains`.
 #' @param thin Thinning intervals for MCMC sampling of 1) stock proportions, 2) baseline allele or type relative frequencies, and 3) stock assignments of each mixture individual.
-#' @param mixfortran The Fortran format of the mixture files, as created by [GCL::create_bayes_mix()].
-#' @param basefortran The Fortran format of the baseline file,as created by [GCL::create_bayes_base()].
+#' @param mixfortran The Fortran format of the mixture files, as created by [GCLr::create_bayes_mix()].
+#' @param basefortran The Fortran format of the baseline file,as created by [GCLr::create_bayes_base()].
 #' @param switches Character string of logical switches:
 #'   - Switch 1: Baseline file printed (default: "F")
 #'   - Switch 2: Mixture file printed (default: "T")
@@ -53,7 +53,7 @@
 #' create_bayes_ctl(sillyvec, loci, mixvec, baseline_name, nreps, nchains, groupvec, priorvec, initmat, dir, seeds, thin, mixfortran, basefortran, switches)
 #' }
 #' 
-#' @seealso See bayes manual for addtional details:  [V:\Software\BAYES\MANUAL.DOC]
+#' @seealso See bayes manual for addtional details:  `V:\Software\BAYES\MANUAL.DOC`
 #' @export
 create_bayes_ctl <- function(sillyvec, loci, mixvec, baseline_name, nreps = 40000, nchains, groupvec, priorvec, initmat, dir, seeds = matrix(sample(seq(10000), 3 * nchains), nrow = 3), thin = c(1, 1, 1), mixfortran, basefortran, switches = "F T F T F T F") {
 
