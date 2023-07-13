@@ -1,4 +1,4 @@
-dupcheck_within_silly <- function(sillyvec, loci = LocusControl$locusnames, quantile = NULL, minnonmissing = 0.6, minproportion = 0.95, ncores = 4){
+dupcheck_within_silly <- function(sillyvec, loci = LocusControl$locusnames, quantile = NULL, minnonmissing = 0.6, minproportion = 0.95, ncores = 4, LocusCtl = LocusControl){
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #   This function checks for duplicate individuals within each silly in "sillyvec".
@@ -19,6 +19,8 @@ dupcheck_within_silly <- function(sillyvec, loci = LocusControl$locusnames, quan
   #
   #   ncores - the number of cores to use in a foreach %dopar% loop. If the number of core exceeds the number on your device, then ncores defaults to detectCores()
   # 
+  #   LocusCtl - an object created by [GCLr::create_locuscontrol()], (default = LocusControl) 
+  #
   # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #    When quantile is set to NULL, returns a tibble of duplicate pairs of individuals by silly.
   #    When quantile is a number, a list containing a tibble of duplicate pairs of individuals by silly and tibble the porportion of duplication for each pair of individuals.
@@ -43,13 +45,11 @@ dupcheck_within_silly <- function(sillyvec, loci = LocusControl$locusnames, quan
   
   start.time <- Sys.time() 
   
-  if(!all(loci %in% LocusControl$locusnames)){
+  if(!all(loci %in% LocusCtl$locusnames)){
     
-    stop(paste0("The following `loci` were not found in `LocusControl`:\n", paste(setdiff(loci, LocusControl$locusnames), collapse = "\n")))
+    stop(paste0("The following `loci` were not found in `LocusControl`:\n", paste(setdiff(loci, LocusCtl$locusnames), collapse = "\n")))
     
   }
-  
-  
   
   if(ncores > parallel::detectCores()) {
     
@@ -57,12 +57,11 @@ dupcheck_within_silly <- function(sillyvec, loci = LocusControl$locusnames, quan
     
     }
   
-  
   nsilly <- length(sillyvec)
   
   nloci <- length(loci)
   
-  ploidy <- LocusControl$ploidy[loci]
+  ploidy <- LocusCtl$ploidy[loci]
   
   scores_cols <- sapply(loci, function(locus) {c(locus, paste0(locus, ".1"))}) %>% 
     as.vector()  # This keeps the scores columns in the correct order when there are loci with similar names.
