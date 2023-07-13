@@ -12,28 +12,30 @@
 #' @param dir Character vector of where to save the ".bse" file.
 #' @param baseline_name Character vector of what to name the baseline.bse, not including the .bse extension.
 #' @param ncores The number of cores to use in a foreach %dopar% loop. If the number of cores exceeds the number on your device, then ncores defaults to [detectCores()].
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)
 #'
-#' @return The fortran format of the baseline file - this object is needed for [create_bayes_ctl()].
+#' @return The fortran format of the baseline file - this object is needed for [GCLr::create_bayes_ctl()].
 #'
 #' @examples
 #' \dontrun{
 #' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
 #' sillyvec <- Final_Pops$silly
 #' loci <- loci82
-#' base_fortran <- create_bayes_base(sillyvec = sillyvec, loci = loci, dir = getwd(), baseline_name = "SusitnaChinook31pops82loci", ncores = 8)
+#' create_bayes_base(sillyvec = sillyvec, loci = loci, dir = getwd(), baseline_name = "SusitnaChinook31pops82loci", ncores = 8)
 #' }
 #' 
 #' @export
-create_bayes_base <- function(sillyvec, loci, dir, baseline_name, ncores = 4) {
-  if (!all(loci %in% LocusControl$locusnames)) {
+create_bayes_base <- function(sillyvec, loci, dir, baseline_name, ncores = 4, LocusCtl = LocusControl) {
+  
+  if (!all(loci %in% LocusCtl$locusnames)) {
     
-    stop(paste0("\n'", setdiff(loci, LocusControl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
+    stop(paste0("\n'", setdiff(loci, LocusCtl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
     
   }
   
   filename <- paste(dir, "\\", baseline_name, ".bse", sep = "")
   
-  y <- GCLr::calc_freq_pop(sillyvec = sillyvec, loci = loci, ncores = ncores)
+  y <- GCLr::calc_freq_pop(sillyvec = sillyvec, loci = loci, ncores = ncores, LocusCtl = LocusCtl)
   
   bse0 <- y %>%
     dplyr::group_by(silly, locus) %>% 
@@ -44,7 +46,7 @@ create_bayes_base <- function(sillyvec, loci, dir, baseline_name, ncores = 4) {
     dplyr::arrange(silly, locus) %>% 
     dplyr::ungroup() 
   
-  max_allele <- LocusControl$nalleles[loci] %>% 
+  max_allele <- LocusCtl$nalleles[loci] %>% 
     max()
   
   max_char <- bse0$n %>% 

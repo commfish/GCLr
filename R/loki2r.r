@@ -64,13 +64,7 @@
 #' @export            
 loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "MSAT")[1], include_missing = FALSE, LocusCtl = LocusControl){
   
-  if(!exists("LocusCtl")){
-    
-    stop("'LocusControl' not yet built.")
-    
-  }
-  
-  if(length(test_type)>1){
+  if(length(test_type) > 1){
     
     stop("Only one test_type can be supplied at a time.")
     

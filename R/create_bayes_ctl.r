@@ -30,6 +30,8 @@
 #'   - Switch 5: Stock assignment distribution for each individual in the mixture sample printed (default: "F")
 #'   - Switch 6: Stock-group or regional estimates printed (default: "T")
 #'   - Switch 7: Individual stock estimates are suppressed (default: "F")
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
+#'   
 #'   
 #' @returns This function writes out bayes control (.ctl) files to `dir`
 #' 
@@ -55,11 +57,11 @@
 #' 
 #' @seealso See bayes manual for addtional details:  [BAYES manual](system.file("BAYES", "MANUAL.DOC", package = "GCLr"))
 #' @export
-create_bayes_ctl <- function(sillyvec, loci, mixvec, baseline_name, nreps = 40000, nchains, groupvec, priorvec, initmat, dir, seeds = matrix(sample(seq(10000), 3 * nchains), nrow = 3), thin = c(1, 1, 1), mixfortran, basefortran, switches = "F T F T F T F") {
+create_bayes_ctl <- function(sillyvec, loci, mixvec, baseline_name, nreps = 40000, nchains, groupvec, priorvec, initmat, dir, seeds = matrix(sample(seq(10000), 3 * nchains), nrow = 3), thin = c(1, 1, 1), mixfortran, basefortran, switches = "F T F T F T F", LocusCtl = LocusControl) {
 
-  if (!all(loci %in% LocusControl$locusnames)) {
+  if (!all(loci %in% LocusCtl$locusnames)) {
     
-    stop(paste0("\n'", setdiff(loci, LocusControl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
+    stop(paste0("\n'", setdiff(loci, LocusCtl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
     
   }
   
@@ -81,9 +83,9 @@ create_bayes_ctl <- function(sillyvec, loci, mixvec, baseline_name, nreps = 4000
     
     nsillys <- length(sillyvec)
     
-    ploidy <- LocusControl$ploidy[loci]
+    ploidy <- LocusCtl$ploidy[loci]
     
-    nalleles <- LocusControl$nalleles[loci]
+    nalleles <- LocusCtl$nalleles[loci]
     
     nloci <- length(loci)
     

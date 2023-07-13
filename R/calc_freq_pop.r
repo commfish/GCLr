@@ -1,4 +1,4 @@
-calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4){
+calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4, LocusCtl = LocusControl){
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #   This function gets the allele frequency for each locus in loci for each silly in sillyvec.
@@ -11,6 +11,8 @@ calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4){
   #
   #   ncores - the number of cores to use in a foreach %dopar% loop. If the nubmer of core exceeds the number on your device, then ncores defaults to detectCores()
   # 
+  #   LocusCtl - an object created by [GCLr::create_locuscontrol()], (default = LocusControl)
+  #
   # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #  A tibble with the following variables: silly, locus, allele_no (from LocusControl), freq (allele frequency), and proportion
   #
@@ -25,12 +27,11 @@ calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4){
   
   start.time <- Sys.time() 
   
-  if(!all(loci %in% LocusControl$locusnames)){
+  if(!all(loci %in% LocusCtl$locusnames)){
     
-    stop(paste0("'", setdiff(loci, LocusControl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
+    stop(paste0("'", setdiff(loci, LocusCtl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
     
   }
-  
   
   if(ncores > parallel::detectCores()) {
     
@@ -43,7 +44,7 @@ calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4){
   scores_cols <- sapply(loci, function(locus) {c(locus, paste0(locus, ".1"))}) %>% 
     as.vector() 
   
-  alleles <- LocusControl$alleles[loci] %>% 
+  alleles <- LocusCtl$alleles[loci] %>% 
     dplyr::bind_rows(.id = "locus") %>% 
     dplyr::rename(allele_no = allele)
   

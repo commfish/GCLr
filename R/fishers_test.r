@@ -1,4 +1,4 @@
-fishers_test <- function(freq, loci, tests){
+fishers_test <- function(freq, loci, tests, LocusCtl = LocusControl){
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #   This function is a wrapper for fisher_compute() to run Fisher's Exact Tests for homogeneity of allele frequencies for multiple sets of collections.
@@ -11,6 +11,8 @@ fishers_test <- function(freq, loci, tests){
   #   loci - a character vector of locus names
   #   
   #   tests - a list of character vectors. The collections is each element of the list are tested separately. 
+  #   
+  #   LocusCtl - an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
   # 
   # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #    Produces a tibble of overall pvalues produced by combining individual locus pvalues 
@@ -27,10 +29,9 @@ fishers_test <- function(freq, loci, tests){
   # 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-  if(sum(is.na(match(loci, LocusControl$locusnames)))){
+  if(sum(is.na(match(loci, LocusCtl$locusnames)))){
     
-    stop(paste("'", loci[is.na(match(loci,LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    stop(paste("'", loci[is.na(match(loci, LocusCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
     }
   

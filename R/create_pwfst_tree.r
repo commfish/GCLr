@@ -1,4 +1,4 @@
-create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, returnbootstrapFst = FALSE){
+create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, returnbootstrapFst = FALSE, LocusCtl = LocusControl){
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #
   #   This function generates a matrix of pairwise Fst values, a neighbor joining
@@ -24,6 +24,8 @@ create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, re
   # 
   #   returnbootstrapFst - a logical vector of length one indicating whether an Fst matrix should be
   #     saved for each bootstrap iteration
+  #
+  #   LocusCtl - an object created by [GCLr::create_locuscontrol()], (default = LocusControl)
   #
   # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # 
@@ -51,14 +53,7 @@ create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, re
   #   PWFSTtree <- create_pwfst_tree(sillyvec = sillyvec31, loci = loci82, dir = "output", nboots = 1000, ncores = 8, returnbootstrapFst = FALSE)
   # 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  if(!exists("LocusControl")) {
-    
-    stop("'LocusControl' is required and not found, please create.")
-    
-  }
-  
-  
+ 
   if(ncores > detectCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
@@ -91,7 +86,7 @@ create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, re
   
   dimnames(pairs)[[2]] <- pairnames
   
-  ploidy <- LocusControl$ploidy
+  ploidy <- LocusCtl$ploidy
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
