@@ -16,6 +16,8 @@
 #' 
 #' @param returnbootstrapFst A logical value indicating whether to return the Fst matrix for each bootstrap iteration.
 #'
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
+#'
 #' @return A list with the following 4 or 5 components:
 #'     \itemize{
 #'       \item \code{tree}: a neighbor joining tree list of 4 created by [ape::nj()] containing:
@@ -44,15 +46,9 @@
 #' PWFSTtree <- create_pwfst_tree(sillyvec = sillyvec31, loci = loci82, dir = "output", nboots = 1000, ncores = 8, returnbootstrapFst = FALSE)
 #'
 #' @export
-create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, returnbootstrapFst = FALSE){
+create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, returnbootstrapFst = FALSE, LocusCtl = LocusControl){
   
-  if(!exists("LocusControl")) {
-    
-    stop("'LocusControl' is required and not found, please create.")
-    
-  }
-
-  if(ncores > parallel::detectCores()) {
+   if(ncores > parallel::detectCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
   
