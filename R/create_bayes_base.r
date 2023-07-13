@@ -13,7 +13,7 @@
 #' @param baseline_name Character vector of what to name the baseline.bse, not including the .bse extension.
 #' @param ncores The number of cores to use in a foreach %dopar% loop. If the number of cores exceeds the number on your device, then ncores defaults to [detectCores()].
 #'
-#' @return The fortran format of the baseline file - this object is needed for [GCLr::create_bayes_ctl()].
+#' @return The fortran format of the baseline file - this object is needed for [create_bayes_ctl()].
 #'
 #' @examples
 #' \dontrun{

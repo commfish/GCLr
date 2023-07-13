@@ -1,6 +1,6 @@
 #' @title Read GTseq QC Genotypes
 #'
-#' @description This function reads in GTseq QC genotypes from .csv files and creates .gcl objects in the global environment. It's called on by [GCLr::qc()].
+#' @description This function reads in GTseq QC genotypes from .csv files and creates .gcl objects in the global environment. It's called on by [qc()].
 #'
 #' @param qccsvFilepaths A character vector with relative paths for QC genotype CSV files.
 #'

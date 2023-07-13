@@ -20,8 +20,8 @@
 #' @param initmat Numeric matrix of initial starting values for each chain with, nrow(`initmat`) == length(`sillyvec`) & ncol(`initmat`) == nchains.
 #' @param seeds Matrix of random seeds containing 3 seeds per chain with, nrow(`seeds`) == 3 & ncol(`seeds`) == `nchains`.
 #' @param thin Thinning intervals for MCMC sampling of 1) stock proportions, 2) baseline allele or type relative frequencies, and 3) stock assignments of each mixture individual.
-#' @param mixfortran The Fortran format of the mixture files, as created by [GCLr::create_bayes_mix()].
-#' @param basefortran The Fortran format of the baseline file,as created by [GCLr::create_bayes_base()].
+#' @param mixfortran The Fortran format of the mixture files, as created by [create_bayes_mix()].
+#' @param basefortran The Fortran format of the baseline file,as created by [create_bayes_base()].
 #' @param switches Character string of logical switches:
 #'   - Switch 1: Baseline file printed (default: "F")
 #'   - Switch 2: Mixture file printed (default: "T")

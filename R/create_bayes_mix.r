@@ -7,10 +7,10 @@
 #' @param dir Character vector of where to save the ".bse" file.
 #' @param ncores Number of cores to use for parallel processing.
 #'
-#' @returns Returns the fortran format of the mixture file, which is needed for [GCLr::create_bayes_ctl()].
+#' @returns Returns the fortran format of the mixture file, which is needed for [create_bayes_ctl()].
 #' It also saves each mixture in `mixvec` as a .mix file.
 #' 
-#' @note If you want to analyze more than one silly as a mixture, use [GCLr::pool_collections()] to combine them into a new silly.gcl
+#' @note If you want to analyze more than one silly as a mixture, use [pool_collections()] to combine them into a new silly.gcl
 #'
 #' @examples
 #' \dontrun{

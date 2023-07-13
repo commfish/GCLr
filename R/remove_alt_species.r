@@ -1,8 +1,8 @@
 #' @title Removes wrong species
 #'
-#' @description This function removes fish that have been identified, via genetic markers, as the wrong species. It relies on output from [GCLr::find_alt_species()].
+#' @description This function removes fish that have been identified, via genetic markers, as the wrong species. It relies on output from [find_alt_species()].
 #'
-#' @param AlternateSpeciesReport The object created by [GCLr::find_alt_species()]
+#' @param AlternateSpeciesReport The object created by [find_alt_species()]
 #' @param AlternateCutOff The minimum proportion of alternate alleles an individual must have in order to be considered the 'wrong species'. Default is 0.5
 #' @param FailedCutOff The minimum proportion of failed loci an individual must have in order to be considered the 'wrong species'. Default is 0.5
 #' @param NonmissingCutOff The minimum number of non-missing alternate loci an individual must have in order to be considered the 'wrong species'. Default is 3.

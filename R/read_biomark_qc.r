@@ -1,6 +1,6 @@
 #' @title Read Biomark QC Data
 #'
-#' @description This function reads QC data from Biomark CSV files. It's called on by [GCLr::qc()].
+#' @description This function reads QC data from Biomark CSV files. It's called on by [qc()].
 #'
 #' @param qccsvFilepaths Character vector specifying the file paths of the QC CSV files.
 #' @param skip Number of lines to skip while reading the CSV files. Default is 15.

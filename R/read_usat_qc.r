@@ -1,6 +1,6 @@
 #' @title Read uSat QC Genotypes
 #'
-#' @description This function reads in uSat QC genotypes from .csv files and creates .gcl objects in the global environment. It verifies that the QC sillys and loci are found in the project and assigns the `qcSillys` vector to the global environment. It's called on by [GCLr::qc()].
+#' @description This function reads in uSat QC genotypes from .csv files and creates .gcl objects in the global environment. It verifies that the QC sillys and loci are found in the project and assigns the `qcSillys` vector to the global environment. It's called on by [qc()].
 #'
 #' @param qccsvFilepaths A character vector with relative paths for QC genotype CSV files.
 #'
