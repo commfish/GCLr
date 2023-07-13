@@ -53,13 +53,7 @@ gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, nco
 
   start_time <- Sys.time()
   
-  if(!exists("LocusControl")){
-    
-    stop("'LocusControl' not yet built.")
-    
-  }
-  
-  if(!all(loci %in% LocusCtl$locusnames)){
+   if(!all(loci %in% LocusCtl$locusnames)){
     
     stop(paste0("'", setdiff(loci, LocusCtl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
     
