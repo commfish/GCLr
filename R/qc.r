@@ -15,13 +15,16 @@
 #'
 #' @returns Returns summary tables and saves them in the QC summary file.
 #' \itemize{
-#'   \item \code{text}: DupCheck Results (if applicable)
+#'   \item \code{text}: 
+#'    - DupCheck Results (if applicable)
+#'   
 #'   \item \code{figures}: 
 #'    - Levelplot of genotyping success rate by silly and locus for ProjectSillys
 #'    - Levelplot of genotyping success rate by silly and locus for qcSillys
 #'    - Histogram of overall qc individual conflict rate
 #'    - Individual histograms of duplicate rate for conflict individuals
-#'   \item \code{summary excel}: 
+#'    
+#'   \item \code{Excel}: 
 #'    - Summary by Silly
 #'    - Conflicts by Silly
 #'    - DupCheck Results (if applicable)
