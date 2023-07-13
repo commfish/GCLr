@@ -1,4 +1,4 @@
-ReadUSatqc.GCL <- function(qccsvFilepaths) {
+read_usat_qc <- function(qccsvFilepaths) {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  This function reads in uSat qc genotypes from .csv files as .gcl objects
 #
