@@ -10,7 +10,8 @@ create_pwfst_tree(
   dir,
   nboots = 1000,
   ncores = 4,
-  returnbootstrapFst = FALSE
+  returnbootstrapFst = FALSE,
+  LocusCtl = LocusControl
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ create_pwfst_tree(
 If the number of cores exceeds the number on your device, \code{ncores} defaults to \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
 \item{returnbootstrapFst}{A logical value indicating whether to return the Fst matrix for each bootstrap iteration.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 A list with the following 4 or 5 components:

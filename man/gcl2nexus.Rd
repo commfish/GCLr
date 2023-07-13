@@ -18,6 +18,8 @@ gcl2nexus(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, ncores = 4)
 \item{PopNames}{Optional character vector the same length as \code{sillyvec} to give populations new names. If NULL, \code{PopNames} defaults to \code{sillyvec}.}
 
 \item{ncores}{The number of cores for multithreading using \code{\link[=doParallel]{doParallel()}} and \code{\link[=foreach]{foreach()}}. Default is 4.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 Writes out a NEXUS file to the specified path.
