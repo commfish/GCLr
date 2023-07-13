@@ -4,7 +4,7 @@
 \alias{create_bayes_mix}
 \title{Create BAYES mixture files}
 \usage{
-create_bayes_mix(mixvec, loci, dir, ncores = 4)
+create_bayes_mix(mixvec, loci, dir, ncores = 4, LocusCtl = LocusControl)
 }
 \arguments{
 \item{mixvec}{Character vector of ".gcl" objects you want to produce mixture files for.}
@@ -14,6 +14,8 @@ create_bayes_mix(mixvec, loci, dir, ncores = 4)
 \item{dir}{Character vector of where to save the ".bse" file.}
 
 \item{ncores}{Number of cores to use for parallel processing.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 Returns the fortran format of the mixture file, which is needed for \code{\link[=create_bayes_ctl]{create_bayes_ctl()}}.

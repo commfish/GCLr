@@ -19,7 +19,8 @@ create_bayes_ctl(
   thin = c(1, 1, 1),
   mixfortran,
   basefortran,
-  switches = "F T F T F T F"
+  switches = "F T F T F T F",
+  LocusCtl = LocusControl
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ create_bayes_ctl(
 \item Switch 6: Stock-group or regional estimates printed (default: "T")
 \item Switch 7: Individual stock estimates are suppressed (default: "F")
 }}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 This function writes out bayes control (.ctl) files to \code{dir}

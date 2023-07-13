@@ -9,7 +9,7 @@ combine_loci(
   markerset,
   update = TRUE,
   delim = c(".", "_")[1],
-  LocusControl = LocusControl
+  LocusCtl = LocusControl
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ combine_loci(
 
 \item{delim}{Specifies the separator between combined loci, either a period (.) which is the default or an underscore (_) so locus names will work in SPAM.}
 
-\item{LocusControl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}} (default = LocusControl)}
 }
 \description{
 This function combines a set of markers into a single marker.

@@ -4,7 +4,14 @@
 \alias{create_bayes_base}
 \title{Create Bayes Baseline File}
 \usage{
-create_bayes_base(sillyvec, loci, dir, baseline_name, ncores = 4)
+create_bayes_base(
+  sillyvec,
+  loci,
+  dir,
+  baseline_name,
+  ncores = 4,
+  LocusCtl = LocusControl
+)
 }
 \arguments{
 \item{sillyvec}{Character vector of populations in the baseline.}
@@ -16,6 +23,8 @@ create_bayes_base(sillyvec, loci, dir, baseline_name, ncores = 4)
 \item{baseline_name}{Character vector of what to name the baseline.bse, not including the .bse extension.}
 
 \item{ncores}{The number of cores to use in a foreach \%dopar\% loop. If the number of cores exceeds the number on your device, then ncores defaults to \code{\link[=detectCores]{detectCores()}}.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 The fortran format of the baseline file - this object is needed for \code{\link[=create_bayes_ctl]{create_bayes_ctl()}}.
@@ -32,7 +41,7 @@ It returns the Fortran format of the baseline file, which is needed for creating
 load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
 sillyvec <- Final_Pops$silly
 loci <- loci82
-base_fortran <- create_bayes_base(sillyvec = sillyvec, loci = loci, dir = getwd(), baseline_name = "SusitnaChinook31pops82loci", ncores = 8)
+create_bayes_base(sillyvec = sillyvec, loci = loci, dir = getwd(), baseline_name = "SusitnaChinook31pops82loci", ncores = 8)
 }
 
 }
