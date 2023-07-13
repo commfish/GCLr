@@ -1,29 +1,33 @@
-calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4, LocusCtl = LocusControl){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function gets the allele frequency for each locus in loci for each silly in sillyvec.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   sillyvec - a vector of silly codes without the ".gcl" extention (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART10")). 
-  #
-  #   loci - vector of locus names; default is all LocusControl$locusnames.
-  #
-  #   ncores - the number of cores to use in a foreach %dopar% loop. If the nubmer of core exceeds the number on your device, then ncores defaults to detectCores()
-  # 
-  #   LocusCtl - an object created by [GCLr::create_locuscontrol()], (default = LocusControl)
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  A tibble with the following variables: silly, locus, allele_no (from LocusControl), freq (allele frequency), and proportion
-  #
-  # Examples~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
-  #  old2new_locuscontrol()  
-  #  old2new_gcl(sillyvec67)
-  #
-  #  Freq <- calc_freq_pop(sillyvec = sillyvec67, loci = loci413)
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @title Calculate Allele Frequency for Multiple Loci and Silly Codes
+#'
+#' @description This function calculates the allele frequency for each locus for each collection (silly code).
+#'
+#' @param sillyvec A character vector of silly codes without the ".gcl" extension.
+#' 
+#' @param loci A character vector of locus names; default is all `LocusControl$locusnames`.
+#' 
+#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop. 
+#' If the number of cores exceeds the number on your device, `ncores` defaults to [parallel::detectCores()].
+#'
+#' @return A tibble with the following columns:
+#'     \itemize{
+#'       \item \code{silly}: silly code
+#'       \item \code{locus}: locus name
+#'       \item \code{allele_no}: the allele number from `LocusControl` (1 or 2 for SNPs)
+#'       \item \code{allele}: the allele call from `LocusControl` (e.g. -, A, C, G, T)
+#'       \item \code{freq}: the allele frequency (count)
+#'       \item \code{proportion}: the allele frequency (proportion); these sum to 1 within a locus
+#'     }
+#'
+#' @examples
+#' 
+#' load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
+#' old2new_locuscontrol()
+#' old2new_gcl(sillyvec67)
+#' Freq <- calc_freq_pop(sillyvec = sillyvec67, loci = loci413)
+#'
+#' @export
+calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4){
   
   start.time <- Sys.time() 
   
