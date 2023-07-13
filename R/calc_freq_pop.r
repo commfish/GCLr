@@ -6,6 +6,7 @@
 #' @param loci A character vector of locus names; default is all `LocusControl$locusnames`.
 #' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop. 
 #' If the number of cores exceeds the number on your device, `ncores` defaults to [parallel::detectCores()].
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #'
 #' @return A tibble with the following columns:
 #'     \itemize{
@@ -25,7 +26,7 @@
 #' Freq <- calc_freq_pop(sillyvec = sillyvec67, loci = loci413)
 #'
 #' @export
-calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4){
+calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4, LocusCtl = LocusControl){
   
   start.time <- Sys.time() 
   
