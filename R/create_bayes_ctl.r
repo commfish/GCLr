@@ -53,7 +53,7 @@
 #' create_bayes_ctl(sillyvec, loci, mixvec, baseline_name, nreps, nchains, groupvec, priorvec, initmat, dir, seeds, thin, mixfortran, basefortran, switches)
 #' }
 #' 
-#' @seealso See bayes manual for addtional details:  `V:\Software\BAYES\MANUAL.DOC`
+#' @seealso See bayes manual for addtional details:  [BAYES manual](system.file("BAYES", "MANUAL.DOC", package = "GCLr"))
 #' @export
 create_bayes_ctl <- function(sillyvec, loci, mixvec, baseline_name, nreps = 40000, nchains, groupvec, priorvec, initmat, dir, seeds = matrix(sample(seq(10000), 3 * nchains), nrow = 3), thin = c(1, 1, 1), mixfortran, basefortran, switches = "F T F T F T F") {
 
