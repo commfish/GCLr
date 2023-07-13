@@ -26,12 +26,6 @@
 #' @export
 find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl){
 
-  if(!exists("LocusCtl")){
-    
-    stop("'LocusControl' not yet built.") # Check if LocusControl is present in environment
-    
-  }
-  
   # First, load the alternate & failed markers for a given species, or stop if incorrect species is provided. 
   if(species == "chum"){
     
