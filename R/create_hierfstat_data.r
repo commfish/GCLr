@@ -7,7 +7,7 @@
 #' @param pop a numeric vector indicating the population affiliation for each silly in `sillyvec`. If there is only one silly per population in `sillyvec`, then this should be a sequence of numbers of length `sillyvec`.
 #' @param loci a character vector of locus names.
 #' @param ncores a numeric value indicating the number of cores to use.
-#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()]
 #'
 #' @return This function returns a [hierfstat] data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
 #'
@@ -35,20 +35,14 @@
 #'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
 #'   unique()
 #' 
-#' GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4, LocusControl = GCLr::ex_LocusControl)
+#' GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4, LocusCtl = GCLr::ex_LocusControl)
 #' 
 #' @export
-create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4, LocusControl = LocusControl){
-  
-  if(!exists("LocusControl")){
+create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4, LocusCtl = LocusControl){
+ 
+  if(sum(is.na(match(loci, LocusCtl$locusnames))) > 0){
     
-    stop("'LocusControl' not yet built.")
-    
-  }
-  
-  if(sum(is.na(match(loci, LocusControl$locusnames))) > 0){
-    
-    stop(paste("'", loci[is.na(match(loci, LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    stop(paste("'", loci[is.na(match(loci, LocusCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
   
@@ -67,7 +61,7 @@ create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4
     
   }
   
-  alleles <- LocusControl$alleles[loci] %>% 
+  alleles <- LocusCtl$alleles[loci] %>% 
     dplyr::bind_rows(.id = "locus")
   
   my.gcl <- lapply(sillyvec, function(silly){
