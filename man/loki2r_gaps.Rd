@@ -4,7 +4,7 @@
 \alias{loki2r_gaps}
 \title{Create GCL Objects (GAPS)}
 \usage{
-loki2r_gaps(sillyvec, username, password, LocusControl = LocusControl)
+loki2r_gaps(sillyvec, username, password)
 }
 \arguments{
 \item{sillyvec}{Vector of silly codes to pull from LOKI.}
@@ -12,8 +12,6 @@ loki2r_gaps(sillyvec, username, password, LocusControl = LocusControl)
 \item{username}{Username for LOKI connection.}
 
 \item{password}{Password for LOKI connection.}
-
-\item{LocusControl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
 }
 \value{
 The runtime of the function in seconds.
@@ -29,7 +27,7 @@ The genotypes and attributes are stored in separate "*.gcl" objects named after 
 \examples{
 \dontrun{
 sillyvec <- c("KQUART06", "KQUART08", "KQUART09")
-loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password, LocusControl = LocusControl)
+loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password)
 }
 
 }

@@ -4,7 +4,12 @@
 \alias{calc_freq_pop}
 \title{Calculate Allele Frequency for Multiple Loci and Silly Codes}
 \usage{
-calc_freq_pop(sillyvec, loci = LocusControl$locusnames, ncores = 4)
+calc_freq_pop(
+  sillyvec,
+  loci = LocusControl$locusnames,
+  ncores = 4,
+  LocusCtl = LocusControl
+)
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes without the ".gcl" extension.}
@@ -13,6 +18,8 @@ calc_freq_pop(sillyvec, loci = LocusControl$locusnames, ncores = 4)
 
 \item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop.
 If the number of cores exceeds the number on your device, \code{ncores} defaults to \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 A tibble with the following columns:
