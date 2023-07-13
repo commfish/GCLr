@@ -1,4 +1,4 @@
-ReadBiomarkqc.GCL=function(qccsvFilepaths,skip=15){
+read_biomark_qc=function(qccsvFilepaths,skip=15){
 ###################################################################################################################################################################################################################################################
 #
 #qccsvFilepaths=c("V:/DATA/All SNP data/Chinook/Project K42 Chinook Inseason_Postseason 2012/Project K42 M192 BioMark/qc/Data/Single Chip/K42 Combined Output.csv","V:/DATA/All SNP data/Chinook/Project K45- AYK, BB Chinook baseline/Project K45 192chip BioMark/qc/Data/Single Chip/K45_qc2_1381716192/K45_qc2_ModifiedforR.csv")
