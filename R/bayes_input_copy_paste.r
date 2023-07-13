@@ -16,7 +16,6 @@
 #'
 #' @return This function has no explicit return value. It copies and pastes the files onto the server.
 #'
-#' @Author: Kyle Shedd
 #' 
 #' @examples
 #' \dontrun{
@@ -39,7 +38,7 @@ bayes_input_copy_paste <- function(origindir, targetdir, mixvec, i = "A"){
     
     c(controlfiles[grep(pattern = mix, x = controlfiles)], mixturefiles[grep(pattern = mix, x = mixturefiles)])
     
-    }, simplify=FALSE) # Just the control/mixture files for mixvec
+    }, simplify = FALSE) # Just the control/mixture files for mixvec
   
   j <- which(LETTERS == i) - 1
   

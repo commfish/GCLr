@@ -23,7 +23,6 @@
 #'
 #' }
 #'
-#' @Author: Kyle Shedd
 #' 
 #' @export
 #' 
