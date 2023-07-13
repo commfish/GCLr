@@ -3,9 +3,7 @@
 #' @description This function calculates the allele frequency for each locus for each collection (silly code).
 #'
 #' @param sillyvec A character vector of silly codes without the ".gcl" extension.
-#' 
 #' @param loci A character vector of locus names; default is all `LocusControl$locusnames`.
-#' 
 #' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop. 
 #' If the number of cores exceeds the number on your device, `ncores` defaults to [parallel::detectCores()].
 #'

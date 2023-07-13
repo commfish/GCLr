@@ -4,16 +4,11 @@
 #' It can utilize multicore processing with \pkg{foreach} to speed up the calculation of variance components.
 #'
 #' @param sillyvec A character vector of silly codes without the ".gcl" extension.
-#' 
 #' @param loci A character vector of locus names.
-#' 
 #' @param dir Directory to save the `PairwiseFstTree` list object using [base::dput()].
-#' 
 #' @param nboots A numeric value indicating the number of bootstrap iterations.
-#' 
 #' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop. 
 #' If the number of cores exceeds the number on your device, `ncores` defaults to [parallel::detectCores()].
-#' 
 #' @param returnbootstrapFst A logical value indicating whether to return the Fst matrix for each bootstrap iteration.
 #'
 #' @return A list with the following 4 or 5 components:
