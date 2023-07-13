@@ -5,7 +5,6 @@
 #' @param sillyvec Vector of silly codes to pull from LOKI.
 #' @param username Username for LOKI connection.
 #' @param password Password for LOKI connection.
-#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
 #' 
 #' @return The runtime of the function in seconds.
 #' 
@@ -16,11 +15,11 @@
 #' @examples
 #' \dontrun{
 #' sillyvec <- c("KQUART06", "KQUART08", "KQUART09")
-#' loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password, LocusControl = LocusControl)
+#' loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password)
 #' }
 #' 
 #' @export
-loki2r_gaps <- function(sillyvec, username, password, LocusControl = LocusControl){
+loki2r_gaps <- function(sillyvec, username, password){
 
   start.time <- Sys.time() 
   
@@ -62,29 +61,31 @@ loki2r_gaps <- function(sillyvec, username, password, LocusControl = LocusContro
   
   nalleles <- sapply(alleles, function(allele) {length(allele)} )
   
-  assign("LocusControl", list(MarkerSuite = paste0(markersuite, "_Converted"), 
-                              locusnames = locusnames, 
-                              Publishedlocusnames = Publishedlocusnames, 
-                              alleles = alleles, 
-                              nalleles = nalleles, 
-                              ploidy = ploidy),
+  LocusCtl <- list(MarkerSuite = paste0(markersuite, "_Converted"), 
+       locusnames = locusnames, 
+       Publishedlocusnames = Publishedlocusnames, 
+       alleles = alleles, 
+       nalleles = nalleles, 
+       ploidy = ploidy)
+  
+  assign("LocusControl", LocusCtl,
          pos = 1)
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  loci <- LocusControl$locusnames
+  loci <- LocusCtl$locusnames
   
   nloci <- length(loci)
   
-  ploidy <- LocusControl$ploidy
+  ploidy <- LocusCtl$ploidy
   
-  alleles <- LocusControl$alleles
+  alleles <- LocusCtl$alleles
   
-  nalleles <- LocusControl$nalleles
+  nalleles <- LocusCtl$nalleles
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   for(silly in sillyvec){
     
-    collectionIDqry = paste0("SELECT * FROM AKFINADM.GEN_COLLECTIONS WHERE SILLY_CODE=","'",silly,"'")
+    collectionIDqry = paste0("SELECT * FROM AKFINADM.GEN_COLLECTIONS WHERE SILLY_CODE = ", "'", silly, "'")
     
     collectionID = RJDBC::dbGetQuery(con, collectionIDqry)$COLLECTION_ID
     
