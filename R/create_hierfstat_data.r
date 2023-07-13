@@ -7,7 +7,7 @@
 #' @param pop a numeric vector indicating the population affiliation for each silly in `sillyvec`. If there is only one silly per population in `sillyvec`, then this should be a sequence of numbers of length `sillyvec`.
 #' @param loci a character vector of locus names.
 #' @param ncores a numeric value indicating the number of cores to use.
-#' @param LocusCtl an object created by [GCLr::create_locuscontrol()]
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)
 #'
 #' @return This function returns a [hierfstat] data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
 #'
@@ -45,7 +45,7 @@ create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4
     stop(paste("'", loci[is.na(match(loci, LocusCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
-  
+
   
   if(ncores > parallel::detectCores()) {
     
