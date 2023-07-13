@@ -12,7 +12,7 @@
 #' 
 #' @param include_missing whether to include all fish even if they were never genotyped for all loci in LocusControl (default = FALSE)
 #' 
-#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)
 #'
 #' @return This function assigns a tibble with the following columns for each silly:
 #'    \itemize{
@@ -58,13 +58,13 @@
 #' @examples
 #' \dontrun{
 #'   sillyvec <- c("SUCIWS06", "SUCIWS07", "SUCIWS08", "SUCIWS09", "SUCIWS10", "SUCIWS11", "SUCIWS12", "SUCIWS13", "SCIMA22")
-#'   loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE, LocusControl = LocusControl)
+#'   loki2r(sillyvec = sillyvec, username = "awbarclay", password = .password, test_type = "SNP", include_missing = TRUE, LocusCtl = LocusControl)
 #' }
-#'    
+#' 
 #' @export            
-loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "MSAT")[1], include_missing = FALSE, LocusControl = LocusControl){
+loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "MSAT")[1], include_missing = FALSE, LocusCtl = LocusControl){
   
-  if(!exists("LocusControl")){
+  if(!exists("LocusCtl")){
     
     stop("'LocusControl' not yet built.")
     
@@ -88,17 +88,17 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   
   con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
   
-  loci <- LocusControl$locusnames
+  loci <- LocusCtl$locusnames
   
   nloci <- length(loci)
   
-  ploidy <- LocusControl$ploidy
+  ploidy <- LocusCtl$ploidy
   
   hap_loci <- ploidy[ploidy==1] %>% names()
   
-  alleles <- LocusControl$alleles
+  alleles <- LocusCtl$alleles
   
-  nalleles <- LocusControl$nalleles 
+  nalleles <- LocusCtl$nalleles 
   
   gnoqry <- paste("SELECT * FROM AKFINADM.V_GNOQRY WHERE LOCUS IN (", paste0("'", loci, "'", collapse = ","), ") AND SILLY_CODE IN (", paste0("'", sillyvec, "'", collapse = ","), ")", sep = "") #Gentoype query
   
