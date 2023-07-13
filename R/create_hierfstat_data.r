@@ -38,7 +38,7 @@
 #' GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4, LocusCtl = GCLr::ex_LocusControl)
 #' 
 #' @export
-create_hierfstat_data <- function(sillyvec, region = NULL, pop,loci, ncores  = 4, LocusCtl = LocusControl){
+create_hierfstat_data <- function(sillyvec, region = NULL, pop, loci, ncores  = 4, LocusCtl = LocusControl){
   
   if(!exists("LocusControl")){
     
