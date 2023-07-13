@@ -51,7 +51,7 @@ create_hierfstat_data <- function(sillyvec, region = NULL, pop, loci, ncores  = 
     stop(paste("'", loci[is.na(match(loci, LocusCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
-  
+
   
   if(ncores > parallel::detectCores()) {
     

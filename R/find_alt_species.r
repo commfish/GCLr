@@ -4,6 +4,7 @@
 #'
 #' @param sillyvec A character vector of silly codes (e.g., c("SYEHR07", "SWENA98", "STATS05")).
 #' @param species The species you are working with; options = sockeye, chum; default = chum.
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #' 
 #' @details 
 #' This function requires a `LocusControl` object and ."gcl" objects. Run [GCLr::create_locuscontrol[] and [GCLr::loki2r] prior to this function.
@@ -23,14 +24,13 @@
 #' wrong_spp <- GCLr::find_alt_species(sillyvec = sillys, species = "sockeye")
 #' 
 #' @export
-find_alt_species <- function(sillyvec, species = "chum"){
+find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl){
 
-  if(!exists("LocusControl")){
+  if(!exists("LocusCtl")){
     
     stop("'LocusControl' not yet built.") # Check if LocusControl is present in environment
     
   }
-  
   
   # First, load the alternate & failed markers for a given species, or stop if incorrect species is provided. 
   if(species == "chum"){
@@ -71,7 +71,7 @@ find_alt_species <- function(sillyvec, species = "chum"){
       stop( "This can only be run on sockeye or chum.")
   }
 
-  loci <- LocusControl$locusnames # List of loci from LocusControl; Relies on LocusControl in environment!
+  loci <- LocusCtl$locusnames # List of loci from LocusControl; Relies on LocusControl in environment!
 
 
   # Subset alternate markers by only those found in LocusControl

@@ -31,6 +31,8 @@
 #' @param ncores A numeric vector of length one indicating the number of cores to use.
 #' 
 #' @param file_type Whether to save the baseline and mixture files as .fst (default and faster) or .csv files.
+#' 
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #'
 #' @details
 #' This function writes out rubias mixtures and baseline files for each test_group and scenario in sample_sizes. For a given test_group and scenario, the mixture file will contain randomly selected samples for each reporting group as defined in the sample_sizes tibble. The corresponding baseline file will contain all baseline samples except for those selected for the mixture.
@@ -59,11 +61,11 @@
 #' }
 #'
 #' @export
-create_rubias_base_eval <- function(sillyvec, group_names, loci, groupvec, sample_sizes, test_groups = group_names, prprtnl = FALSE, base.path = "rubias/baseline", mix.path = "rubias/mixture", seed = 123, ncores = 4, file_type = c("fst", "csv")[1]){
+create_rubias_base_eval <- function(sillyvec, group_names, loci, groupvec, sample_sizes, test_groups = group_names, prprtnl = FALSE, base.path = "rubias/baseline", mix.path = "rubias/mixture", seed = 123, ncores = 4, file_type = c("fst", "csv")[1], LocusCtl = LocusControl){
   
-  if(sum(is.na(match(loci, LocusControl$locusnames)))){
+  if(sum(is.na(match(loci, LocusCtl$locusnames)))){
     
-    stop(paste("'", loci[is.na(match(loci, LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    stop(paste("'", loci[is.na(match(loci, LocusCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
   

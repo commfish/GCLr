@@ -6,6 +6,7 @@
 #' @param loci Character vector of the loci you wish to include.
 #' @param dir Character vector of where to save the ".bse" file.
 #' @param ncores Number of cores to use for parallel processing.
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #'
 #' @returns Returns the fortran format of the mixture file, which is needed for [create_bayes_ctl()].
 #' It also saves each mixture in `mixvec` as a .mix file.
@@ -24,11 +25,11 @@
 #' }
 #' 
 #' @export
-create_bayes_mix <- function(mixvec, loci, dir, ncores = 4) {
+create_bayes_mix <- function(mixvec, loci, dir, ncores = 4, LocusCtl = LocusControl) {
 
-    if (sum(is.na(match(loci, LocusControl$locusnames)))) {
+    if (sum(is.na(match(loci, LocusCtl$locusnames)))) {
     
-    stop(paste("'", loci[is.na(match(loci, LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    stop(paste("'", loci[is.na(match(loci, LocusCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
   
@@ -60,11 +61,11 @@ create_bayes_mix <- function(mixvec, loci, dir, ncores = 4) {
     #Had to suppress an anoying message which only printed to console when running the foreach loop.
     suppressMessages(
       
-      mix_scores <-  foreach::foreach(loc = loci, .packages = c("tidyverse", "tidyselect", "janitor"), .export = c("LocusControl"), .combine = dplyr::bind_cols) %dopar% { #Start multicore loop: loci
+      mix_scores <-  foreach::foreach(loc = loci, .packages = c("tidyverse", "tidyselect", "janitor"), .export = c("LocusCtl"), .combine = dplyr::bind_cols) %dopar% { #Start multicore loop: loci
       
       variables <- c(loc, paste(loc, 1, sep = "."))
         
-      my.alleles <- LocusControl$alleles[[loc]]
+      my.alleles <- LocusCtl$alleles[[loc]]
         
       comb_alleles0 <- scores0 %>%
         dplyr::select(tidyselect::all_of(variables)) %>% 
@@ -96,7 +97,7 @@ create_bayes_mix <- function(mixvec, loci, dir, ncores = 4) {
       
     } #End silly loop
   
-  a_rle <- sapply(loci, function(loc){LocusControl$nalleles[[loc]]}) %>% 
+  a_rle <- sapply(loci, function(loc){LocusCtl$nalleles[[loc]]}) %>% 
     rle()
   
   mix_fortran <- paste0("(", paste0(sapply(seq(length(a_rle$values)), function(locus){

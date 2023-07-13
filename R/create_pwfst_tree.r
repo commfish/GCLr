@@ -84,7 +84,7 @@ create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, re
   
   dimnames(pairs)[[2]] <- pairnames
   
-  ploidy <- LocusControl$ploidy
+  ploidy <- LocusCtl$ploidy
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   

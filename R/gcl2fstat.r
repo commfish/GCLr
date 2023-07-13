@@ -6,6 +6,7 @@
 #' @param loci AA character vector of locus names to include in the FSTAT file.
 #' @param path The full file path to write out the FSTAT file; with "\\" or "/" separator between folders.
 #' @param ncores The number of cores for multithreading using [doParallel()] and [foreach()]. Default is 4. 
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #' 
 #' @details 
 #' This function requires a `LocusControl` object. Run [GCLr::create_locuscontrol()] prior to this function.
@@ -17,20 +18,13 @@
 #' GCLr::gcl2fstat(sillyvec = sillyvec31, loci = loci82, path = "FSTAT/FSTATfile.dat", ncores = 8)
 #' 
 #' @export
-gcl2fstat <- function(sillyvec, loci, path, ncores = 4){
+gcl2fstat <- function(sillyvec, loci, path, ncores = 4, LocusCtl = LocusControl){
 
   start_time <- Sys.time()
   
-  if(!exists("LocusControl")){
+  if(sum(is.na(match(loci, LocusCtl$locusnames)))){
     
-    stop("'LocusControl' not yet built.")
-    
-  }
-  
-  
-  if(sum(is.na(match(loci, LocusControl$locusnames)))){
-    
-    stop(paste("'", loci[is.na(match(loci,LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    stop(paste("'", loci[is.na(match(loci, LocusCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
   
@@ -44,14 +38,14 @@ gcl2fstat <- function(sillyvec, loci, path, ncores = 4){
   
   nloci <- length(loci)
   
-  ploidy <- LocusControl$ploidy[loci]
+  ploidy <- LocusCtl$ploidy[loci]
   
-  alleles <- LocusControl$alleles[loci] %>% 
+  alleles <- LocusCtl$alleles[loci] %>% 
     dplyr::bind_rows(.id = "locus")
       
   maxchar <- max(nchar(alleles$allele))+1
     
-  nalleles <- LocusControl %>% 
+  nalleles <- LocusCtl %>% 
     dplyr::filter(locusnames%in%loci) %>% 
     dplyr::pull(nalleles) %>% 
     purrr::set_names(loci)

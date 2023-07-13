@@ -144,5 +144,3 @@ bayes_indiv_assign_summary <- function(group_names, groupvec, mixnames, maindir,
   return(results)
   
 }
-
-    

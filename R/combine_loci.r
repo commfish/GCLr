@@ -6,7 +6,7 @@
 #' @param markerset A vector of the set of loci you wish to combine.
 #' @param update Logical switch. If TRUE, the "LocusControl" object is updated and all "*.gcl" objects in "sillyvec" will be updated with the new marker. If FALSE, the "LocusControl" object is not updated and a temporary object called "*.temp.gcl" with the updated data is created.
 #' @param delim Specifies the separator between combined loci, either a period (.) which is the default or an underscore (_) so locus names will work in SPAM.
-#' @param LocusControl an object created by [GCLr::create_locuscontrol()]. Default is LocusControl
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl)
 #'
 #' @examples
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
@@ -22,6 +22,7 @@
 combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1], LocusCtl = LocusControl){
 
   if (!all(markerset %in% LocusCtl$locusnames)) {
+
     
     stop(paste0("'", setdiff(markerset, LocusCtl$locusnames), "' from argument 'markerset' not found in 'LocusControl' object!!!"))
     

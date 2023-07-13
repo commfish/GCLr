@@ -31,12 +31,11 @@ calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4){
   
   start.time <- Sys.time() 
   
-  if(!all(loci %in% LocusControl$locusnames)){
+  if(!all(loci %in% LocusCtl$locusnames)){
     
-    stop(paste0("'", setdiff(loci, LocusControl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
+    stop(paste0("'", setdiff(loci, LocusCtl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
     
   }
-  
   
   if(ncores > parallel::detectCores()) {
     
@@ -49,7 +48,7 @@ calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4){
   scores_cols <- sapply(loci, function(locus) {c(locus, paste0(locus, ".1"))}) %>% 
     as.vector() 
   
-  alleles <- LocusControl$alleles[loci] %>% 
+  alleles <- LocusCtl$alleles[loci] %>% 
     dplyr::bind_rows(.id = "locus") %>% 
     dplyr::rename(allele_no = allele)
   
