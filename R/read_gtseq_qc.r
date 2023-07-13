@@ -1,19 +1,20 @@
+#' @title Read GTseq QC Genotypes
+#'
+#' @description This function reads in GTseq QC genotypes from .csv files and creates .gcl objects in the global environment. It's called on by [GCLr::qc()].
+#'
+#' @param qccsvFilepaths A character vector with relative paths for QC genotype CSV files.
+#'
+#' @details
+#' The function reads in the QC genotype data from the CSV files, renames and formats columns, and creates scores and counts arrays for each silly. The resulting .gcl objects are assigned to the global environment with the names "sillyqc.gcl" (e.g., "silly1qc.gcl", "silly2qc.gcl").
+#'
+#' @returns Returns a few silly objects to the global environment 
+#' \itemize{
+#'   \item \code{objects}: 
+#'   - `qc.gcl` list objects
+#'   - `qcSillys`; a character vector of qc sillys
+#'
+#' @export
 read_gtseq_qc <- function(qccsvFilepaths) {
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  This function reads in GTseq qc genotypes from .csv files as .gcl objects
-  #
-  #  Argument(s):  
-  #  qccsvFilepaths <- character vector with relative path for qc genotype .csv files
-  #
-  #  Output:
-  #  Creates qc.gcl list objects in global environment
-  #  qcSillys - a character vector of qc sillys is assigned to the global environment
-  #
-  #  Written by Kyle Shedd 10/15/18  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  while(!require(tidyverse)){ install.packages("tidyverse") }
-  
   # Read in .csv files
   qc_genotypes <- suppressMessages(
     suppressWarnings(
@@ -35,20 +36,20 @@ read_gtseq_qc <- function(qccsvFilepaths) {
   # qc_genotypes <- qc_genotypes %>% 
   #   dplyr::rename(silly_source = "Sample Name", locus = Marker, allele_1 = "Allele 1", allele_2 = "Allele 2") %>% 
   #   tidyr::separate(col = silly_source, into = c("silly", "fish_id"), sep = "_", remove = FALSE)
-
+  
   # Verify that all qc silly are in the project
   ProjectSillysqc <- unique(qc_genotypes$silly)
-  if(!all(ProjectSillysqc %in% ProjectSillys)){ stop(paste0(ProjectSillysqc[! ProjectSillysqc %in% ProjectSillys], " not found in ProjectSillys.")) }
+  if (!all(ProjectSillysqc %in% ProjectSillys)) { stop(paste0(ProjectSillysqc[!ProjectSillysqc %in% ProjectSillys], " not found in ProjectSillys.")) }
   
   # Verify that all qc loci are in project loci
   lociqc <- sort(unique(qc_genotypes$locus))
-  if(!all(lociqc %in% loci)){ stop(paste0(lociqc[! lociqc %in% loci], " not found in LocusControl.")) }
+  if (!all(lociqc %in% loci)) { stop(paste0(lociqc[!lociqc %in% loci], " not found in LocusControl.")) }
   
   # attributes table names
   attNames <- colnames(get(paste0(ProjectSillys[1], ".gcl"))$attributes)
   
   # Loop over silly to create .gcl objects
-  for(x in ProjectSillysqc){
+  for (x in ProjectSillysqc) {
     
     # subset genotypes by silly
     x_genotypes <- qc_genotypes %>% 
@@ -64,10 +65,10 @@ read_gtseq_qc <- function(qccsvFilepaths) {
                     dim = c(nrow(scores), ncol(scores), max(nalleles)), 
                     dimnames = list(rownames(scores), colnames(scores), paste0("Allele", seq(max(nalleles))))
     )
-
-    for(locus in loci){
-      for(al in seq(nalleles[locus])){
-        for(id in unique(x_genotypes$fish_id)){
+    
+    for (locus in loci) {
+      for (al in seq(nalleles[locus])) {
+        for (id in unique(x_genotypes$fish_id)) {
           counts[id, locus, al] <- sum(scores[id, locus, seq(ploidy[locus])] == alleles[[locus]][al])
         }  # id
       }  # al           
