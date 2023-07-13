@@ -4,7 +4,7 @@
 #' 
 #' @param markerset is a vector of loci (e.g., c("Ots_vatf-251", "Ots_ZR-575"))
 #' 
-#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()]
 #' 
 #' @note this function is called on by [GCLr::combine_loci()] and requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function.
 #' 
@@ -12,14 +12,14 @@
 #'
 #' @examples
 #' 
-#' GCLr::get_phenotypes(markerset = c("One_vatf-214", "One_ZNF-61"), LocusControl = GCLr::ex_LocusControl)
+#' GCLr::get_phenotypes(markerset = c("One_vatf-214", "One_ZNF-61"), LocusCtl = GCLr::ex_LocusControl)
 #' 
 #' @export
-get_phenotypes <- function(markerset, LocusControl = LocusControl){
+get_phenotypes <- function(markerset, LocusCtl = LocusControl){
   
-  alleles <- LocusControl$alleles[markerset]
+  alleles <- LocusCtl$alleles[markerset]
   
-  ploidy <- LocusControl$ploidy[markerset]
+  ploidy <- LocusCtl$ploidy[markerset]
   
   newgntps <- lapply(
     
