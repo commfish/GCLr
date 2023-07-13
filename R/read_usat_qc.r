@@ -1,18 +1,14 @@
 #' @title Read uSat QC Genotypes
 #'
-#' @description
-#' This function reads in uSat QC genotypes from .csv files and creates .gcl objects in the global environment. It verifies that the QC sillys and loci are found in the project and assigns the `qcSillys` vector to the global environment. It's called on by [GCLr::qc()].
+#' @description This function reads in uSat QC genotypes from .csv files and creates .gcl objects in the global environment. It verifies that the QC sillys and loci are found in the project and assigns the `qcSillys` vector to the global environment. It's called on by [GCLr::qc()].
 #'
 #' @param qccsvFilepaths A character vector with relative paths for QC genotype CSV files.
 #'
-#' @details
-#' The function reads in the QC genotype data from the CSV files, renames and formats columns, and creates scores and counts arrays for each silly. The resulting .gcl objects are assigned to the global environment with the names "sillyqc.gcl" (e.g., "silly1qc.gcl", "silly2qc.gcl").
+#' @details The function reads in the QC genotype data from the CSV files, renames and formats columns, and creates scores and counts arrays for each silly. The resulting .gcl objects are assigned to the global environment with the names "sillyqc.gcl" (e.g., "silly1qc.gcl", "silly2qc.gcl").
 #'
 #' @returns Returns a few silly objects to the global environment 
-#' \itemize{
-#'   \item \code{objects}: 
-#'   - `qc.gcl` list objects
-#'   - `qcSillys`; a character vector of qc sillys
+#'  `qc.gcl` list objects
+#'  `qcSillys`; a character vector of qc sillys
 #'   
 #' @export
 read_usat_qc <- function(qccsvFilepaths) {

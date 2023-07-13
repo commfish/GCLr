@@ -6,8 +6,6 @@
 #' @param skip Number of lines to skip while reading the CSV files. Default is 15.
 #'
 #' @returns Returns a few silly objects to the global environment 
-#' \itemize{
-#'   \item \code{objects}: 
 #'   - `qc.gcl` list objects
 #'   - `qcSillys`; a character vector of qc sillys
 #'

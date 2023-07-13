@@ -8,8 +8,6 @@
 #' The function reads in the QC genotype data from the CSV files, renames and formats columns, and creates scores and counts arrays for each silly. The resulting .gcl objects are assigned to the global environment with the names "sillyqc.gcl" (e.g., "silly1qc.gcl", "silly2qc.gcl").
 #'
 #' @returns Returns a few silly objects to the global environment 
-#' \itemize{
-#'   \item \code{objects}: 
 #'   - `qc.gcl` list objects
 #'   - `qcSillys`; a character vector of qc sillys
 #'
