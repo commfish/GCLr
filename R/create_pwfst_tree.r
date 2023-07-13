@@ -10,7 +10,6 @@
 #' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop. 
 #' If the number of cores exceeds the number on your device, `ncores` defaults to [parallel::detectCores()].
 #' @param returnbootstrapFst A logical value indicating whether to return the Fst matrix for each bootstrap iteration.
-#'
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #'
 #' @return A list with the following 4 or 5 components:
