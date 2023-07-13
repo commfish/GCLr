@@ -1,4 +1,4 @@
-ReadGTseqqc.GCL <- function(qccsvFilepaths) {
+read_gtseq_qc <- function(qccsvFilepaths) {
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #  This function reads in GTseq qc genotypes from .csv files as .gcl objects
   #
