@@ -65,6 +65,7 @@ library(devtools)
 devtools::install_github("commfish/GCLr")
 ```
 
+
 ## Roxygen syntax
 
 In R package documentation, there are various tags that can be used to
@@ -279,6 +280,13 @@ add_tree_color <- function(tree, currentnames, treenames, groupvec, regioncol, r
 Once you’ve completed the function, push it back to the repository and
 check it off your list on the repo issue. Please add comments or
 anything else you think would be useful to your tasks.
+
+# Function Check
+To view the documentation of the newly generated functions, and ensure it's working, you can use:
+
+``` r
+devtools::document()
+```
 
 ## Big picture steps
 
