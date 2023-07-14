@@ -4,13 +4,15 @@
 #'
 #' @param qccsvFilepaths Character vector specifying the file paths of the QC CSV files.
 #' @param skip Number of lines to skip while reading the CSV files. Default is 15.
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #'
 #' @returns Returns a few silly objects to the global environment 
 #'   - `qc.gcl` list objects
 #'   - `qcSillys`; a character vector of qc sillys
 #'
 #' @export
-read_biomark_qc <- function(qccsvFilepaths, skip = 15) {
+read_biomark_qc <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl) {
+  
   sillyvec = as.vector(sapply(objects(pattern = "*\\.gcl",pos = 1),function(gclname){strsplit(gclname, split = "\\.gcl")[[1]][1]}))
   
   Genotypesqc = NULL
@@ -35,15 +37,15 @@ read_biomark_qc <- function(qccsvFilepaths, skip = 15) {
   
   nlociqc = length(lociqc)
   
-  loci = LocusControl$locusnames
+  loci = LocusCtl$locusnames
   
-  nalleles = LocusControl$nalleles[loci]
+  nalleles = LocusCtl$nalleles[loci]
   
-  ploidy = LocusControl$ploidy[loci]
+  ploidy = LocusCtl$ploidy[loci]
   
   nloci = length(loci)
   
-  alleles = LocusControl$alleles[loci]
+  alleles = LocusCtl$alleles[loci]
   
   names(loci) = loci
   

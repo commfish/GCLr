@@ -4,12 +4,14 @@
 \alias{read_biomark_qc}
 \title{Read Biomark QC Data}
 \usage{
-read_biomark_qc(qccsvFilepaths, skip = 15)
+read_biomark_qc(qccsvFilepaths, skip = 15, LocusCtl = LocusControl)
 }
 \arguments{
 \item{qccsvFilepaths}{Character vector specifying the file paths of the QC CSV files.}
 
 \item{skip}{Number of lines to skip while reading the CSV files. Default is 15.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 Returns a few silly objects to the global environment
