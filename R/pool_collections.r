@@ -12,6 +12,8 @@
 #' @param newname The name of the new "*.gcl" created. Do not provide the ".gcl" extension. If no name is supplied, then the newname defaults to
 #'               the collection names collapsed with a period between each name (e.g., "KQUART06.KQUART08.KQUART09").
 #'
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
+#'
 #' @details
 #' This function is useful for pooling collections from the same location into a single population ("pooled collection") and for producing "pooled mixture" objects for mixed stock analysis.
 #'
@@ -30,14 +32,7 @@
 #' pool_collections(collections = sillyvec[1:2], loci = loci, IDs = NULL, newname =  paste(sillyvec[1:2], collapse = "."))
 #' 
 #' @export
-pool_collections <- function(collections, loci = LocusControl$locusnames, IDs = NULL, newname = paste(collections, collapse = ".")){
-  
-   if(!exists("LocusControl")){
-    
-    stop("'LocusControl' not yet built.")
-    
-  }
-  
+pool_collections <- function(collections, loci = LocusControl$locusnames, IDs = NULL, newname = paste(collections, collapse = "."), LocusCtl = LocusControl){
   
   if(nchar(newname) > 200){
     
@@ -45,9 +40,9 @@ pool_collections <- function(collections, loci = LocusControl$locusnames, IDs = 
     
   }
   
-  if(!all(loci %in% LocusControl$locusnames)){
+  if(!all(loci %in% LocusCtl$locusnames)){
     
-    stop(paste0("The following `loci` were not found in `LocusControl`:\n", paste(setdiff(loci, LocusControl$locusnames), collapse = "\n")))
+    stop(paste0("The following `loci` were not found in `LocusControl`:\n", paste(setdiff(loci, LocusCtl$locusnames), collapse = "\n")))
     
   }
   
