@@ -4,7 +4,14 @@
 \alias{var_comp}
 \title{Variance Components Calculation}
 \usage{
-var_comp(sillyvec, loci, groupvec, fstatfile = NULL, dir)
+var_comp(
+  sillyvec,
+  loci,
+  groupvec,
+  fstatfile = NULL,
+  dir,
+  LocusCtl = LocusControl
+)
 }
 \arguments{
 \item{sillyvec}{A character vector specifying the population silly codes for analysis.}
@@ -16,6 +23,8 @@ var_comp(sillyvec, loci, groupvec, fstatfile = NULL, dir)
 \item{fstatfile}{Optional character string specifying the path to an existing FSTAT file (".dat"). If provided, the function verifies compatibility with the input data. Default is NULL.}
 
 \item{dir}{A character string specifying the directory where an FSTAT file (".dat") will be created. This argument is used only when \code{fstatfile} is NULL.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 A matrix containing the four variance components for each locus:
