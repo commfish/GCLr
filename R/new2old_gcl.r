@@ -8,6 +8,8 @@
 #'
 #' @param ncores a numeric vector of length one indicating the number of cores to use
 #'
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
+#'
 #' @details This function checks if all the required objects exist in the environment and converts the new style tibble "*.gcl" objects to the old style list format. It performs various checks and transformations on the objects, and assigns the converted objects to the workspace.
 #'
 #' @examples
@@ -17,7 +19,7 @@
 #' }
 #' 
 #' @export
-new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
+new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4, LocusCtl = LocusControl){
 
   # Do all sillys exist in the environment?
   if(!all(sillyvec %in% stringr::str_remove(string = objects(pattern = "\\.gcl", pos = -1, envir = .GlobalEnv), pattern = "\\.gcl"))) {  
@@ -28,22 +30,15 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
     
   }
   
-  # Is there a LocusControl object in the environment?
-  if(!exists(x = "LocusControl", where = 1)){
-    
-    stop("There is no LocusControl in the current environment.")
-    
-  }
-  
   # Is LocusControl in the "old" list form?
-  if(!tibble::is_tibble(LocusControl)) {
+  if(!tibble::is_tibble(LocusCtl)) {
     
     stop("LocusControl is the 'old' style, list-form. This function requires the 'new' style, tibble.")
     
   }
   
   # Is ploidy > 2 
-  if(max(LocusControl$ploidy) > 2){
+  if(max(LocusCtl$ploidy) > 2){
     
     stop("Sorry, this function cannot handle polyploid loci (ploidy > 2) at the moment...")
     
@@ -56,7 +51,7 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
     
     loc <- locvars[-grep(pattern = "\\.1$", x = locvars)]  # Need to run this regular expression by Chase to make sure it will always work.
     
-    setdiff(loc, LocusControl$locusnames)
+    setdiff(loc, LocusCtl$locusnames)
     
   }) %>% lapply(FUN = purrr::is_empty) %>% unlist() == FALSE
   
@@ -82,10 +77,10 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
   # Create list of gcl objects for parallel loop
   all.gcl <- sapply(sillyvec_, function(silly){get(paste0(silly, ".gcl"), pos = 1)}, simplify = FALSE)
   
-  alleles <- LocusControl$alleles %>% 
+  alleles <- LocusCtl$alleles %>% 
     dplyr::bind_rows(.id = "locus")
   
-  ploidy <- LocusControl %>% 
+  ploidy <- LocusCtl %>% 
     dplyr::select(locusnames, ploidy) %>% 
     dplyr::rename(locus = locusnames)
   
@@ -98,7 +93,7 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
   
   `%dopar%` <- foreach::`%dopar%`
   
-  gcls <- foreach::foreach(silly = sillyvec_, .packages = c("tidyverse", "janitor"), .export = "LocusControl") %dopar% {
+  gcls <- foreach::foreach(silly = sillyvec_, .packages = c("tidyverse", "janitor"), .export = "LocusCtl") %dopar% {
     
     my.gcl <- all.gcl[[silly]]
     
@@ -135,7 +130,7 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
     scores <- array(c(dose1, dose2), dim = s_dims, dimnames = list(ids, dimnames(dose1)[[2]], c("Dose1", "Dose2")))
     
     # Counts array
-    max_allele <- LocusControl$alleles %>% 
+    max_allele <- LocusCtl$alleles %>% 
       dplyr::bind_rows() %>% 
       dplyr::pull(allele) %>% 
       max()
@@ -196,7 +191,7 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4){
       dplyr::mutate(CAPTURE_DATE = CAPTURE_DATE %>% as.character() %>%  as.POSIXct(format = "%Y-%m-%d"), END_CAPTURE_DATE = END_CAPTURE_DATE %>% as.character() %>%  as.POSIXct(format = "%Y-%m-%d")) %>% 
       as.data.frame()
     
-   list(counts = counts[, LocusControl$locusnames, ], scores = scores[, LocusControl$locusnames, ], n = length(ids), attributes = attributes)
+   list(counts = counts[, LocusCtl$locusnames, ], scores = scores[, LocusCtl$locusnames, ], n = length(ids), attributes = attributes)
   
   } %>% purrr::set_names(sillyvec_)
   
