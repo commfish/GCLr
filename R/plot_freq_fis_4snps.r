@@ -1,4 +1,4 @@
-plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol = NULL, file = NULL, group.pch = 19, point.size = 1, pval.cex = 3, pval.digits = 2, line.width = .5, ncores = 4){
+plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol = NULL, file = NULL, group.pch = 19, point.size = 1, pval.cex = 3, pval.digits = 2, line.width = .5, ncores = 4, LocusCtl = LocusControl){
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # This function will create a pdf file with plots of allele frequency and Fis 
@@ -37,6 +37,8 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
   #
   #  ncores - the number of cores to use in a foreach %dopar% loop. If the number of core exceeds the number on your device, then ncores defaults to parallel::detectCores() 
   # 
+  #  LocusCtl - an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
+  #
   # Output~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #  A pdf file with allele frequency and Fis plots for
   #  each locus and indicates the HWE pvalue if less than alpha.
@@ -65,9 +67,9 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
   
   if(ncores > parallel::detectCores()) {ncores = parallel::detectCores()}
 
-  ploidy <- LocusControl$ploidy[loci]
+  ploidy <- LocusCtl$ploidy[loci]
 
-  nalleles <- LocusControl$nalleles[loci]
+  nalleles <- LocusCtl$nalleles[loci]
   
   if(length(setdiff(loci, loci[ploidy==2 & nalleles==2]))>=1){
     
@@ -81,7 +83,7 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
     
     lapply(loci, function(locus){
       
-      my.alleles <- LocusControl$alleles[[locus]] %>% 
+      my.alleles <- LocusCtl$alleles[[locus]] %>% 
         pull(call)
       
       my.gcl %>% 
@@ -108,7 +110,7 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
   `%dopar%` <- foreach::`%dopar%`
   
   #Start parallel loop
-  HWE_df <- foreach::foreach(silly = sillyvec, .export = "LocusControl", .packages = c("tidyverse", "HardyWeinberg")) %dopar% {
+  HWE_df <- foreach::foreach(silly = sillyvec, .export = "LocusCtl", .packages = c("tidyverse", "HardyWeinberg")) %dopar% {
 
     my.gcl <- gcls[[silly]]
 
