@@ -45,7 +45,7 @@ plot_fishers_test <- function(pooling_test) {
   
   pooling_test %>%
     tidyr::unnest(bylocus) %>% {
-      ggplot2::ggplot(aes(x = pval)) +
+      ggplot2::ggplot(., aes(x = pval)) +
         ggplot2::geom_histogram(binwidth = 0.05) +
         ggplot2::geom_hline(
           yintercept = (dplyr::select(.data = ., locus) %>% dplyr::n_distinct()) / 20,
