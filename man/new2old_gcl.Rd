@@ -4,7 +4,7 @@
 \alias{new2old_gcl}
 \title{Convert New Style "*.gcl" objects to Old Style}
 \usage{
-new2old_gcl(sillyvec, save_new = FALSE, ncores = 4)
+new2old_gcl(sillyvec, save_new = FALSE, ncores = 4, LocusCtl = LocusControl)
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes with associated *.gcl objects that need to be converted}
@@ -12,6 +12,8 @@ new2old_gcl(sillyvec, save_new = FALSE, ncores = 4)
 \item{save_new}{whether you want the new objects overwritten without saving (TRUE) or assign the new objects to ".gcl_new" before overwriting (FALSE)}
 
 \item{ncores}{a numeric vector of length one indicating the number of cores to use}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \description{
 This function converts new style ".gcl" objects from tibbles to a list of arrays. The new style objects can be saved as ".gcl_new" before they are overwritten.
