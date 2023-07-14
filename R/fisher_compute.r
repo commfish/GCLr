@@ -3,7 +3,7 @@
 #' @description This function is a wrapper for [stats::fisher.test()] and runs a Fisher's Exact Test for homogeneity of allele frequencies. 
 #' The null hypothesis is that there are no significant differences in allele frequencies.
 #'
-#' @param freq A tibble of allele frequencies produced by [GCLr::calc_freq_pop] for the collections you want to test.
+#' @param freq A tibble of allele frequencies produced by [GCLr::calc_freq_pop()] for the collections you want to test.
 #' @param loci A character vector of locus names.
 #' @param prec The precision of the output p-values (i.e., the number of significant digits; default is 4).
 #'
@@ -14,7 +14,7 @@
 #'       \item \code{bylocus}: a list containing a tibble of locus-specific p-values
 #'     }
 #'
-#' @details This function is called on by [GCLr::fishers_test] to do multiple tests at once.
+#' @details This function is called on by [GCLr::fishers_test()] to do multiple tests at once.
 #' This function is used to determine if temporal or geographically similar collections have similar allele frequencies for pooling.
 #'
 #' @examples
