@@ -1,14 +1,15 @@
 #' @title Calculate Allele Frequency for Multiple Loci and Silly Codes
 #'
-#' @description This function calculates the allele frequency for each locus for each collection (silly code).
+#' @description
+#' This function calculates the allele frequency for each locus for each collection (silly code).
 #'
 #' @param sillyvec A character vector of silly codes without the ".gcl" extension.
 #' @param loci A character vector of locus names; default is all `LocusControl$locusnames`.
-#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop. 
+#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
 #' If the number of cores exceeds the number on your device, `ncores` defaults to [parallel::detectCores()].
-#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
 #'
-#' @return A tibble with the following columns:
+#' @returns A tibble with the following 6 columns:
 #'     \itemize{
 #'       \item \code{silly}: silly code
 #'       \item \code{locus}: locus name
@@ -19,11 +20,12 @@
 #'     }
 #'
 #' @examples
-#' 
+#' \dontrun{
 #' load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
 #' old2new_locuscontrol()
 #' old2new_gcl(sillyvec67)
 #' Freq <- calc_freq_pop(sillyvec = sillyvec67, loci = loci413)
+#' }
 #'
 #' @export
 calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4, LocusCtl = LocusControl){

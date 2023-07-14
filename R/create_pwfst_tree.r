@@ -1,18 +1,19 @@
 #' @title Create Pairwise Fst Tree
 #'
-#' @description This function generates a matrix of pairwise Fst values, a neighbor joining tree, bootstrap values for tree nodes, and variance components. 
+#' @description 
+#' This function generates a matrix of pairwise Fst values, a neighbor joining tree, bootstrap values for tree nodes, and variance components.
 #' It can utilize multicore processing with \pkg{foreach} to speed up the calculation of variance components.
 #'
 #' @param sillyvec A character vector of silly codes without the ".gcl" extension.
 #' @param loci A character vector of locus names.
 #' @param dir Directory to save the `PairwiseFstTree` list object using [base::dput()].
-#' @param nboots A numeric value indicating the number of bootstrap iterations.
-#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop. 
+#' @param nboots A numeric value indicating the number of bootstrap iterations (default = 1000).
+#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
 #' If the number of cores exceeds the number on your device, `ncores` defaults to [parallel::detectCores()].
-#' @param returnbootstrapFst A logical value indicating whether to return the Fst matrix for each bootstrap iteration.
-#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
+#' @param returnbootstrapFst A logical value indicating whether to return the Fst matrix for each bootstrap iteration (default = FALSE).
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
 #'
-#' @return A list with the following 4 or 5 components:
+#' @returns A list with the following 4 or 5 components:
 #'     \itemize{
 #'       \item \code{tree}: a neighbor joining tree list of 4 created by [ape::nj()] containing:
 #'         \itemize{
@@ -29,15 +30,17 @@
 #'     }
 #' This list object is saved in `dir` using [base::dput()], and is named `paste(dir,"\\", length(sillyvec), "Pops", length(loci), "Loci_", "PairwiseFstTree.txt", sep = "")`
 #'
-#' @details Older versions of this function used to write out an FSTAT .dat file, but this is no longer the case. 
+#' @details
+#' Older versions of this function used to write out an FSTAT .dat file, but this is no longer the case. 
 #' The function now calls on [GCLr::create_hierfstat_data()] to create a \pkg{hierfstat} data object internally.
 #' Depending on the size of your baseline and number of bootstrap iterations, this function can take a while.
 #'
 #' @examples
-#' 
+#' \dontrun{
 #' source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions
 #' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
 #' PWFSTtree <- create_pwfst_tree(sillyvec = sillyvec31, loci = loci82, dir = "output", nboots = 1000, ncores = 8, returnbootstrapFst = FALSE)
+#' }
 #'
 #' @export
 create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, returnbootstrapFst = FALSE, LocusCtl = LocusControl){
