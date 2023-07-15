@@ -5,7 +5,7 @@
 #'
 #' @param file The full file path to the `genepop` HWE output, including the ".P" extension.
 #' @param sillyvec An optional character vector of silly codes without the ".gcl" extension (default = `NULL`).
-#' If NULL, `Pop` names will come directly from the ("*.P") file and likely include "_fishID" extensions.
+#' If `NULL`, `Pop` names will come directly from the ("*.P") file and likely include "_fishID" extensions.
 #' If supplying `sillyvec`, make sure it is the same `sillyvec` used in [GCLr::gcl2genepop()].
 #' @param summaryAsNumeric A logical vector of length 1 indicating whether character p-values such as "High. sign." or " < "
 #' should be coerced into numeric (default = `TRUE`).

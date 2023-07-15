@@ -21,7 +21,7 @@
 #' if there are several loci that have low p-values.
 #'
 #' @examples
-#' \donotrun{
+#' \dontrun{
 #' load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
 #' old2new_locuscontrol()
 #' old2new_gcl(sillyvec = c("KKILL05","KKILL06", "KFUNN05", "KFUNN06"), save_old = FALSE)
@@ -32,10 +32,11 @@
 #'
 #' @references While testing for homogeneity of allele frequencies is not the same as testing for conformance to Hardy-Weinberg expectations,
 #' the idea for the plots created by this function comes from:  
-#'   - Waples, R.S., 2015. Testing for Hardy–Weinberg proportions: have we lost the plot?. Journal of heredity, 106(1), pp.1-19. [link](https://academic.oup.com/jhered/article/106/1/1/2961870)
+#'   - Waples, R.S., 2015. Testing for Hardy–Weinberg proportions: have we lost the plot?. Journal of heredity, 106(1), pp.1-19. <https://academic.oup.com/jhered/article/106/1/1/2961870>
 #'
 #' @export
 plot_fishers_test <- function(pooling_test) {
+  
   # just setting variables for use in plotting - set ncol to something reasonable in facet_wrap
   if (length(pooling_test$test_sillys) > 4) {
     ncols <- round(length(pooling_test$test_sillys) / 3, 0)
@@ -45,14 +46,14 @@ plot_fishers_test <- function(pooling_test) {
   
   pooling_test %>%
     tidyr::unnest(bylocus) %>% {
-      ggplot2::ggplot(., aes(x = pval)) +
+      ggplot2::ggplot(., ggplot2::aes(x = pval)) +
         ggplot2::geom_histogram(binwidth = 0.05) +
         ggplot2::geom_hline(
           yintercept = (dplyr::select(.data = ., locus) %>% dplyr::n_distinct()) / 20,
           colour = "red"
         ) + 
         ggplot2::geom_text(
-          mapping = aes(x = 0.5, y = 15, label = overall),
+          mapping = ggplot2::aes(x = 0.5, y = 15, label = overall),
           colour = "red",
           size = 6
         ) +
