@@ -10,7 +10,7 @@ read_genepop_hwe(file, sillyvec = NULL, summaryAsNumeric = TRUE)
 \item{file}{The full file path to the \code{genepop} HWE output, including the ".P" extension.}
 
 \item{sillyvec}{An optional character vector of silly codes without the ".gcl" extension (default = \code{NULL}).
-If NULL, \code{Pop} names will come directly from the ("*.P") file and likely include "_fishID" extensions.
+If \code{NULL}, \code{Pop} names will come directly from the ("*.P") file and likely include "_fishID" extensions.
 If supplying \code{sillyvec}, make sure it is the same \code{sillyvec} used in \code{\link[=gcl2genepop]{gcl2genepop()}}.}
 
 \item{summaryAsNumeric}{A logical vector of length 1 indicating whether character p-values such as "High. sign." or " < "

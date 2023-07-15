@@ -29,7 +29,7 @@ it can also be helpful to see the distribution of locus-specific p-values to det
 if there are several loci that have low p-values.
 }
 \examples{
-\donotrun{
+\dontrun{
 load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
 old2new_locuscontrol()
 old2new_gcl(sillyvec = c("KKILL05","KKILL06", "KFUNN05", "KFUNN06"), save_old = FALSE)
@@ -43,6 +43,6 @@ plot_fishers_test(pooling_test = temp_pool)
 While testing for homogeneity of allele frequencies is not the same as testing for conformance to Hardy-Weinberg expectations,
 the idea for the plots created by this function comes from:
 \itemize{
-\item Waples, R.S., 2015. Testing for Hardy–Weinberg proportions: have we lost the plot?. Journal of heredity, 106(1), pp.1-19. \href{https://academic.oup.com/jhered/article/106/1/1/2961870}{link}
+\item Waples, R.S., 2015. Testing for Hardy–Weinberg proportions: have we lost the plot?. Journal of heredity, 106(1), pp.1-19. \url{https://academic.oup.com/jhered/article/106/1/1/2961870}
 }
 }
