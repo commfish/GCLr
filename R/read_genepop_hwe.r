@@ -35,6 +35,9 @@
 #' @seealso [genepop::genepop-package()]
 #'
 #' @examples
+#' \dontrun{
+#' genepop_hwe <- read_genepop_hwe(file = "~/R/test.txt.P", sillyvec = sillyvec)
+#' }
 #' 
 #' @export
 read_genepop_hwe <- function(file, sillyvec = NULL, summaryAsNumeric = TRUE){

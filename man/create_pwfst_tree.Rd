@@ -21,14 +21,14 @@ create_pwfst_tree(
 
 \item{dir}{Directory to save the \code{PairwiseFstTree} list object using \code{\link[base:dput]{base::dput()}}.}
 
-\item{nboots}{A numeric value indicating the number of bootstrap iterations.}
+\item{nboots}{A numeric value indicating the number of bootstrap iterations (default = 1000).}
 
-\item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop.
+\item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).
 If the number of cores exceeds the number on your device, \code{ncores} defaults to \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
-\item{returnbootstrapFst}{A logical value indicating whether to return the Fst matrix for each bootstrap iteration.}
+\item{returnbootstrapFst}{A logical value indicating whether to return the Fst matrix for each bootstrap iteration (default = \code{FALSE}).}
 
-\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}} (default = LocusControl).}
 }
 \value{
 A list with the following 4 or 5 components:
@@ -58,9 +58,10 @@ The function now calls on \code{\link[=create_hierfstat_data]{create_hierfstat_d
 Depending on the size of your baseline and number of bootstrap iterations, this function can take a while.
 }
 \examples{
-
+\dontrun{
 source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions
 load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
 PWFSTtree <- create_pwfst_tree(sillyvec = sillyvec31, loci = loci82, dir = "output", nboots = 1000, ncores = 8, returnbootstrapFst = FALSE)
+}
 
 }

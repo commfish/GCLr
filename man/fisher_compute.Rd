@@ -7,18 +7,18 @@
 fisher_compute(freq, loci, prec = 4)
 }
 \arguments{
-\item{freq}{A tibble of allele frequencies produced by \link{calc_freq_pop} for the collections you want to test.}
+\item{freq}{A tibble of allele frequencies produced by \code{\link[=calc_freq_pop]{calc_freq_pop()}} for the collections (sillys) you want to test.}
 
 \item{loci}{A character vector of locus names.}
 
-\item{prec}{The precision of the output p-values (i.e., the number of significant digits; default is 4).}
+\item{prec}{The precision of the output p-values (i.e., the number of significant digits; default = 4).}
 }
 \value{
-A tibble with one row with the following columns:
+A tibble with 1 row with the following 3 columns:
 \itemize{
 \item \code{test_sillys}: a concatenated string of the collections (silly codes) being tested
 \item \code{overall}: overall p-value across all loci obtained using Fisher's method
-\item \code{bylocus}: a list containing a tibble of locus-specific p-values
+\item \code{bylocus}: a nested list containing a tibble of locus-specific p-values
 }
 }
 \description{
@@ -26,17 +26,18 @@ This function is a wrapper for \code{\link[stats:fisher.test]{stats::fisher.test
 The null hypothesis is that there are no significant differences in allele frequencies.
 }
 \details{
-This function is called on by \link{fishers_test} to do multiple tests at once.
-This function is used to determine if temporal or geographically similar collections have similar allele frequencies for pooling.
+This function is called on by \code{\link[=fishers_test]{fishers_test()}} to do multiple tests at once.
+This function is used to test whether temporally or geographically similar baseline collections have significant differences in
+allele frequencies across loci. If there are no significant differences between collections, then we typically pool collections into populations
+to improve estimates of allele frequencies.
 }
 \examples{
-
+\dontrun{
 load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
 old2new_locuscontrol()
 old2new_gcl(sillyvec = c("KKILL05","KKILL06"), save_old = FALSE)
-
 freq <- calc_freq_pop(sillyvec = c("KKILL05","KKILL06"), loci = loci443)
-
 fisher_compute(freq = freq, loci = loci443, prec = 4)
+}
 
 }
