@@ -6,7 +6,7 @@
 #'
 #' @param freq A tibble of allele frequencies produced by [GCLr::calc_freq_pop()] for the collections (sillys) you want to test.
 #' @param loci A character vector of locus names.
-#' @param prec The precision of the output p-values (i.e., the number of significant digits; default is 4).
+#' @param prec The precision of the output p-values (i.e., the number of significant digits; default = 4).
 #'
 #' @returns A tibble with 1 row with the following 3 columns:
 #'     \itemize{
