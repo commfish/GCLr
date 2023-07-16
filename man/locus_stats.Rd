@@ -30,8 +30,8 @@ This function calculates basic locus statistics (Ho, Fis, Fst) for each locus ac
 }
 \details{
 This function uses the \code{\link[hierfstat:hierfstat]{hierfstat::hierfstat()}} to calculate locus statistics for Ho, Fis, and Fst.
-Previous versions of this function used \code{\link[=gcl2fstat]{gcl2fstat()}} to write out an FSTAT (\emph{.dat) file, but this is no longer the case.
-Use \code{\link[=gcl2fstat]{gcl2fstat()}} if you want to create an FSTAT (}.dat) file.
+Previous versions of this function used \code{\link[=gcl2fstat]{gcl2fstat()}} to write out an FSTAT (".dat") file, but this is no longer the case.
+Use \code{\link[=gcl2fstat]{gcl2fstat()}} if you want to create an FSTAT (".dat") file.
 }
 \examples{
 \dontrun{

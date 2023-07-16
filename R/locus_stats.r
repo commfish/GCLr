@@ -19,8 +19,8 @@
 #'       
 #' @details
 #' This function uses the [hierfstat::hierfstat()] to calculate locus statistics for Ho, Fis, and Fst.
-#' Previous versions of this function used [GCLr::gcl2fstat()] to write out an FSTAT (*.dat) file, but this is no longer the case.
-#' Use [GCLr::gcl2fstat()] if you want to create an FSTAT (*.dat) file.
+#' Previous versions of this function used [GCLr::gcl2fstat()] to write out an FSTAT (".dat") file, but this is no longer the case.
+#' Use [GCLr::gcl2fstat()] if you want to create an FSTAT (".dat") file.
 #' 
 #' @seealso 
 #' [hierfstat::hierfstat()]
