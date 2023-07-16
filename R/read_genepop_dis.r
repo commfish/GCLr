@@ -18,7 +18,8 @@
 #'       \item \code{sillyvec_1}: pairwise loci LD p-values for 1st silly in `sillyvec`
 #'       \item \code{sillyvec_2}: pairwise loci LD p-values in `sillyvec`
 #'       \item \code{sillyvec_n}: pairwise loci LD p-values in `sillyvec`
-#'       \item \code{Overall}: pairwise loci LD p-values overall sillys in `sillyvec`       
+#'       \item \code{Overall}: pairwise loci LD p-values overall sillys in `sillyvec`
+#'       }       
 #'       
 #' @details
 #' Designed and tested on Genepop v4.8.3. If the LD (".DIS) file contains tests for only 1 populations, the tibble will not contain an "Overall" column.

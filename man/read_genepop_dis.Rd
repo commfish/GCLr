@@ -27,6 +27,7 @@ A non-tidy tibble with pairwise loci LD p-values per population and overall popu
 \item \code{sillyvec_n}: pairwise loci LD p-values in \code{sillyvec}
 \item \code{Overall}: pairwise loci LD p-values overall sillys in \code{sillyvec}
 }
+}
 \description{
 This function reads in output from a \code{genepop} Linkage Disequilibrium test ("*.DIS") file.
 }
