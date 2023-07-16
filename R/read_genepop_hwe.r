@@ -32,11 +32,14 @@
 #' If MCMC, replace hard 0 p-values with `1 / (batches * iterations)` and calculate overall pops and overall loci via Fisher's method (ChiSqaure).
 #' if Exact test, p-values overall pops or overall loci are pulled directly from `genepop` ("*.P") file
 #'
-#' @seealso [genepop::genepop-package()]
-#'
+#' @seealso 
+#' [genepop::genepop-package()]
+#' [genepop::test_HW()]
+#' 
 #' @examples
 #' \dontrun{
-#' genepop_hwe <- read_genepop_hwe(file = "~/R/test.txt.P", sillyvec = sillyvec)
+#' genepop::test_HW(inputFile = "C:/Users/krshedd/Documents/R/test.txt")  # needs full file path
+#' genepop_hwe <- GCLr::read_genepop_hwe(file = "~/R/test.txt.P", sillyvec = sillyvec)
 #' }
 #' 
 #' @export

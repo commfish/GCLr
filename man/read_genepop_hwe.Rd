@@ -44,10 +44,12 @@ if Exact test, p-values overall pops or overall loci are pulled directly from \c
 }
 \examples{
 \dontrun{
-genepop_hwe <- read_genepop_hwe(file = "~/R/test.txt.P", sillyvec = sillyvec)
+genepop::test_HW(inputFile = "C:/Users/krshedd/Documents/R/test.txt")  # needs full file path
+genepop_hwe <- GCLr::read_genepop_hwe(file = "~/R/test.txt.P", sillyvec = sillyvec)
 }
 
 }
 \seealso{
 \code{\link[genepop:genepop-package]{genepop::genepop-package()}}
+\code{\link[genepop:Hardy-Weinberg]{genepop::test_HW()}}
 }

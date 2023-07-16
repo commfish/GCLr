@@ -103,9 +103,9 @@ plot_genepop_hwe <- function(GenepopHWE_report, sillyvec = NULL, plot_type = c("
     
     low_loci <-
       HWEpval %>% 
-      filter(silly == "Overall Pops" &
+      dplyr::filter(silly == "Overall Pops" &
                pval < 0.1, locus != "Overall Loci") %>% 
-      pull(locus)
+      dplyr::pull(locus)
     
     # just setting variables for use in plotting - set ncol to something reasonable in facet_wrap
     if (length(low_loci) > 4) {
