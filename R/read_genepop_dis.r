@@ -23,7 +23,7 @@
 #' @details
 #' Designed and tested on *Genepop* v4.8.3.
 #' If the LD ("*.DIS) file contains tests for only 1 populations, the tibble will not contain an 'Overall' column.
-#' P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with `1/(#Batches*#Iterations per batch)`.
+#' P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with `1/(n_Batches*n_Iterations per batch)`.
 #' 
 #' @seealso 
 #' [genepop::genepop-package()]
