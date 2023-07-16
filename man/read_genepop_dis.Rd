@@ -10,11 +10,11 @@ read_genepop_dis(file, loci = NULL, sillyvec = NULL)
 \item{file}{The full file path to the \code{genepop} LD output, including the ".DIS" extension.}
 
 \item{loci}{An optional character vector of locus names (default = \code{NULL}).
-If \code{NULL} the locus names will come directly from the (*.DIS) file and get truncated to 8 characters.
+If \code{NULL} the locus names will come directly from the (.DIS) file and get truncated to 8 characters.
 If supplying \code{loci}, make sure it is the same \code{loci} used in \code{\link[=gcl2genepop]{gcl2genepop()}}.}
 
 \item{sillyvec}{An optional character vector of silly codes without the ".gcl" extension (default = \code{NULL}).
-If \code{NULL}, \code{Pop} names will come directly from the ("*.DIS") file and likely include "_fishID" extensions.
+If \code{NULL}, \code{Pop} names will come directly from the (".DIS") file and likely include "_fishID" extensions.
 If supplying \code{sillyvec}, make sure it is the same \code{sillyvec} used in \code{\link[=gcl2genepop]{gcl2genepop()}}.}
 }
 \value{
@@ -28,12 +28,12 @@ A non-tidy tibble with pairwise loci LD p-values per population and overall popu
 \item \code{Overall}: pairwise loci LD p-values overall sillys in \code{sillyvec}
 }
 \description{
-This function reads in output from a \code{genepop} Linkage Disequilibrium test ("*.DIS") file.
+This function reads in output from a \code{genepop} Linkage Disequilibrium test (".DIS") file.
 }
 \details{
-Designed and tested on \emph{Genepop} v4.8.3.
-If the LD ("*.DIS) file contains tests for only 1 populations, the tibble will not contain an 'Overall' column.
-P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with \verb{1/(n_Batches*n_Iterations per batch)}.
+Designed and tested on Genepop v4.8.3.
+If the LD (".DIS) file contains tests for only 1 populations, the tibble will not contain an 'Overall' column.
+P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with \verb{1/(n_Batches x n_Iterations per batch)}.
 }
 \examples{
 \dontrun{

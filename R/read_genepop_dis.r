@@ -1,14 +1,14 @@
 #' @title Read Genepop DIS Output
 #' 
 #' @description
-#' This function reads in output from a `genepop` Linkage Disequilibrium test ("*.DIS") file.
+#' This function reads in output from a `genepop` Linkage Disequilibrium test (".DIS") file.
 #'
 #' @param file The full file path to the `genepop` LD output, including the ".DIS" extension.
 #' @param loci An optional character vector of locus names (default = `NULL`).
-#' If `NULL` the locus names will come directly from the (*.DIS) file and get truncated to 8 characters.
+#' If `NULL` the locus names will come directly from the (.DIS) file and get truncated to 8 characters.
 #' If supplying `loci`, make sure it is the same `loci` used in [GCLr::gcl2genepop()].
 #' @param sillyvec An optional character vector of silly codes without the ".gcl" extension (default = `NULL`).
-#' If `NULL`, `Pop` names will come directly from the ("*.DIS") file and likely include "_fishID" extensions.
+#' If `NULL`, `Pop` names will come directly from the (".DIS") file and likely include "_fishID" extensions.
 #' If supplying `sillyvec`, make sure it is the same `sillyvec` used in [GCLr::gcl2genepop()].
 #'
 #' @returns A non-tidy tibble with pairwise loci LD p-values per population and overall populations:
@@ -21,9 +21,9 @@
 #'       \item \code{Overall}: pairwise loci LD p-values overall sillys in `sillyvec`       
 #'       
 #' @details
-#' Designed and tested on *Genepop* v4.8.3.
-#' If the LD ("*.DIS) file contains tests for only 1 populations, the tibble will not contain an 'Overall' column.
-#' P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with `1/(n_Batches*n_Iterations per batch)`.
+#' Designed and tested on Genepop v4.8.3.
+#' If the LD (".DIS) file contains tests for only 1 populations, the tibble will not contain an 'Overall' column.
+#' P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with `1/(n_Batches x n_Iterations per batch)`.
 #' 
 #' @seealso 
 #' [genepop::genepop-package()]
