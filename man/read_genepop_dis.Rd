@@ -28,12 +28,12 @@ A non-tidy tibble with pairwise loci LD p-values per population and overall popu
 \item \code{Overall}: pairwise loci LD p-values overall sillys in \code{sillyvec}
 }
 \description{
-This function reads in output from a \code{genepop} Linkage Disequilibrium test (".DIS") file.
+This function reads in output from a \code{genepop} Linkage Disequilibrium test ("*.DIS") file.
 }
 \details{
 Designed and tested on Genepop v4.8.3.
 If the LD (".DIS) file contains tests for only 1 populations, the tibble will not contain an 'Overall' column.
-P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with \verb{1/(n_Batches x n_Iterations per batch)}.
+P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with 1/(n_Batches x n_Iterations per batch).
 }
 \examples{
 \dontrun{
