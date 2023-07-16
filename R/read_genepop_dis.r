@@ -1,7 +1,7 @@
 #' @title Read Genepop DIS Output
 #' 
 #' @description
-#' This function reads in output from a `genepop` Linkage Disequilibrium test (".DIS") file.
+#' This function reads in output from a `genepop` Linkage Disequilibrium test ("*.DIS") file.
 #'
 #' @param file The full file path to the `genepop` LD output, including the ".DIS" extension.
 #' @param loci An optional character vector of locus names (default = `NULL`).
@@ -23,7 +23,7 @@
 #' @details
 #' Designed and tested on Genepop v4.8.3.
 #' If the LD (".DIS) file contains tests for only 1 populations, the tibble will not contain an 'Overall' column.
-#' P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with `1/(n_Batches x n_Iterations per batch)`.
+#' P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with 1/(n_Batches x n_Iterations per batch).
 #' 
 #' @seealso 
 #' [genepop::genepop-package()]
