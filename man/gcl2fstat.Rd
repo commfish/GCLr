@@ -9,9 +9,9 @@ gcl2fstat(sillyvec, loci, path, ncores = 4, LocusCtl = LocusControl)
 \arguments{
 \item{sillyvec}{A character vector of silly codes to include in the FSTAT file.}
 
-\item{loci}{AA character vector of locus names to include in the FSTAT file.}
+\item{loci}{A character vector of locus names to include in the FSTAT file.}
 
-\item{path}{The full file path to write out the FSTAT file; with "\\" or "/" separator between folders.}
+\item{path}{The full file path to write out the FSTAT file including ".dat" extension; with "\\" or "/" separator between folders.}
 
 \item{ncores}{The number of cores for multithreading using \code{\link[=doParallel]{doParallel()}} and \code{\link[=foreach]{foreach()}}. Default is 4.}
 

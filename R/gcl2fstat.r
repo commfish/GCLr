@@ -3,8 +3,8 @@
 #' Write out an FSTAT input file from ".gcl" objects.
 #'
 #' @param sillyvec A character vector of silly codes to include in the FSTAT file.
-#' @param loci AA character vector of locus names to include in the FSTAT file.
-#' @param path The full file path to write out the FSTAT file; with "\\" or "/" separator between folders.
+#' @param loci A character vector of locus names to include in the FSTAT file.
+#' @param path The full file path to write out the FSTAT file including ".dat" extension; with "\\" or "/" separator between folders.
 #' @param ncores The number of cores for multithreading using [doParallel()] and [foreach()]. Default is 4. 
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #' 

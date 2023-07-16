@@ -9,7 +9,7 @@
 #' @param dir Directory to save the `PairwiseFstTree` list object using [base::dput()].
 #' @param nboots A numeric value indicating the number of bootstrap iterations (default = 1000).
 #' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
-#' If the number of cores exceeds the number on your device, `ncores` defaults to [parallel::detectCores()].
+#' The number of cores cannot exceeds the number on your device ([parallel::detectCores()]).
 #' @param returnbootstrapFst A logical value indicating whether to return the Fst matrix for each bootstrap iteration (default = `FALSE`).
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
 #'
@@ -45,7 +45,7 @@
 #' @export
 create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, returnbootstrapFst = FALSE, LocusCtl = LocusControl){
   
-   if(ncores > parallel::detectCores()) {
+  if(ncores > parallel::detectCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
   

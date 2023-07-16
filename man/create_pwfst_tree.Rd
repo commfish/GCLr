@@ -24,7 +24,7 @@ create_pwfst_tree(
 \item{nboots}{A numeric value indicating the number of bootstrap iterations (default = 1000).}
 
 \item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).
-If the number of cores exceeds the number on your device, \code{ncores} defaults to \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
+The number of cores cannot exceeds the number on your device (\code{\link[parallel:detectCores]{parallel::detectCores()}}).}
 
 \item{returnbootstrapFst}{A logical value indicating whether to return the Fst matrix for each bootstrap iteration (default = \code{FALSE}).}
 
