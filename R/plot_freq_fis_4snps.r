@@ -22,7 +22,7 @@
 #' If the number of cores exceeds the number on your device ([parallel::detectCores()]), then all cores will be used.
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
 #'
-#' @returns A tibble of HWE p-values, Fis values, and allele frequencies and a ("*.pdf") of locus-specific plots:
+#' @returns A tibble of HWE p-values, Fis values, and allele frequencies and a (".pdf") of locus-specific plots:
 #'     \itemize{
 #'       \item \code{output}: a data.frame with 7 columns containing the full HWE output:
 #'         \itemize{
@@ -32,7 +32,7 @@
 #'           \item \code{fis}: Fis estimate as calculated by [HardyWeinberg::HWf()]
 #'           \item \code{allele freq}: allele frequency (proportion) of the 1st allele in `LocusCtl` as calculated by [GCLr::calc_freq_pop()]
 #'           }
-#'       \item \code{file}: a ("*.pdf") of stacked allele frequency and Fis plots for all sillys in `sillyvec` 
+#'       \item \code{file}: a (".pdf") of stacked allele frequency and Fis plots for all sillys in `sillyvec` 
 #'                          with one page per locus in `loci`
 #'       }
 #' 

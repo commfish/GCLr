@@ -53,7 +53,7 @@ If the number of cores exceeds the number on your device (\code{\link[parallel:d
 \item{group_col}{An optional character vector of colors corresponding to each group in \code{groupvec} (default = \code{NULL}).}
 }
 \value{
-A tibble of HWE p-values, Fis values, and allele frequencies and a ("\emph{.pdf") of locus-specific plots:
+A tibble of HWE p-values, Fis values, and allele frequencies and a (".pdf") of locus-specific plots:
 \itemize{
 \item \code{output}: a data.frame with 7 columns containing the full HWE output:
 \itemize{
@@ -63,7 +63,7 @@ A tibble of HWE p-values, Fis values, and allele frequencies and a ("\emph{.pdf"
 \item \code{fis}: Fis estimate as calculated by \code{\link[HardyWeinberg:HWf]{HardyWeinberg::HWf()}}
 \item \code{allele freq}: allele frequency (proportion) of the 1st allele in \code{LocusCtl} as calculated by \code{\link[=calc_freq_pop]{calc_freq_pop()}}
 }
-\item \code{file}: a ("}.pdf") of stacked allele frequency and Fis plots for all sillys in \code{sillyvec}
+\item \code{file}: a (".pdf") of stacked allele frequency and Fis plots for all sillys in \code{sillyvec}
 with one page per locus in \code{loci}
 }
 }
