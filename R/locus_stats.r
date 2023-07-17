@@ -41,8 +41,13 @@
 #' }
 #'  
 #' @export
-locus_stats <- function(sillyvec, loci, ncores = 4, LocusCtl = LocusControl, ...){
-
+locus_stats <-
+  function(sillyvec,
+           loci,
+           ncores = 4,
+           LocusCtl = LocusControl,
+           ...) {
+    
   unused_args <- list(...)
   
   if (!length(unused_args) == 0){ 

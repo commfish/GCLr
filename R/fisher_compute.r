@@ -31,7 +31,7 @@
 #' }
 #'
 #' @export
-fisher_compute <- function(freq, loci, prec = 4){
+fisher_compute <- function(freq, loci, prec = 4) {
   
   # Getting p-values for each locus.
   pval <- sapply(loci, function(locus){

@@ -43,8 +43,11 @@
 #' }
 #' 
 #' @export
-read_genepop_hwe <- function(file, sillyvec = NULL, summaryAsNumeric = TRUE){
-
+read_genepop_hwe <-
+  function(file,
+           sillyvec = NULL,
+           summaryAsNumeric = TRUE) {
+    
   hwp=scan(file,what='',sep = "\n")
 
   npops=as.numeric(strsplit(hwp[grep("Number of populations detected:    ",hwp)],split="Number of populations detected:    ")[[1]][2])

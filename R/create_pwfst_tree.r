@@ -43,8 +43,15 @@
 #' }
 #'
 #' @export
-create_pwfst_tree <- function(sillyvec, loci, dir, nboots = 1000, ncores = 4, returnbootstrapFst = FALSE, LocusCtl = LocusControl){
-  
+create_pwfst_tree <-
+  function(sillyvec,
+           loci,
+           dir,
+           nboots = 1000,
+           ncores = 4,
+           returnbootstrapFst = FALSE,
+           LocusCtl = LocusControl) {
+    
   if(ncores > parallel::detectCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")

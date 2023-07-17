@@ -28,8 +28,12 @@
 #' }
 #'
 #' @export
-calc_freq_pop <- function(sillyvec, loci = LocusControl$locusnames, ncores = 4, LocusCtl = LocusControl){
-  
+calc_freq_pop <-
+  function(sillyvec,
+           loci = LocusControl$locusnames,
+           ncores = 4,
+           LocusCtl = LocusControl) {
+    
   start.time <- Sys.time() 
   
   if(!all(loci %in% LocusCtl$locusnames)){

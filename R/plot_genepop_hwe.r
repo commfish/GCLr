@@ -36,8 +36,11 @@
 #'   - Waples, R.S., 2015. Testing for Hardy–Weinberg proportions: have we lost the plot?. Journal of heredity, 106(1), pp.1-19. <https://academic.oup.com/jhered/article/106/1/1/2961870>
 #'   
 #' @export
-plot_genepop_hwe <- function(GenepopHWE_report, sillyvec = NULL, plot_type = c("silly", "locus")[1]) {
-
+plot_genepop_hwe <-
+  function(GenepopHWE_report,
+           sillyvec = NULL,
+           plot_type = c("silly", "locus")[1]) {
+    
   summary_sillys <- setdiff(dimnames(GenepopHWE_report$SummaryPValues)[[2]], "Overall Pops")
   
   # Sillyvec is optional in read_genepop_hwe.

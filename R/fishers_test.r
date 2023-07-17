@@ -35,8 +35,8 @@
 #' }
 #'
 #' @export
-fishers_test <- function(freq, loci, tests, LocusCtl = LocusControl){
-
+fishers_test <- function(freq, loci, tests, LocusCtl = LocusControl) {
+  
   if(!all(loci %in% LocusCtl$locusnames)){
     
     stop(paste0("'", setdiff(loci, LocusCtl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))

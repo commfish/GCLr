@@ -46,8 +46,10 @@
 #' }
 #'  
 #' @export
-read_genepop_dis <- function(file, loci = NULL, sillyvec = NULL) {
-
+read_genepop_dis <- function(file,
+                             loci = NULL,
+                             sillyvec = NULL) {
+  
   dis <- scan(file, what = '', sep = "\n")
   
   npops <- as.numeric(strsplit(dis[grep("Number of populations detected :", dis)], split = "Number of populations detected :")[[1]][2])
