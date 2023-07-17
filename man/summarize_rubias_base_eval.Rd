@@ -71,11 +71,11 @@ A list with the following 2 components:
 \item \code{P=0}: proportion of posterior with stock proportion < \code{threshold} (i.e., 0)
 \item \code{true_proportion}: the true stock proportion in  the scenario
 \item \code{total_samples}: mixture scenario sample size
-\item \code{method}: \pkg{rubias} method ("MCMC" or "PB")
+\item \code{method}: \code{rubias} method ("MCMC" or "PB")
 }
 \item \code{summary_stats}: a tibble with 6 columns containing mixture summary statistics for each group tested:
 \itemize{
-\item \code{method}: \pkg{rubias} method ("MCMC" or "PB")
+\item \code{method}: \code{rubias} method ("MCMC" or "PB")
 \item \code{test_group}: \code{repunit} being tested
 \item \code{RMSE}: root mean squared error of mean stock proportions
 \item \code{Mean_Bias}: mean bias (estimate - true) among all test mixtures for a given \code{test_group}
