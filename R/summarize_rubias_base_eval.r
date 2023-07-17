@@ -51,7 +51,7 @@
 #'           \item \code{test_group}: `repunit` being tested
 #'           \item \code{RMSE}: root mean squared error of mean stock proportions
 #'           \item \code{Mean_Bias}: mean bias (estimate - true) among all test mixtures for a given `test_group`
-#'           \item \code{90%_within}: the |90% CI| of the residuals (i.e., 90% of point estimates were within d distance of the true proportion)
+#'           \item \code{90%_within}: the abs(90% CI) of the residuals (i.e., 90% of point estimates were within d distance of the true proportion)
 #'           \item \code{Within_Interval}: the proportion of tests where the CI contained the true proportion
 #'         }
 #'     }
