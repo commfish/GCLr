@@ -1,8 +1,8 @@
 #' @title QC script
 #' @description Perform quality control for lab projects.
 #' 
-#' @note It is important to run this script in order, or some functions will not provide accurate results. This is by design, as this script only hits LOKI once to save time.
-#' @note This is not a function, but a step wise operation that the user must run through to manually generate applicable files.
+#' @note It is important to run this script in order, or some functions will not provide accurate results. This is by design, as this script only hits LOKI once to save time. 
+#' This is not a function, but a step wise operation that the user must run through to manually generate applicable files.
 #' 
 #' @param dirqc The directory where the QC files are located.
 #' @param species The species for the project (e.g., "pink").
