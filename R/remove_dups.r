@@ -1,37 +1,35 @@
+#' Remove Duplicates based on Criteria
+#'
+#' This function removes duplicates from the input data frame based on specific criteria.
+#'
+#' @param dupcheck A data frame or tibble containing the information to check for duplicates. This object is produced by dupcheck_within_silly().
+#' @param remove_both Logical. If set to TRUE, the function will remove duplicates from both "ID1" and "ID2" columns. If set to FALSE (default), the function will remove duplicates based on the "Missing1" and "Missing2" columns.
+#'
+#' @return A data frame containing the results after removing duplicates.
+#' 
+#' @details The `remove_dups` function takes an input data frame `dupcheck` and checks for duplicates based on the columns "silly", "ID1", "ID2", "Missing1", "Missing2", and "proportion". If there are no duplicates or if the input `dupcheck` is empty, the function will return an empty data frame with a warning message. The function will first check if `dupcheck` is a tibble; if not, it assumes the data is stored in a column named "report" and extracts the tibble from that column.
+#' 
+#' If the `remove_both` argument is set to TRUE, the function removes duplicates from both "ID1" and "ID2" columns using tidyr::pivot_longer. Otherwise, it calculates which duplicates to remove based on the "Missing1" and "Missing2" columns using dplyr::mutate and dplyr::case_when.
+#' 
+#' The function then processes the data for each unique value of "silly" and removes the corresponding duplicates using the `remove_ids` function.
+#'
+#' @examples
+#' \dontrun{
+#' password = "************"
+#' create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = password)
+#' sillyvec = c("SMCDO03", "SNEVA13")
+#' loki2r(sillyvec = sillyvec, username = "awbarclay", password = password)
+#' remove_ind_miss_loci(sillyvec = sillyvec)
+#' 
+#' dupcheck <- dupcheck_within_silly(sillyvec = sillyvec, loci = LocusControl$locusnames, quantile = NULL, minproportion = 0.95, ncores = 8)
+#' removed_dups <- remove_dups(dupcheck)
+#' }
+#' 
+#' @seealso
+#' \code{\link{remove_ids}}
+#' 
+#' @export
 remove_dups <- function(dupcheck, remove_both = FALSE){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  This function removes duplicated "IDs" found with "dupcheck_within_silly"
-  #  The default option is to remove the duplicated "IDs" with the highest number of missing loci for
-  #  each duplicate pair (remove_both = FALSE). 
-  #  If remove_both = FALSE and both IDs have the same number of missing loci, ID1 is removed.
-  #  If remove_both = TRUE, both duplicated "IDs" are removed, use this option if you have paired data 
-  #  that has become compromised by the duplicate pair (i.e. ASL, otolith data, etc.).
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   dupcheck - an object created by the function "dupcheck_within_silly". 
-  #
-  #   remove_both - TRUE/FALSE on whether to remove both duplicated "IDs" or just one of "IDs"
-  #
-  # Output~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #    Returns a tibble with 3 variables: 
-  #                  SILLY_CODE <chr> = the silly with IDs removed 
-  #                  IDs <list> = the IDs removed
-  #                  is_empty <lgl> = were all IDs removed?
-  #
-  # Examples~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  password = "************"
-  #  create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = password)
-  #  sillyvec = c("SMCDO03", "SNEVA13")
-  #  loki2r(sillyvec = sillyvec, username = "awbarclay", password = password)
-  #  remove_ind_miss_loci(sillyvec = sillyvec)
-  #
-  #  dupcheck <- dupcheck_within_silly(sillyvec = sillyvec, loci = LocusControl$locusnames, quantile = NULL, minproportion = 0.95, ncores = 8)
-  #  removed_dups <- remove_dups(dupcheck)
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   if(is_empty(dupcheck)){
     
