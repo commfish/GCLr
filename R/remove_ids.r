@@ -31,9 +31,6 @@
 #' remove_ids(silly = "SMCDO03", IDs = 1:10)
 #' }
 #'
-#' @seealso
-#' \code{\link{add_ids}}: Function to add IDs to a Silly GCL object.
-#'
 #' @export
   
 remove_ids <- function(silly, IDs){
