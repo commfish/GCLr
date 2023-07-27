@@ -8,6 +8,7 @@
 #' @param loci A character vector of locus names. If set to NULL, all loci in the ".gcl" objects will be used.
 #' @param minnonmissing The proportion of loci that a pair must share non-missing genotypes in order to be reported.
 #' @param minproportion The proportion of shared non-missing loci that must be shared between the individuals to be reported as a matching pair.
+#' @param ncores The number of cores to use in a `foreach::%dopar%` loop. If the number of cores exceeds the number on your device, then `ncores` defaults to `parallel::detectCores()`.
 #' @param ncores The number of cores to use in a [foreach::%dopar%] loop. If the number of cores exceeds the number on your device, then `ncores` defaults to [parallel::detectCores()].
 #' @param plot.results Logical value indicating whether to produce histograms of duplicate rates for each silly code in `KeySillyIDs`.
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  

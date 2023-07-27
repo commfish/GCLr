@@ -1,36 +1,34 @@
+#' Compare Compositions Between Mixtures
+#'
+#' This function compares the difference in stock compositions between two mixtures.
+#' **This needs a better explanation of what it does**
+#'
+#' @param mixnames A character vector of length 2 containing the mixture names to compare.
+#' @param groupnames A character vector giving the names of the stock groups resolved by the mixtures, with length equal to the number columns in the RGN files.
+#' @param mixdir An atomic string giving the folder path where the mixture sub-folders are located.
+#' @param diffs Differences to check.
+#' @param nchains The number of MCMC chains for summarizing the mixture results; default is 5.
+#' @param burn The proportion of iterations to burn prior to summarizing results; default is 1/2.
+#'
+#' @return A list with two elements: \code{one.sided} and \code{two.sided}.
+#' \describe{
+#'   \item{\code{one.sided}}{A tibble with one-sided p-values for each group.}
+#'   \item{\code{two.sided}}{A tibble with two-sided p-values for each group at different \code{diffs}.}
+#' }
+#'
+#' @examples
+#'
+#' \dontrun{
+#' load("V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2013 UCIfisheryMixtures/2013UCIfisheryMixtureAnalysis.RData")
+#' mixdir <- "V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2013 UCIfisheryMixtures/BAYES/Output"
+#' groups <- c("group1", "group2", "group3")  # Replace with actual group names
+#' compare_comps_between(mixnames = c("DriftExpCorr.Jul11", "Drift.Jul8"), groupnames = groups, mixdir = mixdir, diffs = seq(10)/100, nchains = 5, burn = 1/2)
+#' }
+#'
+#' @export
+#' 
 compare_comps_between <- function(mixnames, groupnames, mixdir, diffs = seq(10)/100, nchains = 5, burn = 1/2){
   
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function compares the difference in stock compostions between two mixtures. 
-  #  **This needs a better explanation of what it does**
-  # 
-  # Input parameters~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # 
-  #  mixnames - characacter vector of length 2 containing the mixture names to compare.
-  # 
-  #  groupnames -  characacter vector giving the names of the stock groups resolved by the mixtures, with length equal to the number columns in the RGN files.
-  # 
-  #  mixdir - atomic string giving the folder path where the mixture sub-folders are located.
-  #
-  #  diffs - differences to check
-  #
-  #  nchains - the number of MCMC chains for summarizing the mixture results; default is 5
-  #
-  #  burn - the proportion of itrations to burn prior to summarizing results; default is 1/2
-  # 
-  # Output~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  retuns a vector of p-values, same length as 'groupnames', with each element corresponding to the proportion of
-  #  MCMC relizations where a group's composition in one mixture exceeds that of the other mixture.
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  # load("V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2013 UCIfisheryMixtures/2013UCIfisheryMixtureAnalysis.RData")
-  # mixdir <- "V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2013 UCIfisheryMixtures/BAYES/Output"
-  # 
-  # compare_comps_between(mixnames = c("DriftExpCorr.Jul11","Drift.Jul8"), groupnames = groups, mixdir = mixdir, diffs = seq(10)/100, nchains = 5, burn = 1/2)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-
   if(length(mixnames)>2|length(mixnames)<2){
     
     stop("This function compares estimates between two mixtures. Make sure mixnames contains exactly two mixture names and try again.")

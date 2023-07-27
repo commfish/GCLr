@@ -23,7 +23,6 @@
 #'
 #' }
 #'
-#' 
 #' @export
 #' 
 bayes_output_copy_paste <- function(origindir, targetdir, mixvec){
