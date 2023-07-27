@@ -1,32 +1,35 @@
-create_bayes_mix <- function(mixvec, loci, dir, ncores = 4){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function creates a BAYES mixure (.mix) file for each silly in mixvec.
-  #   **Note: If you want to analyze more than one silly as a mixture, use pool_collections to combine them into a new silly.gcl**
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   mixvec - character vector of ".gcl" objects you want to produce mixture files for.
-  #   loci - character vector of the loci you wish to include
-  #   dir - character vector of where to save the ".bse" file
-  #            
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   Returns the fortran format of the mixture file - this object is needed for create_bayes_ctl
-  #   Saves each mixture in mixvec as a .mix file
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-  # loki2r(sillyvec = c("KSUSC18FW", "KSUSCN18", "KSUSC19FW", "KSUSCN19"), username = "awbarclay", password = password)
-  # combine_loci(sillyvec = c("KSUSC18FW", "KSUSCN18", "KSUSC19FW", "KSUSCN19"), markerset = c("Ots_MHC1", "Ots_MHC2"))
-  # pool_collections(collections = c("KSUSC18FW", "KSUSCN18"), newname = "Susitna2018")
-  # pool_collections(collections = c("KSUSC19FW", "KSUSCN19"), newname = "Susitna2019")
-  # loci <- c(loci82, "Ots_MHC1.Ots_MHC2")
-  # mix_fortran <- create_bayes_mix(mixvec = c("Susitna2018", "Susitna2019"), loci = loci, dir = getwd(), ncores = 8)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  
-  if(sum(is.na(match(loci, LocusControl$locusnames)))){
+#' @title Create BAYES mixture files
+#'
+#' @description This function creates a BAYES mixture (.mix) file for each silly in mixvec.
+#'
+#' @param mixvec Character vector of ".gcl" objects you want to produce mixture files for.
+#' @param loci Character vector of the loci you wish to include.
+#' @param dir Character vector of where to save the ".bse" file.
+#' @param ncores Number of cores to use for parallel processing.
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
+#'
+#' @returns Returns the fortran format of the mixture file, which is needed for [create_bayes_ctl()].
+#' It also saves each mixture in `mixvec` as a .mix file.
+#' 
+#' @note If you want to analyze more than one silly as a mixture, use [pool_collections()] to combine them into a new silly.gcl
+#'
+#' @examples
+#' \dontrun{
+#' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
+#' loki2r(sillyvec = c("KSUSC18FW", "KSUSCN18", "KSUSC19FW", "KSUSCN19"), username = "awbarclay", password = password)
+#' combine_loci(sillyvec = c("KSUSC18FW", "KSUSCN18", "KSUSC19FW", "KSUSCN19"), markerset = c("Ots_MHC1", "Ots_MHC2"))
+#' pool_collections(collections = c("KSUSC18FW", "KSUSCN18"), newname = "Susitna2018")
+#' pool_collections(collections = c("KSUSC19FW", "KSUSCN19"), newname = "Susitna2019")
+#' loci <- c(loci82, "Ots_MHC1.Ots_MHC2")
+#' mix_fortran <- create_bayes_mix(mixvec = c("Susitna2018", "Susitna2019"), loci = loci, dir = getwd(), ncores = 8)
+#' }
+#' 
+#' @export
+create_bayes_mix <- function(mixvec, loci, dir, ncores = 4, LocusCtl = LocusControl) {
+
+    if (sum(is.na(match(loci, LocusCtl$locusnames)))) {
     
-    stop(paste("'", loci[is.na(match(loci, LocusControl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    stop(paste("'", loci[is.na(match(loci, LocusCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
     
   }
   
@@ -38,7 +41,7 @@ create_bayes_mix <- function(mixvec, loci, dir, ncores = 4){
     
   }, simplify = FALSE)
    
-  for(silly in mixvec){ #Start silly loop
+  for (silly in mixvec) { #Start silly loop
     
     new.gcl <- my.gcl[[silly]]
   
@@ -58,11 +61,11 @@ create_bayes_mix <- function(mixvec, loci, dir, ncores = 4){
     #Had to suppress an anoying message which only printed to console when running the foreach loop.
     suppressMessages(
       
-      mix_scores <-  foreach::foreach(loc = loci, .packages = c("tidyverse", "tidyselect", "janitor"), .export = c("LocusControl"), .combine = dplyr::bind_cols) %dopar% { #Start multicore loop: loci
+      mix_scores <-  foreach::foreach(loc = loci, .packages = c("tidyverse", "tidyselect", "janitor"), .export = c("LocusCtl"), .combine = dplyr::bind_cols) %dopar% { #Start multicore loop: loci
       
       variables <- c(loc, paste(loc, 1, sep = "."))
         
-      my.alleles <- LocusControl$alleles[[loc]]
+      my.alleles <- LocusCtl$alleles[[loc]]
         
       comb_alleles0 <- scores0 %>%
         dplyr::select(tidyselect::all_of(variables)) %>% 
@@ -78,7 +81,7 @@ create_bayes_mix <- function(mixvec, loci, dir, ncores = 4){
         dplyr::select(dplyr::all_of(my.alleles$allele %>% as.character())) %>% 
         tidyr::unite(col = "comb", as.character(my.alleles$allele), sep = "") %>%
         dplyr::pull(comb) %>% 
-        stringr::str_pad(width = length(my.alleles$allele)+1, pad = " ", side = "left") %>% 
+        stringr::str_pad(width = length(my.alleles$allele) + 1, pad = " ", side = "left") %>% 
         tibble::as_tibble()
       
       comb_alleles
@@ -94,7 +97,7 @@ create_bayes_mix <- function(mixvec, loci, dir, ncores = 4){
       
     } #End silly loop
   
-  a_rle <- sapply(loci, function(loc){LocusControl$nalleles[[loc]]}) %>% 
+  a_rle <- sapply(loci, function(loc){LocusCtl$nalleles[[loc]]}) %>% 
     rle()
   
   mix_fortran <- paste0("(", paste0(sapply(seq(length(a_rle$values)), function(locus){
@@ -103,7 +106,7 @@ create_bayes_mix <- function(mixvec, loci, dir, ncores = 4){
     
     }), collapse = ","), ")")
   
-  Sys.time()-start_time
+  Sys.time() - start_time
   
   return(mix_fortran)
   

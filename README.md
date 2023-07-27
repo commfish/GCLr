@@ -50,11 +50,7 @@ You should now see the project and can edit the files.
 
 ### Installation
 
-You can install the package using devtools. After editing files, and
-pushing back to GitHub, it’s recommended to install again so you can see
-if your function broke things. Before you reinstall, it’s best to shut
-down R, delete the package folder in your library folder, and finally
-reinstall it all.
+You can install the package using devtools. 
 
 ``` r
 
@@ -63,6 +59,17 @@ install.packages("devtools")
 library(devtools)
 
 devtools::install_github("commfish/GCLr")
+```
+### Editing Workflow
+After editing and saving your file, you use devtools::document() to update the .rd files. 
+
+You then switch over to the 'build' tab in Rstudio and click the install dropdown, then select "Clean and Install". This builds the package from your local repo, rather than remote, and will fail if there are issues. In short, it allows you to test changes without pushing to GH first, then building based on the remote files. If everything worked and your changes are good, then you can commit and push to GH.
+
+# Function Check
+To view the documentation of the newly generated functions, and ensure it's working, you can use:
+
+``` r
+devtools::document()
 ```
 
 ## Roxygen syntax
@@ -279,6 +286,7 @@ add_tree_color <- function(tree, currentnames, treenames, groupvec, regioncol, r
 Once you’ve completed the function, push it back to the repository and
 check it off your list on the repo issue. Please add comments or
 anything else you think would be useful to your tasks.
+
 
 ## Big picture steps
 

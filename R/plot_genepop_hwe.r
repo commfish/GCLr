@@ -1,37 +1,47 @@
-plot_genepop_hwe <- function(GenepopHWE_report, sillyvec = NULL, plot_type = "silly") {
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function plots results from read_genepop_hwe(). You provide the report, a list of sillys, and loci and it will provide a visual of
-  #   p-values faceted by silly.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   GenepopHWE_report - raw output from read_genepop_hwe()
-  #
-  #   sillyvec <- vector of sillys you're interested in
-  #
-  #   plot_type <- do you want to show plots by silly or by locus? Options are"silly" or "locus"; default = "silly"
-  #                 if by locus, only the low-pvalue loci will be shown.
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #    Produces a plot of the results from read_genepop_hwe. Specifically, displays p-value, overall p-value, by silly or by locus.
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # 
-  #  attach("V:\\Analysis\\5_Coastwide\\Chum\\NPen2WA_Chum_baseline\\NPen2WA_Chum_baseline.Rdata")
-  #  sillyvec234 <- sillyvec234
-  #  detach()
-  #  
-  #  HWEreport <- read_genepop_hwe("V:/Analysis/5_Coastwide/Chum/NPen2WA_Chum_baseline/GENEPOP/NAKPen2WA_234pops_93loci.P", sillyvec = sillyvec234)
-  #
-  #  plot_genepop_hwe(GenepopHWE_report = HWEreport, sillyvec = sillyvec234[1:10])
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  if (!require("pacman"))
-    install.packages("pacman")
-  library(pacman)
-  pacman::p_load(tidyverse)  # Install packages, if not in library and then load them
-  
-  summary_sillys <- dimnames(GenepopHWE_report$SummaryPValues)[[2]]
+#' @title Plot Genepop HWE Output
+#'
+#' @description 
+#' This function plots the results from [GCLr::read_genepop_hwe()]. It displays a histogram of locus- or population-specific p-values and 
+#' the overall p-value across loci/populations, faceted by each locus/population.
+#' 
+#' @param GenepopHWE_report Raw output from [GCLr::read_genepop_hwe()].
+#' @param sillyvec An optional character vector of silly codes without the ".gcl" extension used to filter results when `plot_type = "silly"` (default = `NULL`).
+#' If `NULL`, `sillyvec` will be inherited from `GenepopHWE_report`. This argument does not filter results when `plot_type = "locus"`.
+#' @param plot_type A Character vector of length 1 specifying whether to plot p-values by "silly" or "locus" (default = "silly").
+#' If "locus", only loci with an overall p-value across populations < 0.1 will be shown.
+#'
+#' @returns A plot faceted by each population/locus Each facet shows:
+#'     \itemize{
+#'       \item a histogram of locus- or population-specific p-values
+#'       \item the overall p-value across loci/populations printed in red
+#'       \item a horizontal red line showing the expected number of loci/populations within each p-value bin by chance
+#'     }
+#'
+#' @details
+#' This function is used to visualize the results from [GCLr::read_genepop_hwe()], which is used to test whether collections/populations have significant 
+#' deviations from Hardy-Weinberg expectations (HWE; overall p-value < 0.05 with Bonferroni correction for the number of collections in the baseline).
+#' When using this function to test loci for conformance to HWE, we recommend removing loci when the overall p-value < 0.01. However, in both cases
+#' it can also be helpful to see the distribution of locus- or population-specific p-values to determine if there are just a few loci/populations driving the 
+#' overall p-value, or if there are several loci/populations that have low p-values. When populations or loci do not conform to HWE, users should investigate
+#' patterns of Fis to determine the root cause.
+#' 
+#' @examples
+#' \dontrun{
+#' genepop_hwe <- read_genepop_hwe(file = "~/R/test.txt.P", sillyvec = sillyvec)
+#' plot_genepop_hwe(GenepopHWE_report = genepop_hwe, plot_type = "silly")
+#' plot_genepop_hwe(GenepopHWE_report = genepop_hwe, plot_type = "locus")
+#' }
+#' 
+#' @references The idea for the plots created by this function comes from:  
+#'   - Waples, R.S., 2015. Testing for Hardy–Weinberg proportions: have we lost the plot?. Journal of heredity, 106(1), pp.1-19. <https://academic.oup.com/jhered/article/106/1/1/2961870>
+#'   
+#' @export
+plot_genepop_hwe <-
+  function(GenepopHWE_report,
+           sillyvec = NULL,
+           plot_type = c("silly", "locus")[1]) {
+    
+  summary_sillys <- setdiff(dimnames(GenepopHWE_report$SummaryPValues)[[2]], "Overall Pops")
   
   # Sillyvec is optional in read_genepop_hwe.
   # Check to make sure all sillys have results if sillyvec is supplied.
@@ -44,24 +54,20 @@ plot_genepop_hwe <- function(GenepopHWE_report, sillyvec = NULL, plot_type = "si
       stop(
         "GeneopHWE_report does not contain results for all sillys in sillyvec. Was sillyvec supplied for read_genepop_hwe?"
       )
-      
+    }
+  } else {
+    sillyvec <- summary_sillys
+  }
+  
+  if (plot_type == "silly") {
+    
+    # just setting variables for use in plotting - set ncol to something reasonable in facet_wrap
+    if (length(sillyvec) > 4) {
+      ncols <- round(length(sillyvec) / 3, 0)
+    } else {
+      ncols <- NULL
     }
     
-  } else{
-    sillyvec <- summary_sillys
-    
-  }
-  
-  # just setting variables for use in plotting - set ncol to something reasonable in facet_wrap
-  if (length(sillyvec) > 4) {
-    ncols <- round(length(sillyvec) / 3, 0)
-    
-  } else {
-    ncols <- NULL
-    
-  }
-  
-  if (plot_type %in% "silly") {
     # First convert the Genepop HWE report into a usable table and filter for sillyvec.
     HWEpval <- GenepopHWE_report$SummaryPValues %>%
       dplyr::as_tibble(rownames = "locus") %>%
@@ -69,47 +75,72 @@ plot_genepop_hwe <- function(GenepopHWE_report, sillyvec = NULL, plot_type = "si
       dplyr::filter(silly %in% sillyvec)
     
     # Now plot the pvals
-    ggplot2::ggplot(data = HWEpval %>% dplyr::filter(locus != "Overall Loci"), aes(x = pval)) +
-      ggplot2::geom_histogram(binwidth = 0.05) +
-      ggplot2::geom_hline(
-        yintercept = (HWEpval %>% dplyr::select(locus) %>% dplyr::n_distinct()) / 20,
-        colour = "red") +
-      ggplot2::geom_text(
-        data = HWEpval %>% dplyr::filter(locus == "Overall Loci"),
-        mapping = aes(x = 0.5, y = 15, label = pval),
-        colour = "red",
-        size = 6) +
-      ggplot2::facet_wrap( ~ silly, ncol = ncols) +
-      ggplot2::theme_bw()
+    HWEpval %>% {
+      ggplot2::ggplot(dplyr::filter(.data = ., locus != "Overall Loci"), ggplot2::aes(x = pval)) +
+        ggplot2::geom_histogram(binwidth = 0.05) +
+        ggplot2::geom_hline(
+          yintercept = (
+            dplyr::filter(.data = ., locus != "Overall Loci") %>% dplyr::select(locus) %>% dplyr::n_distinct()
+          ) / 20,
+          colour = "red"
+        ) +
+        ggplot2::geom_text(
+          data = dplyr::filter(.data = ., locus == "Overall Loci"),
+          mapping = ggplot2::aes(x = 0.5, y = 15, label = pval),
+          colour = "red",
+          size = 6
+        ) +
+        ggplot2::facet_wrap( ~ silly, ncol = ncols) +
+        ggplot2::theme_bw() +
+        ggplot2::labs(x = "locus-specific p-values",
+                      y = "number of loci")
+    }
     
-  } else if (plot_type %in% "locus") {
+  } else if (plot_type == "locus") {
+
     # First convert the Genepop HWE report into a usable table and filter for loci.
-    HWEpval <- GenepopHWE_report$SummaryPValues %>%
+    HWEpval <- 
+      GenepopHWE_report$SummaryPValues %>%
       dplyr::as_tibble(rownames = "locus") %>%
       tidyr::pivot_longer(-locus, names_to = "silly", values_to = "pval")
     
     low_loci <-
-      HWEpval %>% filter(silly == "Overall Pops" &
-                           pval < 0.1, locus != "Overall Loci") %>% pull(locus)
+      HWEpval %>% 
+      dplyr::filter(silly == "Overall Pops" &
+               pval < 0.1, locus != "Overall Loci") %>% 
+      dplyr::pull(locus)
+    
+    # just setting variables for use in plotting - set ncol to something reasonable in facet_wrap
+    if (length(low_loci) > 4) {
+      ncols <- round(length(low_loci) / 3, 0)
+    } else {
+      ncols <- NULL
+    }
     
     # Now plot the pvals by batches according to ncols:
-    ggplot2::ggplot(data = HWEpval %>% 
-                      dplyr::filter(silly != "Overall Pops" & locus %in% low_loci),
-                    aes(x = pval)) +
-      ggplot2::geom_histogram(binwidth = 0.05) +
-      ggplot2::geom_hline(
-        yintercept = (HWEpval %>% dplyr::select(silly) %>% dplyr::n_distinct()) / 20,
-        colour = "red") +
-      ggplot2::geom_text(
-        data = HWEpval %>% dplyr::filter(silly == "Overall Pops" &
-                                           locus %in% low_loci),
-        mapping = aes(x = 0.5, y = 15, label = pval),
-        colour = "red",
-        size = 6) +
-      ggplot2::facet_wrap( ~ locus, ncol = round(length(low_loci) / 10, 0)) +
-      ggplot2::theme_bw()
+    HWEpval %>% {
+      ggplot2::ggplot(dplyr::filter(.data = ., silly != "Overall Pops" &
+                                      locus %in% low_loci),
+                      ggplot2::aes(x = pval)) +
+        ggplot2::geom_histogram(binwidth = 0.05) +
+        ggplot2::geom_hline(
+          yintercept = (dplyr::select(.data = ., silly) %>% dplyr::n_distinct()) / 20,
+          colour = "red"
+        ) +
+        ggplot2::geom_text(
+          data = dplyr::filter(.data = ., silly == "Overall Pops" &
+                                 locus %in% low_loci),
+          mapping = ggplot2::aes(x = 0.5, y = 15, label = pval),
+          colour = "red",
+          size = 6
+        ) +
+        ggplot2::facet_wrap(~ locus, ncol = ncols) +
+        ggplot2::theme_bw() +
+        ggplot2::labs(x = "pop-specific p-values",
+                      y = "number of pops")
+    }
     
   } else {
-    stop("Did you specify plotting by silly or by locus?")
-    }
+    stop("Did you specify plotting by `silly` or by `locus`?")
+  }
 }

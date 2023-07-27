@@ -7,6 +7,7 @@
 #' @param groupvec A numeric vector specifying the reporting group affiliation for each silly code.
 #' @param fstatfile Optional character string specifying the path to an existing FSTAT file (".dat"). If provided, the function verifies compatibility with the input data. Default is NULL.
 #' @param dir A character string specifying the directory where an FSTAT file (".dat") will be created. This argument is used only when `fstatfile` is NULL.
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #' 
 #' @details 
 #' The original function is "BackwardEliminationThetaP.GCL" in the temp folder.
@@ -26,22 +27,22 @@
 #' @references Weir, B.S. 1995. Genetic Data Analysis. Sinauer Associates, Inc. Sunderland, MA. (pg 184)
 #' 
 #' @export
-var_comp <- function(sillyvec, loci, groupvec, fstatfile = NULL, dir){
+var_comp <- function(sillyvec, loci, groupvec, fstatfile = NULL, dir, LocusCtl = LocusControl){
 
   names(sillyvec) <- NULL
   
-  nloci=length(loci)
-  nalleles=LocusControl$nalleles[loci]
-  ploidy=LocusControl$ploidy[loci] 
-  alleles=LocusControl$alleles[loci]
+  nloci <- length(loci)
+  nalleles <- LocusCtl$nalleles[loci]
+  ploidy <- LocusCtl$ploidy[loci] 
+  alleles <- LocusCtl$alleles[loci]
   
-  my.gcl=sapply(sillyvec,function(silly){get(paste(silly,".gcl",sep=""),pos=1)},simplify=FALSE)
+  my.gcl <- sapply(sillyvec, function(silly){get(paste(silly, ".gcl", sep = ""), pos = 1)}, simplify = FALSE)
   
-  n=sapply(sillyvec,function(silly){my.gcl[[silly]]$n})
+  n <- sapply(sillyvec, function(silly){my.gcl[[silly]]$n})
   
   if(!is.null(fstatfile)) {
     
-    dat0=read.fstat.data(fstatfile)
+    dat0 <- read.fstat.data(fstatfile)
     
     if(dim(dat0)[1] != sum(n)) {stop(paste(fstatfile, " does not have the same number of fish as 'sillyvec', verify that the 'fstatfile' corresponds to the fish you want to analyze!"))}
 
@@ -52,65 +53,75 @@ var_comp <- function(sillyvec, loci, groupvec, fstatfile = NULL, dir){
   } else {
     cat("No 'fstatfile' provided, so creating one\n")
     
-    fstatdir=paste(dir,"\\", length(groupvec), "pops", nloci, "loci", "_","fstatfile.dat",sep="")
+    fstatdir <- paste(dir, "\\", length(groupvec), "pops", nloci, "loci", "_", "fstatfile.dat", sep = "")
         
-    maxchar=nchar(nalleles)+1
-    names(maxchar)=loci
+    maxchar <- nchar(nalleles)+1
+    names(maxchar) <- loci
     
-    nsillys=length(sillyvec)
+    nsillys <- length(sillyvec)
     
-    maxsillychar=nchar(nsillys)+1
+    maxsillychar <- nchar(nsillys)+1
     
-    scores=sapply(sillyvec,function(silly){my.gcl[[silly]]$scores[,loci,]},simplify=FALSE)
+    scores <- sapply(sillyvec, function(silly){my.gcl[[silly]]$scores[ , loci, ]}, simplify = FALSE)
     
-    counts=sapply(sillyvec,function(silly){
+    counts <- sapply(sillyvec,function(silly){
+      
       sapply(1:n[silly],function(i){
+        
         paste(c(match(silly,sillyvec),sapply(loci,function(locus){
-          ifelse(is.na(scores[[silly]][i,locus,1]),paste(rep(0,ploidy[locus]*maxchar[locus]),collapse=""),paste(sapply(1:ploidy[locus],function(allele){
-            paste(c(rep(0,maxchar[locus]-nchar(match(scores[[silly]][i,locus,allele],alleles[[locus]]))),match(scores[[silly]][i,locus,allele],alleles[[locus]])),collapse="")
-          }),collapse=""))
-        })),collapse=" ")
-      })
-    },simplify=FALSE)      
+          
+          ifelse(is.na(scores[[silly]][i, locus, 1]), paste(rep(0, ploidy[locus]*maxchar[locus]), collapse = ""), paste(sapply(1:ploidy[locus], function(allele){
+            
+            paste(c(rep(0, maxchar[locus]-nchar(match(scores[[silly]][i, locus, allele], alleles[[locus]]))), match(scores[[silly]][i, locus, allele], alleles[[locus]])), collapse = "")
+          
+            }),collapse = ""))
+        
+          })), collapse = " ")
+      
+        })
     
-    fstat=paste(nsillys,nloci,max(nalleles),max(maxchar),sep=" ")
+      }, simplify = FALSE)      
     
-    fstat=rbind(fstat,cbind(loci))
+    fstat <- paste(nsillys, nloci, max(nalleles), max(maxchar), sep = " ")
     
-    fstat=rbind(fstat,cbind(as.vector(unlist(counts))))
+    fstat <- rbind(fstat, cbind(loci))
+    
+    fstat <- rbind(fstat, cbind(as.vector(unlist(counts))))
     
     write.table(x = fstat, file = fstatdir, row.names = FALSE, col.names = FALSE, quote = FALSE) 
     
-    dat0=read.fstat.data(fstatdir)
+    dat0 <- read.fstat.data(fstatdir)
     
   }
   
-  dat=data.frame(rep(groupvec,n),dat0)
+  dat <- data.frame(rep(groupvec, n), dat0)
   
-  dimnames(dat)[[2]]=c("Region","Pop",loci)
+  dimnames(dat)[[2]] <- c("Region", "Pop", loci)
   
-  G=max(groupvec)
+  G <- max(groupvec)
   
-  VarCompByLocus=array(0,c(nloci,4),dimnames=list(loci,c("P","S","I","G")))
+  VarCompByLocus <- array(0, c(nloci, 4), dimnames = list(loci, c("P", "S", "I", "G")))
   
   cat("\nCalculating Variance Components for each locus\n", sep = '')
-  if (.Platform$OS.type == "windows") flush.console()
+  if(.Platform$OS.type == "windows") flush.console()
   pb <- txtProgressBar(min = 0, max = nloci, style = 3)
   
   for(locus in loci){
+    
     setTxtProgressBar(pb = pb, value = which(loci == locus))
     
-    data=data.frame(dat[,1:2],dat[,locus])
+    data <- data.frame(dat[ , 1:2], dat[ , locus])
     
-    vc=varcomp(data,diploid=ploidy[locus]>1)$overall
+    vc <- varcomp(data, diploid = ploidy[locus]>1)$overall
     
     if(!sum(is.na(vc))){
       
-      VarCompByLocus[locus,1:length(vc)]=vc
+      VarCompByLocus[locus, 1:length(vc)]=vc
       
     }
     
   }
   
   return(VarCompByLocus)
+  
 }

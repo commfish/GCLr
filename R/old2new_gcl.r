@@ -1,4 +1,4 @@
-old2new_gcl <- function (sillyvec, save_old = FALSE){
+old2new_gcl <- function(sillyvec, save_old = FALSE){
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # This function converts old style "*.gcl" objects from nested arrays to tibbles of scores and attributes. 
   # The old style objects can be saved as *.gcl_old before they are overwritten.

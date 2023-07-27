@@ -1,60 +1,73 @@
-plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol = NULL, file = NULL, group.pch = 19, point.size = 1, pval.cex = 3, pval.digits = 2, line.width = .5, ncores = 4){
+#' @title Plot Allele Frequency & Fis for SNPs
+#'
+#' @description 
+#' This function plots ("*.pdf") and returns allele frequencies, Fis values, and HWE p-values for each locus.
+#'
+#' @param sillyvec A character vector of silly codes without the ".gcl" extension, objects must exist in your environment.
+#' @param loci A character vector of locus names. Note, only loci with ploidy = 2 and nalleles = 2 will be plotted.
+#' @param groupvec An optional numeric vector indicating the group affiliation of each silly in `sillyvec`, 
+#' must be the same length as `sillyvec` (default = `NULL`). If `NULL`, `groupvec` will be `1:length(sillyvec)`
+#' @param alpha A numeric vector of length 1 specifying the critical HWE p-value for plotting.
+#' @param group_col An optional character vector of colors corresponding to each group in `groupvec` (default = `NULL`).
+#' @param file A character vector of length 1 with the full file path including ".pdf" extension where plots will be saved.
+#' @param group.pch A vector of point shape `pch` values corresponding to each group with `length = max(groupvec)`. 
+#' If only 1 `pch` is supplied it will be recycled for all groups (default `pch` = 19).
+#' @param point.size A numeric vector of length 1 specifying the size of points on the plot, used by [ggplot2::geom_point()] 
+#' (default = 1).
+#' @param pval.cex A numeric vector of length 1 specifying the character expansion (i.e. size of text) for HWE p-values (default = 3).
+#' @param pval.digits A numeric vector of length 1 specifying the number of digits to show for HWE p-values (default = 2).
+#' @param line.width A numeric vector of length 1 specifying the width of the line connecting the points, used by [ggplot2::geom_line()] 
+#' default = 0.5).
+#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
+#' If the number of cores exceeds the number on your device ([parallel::detectCores()]), then all cores will be used.
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
+#'
+#' @returns A tibble of HWE p-values, Fis values, and allele frequencies and a (".pdf") of locus-specific plots:
+#'     \itemize{
+#'       \item \code{output}: a data.frame with 7 columns containing the full HWE output:
+#'         \itemize{
+#'           \item \code{population}: silly code
+#'           \item \code{locus}: locus name
+#'           \item \code{pval}: HWE p-value as calculated by [HardyWeinberg::HWExactMat()]
+#'           \item \code{fis}: Fis estimate as calculated by [HardyWeinberg::HWf()]
+#'           \item \code{allele freq}: allele frequency (proportion) of the 1st allele in `LocusCtl` as calculated by [GCLr::calc_freq_pop()]
+#'           }
+#'       \item \code{file}: a (".pdf") of stacked allele frequency and Fis plots for all sillys in `sillyvec` 
+#'                          with one page per locus in `loci`
+#'       }
+#' 
+#' @details
+#' HWE p-values are printed if less than alpha. Loci with a ploidy of 1 (e.g., mitochondrial SNPs or microhaplotypes) are excluded.
+#' The allele frequency is that of the 1st allele in `LocusCtl` (i.e., alphabetical alleles).
+#' 
+#' @seealso 
+#' [HardyWeinberg::HardyWeinberg-package()]
+#' [HardyWeinberg::HWExactMat()]
+#' [HardyWeinberg::HWf()]
+#' [GCLr::calc_freq_pop()]
+#' [GCLr::plot_allele_freq()]
+#'
+#' @examples
+#' \dontrun{
+#' freqs_fis <- GCLr::plot_freq_fis_4snps()
+#' }
+#' 
+#' @export
+plot_freq_fis_4snps <-
+  function(sillyvec,
+           loci,
+           groupvec = NULL,
+           alpha = 0.05,
+           groupcol = NULL,
+           file = NULL,
+           group.pch = 21,
+           point.size = 3,
+           pval.cex = 3,
+           pval.digits = 2,
+           line.width = 0.7,
+           ncores = 4,
+           LocusCtl = LocusControl) {
 
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function will create a pdf file with plots of allele frequency and Fis 
-  # for each locus on a separate page. HWE p-values are printed if less than
-  # alpha.
-  # 
-  # Input parameters~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # 
-  #  sillyvec - a vector of sillys, without ".gcl" extension that you want the 
-  #   freqencies plotted for
-  #
-  #  loci - a vector of loci that you want included in the frequency plots, 
-  #   **Note: Only use loci with ploidy==2. If loci with ploidy == 1 are supplied, 
-  #           they will not be included in the plots and a message will appear.**
-  #
-  #  groupvec - a vector of group numbers corresponding to each silly in sillyvec
-  #
-  #  alpha - critical HWE p-value
-  #
-  #  groupcol - optional character vector of colors corresponding to each group of length max(groupvec), 
-  #             can be either color numbers (numeric vector) or color names (character vector).
-  #             If left NULL (default) a rainbow of colors will be used.
-  #     
-  #  file - the full file path, with .pdf extension where the file will be written
-  #         If no file is supplied, the default is to write the file "FreqPlot.pdf" to 
-  #         the current working directory.
-  #
-  #  group.pch - a vector of pch values corresponding to each group with length = 
-  #              max(groupvec). If only one pch is supplied it will be recycled for each group; default pch is 19
-  #
-  #  point.size - the size of points on the plot, used by ggplot2::geom_point()
-  #
-  #  pval.cex - character expansion (i.e. size of text) for p-values
-  #
-  #  line.width - the width of the line connecting the points, used by ggplot2::geom_line()
-  #
-  #  ncores - the number of cores to use in a foreach %dopar% loop. If the number of core exceeds the number on your device, then ncores defaults to parallel::detectCores() 
-  # 
-  # Output~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  A pdf file with allele frequency and Fis plots for
-  #  each locus and indicates the HWE pvalue if less than alpha.
-  #
-  #  Returns a tibble with the following variables:
-  #   1) population
-  #   2) locus
-  #   3) pval
-  #   4) fis
-  #   5) allele_freq
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  load("V:\\Analysis\\5_Coastwide\\Chum\\NPen2WA_Chum_baseline\\NPen2WA_Chum_baseline.Rdata")
-  #   
-  #  plot_freq_fis_4snps(sillyvec = sillyvec227, loci = loci91, groupvec = groupvec19, alpha = 0.05, groupcol = grcol, file = "./FreqFisPlot.pdf", ncores = 8)
-  #    
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
   start.time <- Sys.time()
 
   if(is.null(file)){
@@ -65,13 +78,13 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
   
   if(ncores > parallel::detectCores()) {ncores = parallel::detectCores()}
 
-  ploidy <- LocusControl$ploidy[loci]
+  ploidy <- LocusCtl$ploidy[loci]
 
-  nalleles <- LocusControl$nalleles[loci]
+  nalleles <- LocusCtl$nalleles[loci]
   
   if(length(setdiff(loci, loci[ploidy==2 & nalleles==2]))>=1){
     
-    message(paste0("The following loci were excluded from the plots becuase they have a ploidy of 1: ", paste0(setdiff(loci, loci[ploidy==2 & nalleles==2]), collapse = ", ")))
+    message(paste0("The following loci were excluded from the plots becuase they have a ploidy of 1 or more than 2 alleles: ", paste0(setdiff(loci, loci[ploidy==2 & nalleles==2]), collapse = ", ")))
     
     }
   
@@ -81,7 +94,7 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
     
     lapply(loci, function(locus){
       
-      my.alleles <- LocusControl$alleles[[locus]] %>% 
+      my.alleles <- LocusCtl$alleles[[locus]] %>% 
         pull(call)
       
       my.gcl %>% 
@@ -108,7 +121,7 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
   `%dopar%` <- foreach::`%dopar%`
   
   #Start parallel loop
-  HWE_df <- foreach::foreach(silly = sillyvec, .export = "LocusControl", .packages = c("tidyverse", "HardyWeinberg")) %dopar% {
+  HWE_df <- foreach::foreach(silly = sillyvec, .packages = c("tidyverse", "HardyWeinberg")) %dopar% {  # , .export = "LocusCtl"
 
     my.gcl <- gcls[[silly]]
 
@@ -134,24 +147,30 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
     dplyr::mutate(population = factor(population, levels = sillyvec))#silly
   
   parallel::stopCluster(cl) #End parallel loop
+  
+  if (is.null(groupvec)) {
+    
+    groupvec <- seq_along(sillyvec)
+    
+  }
 
-  G <- max(groupvec)
+  G <- dplyr::n_distinct(groupvec)
 
-  if(is.null(groupcol)){
+  if (is.null(groupcol)) {
     
     groupcol <- rainbow(G)
     
   }
+  
+  if (is.numeric(groupcol)) {
     
-  if(is.numeric(groupcol)){
+    groupcol <- colors()[groupcol]
     
-     groupcol <- colors()[groupcol]
-     
   }  
 
   PopCol <- groupcol[groupvec] 
   
-  Freq <- suppressMessages(calc_freq_pop(sillyvec = sillyvec, loci = loci, ncores = ncores))
+  Freq <- suppressMessages(GCLr::calc_freq_pop(sillyvec = sillyvec, loci = loci, ncores = ncores))
     
   q <- Freq %>% 
     dplyr::filter(allele_no == 1) %>% 
@@ -178,39 +197,63 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
     my.dat <- HWE_df %>% 
       dplyr::filter(locus==!!locus)
     
-    freqplot <- my.dat %>% 
-      ggplot2::ggplot(aes(y = q, x = pop_no)) +
-      ggplot2::geom_point(color = PopCol, shape = PopPch, size = point.size)+
-      ggplot2::geom_line(color = "black", linetype = "dashed", size = line.width) +
-      ggplot2::ylim(0,1)+
+    freqplot <- my.dat %>%
+      ggplot2::ggplot(ggplot2::aes(y = q, x = pop_no)) +
+      ggplot2::geom_hline(yintercept = c(0, 1), size = 0.5) +
+      ggplot2::geom_line(color = "black",
+                         linetype = "dashed",
+                         linewidth = line.width) +
+      ggplot2::geom_point(
+        fill = PopCol,
+        color = "black",
+        shape = PopPch,
+        size = point.size
+      ) +
+      ggplot2::ylim(0, 1) +
       ggplot2::ylab("Frequency") +
       ggplot2::theme_bw() +
-      ggplot2::theme(axis.text.x = ggplot2::element_blank(), axis.title.x = ggplot2::element_blank()) + 
+      ggplot2::theme(
+        axis.text.x = ggplot2::element_blank(),
+        axis.title.x = ggplot2::element_blank()
+      ) +
       ggplot2::ggtitle(label = unique(locus))
     
     labels <- as.character(round(my.dat$pval , pval.digits))
     
     labels[labels=="0"] <- paste(c("<0.", rep(0, pval.digits), "5"), collapse = "")
     
-    labels[my.dat$pval>alpha] <- NA
+    labels[my.dat$pval>alpha] <- ""
     
     lab_adjust <- fisylim0*0.1
     
-    fisplot <- my.dat %>% 
-      dplyr::mutate(labels = !!labels) %>% 
-      ggplot2::ggplot(aes(y = fis, x = pop_no)) +
-      ggplot2::geom_abline(slope = 0, size = 0.5)+
-      ggplot2::geom_point(color = PopCol, shape = PopPch, size = point.size)+
-      ggplot2::geom_line(color = "black", linetype = "dashed", size = line.width) +
-      ggplot2::ylim(fisylim)+
-      ggplot2::ylab(expression(italic(F)[IS]))+
-      ggplot2::xlab("Population")+
-      ggplot2::geom_text(aes(y = fis+lab_adjust*sign(fis), label = labels), color = PopCol, size = pval.cex) +
+    fisplot <- my.dat %>%
+      dplyr::mutate(labels = !!labels) %>%
+      ggplot2::ggplot(ggplot2::aes(y = fis, x = pop_no, label = labels)) +
+      ggplot2::geom_abline(slope = 0, size = 0.5) +
+      ggplot2::geom_line(color = "black",
+                         linetype = "dashed",
+                         linewidth = line.width) +
+      ggplot2::geom_point(
+        fill = PopCol,
+        color = "black",
+        shape = PopPch,
+        size = point.size
+      ) +
+      ggplot2::ylim(fisylim * 1.1) +
+      ggplot2::ylab(expression(italic(F)[IS])) +
+      ggplot2::xlab("Population") +
+      ggplot2::geom_text(ggplot2::aes(y = (fis + lab_adjust * sign(fis)), label = labels),
+                         color = PopCol,
+                         size = pval.cex) +
       ggplot2::theme_bw()
     
     grid::grid.newpage()
-    grid::grid.draw(rbind(ggplot2::ggplotGrob(freqplot), ggplot2::ggplotGrob(fisplot), size = "last"))
-
+    grid::grid.draw(rbind(
+      ggplot2::ggplotGrob(freqplot),
+      ggplot2::ggplotGrob(fisplot),
+      size = "last"
+    ))
+    
   }
 
   dev.off()
@@ -218,8 +261,5 @@ plot_freq_fis_4snps <- function(sillyvec, loci, groupvec, alpha = 0.05, groupcol
   print(Sys.time()-start.time)
 
   return(HWE_df %>% dplyr::select(population, locus, pval, fis, allele_freq = q))
- 
+  
 }
-
-  
-  

@@ -1,18 +1,24 @@
 #' @title Combine QC Conflict Reports and Add PLATE_ID Column
-#' 
 #' @description This function combines QC conflict reports and adds a column of PLATE_IDs associated with each individual conflict.  The function requires "*.gcl" objects and the "ProjectSillys" vector created by ReadProjectloki2r.
 #'
 #' @param files A vector of CSV files that you want to combine, including the file extension.
 #'
+#' 
+#' @family QA scripts
+#' 
 #' @examples
-#' \dontrun{
+#'  \dontrun{
+#'  
 #' combine_conflicts(files = c("CM31 qc 01 Import Results.csv", "CM31 qc 02 Import Results.csv", "CM31 qc Plate3 Imports.csv"))
 #' }
 #' 
 #' @export
 combine_conflicts <- function(files) {
-
-    # Read in concordance files
+  
+  if (sys.call()[[1]] == quote(CombineConflictsWithPlateID.GCL.r)) {
+    warning("The function 'CombineConflictsWithPlateID.GCL.r' is deprecated. Please use 'combine_conflicts' instead.")
+  }
+  # Read in concordance files
   suppressMessages(
     concordance <- files %>% 
       purrr::map(readr::read_csv) %>% 

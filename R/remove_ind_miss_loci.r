@@ -1,4 +1,4 @@
-remove_ind_miss_loci <- function(sillyvec, loci = LocusControl$locusnames, proportion = 0.8){
+remove_ind_miss_loci <- function(sillyvec, loci = LocusControl$locusnames, proportion = 0.8, LocusCtl = LocusControl){
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #   This function removes individuals from "*.gcl" objects that have fewer non-missing loci than that specified by "proportion".
@@ -11,7 +11,9 @@ remove_ind_miss_loci <- function(sillyvec, loci = LocusControl$locusnames, propo
   #
   #   loci - optional vector of locus names to be considered when removing individuals for missing data; default is LocusControl$locusnames
   #          This argument is useful if you have loci in your markersuite that do not perform well in the lab and they will be dropped from the final dataset. 
-  # 
+  #   
+  #   LocusCtl - an object created by [GCLr::create_locuscontrol()], (default = LocusControl) 
+  #
   # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #    Returns a tibble with 3 variables: 
   #                  SILLY_CODE <chr> = the silly with IDs removed 
@@ -33,16 +35,9 @@ remove_ind_miss_loci <- function(sillyvec, loci = LocusControl$locusnames, propo
   #
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  if(!exists("LocusControl")){
+  if(!all(loci %in% LocusCtl$locusnames)){
     
-    stop("'LocusControl' not yet built.")
-    
-  }
-  
-  
-  if(!all(loci %in% LocusControl$locusnames)){
-    
-    stop(paste0("The following `loci` were not found in `LocusControl`:\n", paste(setdiff(loci,LocusControl$locusnames), collapse = "\n")))
+    stop(paste0("The following `loci` were not found in `LocusControl`:\n", paste(setdiff(loci, LocusCtl$locusnames), collapse = "\n")))
     
   }
   

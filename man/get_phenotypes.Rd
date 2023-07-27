@@ -4,12 +4,12 @@
 \alias{get_phenotypes}
 \title{Get All Combinations of Phenotypes}
 \usage{
-get_phenotypes(markerset, LocusControl = LocusControl)
+get_phenotypes(markerset, LocusCtl = LocusControl)
 }
 \arguments{
 \item{markerset}{is a vector of loci (e.g., c("Ots_vatf-251", "Ots_ZR-575"))}
 
-\item{LocusControl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
 }
 \value{
 a vector of phenotypes
@@ -22,6 +22,6 @@ this function is called on by \code{\link[=combine_loci]{combine_loci()}} and re
 }
 \examples{
 
-GCLr::get_phenotypes(markerset = c("One_vatf-214", "One_ZNF-61"), LocusControl = GCLr::ex_LocusControl)
+GCLr::get_phenotypes(markerset = c("One_vatf-214", "One_ZNF-61"), LocusCtl = GCLr::ex_LocusControl)
 
 }

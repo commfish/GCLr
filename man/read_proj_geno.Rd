@@ -39,7 +39,9 @@ This function pulls project genotypes from LOKI database to create "slim" .gcl o
 The function checks the combination of arguments to ensure the correct usage.
 }
 \examples{
+\dontrun{
 read_proj_geno(project_name = c("P014", "P015", "P016"), sillyvec = c("SCIMA18", "SCIMA17"), 
                loci = c("One_E2", "One_MHC2_251", "One_Cytb_17"), username = "awbarclay", password = "password")
+}
 
 }

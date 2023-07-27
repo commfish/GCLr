@@ -16,7 +16,6 @@ Imports:
     hierfstat,
     genepop,
     mapview,
-    plotly,
     gplots,
     htmlwidgets,
     HardyWeinberg,
@@ -43,6 +42,7 @@ Imports:
     terra,
     sf,
     exifr
+Depends: R (>= 3.5.0)
 License: `use_gpl3_license()`
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -1,6 +1,55 @@
-custom_comb_rubias_output <- function(rubias_output = NULL, mixvec = NULL, group_names = NULL, group_names_new = NULL,
-                                         groupvec = NULL, groupvec_new = NULL, path = "rubias/output", alpha = 0.1, 
-                                         burn_in = 5000, bias_corr = FALSE, threshold = 5e-7, plot_trace = TRUE, ncores = 4) {
+#' @title Summarize `rubias` Output
+#'
+#' @description
+#' A short description...
+#'
+#' @param rubias_output 
+#' @param mixvec 
+#' @param group_names 
+#' @param group_names_new 
+#' @param groupvec 
+#' @param groupvec_new 
+#' @param path 
+#' @param alpha 
+#' @param burn_in 
+#' @param bias_corr 
+#' @param threshold 
+#' @param plot_trace 
+#' @param ncores 
+#'
+#' @returns A tibble with 8 columns:
+#'     \itemize{
+#'       \item \code{mixture_collection}: factor of mixtures (only a factor for ordering, plotting purposes)
+#'       \item \code{repunit}: factor of reporting groups (only a factor for ordering, plotting purposes)
+#'       \item \code{mean}: mean posterior of stock proportion
+#'       \item \code{sd}: sd of posterior of stock proportion
+#'       \item \code{medoam}: median posterior of stock proportion
+#'       \item \code{sd}: sd of posterior of stock proportion
+#'       \item \code{loCI}: lower 5% CI from posterior of stock proportion
+#'       \item \code{hiCI}: upper 95% CI from posterior of stock proportion 
+#'       \item \code{P=0}: proportion of posterior with stock proportion < `threshold` (i.e., 0)
+#'       }
+#'
+#' @examples
+#' \dontrun{
+#' rubias_out <- GCLr::custom_comb_rubias_output()
+#' }
+#' 
+#' @export
+custom_comb_rubias_output <-
+  function(rubias_output = NULL,
+           mixvec = NULL,
+           group_names = NULL,
+           group_names_new = NULL,
+           groupvec = NULL,
+           groupvec_new = NULL,
+           path = "rubias/output",
+           alpha = 0.1,
+           burn_in = 5000,
+           bias_corr = FALSE,
+           threshold = 5e-7,
+           plot_trace = TRUE,
+           ncores = 4) {
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # This function computes summary statistics from `rubias` output, similar to `CustomCombineBAYESOutput.
   # However, output is a tibble with `mixture_collection` as a column, instead of each mixture as its own list.

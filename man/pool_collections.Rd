@@ -8,7 +8,8 @@ pool_collections(
   collections,
   loci = LocusControl$locusnames,
   IDs = NULL,
-  newname = paste(collections, collapse = ".")
+  newname = paste(collections, collapse = "."),
+  LocusCtl = LocusControl
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ These will be used to subset each collection before pooling. If no IDs are suppl
 
 \item{newname}{The name of the new "*.gcl" created. Do not provide the ".gcl" extension. If no name is supplied, then the newname defaults to
 the collection names collapsed with a period between each name (e.g., "KQUART06.KQUART08.KQUART09").}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
 assigns a new "pooled collection" to your workspace

@@ -9,6 +9,7 @@
 #' @param usat Logical; whether the data are from microsatellites (TRUE) or not (FALSE). This is included because GENEPOP only accepts numeric alleles; SNP alleles have to be converted from character to numeric, and microsatellite alleles are already numeric.
 #' @param ncores The number of cores for multithreading using [doParallel()] and [foreach()]. Default is 4. 
 #' @param npops Optional; the number of populations for each file. If supplied, multiple files with generic file names will be written out, with `npops` per file (see details).
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #' 
 #' @details
 #' This function requires a `LocusControl` object. Run [GCLr::create_locuscontrol()] prior to this function.
@@ -48,19 +49,13 @@
 #' GCLr::gcl2genepop(sillyvec = sillyvec[1:36], loci = loci, path = "GENEPOP", VialNums = TRUE, usat = FALSE, ncores = 8, npops = 2)
 #' 
 #' @export
-gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, ncores = 4, npops = NULL){
+gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, ncores = 4, npops = NULL, LocusCtl = LocusControl){
 
   start_time <- Sys.time()
   
-  if(!exists("LocusControl")){
+   if(!all(loci %in% LocusCtl$locusnames)){
     
-    stop("'LocusControl' not yet built.")
-    
-  }
-  
-  if(!all(loci %in% LocusControl$locusnames)){
-    
-    stop(paste0("'", setdiff(loci, LocusControl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
+    stop(paste0("'", setdiff(loci, LocusCtl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
     
   }
   
@@ -83,10 +78,10 @@ gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, nco
     
   }
   
-  alleles <- LocusControl$alleles[loci] %>% 
+  alleles <- LocusCtl$alleles[loci] %>% 
     dplyr::bind_rows(.id = "locus")
   
-  ploidy <- LocusControl %>% 
+  ploidy <- LocusCtl %>% 
     dplyr::filter(locusnames %in% loci) %>% 
     dplyr::pull(ploidy) %>% 
     purrr::set_names(loci)
@@ -105,7 +100,7 @@ gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, nco
   
   sillylist <- split(sillyvec, base::ceiling(seq_along(sillyvec)/np))
   
-  nalleles <- LocusControl %>% 
+  nalleles <- LocusCtl %>% 
     dplyr::filter(locusnames %in% loci) %>% 
     dplyr::pull(nalleles) %>% 
     purrr::set_names(loci)

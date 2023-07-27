@@ -16,7 +16,8 @@ create_rubias_base_eval(
   mix.path = "rubias/mixture",
   seed = 123,
   ncores = 4,
-  file_type = c("fst", "csv")[1]
+  file_type = c("fst", "csv")[1],
+  LocusCtl = LocusControl
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ create_rubias_base_eval(
 \item{ncores}{A numeric vector of length one indicating the number of cores to use.}
 
 \item{file_type}{Whether to save the baseline and mixture files as .fst (default and faster) or .csv files.}
+
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \description{
 This function creates rubias mixture and baseline files for different test scenarios. These files are supplied to \code{\link[=run_rubias_base_eval]{run_rubias_base_eval()}} for producing baseline evaluation estimates.

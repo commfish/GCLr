@@ -8,8 +8,13 @@
 #' @param loci A character vector of locus names. If set to NULL, all loci in the ".gcl" objects will be used.
 #' @param minnonmissing The proportion of loci that a pair must share non-missing genotypes in order to be reported.
 #' @param minproportion The proportion of shared non-missing loci that must be shared between the individuals to be reported as a matching pair.
+<<<<<<< HEAD
 #' @param ncores The number of cores to use in a `foreach::%dopar%` loop. If the number of cores exceeds the number on your device, then `ncores` defaults to `parallel::detectCores()`.
+=======
+#' @param ncores The number of cores to use in a [foreach::%dopar%] loop. If the number of cores exceeds the number on your device, then `ncores` defaults to [parallel::detectCores()].
+>>>>>>> 4e8ba2320f2cc09da272f26eff0e5386c70fce79
 #' @param plot.results Logical value indicating whether to produce histograms of duplicate rates for each silly code in `KeySillyIDs`.
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #'
 #' @return A tibble that includes the duplicate individuals that exceeded `minproportion` or had the maximum duplicate rate, as well as duplicate individuals that came from the same original collection (i.e., project duplicates). The tibble includes the following variables:
 #'   \itemize{
@@ -38,11 +43,11 @@
 #' results <- GCLr::dupcheck_among_sillys(KeySillys = c("KKILL06qc", "KFUNN05qc"), KeySillyIDs = list(KKILL06qc = c(101, 176), KFUNN05qc = c(9, 30)), BetweenSillys = c("KKILL05", "KKILL06", "KFUNN05", "KFUNN06"), loci = LocusControl$locusnames, minnonmissing = 0.6, minproportion = 0.9, ncores = 4)
 #'
 #' @export
-dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, loci, minnonmissing = 0.6, minproportion = 0.9, ncores = 4, plot.results = TRUE){
+dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, loci, minnonmissing = 0.6, minproportion = 0.9, ncores = 4, plot.results = TRUE, LocusCtl = LocusControl){
 
-  if(!all(loci %in% LocusControl$locusnames)){
+  if(!all(loci %in% LocusCtl$locusnames)){
     
-    stop(paste0("The following `loci` were not found in `LocusControl`:\n", paste(setdiff(loci, LocusControl$locusnames), collapse = "\n")))
+    stop(paste0("The following `loci` were not found in `LocusControl`:\n", paste(setdiff(loci, LocusCtl$locusnames), collapse = "\n")))
     
   }
   
@@ -59,7 +64,7 @@ dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, 
     
   }
   
-  ploidy <- LocusControl$ploidy[loci]
+  ploidy <- LocusCtl$ploidy[loci]
   
   scores_cols <- sapply(loci, function(locus) {c(locus, paste0(locus, ".1"))}) %>% 
     as.vector()  # This keeps the scores columns in the correct order when there are loci with similar names.

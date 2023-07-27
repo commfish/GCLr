@@ -9,7 +9,7 @@
 #'
 #' @param sillyvec Character vector of SILLY codes in the project.
 #'
-#' @return A list of failure rates by SILLY, locus, plate, and project.
+#' @returns A list of failure rates by SILLY, locus, plate, and project.
 #'
 #'
 #' @details

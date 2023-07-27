@@ -1,4 +1,4 @@
-sampn_by_locus <- function(sillyvec, loci = LocusControl$locusnames){
+sampn_by_locus <- function(sillyvec, loci = LocusControl$locusnames, LocusCtl = LocusControl){
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #   This function creates a tibble of sample sizes by locus.
   #
@@ -26,9 +26,9 @@ sampn_by_locus <- function(sillyvec, loci = LocusControl$locusnames){
   #  of the proportion of fish with scores for each locus and silly
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  if(!all(loci %in% LocusControl$locusnames)){
+  if(!all(loci %in% LocusCtl$locusnames)){
     
-    stop(paste0("'", setdiff(loci, LocusControl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
+    stop(paste0("'", setdiff(loci, LocusCtl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
     
   }
   

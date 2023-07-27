@@ -4,14 +4,14 @@
 \alias{hierfstat_global_stats}
 \title{Compute global hierarchical F-statistics and variance components.}
 \usage{
-hierfstat_global_stats(levels, genotypes, LocusControl = LocusControl)
+hierfstat_global_stats(levels, genotypes, LocusCtl = LocusControl)
 }
 \arguments{
 \item{levels}{A data frame containing the different levels (factors) from the outermost (e.g., region) to the innermost before the individual.}
 
 \item{genotypes}{A data frame containing the genotypes in single-column numeric format (e.g., 101, 102, 202).}
 
-\item{LocusControl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
+\item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}}
 }
 \value{
 A list containing 3 tibbles:

@@ -1,32 +1,53 @@
-locus_stats <- function(sillyvec, loci, ncores = 4, ...){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   This function creates a table of statistics containing obseved hetrozygosity (Ho), Fis, and Fst for each locus in loci.
-  #   Note: as of 11/18/22 this function no longer writes out an FSTAT file using gcl2fstat, but instead calls on create_hierfstat_data to create 
-  #         a hierfstat data object.Use gcl2FSTAT if you need to produce an FSTAT .dat file. 
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #   sillyvec - a vector of silly codes without the ".gcl" extention (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART10")). 
-  #
-  #   loci - a character vector of locus names
-  #   
-  #   ncores - a numeric vector of length one indicating the number of cores to use
-  #
-  #   ... - allows for previously used arguments 'fstatdir' and 'dir' to be supplied. 
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   A tibble is returned containing locusname, Ho, Fis, and Fst
-  #
-  #  if is.null(fstatdir) and exists(dir) "fstatfile.dat" is put into "dir"
-  #
-  # Examples~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-  #
-  #   locus_stats(sillyvec = sillyvec31, loci = loci82, ncores = 23)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+#' @title Calculate Basic Locus Statistics
+#' 
+#' @description
+#' This function calculates basic locus statistics (Ho, Fis, Fst) for each locus across collections (silly code).
+#'
+#' @param sillyvec A character vector of silly codes without the ".gcl" extension.
+#' @param loci A character vector of locus names.
+#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
+#' The number of cores cannot exceeds the number on your device ([parallel::detectCores()]).
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
+#'
+#' @returns A tibble with 1 row per locus in `loci` + "Overall" and the following 4 columns:
+#'     \itemize{
+#'       \item \code{locus}: locus name
+#'       \item \code{Ho}: observed heterozygosity calculated by [hierfstat::basic.stats()]
+#'       \item \code{Fis}: Fis calculated by [hierfstat::varcomp()]
+#'       \item \code{Fst}: Fst calculated by [hierfstat::varcomp()]
+#'       }       
+#'       
+#' @details
+#' This function uses the [hierfstat::hierfstat()] to calculate locus statistics for Ho, Fis, and Fst.
+#' Previous versions of this function used [GCLr::gcl2fstat()] to write out an FSTAT (".dat") file, but this is no longer the case.
+#' Use [GCLr::gcl2fstat()] if you want to create an FSTAT (".dat") file.
+#' 
+#' @seealso 
+#' [hierfstat::hierfstat()]
+#' [hierfstat::varcomp()]
+#' [hierfstat::basic.stats()]
+#' [GCLr::create_hierfstat_data()]
+#' 
+#' @examples
+#' \dontrun{
+#' GCLr::create_locuscontrol(markersuite = "Sockeye2011_96SNPs",
+#'                           username = .username,
+#'                           password = .password)
+#' sillyvec = c("SKARLSE11", "SKARLSE99L", "SREDCRY11", "SDOGSC08")
+#' GCLr::loki2r(sillyvec = sillyvec,
+#'              username = .username,
+#'              password = .password)
+#' (my_locus_stats <- GCLr::locus_stats(sillyvec = sillyvec, loci = LocusControl$locusnames, ncores = 4))
+#' }
+#'  
+#' @export
+locus_stats <-
+  function(sillyvec,
+           loci,
+           ncores = 4,
+           LocusCtl = LocusControl,
+           ...) {
+    
   unused_args <- list(...)
   
   if (!length(unused_args) == 0){ 
@@ -40,12 +61,6 @@ locus_stats <- function(sillyvec, loci, ncores = 4, ...){
     
     }
   
-  if(!exists("LocusControl")) {
-    
-    stop("'LocusControl' is required and not found, please create.")
-    
-  }
-  
   if(ncores > parallel::detectCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
@@ -54,7 +69,7 @@ locus_stats <- function(sillyvec, loci, ncores = 4, ...){
   
   start.time <- Sys.time()
   
-  ploidy <- LocusControl$ploidy[loci]
+  ploidy <- LocusCtl$ploidy[loci]
   
   dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = ncores)
 

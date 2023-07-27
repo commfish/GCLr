@@ -1,4 +1,4 @@
-remove_na_indv <- function(sillyvec) {
+remove_na_indv <- function(sillyvec, LocusCtl = LocusControl) {
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #   This function removes any individuals from a SILLY.gcl object that were not genotyped
@@ -7,6 +7,7 @@ remove_na_indv <- function(sillyvec) {
   # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #   
   #   sillyvec - a character vector of silly codes (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART09")) 
+  #   LocusCtl - an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
   # 
   # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #    1) this function will modify silly.gcls in your environment to remove NA fish
@@ -21,14 +22,7 @@ remove_na_indv <- function(sillyvec) {
   # This function requires a locus control object to subset out the scores columns.
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  if(!exists("LocusControl")){
-    
-    stop("'LocusControl' not yet built.")
-    
-  }
-  
-  
-  scores_cols <- LocusControl$locusnames
+  scores_cols <- LocusCtl$locusnames
   
   na.individuals.removed <- lapply(sillyvec, function(silly) {
     

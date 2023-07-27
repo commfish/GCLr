@@ -6,7 +6,7 @@
 #' @param markerset A vector of the set of loci you wish to combine.
 #' @param update Logical switch. If TRUE, the "LocusControl" object is updated and all "*.gcl" objects in "sillyvec" will be updated with the new marker. If FALSE, the "LocusControl" object is not updated and a temporary object called "*.temp.gcl" with the updated data is created.
 #' @param delim Specifies the separator between combined loci, either a period (.) which is the default or an underscore (_) so locus names will work in SPAM.
-#' @param LocusControl an object created by [GCLr::create_locuscontrol()]
+#' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl)
 #'
 #' @examples
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
@@ -19,28 +19,29 @@
 #' This function requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function. This function requires dplyr version 1.0.0 or higher.
 #'
 #' @export
-combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1], LocusControl = LocusControl){
+combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")[1], LocusCtl = LocusControl){
 
-  if(!all(markerset %in% LocusControl$locusnames)){
+  if (!all(markerset %in% LocusCtl$locusnames)) {
+
     
-    stop(paste0("'", setdiff(markerset, LocusControl$locusnames), "' from argument 'markerset' not found in 'LocusControl' object!!!"))
+    stop(paste0("'", setdiff(markerset, LocusCtl$locusnames), "' from argument 'markerset' not found in 'LocusControl' object!!!"))
     
   }
   
   nmarkers <- length(markerset)  
   
-  myploidy <- LocusControl$ploidy[markerset]
+  myploidy <- LocusCtl$ploidy[markerset]
   
-  if(sum(myploidy == myploidy[1]) != nmarkers){
+  if (sum(myploidy == myploidy[1]) != nmarkers) {
     
     stop("'markerset' has different ploidies!!!")
     
   }  
   
-  MarkerSuite <- LocusControl$MarkerSuite %>% 
+  MarkerSuite <- LocusCtl$MarkerSuite %>% 
     unique()
   
-  locusnames <- LocusControl$locusnames
+  locusnames <- LocusCtl$locusnames
   
   newmarkername <- paste(markerset, collapse = delim)
   
@@ -50,7 +51,7 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
   
   nloci <- length(loci)
   
-  Publishedlocusnames <- LocusControl$Publishedlocusnames
+  Publishedlocusnames <- LocusCtl$Publishedlocusnames
   
   Publishedlocusnames <- c(Publishedlocusnames, purrr::set_names(NA, newmarkername))
   
@@ -58,13 +59,13 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
   
   maxchar <- max(nchar(newalleles))
   
-  alleles <- LocusControl$alleles[locusnames]
+  alleles <- LocusCtl$alleles[locusnames]
   
-  nalleles <- LocusControl$nalleles[locusnames]
+  nalleles <- LocusCtl$nalleles[locusnames]
   
-  ploidy <- LocusControl$ploidy[locusnames]
+  ploidy <- LocusCtl$ploidy[locusnames]
   
-  if(!existnewmarker){
+  if (!existnewmarker) {
     
     alleles[[length(locusnames) + 1]] <- tibble::tibble(allele = seq_along(newalleles), call = newalleles)
     
@@ -76,11 +77,11 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
   
   names(alleles) <- names(nalleles) <- names(ploidy) <- loci
   
-  for(silly in sillyvec){
+  for (silly in sillyvec) {
     
     my.gcl <- get(paste0(silly, ".gcl"), pos = 1)
     
-    if(newmarkername %in% names(my.gcl)){
+    if (newmarkername %in% names(my.gcl)) {
       
       warning(paste0("'", newmarkername, "'"," already created in silly '", silly,"'!!!"))
       next()
@@ -90,11 +91,11 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
     newmarkername_1 <- paste0(newmarkername, ".1")  # Allele 2 name
     
     # Combine haploid
-    if(unique(myploidy) == 1){ 
+    if (unique(myploidy) == 1) { 
       
       new.gcl <- my.gcl %>% 
         tidyr::unite(col = {{newmarkername}}, tidyselect::all_of(markerset), sep = '', remove = FALSE, na.rm = TRUE) %>%  # Had to add the {{}} around the col object for this to work. 
-        mutate(!!rlang::sym(newmarkername) := dplyr::case_when(nchar(!!rlang::sym(newmarkername)) < maxchar ~ NA_character_,  # Added this mutate case_when to replace any genotypes with less than maxchar with NA's. Maybe there is a better way?
+        dplyr::mutate(!!rlang::sym(newmarkername) := dplyr::case_when(nchar(!!rlang::sym(newmarkername)) < maxchar ~ NA_character_,  # Added this mutate case_when to replace any genotypes with less than maxchar with NA's. Maybe there is a better way?
                                                                TRUE ~ !!rlang::sym(newmarkername)), 
                !!rlang::sym(newmarkername_1) := NA_character_) %>% 
         dplyr::relocate(!!rlang::sym(newmarkername), .after = tidyselect::last_col()) %>% 
@@ -103,7 +104,7 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
     }
     
     # Combine diploid
-    if(unique(myploidy)==2){ 
+    if (unique(myploidy) == 2) { 
       
       sel_var <- lapply(markerset, function(mkr){
         c(mkr, paste0(mkr, ".1"))
@@ -119,13 +120,13 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
       
     }
     
-    if(update){
+    if (update) {
       
       assign(paste0(silly, ".gcl"), new.gcl, pos = 1)
       
     }
     
-    if(!update){
+    if (!update) {
       
       assign(paste0(silly, ".temp.gcl"), new.gcl, pos = 1)
       
@@ -133,7 +134,7 @@ combine_loci <- function(sillyvec, markerset, update = TRUE, delim = c(".", "_")
     
   }
   
-  if(update){
+  if (update) {
     
     assign(
       x = "LocusControl",

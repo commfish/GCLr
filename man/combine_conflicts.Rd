@@ -13,8 +13,10 @@ combine_conflicts(files)
 This function combines QC conflict reports and adds a column of PLATE_IDs associated with each individual conflict.  The function requires "*.gcl" objects and the "ProjectSillys" vector created by ReadProjectloki2r.
 }
 \examples{
-\dontrun{
+ \dontrun{
+ 
 combine_conflicts(files = c("CM31 qc 01 Import Results.csv", "CM31 qc 02 Import Results.csv", "CM31 qc Plate3 Imports.csv"))
 }
 
 }
+\concept{QA scripts}

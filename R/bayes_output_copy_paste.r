@@ -23,6 +23,7 @@
 #'
 #' }
 #'
+#' @export
 #' 
 bayes_output_copy_paste <- function(origindir, targetdir, mixvec){
   
@@ -50,7 +51,7 @@ bayes_output_copy_paste <- function(origindir, targetdir, mixvec){
   
   names(filestocopy) <- mixvec
   
-  if(!all(mixvec %in% names(filestocopy))) {
+  if (!all(mixvec %in% names(filestocopy))) {
     
     stop("'mixvec' object does not match all output files!!!\nThis 'stop' prevents you from accidently deleting these files, because they will not be copied properly!!!\nIf mixvec is a named vector, then the vector is used, not the names!!!")
     

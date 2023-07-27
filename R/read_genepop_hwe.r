@@ -1,35 +1,53 @@
-read_genepop_hwe=function(file, sillyvec = NULL, summaryAsNumeric = TRUE){
-  #############################################################################################################################
-  #This function reads in the population output from a GENEPOP Hardy-Weinberg test ("*.P") file and returns a list of 2:
-  #1) is a data frame containing all of the HWE data for each locus by Pop
-  #2) is a matrix containing just the PValues for each Pop and the overall PValue across Pops (Fisher's method)
-  #
-  # "file" - the full file path, including the ".P" extension.  Make sure the file has not been modified.
-  # "sillyvec" - optional character vector to provide for pop names as opposed to getting form genepop .P file
-  # "summaryAsNumeric" - logical, indicates if you want summary p-values from exact test to be numeric or character
-  #   Note: forcing to numeric takes output such as "High. sign." and forces to 0.000 for Genepop 4.6 and below
-  #   Note: forcing to numeric takes output such as " < 0.1555" and forces to 0.1555 for Genepop 4.7 and above
-  #
-  # Example: HWE=read_genepop_hwe(file="V:/WORK/Chum/AHRP/Data/AHRPsamples.txt.P")
-  #
-  # Written 8/6/14 Kyle Shedd - data.frame with p-values for each pop + overall
-  # Updated 8/22/14 08:16 to handle exact test vs. MCMC method
-  # Updated 9/16/14 10:25 KS changed how DF are determined for Fisher's method (global p-values for loci across populations)
-  # Updated 9/16/14 11:33 KS Global p-values for loci across populations (summary[,"Overall Pops"]) are now read directly from the 
-  #  Genepop *.P file rather than calculated with Fischer's method in R. The reasoning for this new approach is that 1), it no 
-  #  longer matters if you use the Exact test or MCMC method, and 2) since Genepop rounds p-values to the nearest 0.0001, small 
-  #  p-values were simply displayed as 0.0000, which made subsequent calculations of global p-values via Fischer's method fail, 
-  #  since you can't take the ln(0).
-  # Updated 9/17/14 11:51 KS Added global p-values for populations across loci (summary ["Overall Loci",])
-  # Updated 2/8/15 17:32 KS Added global p-value for Overall Pops over all loci (Fisher's Method). NOTE: this should only be
-  #  trusted/used if the sample size per pop is similar...
-  # Updated 7/27/15 20:00 KS Added an "if" "else" section to handle the calculation of "Overall Loci" and "Overall Pops"
-  #  depending on whether p-values were calculated in Genepop with the "Exact" or "MCMC" setting. If MCMC then hard 0s are
-  #  replaced with repzero = batches * iterations
-  #############################################################################################################################
-  
-  while(!require(reshape2)){ install.packages("reshape2") }
-
+#' @title Read Genepop HWE Output
+#' 
+#' @description
+#' This function reads in output from a `genepop` Hardy-Weinberg test ("*.P") file.
+#'
+#' @param file The full file path to the `genepop` HWE output, including the ".P" extension.
+#' @param sillyvec An optional character vector of silly codes without the ".gcl" extension (default = `NULL`).
+#' If `NULL`, `Pop` names will come directly from the ("*.P") file and likely include "_fishID" extensions.
+#' If supplying `sillyvec`, make sure it is the same `sillyvec` used in [GCLr::gcl2genepop()].
+#' @param summaryAsNumeric A logical vector of length 1 indicating whether character p-values such as "High. sign." or " < "
+#' should be coerced into numeric (default = `TRUE`).
+#' 
+#' @returns A list with 2 components:
+#'     \itemize{
+#'       \item \code{DataByPop}: a data.frame with 7 columns containing the full HWE output:
+#'         \itemize{
+#'           \item \code{Pop}: silly code
+#'           \item \code{Locus}: locus name
+#'           \item \code{PValue}: HWE p-value
+#'           \item \code{SE}: standard error of the estimated p-value
+#'           \item \code{WC Fis}: Weir and Cockerham Fis estimate
+#'           \item \code{RH Fis}: Robertson and Hill Fis estimate
+#'           \item \code{Steps}: number of genotypic matrices considered (exact) or number of switches (MCMC)
+#'           }
+#'       \item \code{SummaryPValues}: a matrix containing p-values for each locus (row) and pop (column) including the 
+#'       overall p-value across pops and loci (Fisher's method)
+#'       }
+#'
+#' @details
+#' In `genepop` version 4.6 or below, `summaryAsNumeric = TRUE`, forces character output such as "High. sign." and to "0.000".
+#' In `genepop` version 4.7 or avove, `summaryAsNumeric = TRUE`, forces character output such as " < 0.1555" and to "0.1555".
+#' If MCMC, replace hard 0 p-values with `1 / (batches * iterations)` and calculate overall pops and overall loci via Fisher's method (ChiSqaure).
+#' if Exact test, p-values overall pops or overall loci are pulled directly from `genepop` ("*.P") file
+#'
+#' @seealso 
+#' [genepop::genepop-package()]
+#' [genepop::test_HW()]
+#' 
+#' @examples
+#' \dontrun{
+#' genepop::test_HW(inputFile = "C:/Users/krshedd/Documents/R/test.txt")  # needs full file path
+#' genepop_hwe <- GCLr::read_genepop_hwe(file = "~/R/test.txt.P", sillyvec = sillyvec)
+#' }
+#' 
+#' @export
+read_genepop_hwe <-
+  function(file,
+           sillyvec = NULL,
+           summaryAsNumeric = TRUE) {
+    
   hwp=scan(file,what='',sep = "\n")
 
   npops=as.numeric(strsplit(hwp[grep("Number of populations detected:    ",hwp)],split="Number of populations detected:    ")[[1]][2])
@@ -57,7 +75,7 @@ read_genepop_hwe=function(file, sillyvec = NULL, summaryAsNumeric = TRUE){
   HWdata=NULL
   
   for(i in 1:npops){  
-    HWdata=rbind(HWdata,cbind(Pop=rep(pops[i],ndiploci),colsplit(
+    HWdata=rbind(HWdata,cbind(Pop=rep(pops[i],ndiploci),reshape2::colsplit(
       sapply((popstart[i]+6):(popstart[i]+6+ndiploci-1),function(row){gsub(pattern="[[:blank:]]+",x=hwp[row],replacement="/",fixed=F)}),
       pattern="/",names=c("Locus","PValue","SE","WC Fis","RH Fis","Steps","Switches","Low"))[,1:6]))
   }
@@ -70,7 +88,7 @@ read_genepop_hwe=function(file, sillyvec = NULL, summaryAsNumeric = TRUE){
   
   # Proceed as normal
   
-  loci=gsub(colsplit(hwp[grep("Locus ",hwp)],pattern="\"",names=c("Locus","Locus"))[,2],pattern="\"",replacement="")
+  loci=gsub(reshape2::colsplit(hwp[grep("Locus ",hwp)],pattern="\"",names=c("Locus","Locus"))[,2],pattern="\"",replacement="")
   
   invisible(ifelse(length(grep(" not diploid.",loci))==0,assign("mono",0),assign("mono",grep(" not diploid.",loci))))
   
@@ -113,9 +131,9 @@ read_genepop_hwe=function(file, sillyvec = NULL, summaryAsNumeric = TRUE){
     
   } else {
     
-    overallpops=colsplit(hwp[grep("Locus ",hwp)+5+npops+4],pattern=" Prob :    ",names=c("Trash","P-value"))[,2]
+    overallpops=reshape2::colsplit(hwp[grep("Locus ",hwp)+5+npops+4],pattern=" Prob :    ",names=c("Trash","P-value"))[,2]
     
-    overallloci=colsplit(hwp[grep("Pop : ",hwp)+5+ndiploci+4],pattern=" Prob :    ",names=c("Trash","P-value"))[,2]
+    overallloci=reshape2::colsplit(hwp[grep("Pop : ",hwp)+5+ndiploci+4],pattern=" Prob :    ",names=c("Trash","P-value"))[,2]
     
     ## Force SummaryPValues matrix to be numeric for Exact test
     # If using Genepop version 4.6 or lower, "High. sign." is forced to "0.0000"
@@ -160,5 +178,7 @@ read_genepop_hwe=function(file, sillyvec = NULL, summaryAsNumeric = TRUE){
   lst=list("DataByPop"=HWdata,"SummaryPValues"=smmry)
   
   print(cat("All p-values are pulled directly from the Genepop *.P file if calculated via Exact test.\nIf calculated via MCMC then over all loci/pops are derived in this function, correcting p = 0 for the number of batches * iterations!\nNA in 'smmry' dataframe means that locus in either 1) monomorphic (or very low MAF) or 2) not diploid (haploid mtSNP).\nHaploid loci are not included in the 'HWdata' data.frame."))
+  
   return(invisible(lst))
+  
 }
