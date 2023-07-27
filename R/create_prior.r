@@ -22,7 +22,7 @@
 #' rubias_prior <- create_prior(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), minval = 0.01, type = "rubias", sillyvec = sillyvec)
 #' }
 #'
-#' @details This function is also used by `MulitChainInits.GCL()` to create initial starting values.
+#' @details This function is also used by [GCLr::multichain_inits()] to create initial starting values.
 #'
 #' @export
 create_prior <- function(groupvec, groupweights, minval = 0.01, type = c("BAYES", "rubias")[1], sillyvec = NULL){

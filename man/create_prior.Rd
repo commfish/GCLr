@@ -31,7 +31,7 @@ For \code{type = "rubias"}, the function outputs a tibble with "collection" and 
 This function creates a prior object for BAYES or rubias.
 }
 \details{
-This function is also used by \code{MulitChainInits.GCL()} to create initial starting values.
+This function is also used by \code{\link[=multichain_inits]{multichain_inits()}} to create initial starting values.
 }
 \note{
 The BAYES prior object is supplied to the prior argument in \code{create_bayes_ctl()}.
