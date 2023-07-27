@@ -6,8 +6,11 @@ export(base2gcl)
 export(base_eval_sample_sizes)
 export(bayes_indiv_assign_summary)
 export(bayes_input_copy_paste)
+<<<<<<< HEAD
+=======
 export(bayes_output_copy_paste)
 export(calc_freq_pop)
+>>>>>>> 4e8ba2320f2cc09da272f26eff0e5386c70fce79
 export(col2hex)
 export(collections_map)
 export(combine_conflicts)
