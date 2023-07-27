@@ -1,40 +1,53 @@
-#' @title Summarize `rubias` Output
+#' Custom Combine `rubias` Output
 #'
-#' @description
-#' A short description...
+#' This function computes summary statistics from `rubias` output, similar to `CustomCombineBAYESOutput`.
+#' However, output is a tibble with `mixture_collection` as a column, instead of each mixture as its own list.
+#' It can take either the `rubias_output` list object from `run_rubias_mix` or `infer_mixture`,
+#' OR it can read in the .csv files created by `run_rubias_mix`.
 #'
-#' @param rubias_output 
-#' @param mixvec 
-#' @param group_names 
-#' @param group_names_new 
-#' @param groupvec 
-#' @param groupvec_new 
-#' @param path 
-#' @param alpha 
-#' @param burn_in 
-#' @param bias_corr 
-#' @param threshold 
-#' @param plot_trace 
-#' @param ncores 
+#' NOTE: Currently this function only allows bias correction for the reporting groups run in the mixture.
+#' It cannot do bias correction for different baseline groupvecs because the current `rubias` output only
+#' gives the bias-corrected means for each `mixture_collection` and `repunit` (i.e., `rho`, not `pi`).
 #'
-#' @returns A tibble with 8 columns:
-#'     \itemize{
-#'       \item \code{mixture_collection}: factor of mixtures (only a factor for ordering, plotting purposes)
-#'       \item \code{repunit}: factor of reporting groups (only a factor for ordering, plotting purposes)
-#'       \item \code{mean}: mean posterior of stock proportion
-#'       \item \code{sd}: sd of posterior of stock proportion
-#'       \item \code{medoam}: median posterior of stock proportion
-#'       \item \code{sd}: sd of posterior of stock proportion
-#'       \item \code{loCI}: lower 5% CI from posterior of stock proportion
-#'       \item \code{hiCI}: upper 95% CI from posterior of stock proportion 
-#'       \item \code{P=0}: proportion of posterior with stock proportion < `threshold` (i.e., 0)
-#'       }
+#' UPDATE: This function CAN do bias correction if you are rolling up groups from fine-scale to broad-scale.
+#' To use this functionality, specify `group_names` as the original, fine-scale groups, `groupvec_new` as 
+#' the groupvec to go from fine-scale to broad-scale groups, and `group_names_new` as the broad-scale groups
+#' (i.e., length(groupvec_new) = length(group_names), and max(groupvec_new) == length(group_names_new))
+#'
+#' @param rubias_output Output list object from `run_rubias_mix` or `infer_mixture`.
+#' @param mixvec Character vector of mixture sillys, used to read in output .csv files if `rubias_output = NULL`.
+#' @param group_names Character vector of group_names, used to sort repunit as a factor, can get from .csv.
+#' @param group_names_new Character vector of new group_names, used to roll up groups from fine-scale to broad-scale for bias correction
+#'                       if specified, `groupvec_new` must be = length(group_names_new).
+#' @param groupvec Numeric vector indicating the group affiliation of each pop in sillyvec, used if resummarizing to new groups.
+#' @param groupvec_new A numeric vector indicating the new group affiliation of each group, used if resummarizing fine-scale groups to broad-scale groups with bias correction.
+#' @param path Character vector of where to find output from each mixture as a .csv (created by `run_rubias_mix`).
+#' @param alpha Numeric constant specifying credibility intervals, default is 0.1, which gives 90% CIs (i.e., 5% and 95%).
+#' @param burn_in Numeric constant specifying how many sweeps were used for burn_in in `run_rubias_mix` or `infer_mixture`.
+#' @param bias_corr Logical switch indicating whether you want bias-corrected values from `method = "PB"` or not, 
+#'                 currently can NOT do bias correction if not using the same repunits that were run in the mixture.
+#' @param threshold Numeric constant specifying how low stock comp is before assuming 0, used for `P=0` calculation, default is from BAYES.
+#' @param plot_trace Logical switch, when on will create a trace plot for each mixture and repunit (reporting group).
+#' @param ncores A numeric vector of length one indicating the number of cores to use (ncores is only used when is.null(rubias_output) == TRUE).
+#'
+#' @return A tibble with 8 fields for each mixture and repunit (reporting group).
+#'   - \code{mixture_collection}: Factor of mixtures (only a factor for ordering, plotting purposes).
+#'   - \code{repunit}: Factor of reporting groups (only a factor for ordering, plotting purposes).
+#'   - \code{mean}: Mean stock composition.
+#'   - \code{sd}: Standard deviation.
+#'   - \code{median}: Median stock composition.
+#'   - \code{loCI}: Lower bound of credibility interval.
+#'   - \code{hiCI}: Upper bound of credibility interval.
+#'   - \code{P=0}: The proportion of the stock comp distribution that was below `threshold` (i.e., posterior probability that stock comp = 0).
+#'
+#' @seealso custom_comb_bayes_output()
 #'
 #' @examples
 #' \dontrun{
-#' rubias_out <- GCLr::custom_comb_rubias_output()
+#' load("V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/OLD rubias/output/test/custom_comb_rubias_output_test.RData")
+#' lynncanal_2015_SW26_27.sum <- custom_comb_rubias_output(rubias_output = lynncanal_test.out, group_names = LynnCanal_groups7, bias_corr = TRUE)
 #' }
-#' 
+#'
 #' @export
 custom_comb_rubias_output <-
   function(rubias_output = NULL,
@@ -50,57 +63,7 @@ custom_comb_rubias_output <-
            threshold = 5e-7,
            plot_trace = TRUE,
            ncores = 4) {
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function computes summary statistics from `rubias` output, similar to `CustomCombineBAYESOutput.
-  # However, output is a tibble with `mixture_collection` as a column, instead of each mixture as its own list.
-  # It can take either the `rubias_output` list object from `run_rubias_mix` or `infer_mixture`,
-  # OR it can read in the .csv files created by `run_rubias_mix`.
-  #
-  # NOTE: Currently this function only allows bias correction for the reporting groups run in the mixture
-  # It can not do bias correction for different baseline groupvecs, because current `rubias` output only
-  # gives the bias corrected means for each `mixture_collection` and `repunit` (i.e. `rho`, not `pi`)
-  #
-  # UPDATE: This function CAN do bias correction if you are rolling up groups from fine-scale to broad-scale.
-  # To use this functionality, specify `group_names` as the original, fine-scale groups, `groupvec_new` as 
-  # the groupvec to go from fine-scale to broad-scale groups, and `group_names_new` as the broad-scale groups
-  # (i.e. length(groupvec_new) = length(group_names), and max(groupvec_new) == length(group_names_new))
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   rubias_output - output list object from `run_rubias_mix` or `infer_mixture`
-  #   mixvec - character vector of mixture sillys, used to read in output .csv files if `rubias_output = NULL`
-  #   group_names - character vector of group_names, used to sort repunit as a factor, can get from .csv
-  #   group_names_new - character vector of new group_names, used to roll up groups from fine-scale to broad-scale for bias correction
-  #                     if specified, `groupvec_new` must be = length(group_names_new)
-  #   groupvec - numeric vector indicating the group affiliation of each pop in sillyvec, used if resumarizing to new groups
-  #   groupvec_new - a numeric vector indicating the new group affiliation of each group, used if resumarizing fine-scale groups to broad-scale groups with bias correction
-  #   path - character vector of where to find output from each mixture as a .csv (created by `run_rubias_mix`)
-  #   alpha - numeric constant specifying credibility intervals, default is 0.1, which gives 90% CIs (i.e. 5% and 95%)
-  #   burn_in - numeric constant specifying how many sweeps were used for burn_in in `run_rubias_mix` or `infer_mixture`
-  #   bias_corr - logical switch indicating whether you want bias corrected values from `method = "PB"` or not, 
-  #               currently can NOT do bias correction if not using the same repunits that were run in the mixture
-  #   threshold - numeric constant specifying how low stock comp is before assume 0, used for `P=0` calculation, default is from BAYES
-  #   plot_trace - logical switch, when on will create a trace plot for each mixture and repunit (reporting group)
-  #   ncores - a numeric vector of length one indicating the number of cores to use (ncores is only used when is.null(rubias_output) == TRUE)
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   Returns a tibble with 8 fields for each mixture and repunit (reporting group)
-  #   mixture_collection - factor of mixtures (only a factor for ordering, plotting purposes)
-  #   repunit - factor of reporting groups (only a factor for ordering, plotting purposes)
-  #   mean - mean stock composition
-  #   sd - standard deviation
-  #   median - median stock composition
-  #   loCI - lower bound of credibility interval
-  #   hiCI - upper bound of credibility interval
-  #   P=0 - the proportion of the stock comp distribution that was below `threshold` (i.e posterior probability that stock comp = 0)
-  #
-  #   Also returns a trace plot for each mixture and repunit if `plot_trace = TRUE`
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # load("V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/OLD rubias/output/test/custom_comb_rubias_output_test.RData")
-  # lynncanal_2015_SW26_27.sum <- custom_comb_rubias_output(rubias_output = lynncanal_test.out, group_names = LynnCanal_groups7, bias_corr = TRUE)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  #~~~~~~~~~~~~~~~~
+
   ## Error catching
   if(ncores > parallel::detectCores()) {
     
