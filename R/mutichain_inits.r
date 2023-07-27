@@ -1,47 +1,62 @@
-mutichain_inits <- function(npops, nchains, prop = 0.9, type = c("BAYES", "rubias")[1], sillyvec = NULL){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  # This function creates either a matrix of initial start values for multiple BAYES chains 
-  # or a list of tibbles (length = nchain) containing initial start values for multiple rubias chains.
-  # The values for each chain add to 1 and higher start values are given to a different range of pops for each chain.
-  # For example, if you have 500 pops and need starting values for 5 chains and prop = 0.9,
-  # then the first 100 pops will have starting values = .9/100 and the rest
-  # of the pops will have start values = .1/400.  Each chain will have a different 
-  # set of pops with this higher start value. 
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #  npops - number of populations
-  #
-  #  nchains - number of BAYES or rubias chains that you need starting values for.
-  #
-  #  prop - start value proportion you want to give npops/nchains, default is .9
-  #
-  #  type - whether you want an initial start value object for "BAYES" or "rubias"
-  #
-  #  sillyvec - a vector of silly codes without the ".gcl" extension, this argument is needed when type = "rubias"
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  # For type = "BAYES" the function outputs a matrix with nrow = npops and ncol = nchains.
-  # For type = "rubias" the function outputs a list of length = nchains, and each element is a tibble
-  # with "collection" and "pi_init" variables. 
-  #
-  # Note: The BAYES initial start value object is supplied to the initmat argument in create_bayes_ctl()
-  #       The rubias initial start value object is supplied to the pi_init argument in run_rubias_mix(); however,[ 
-  #       the user must subset the list to supply a single tibble for each rubias chain. 
-  #       For example, use rubias_inits$Chain1, rubias_init[["Chain1"]] or rubias_init[[1]] to subset for chain 1.
-  #
-  # Examples~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # sillyvec <- c("KQUART060809", "KCRESC06", "KKENU09", "KJUNE050607", "KRUSSR05060708", "KBENJ0506", "KKILL0506", "KFUNN0506", "KKENAI030406", "KSLIK040508")
-  # 
-  # BAYES_inits <- mutichain_inits(npops = length(sillyvec), nchains = 5, prop = 0.9, type = "BAYES", sillyvec = NULL)
-  #
-  # rubias_inits <- mutichain_inits(npops = length(sillyvec), nchains = 5, prop = 0.9, type = "rubias", sillyvec = sillyvec)
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+#' Generate Initialization Matrix for Multiple Chains
+#'
+#' This function generates an initialization matrix for multiple chains used in
+#' Bayesian data analysis or rubias modeling. The matrix specifies the initial
+#' values for each chain to facilitate the convergence of the chains to the
+#' posterior distribution.
+#'
+#' @param npops Integer. The total number of populations to consider.
+#' @param nchains Integer. The number of chains to be used. Must be greater than 1.
+#' @param prop Numeric (optional). The proportion of the prior distribution to
+#'   allocate to each group in the chain initialization matrix. Default is 0.9.
+#' @param type Character (optional). The type of initialization to be performed.
+#'   Possible values are "BAYES" for Bayesian analysis or "rubias" for rubias
+#'   modeling. Default is "BAYES".
+#' @param sillyvec Numeric vector (optional). Required only when `type` is set
+#'   to "rubias". The user must supply a vector containing silly values for each
+#'   chain. Default is NULL.
+#'
+#' @return A matrix or a list of tibbles, depending on the chosen `type`, where
+#'   rows represent different populations and columns represent different chains.
+#'   For "BAYES" type, the matrix contains the initial prior values for each
+#'   population in each chain. For "rubias" type, it returns a list of tibbles,
+#'   where each tibble contains a "collection" column with the supplied
+#'   `sillyvec` and a "pi_init" column containing the initial prior values for
+#'   each population in each chain.
+#'
+#' @details
+#' The function supports two types of initialization:
+#'
+#' - \code{"BAYES"}: Bayesian initialization where the prior distribution is
+#'   divided among the chains proportionally based on the \code{prop} argument.
+#'   The matrix returned represents the initial prior values for each population
+#'   in each chain.
+#'
+#' - \code{"rubias"}: Rubias initialization where a \code{sillyvec} is required
+#'   to provide initial values for each chain. The prior distribution is divided
+#'   among the chains based on the \code{GroupWeights} matrix, which represents
+#'   the proportion of prior to be allocated to each group in each chain. The
+#'   function returns a list of tibbles, each containing the supplied
+#'   \code{sillyvec} in the "collection" column and the initial prior values for
+#'   each population in each chain in the "pi_init" column.
+#'
+#' @examples
+#' \dontrun{
+#' # Bayesian initialization with 5 populations and 3 chains
+#' init_matrix_bayes <- mutichain_inits(npops = 5, nchains = 3, prop = 0.8)
+#'
+#' # Rubias initialization with 10 populations, 4 chains, and a supplied sillyvec
+#' silly_vector <- c(0.5, 0.3, 0.7, 0.1)
+#' init_matrix_rubias <- mutichain_inits(npops = 10, nchains = 4, type = "rubias",
+#'                                       sillyvec = silly_vector)
+#'
+#' # Rubias initialization will throw an error if sillyvec is not provided
+#' init_matrix_rubias_error <- mutichain_inits(npops = 10, nchains = 4, type = "rubias")
+#' }
+#'
+#' @export
+
+mutichain_inits <- function(npops, nchains, prop = 0.9, type = c("BAYES", "rubias")[1], sillyvec = NULL){    
   
   if(!type%in%c("BAYES", "rubias")){
     
