@@ -28,6 +28,8 @@ dupcheck_among_sillys(
 
 \item{minproportion}{The proportion of shared non-missing loci that must be shared between the individuals to be reported as a matching pair.}
 
+\item{ncores}{The number of cores to use in a \verb{foreach::\%dopar\%} loop. If the number of cores exceeds the number on your device, then \code{ncores} defaults to \code{parallel::detectCores()}.}
+
 \item{plot.results}{Logical value indicating whether to produce histograms of duplicate rates for each silly code in \code{KeySillyIDs}.}
 }
 \value{
