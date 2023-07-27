@@ -1,22 +1,49 @@
+#' Convert old *.gcl objects to tibbles of scores and attributes
+#'
+#' This function takes a vector of character strings representing old *.gcl objects
+#' and converts them to tidy tibbles. The resulting tibbles will contain the same
+#' data as the original *.gcl objects but will be in a more organized format with
+#' standardized column names and data types.
+#'
+#' @param sillyvec A vector of character strings. The names of the old *.gcl objects
+#'        that need to be converted to tibbles.
+#' @param save_old Logical. If TRUE, the original *.gcl objects will be saved as
+#'        <object_name>.gcl_old before conversion.
+#'
+#' @return None (invisible). The function performs the conversion in-place and saves
+#'         the resulting tibbles back into the global environment.
+#'
+#' @details
+#' The function first checks if all the specified old *.gcl objects exist in the global
+#' environment. If any are missing, it raises an error with a message showing the names
+#' of the missing objects.
+#'
+#' Next, the function iterates over the specified old *.gcl objects and processes each one.
+#' It checks the attributes of the object and renames certain columns if they differ from
+#' the standard attribute names. It also adds missing columns with default NA values if they
+#' are not present in the original object.
+#'
+#' After standardizing the attributes, the function converts each object to a tibble format
+#' where the columns are arranged in a specific order.
+#'
+#' The resulting tibbles are then saved back into the global environment with the same names
+#' as the original *.gcl objects.
+#'
+#' Additionally, the function provides feedback to the user by printing a message listing the
+#' names of the converted *.gcl objects.
+#'
+#' @examples
+#' \dontrun{
+#' # load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
+#' # old2new_gcl(sillyvec = sillyvec157, save_old = TRUE)
+#' }
+#'
+#' @seealso
+#' \code{\link{new2old_gcl}} to convert tibbles back to old *.gcl format.
+#'
+#' @export
+
 old2new_gcl <- function(sillyvec, save_old = FALSE){
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function converts old style "*.gcl" objects from nested arrays to tibbles of scores and attributes. 
-  # The old style objects can be saved as *.gcl_old before they are overwritten.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   sillyvec - A character vector of silly codes with associated *.gcl objects that need to be converted.
-  #   overwrite - logical; whether you want the old objects overwritten without saving 
-  #              (TRUE) or assign the new objects to *.gcl_old before overwriting (FALSE) 
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   This function assigns a converted *.gcl object to the current workspace.
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
-  # 
-  # old2new_gcl(sillyvec = sillyvec157, save_old = TRUE)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
   
   if(!all(sillyvec %in% stringr::str_remove(string = objects(pattern = "\\.gcl", pos = -1, envir = .GlobalEnv), pattern = "\\.gcl"))) {  # Do all sillys exist in the environment?
     
