@@ -1,25 +1,54 @@
-load_sillys <- function(path, sillyvec = NULL, rds = FALSE) {
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function loads .gcl objects saved with `dput`, it is a wrapper for `dget`.
-  # It assumes all .txt files in `path` are .gcls and will load all of them,
-  # unless you specify `sillyvec`, in which case it will just load those.
-  # Also assumes files do not have ".gcl" in filename.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   path - character vector of where the .gcl objects you wish to load reside
-  #   sillyvec - (optional) character vector of sillys in `path`
-  #   rds - logical; if set to TRUE the function will load files in rds format.
-  #                  if set to FALSE the function will load files produced by 'dput'
-  #                  default is FALSE for backwards compatablity.
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   Returns a character vector of sillys loaded
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # setwd("V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/")
-  # load_sillys(path = "Baseline genotpyes", sillyvec = c("SCKAT07E", "SCKAT07L"))
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+#' Load Silly Files into the Global Environment
+#'
+#' This function loads silly files into the global environment. Silly files can
+#' either be in '.txt' or '.rds' format. The function lists all the files in the
+#' given \code{path} with the specified \code{extension}, loads them into the 
+#' global environment as '.gcl' objects, and returns the names of the loaded objects.
+#'
+#' @param path A character string specifying the directory path where the silly 
+#' files are located.
+#'
+#' @param sillyvec A character vector of specific silly file names (without the 
+#' '.txt' or '.rds' extension) to be loaded. If provided, only the files listed 
+#' in \code{sillyvec} will be loaded from the \code{path} directory.
+#'
+#' @param rds Logical. If TRUE, the function expects '.rds' files, otherwise, it 
+#' assumes '.txt' files. Default is FALSE.
+#'
+#' @return A character vector containing the names of the loaded '.gcl' objects 
+#' in the global environment.
+#'
+#'
+#' @details The function uses the 'pacman' package to ensure that required 
+#' packages are installed and loaded. If 'pacman' is not installed, it will 
+#' automatically install it.
+#'
+#' The function loads the silly files into the global environment as '.gcl' 
+#' objects. If the \code{rds} argument is set to TRUE, 'readRDS' from the 
+#' 'base' package will be used to read the '.rds' files. Otherwise, the 'dget' 
+#' function from the 'base' package will be used to read the '.txt' files.
+#'
+#' If the \code{sillyvec} argument is provided, the function will only load the 
+#' specified files from the \code{path} directory. If any of the files in 
+#' \code{sillyvec} are not present in the \code{path} directory, an error will be
+#' thrown.
+#'
+#' If no files with the specified \code{extension} are found in the \code{path} 
+#' directory, the function will raise an error indicating that there are no 
+#' '.txt' or '.rds' files in the provided path.
+#'
+#' @examples
+#' \dontrun{
+#' # Load all '.txt' files from the 'silly_files' directory
+#' load_sillys("silly_files")
+#'
+#' # Load specific '.rds' files from the 'data' directory
+#' load_sillys("data", sillyvec = c("file1", "file2"), rds = TRUE)
+#' }
+#'
+#' @export
+
+load_sillys <- function(path, sillyvec = NULL, rds = FALSE) {  
   
   if (!require("pacman")) {
     install.packages("pacman")
