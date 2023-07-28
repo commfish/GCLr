@@ -13,7 +13,6 @@
 #' iris <- iris  # bringing into pos = 1
 #' save_sillys(sillyvec = "SGILL15D15", path = "Raw genotypes")
 #'
-#' @importFrom base saveRDS
 #' @export
 save_sillys <- function(sillyvec, path, rds = FALSE) {
 
