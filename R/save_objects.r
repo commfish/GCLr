@@ -1,26 +1,23 @@
+#' Save R objects to disk
+#'
+#' This function saves R objects with either `dput` or `saveRDS`.
+#'
+#' `dput` saves object code to a text file.
+#' `saveRDS` saves objects in rds format, which is a compressed format - saves and reads back into R much faster than a text file.
+#'
+#' @param objects character vector of objects you wish to save
+#' @param path character vector of where you want to save objects
+#' @param rds logical; if set to TRUE the objects will be saved in rds format,
+#'        default is FALSE for backwards compatibility.
+#' 
+#' @return All objects are saved as "objects.txt" or "objects.rds"
+#'
+#' @examples
+#' iris <- iris  # bringing into pos = 1
+#' save_objects(objects = "iris", path = "Objects", rds = TRUE)
+#'
+#' @export
 save_objects <- function(objects, path, rds = FALSE) {
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function saves R objects with either `dput` or 'saveRDS'.
-  #
-  # dput saves object code a text file
-  # saveRDS saves objects in rds format, which is a compressed format - saves and reads back into R much faster than a text file.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   objects - character vector of objects you wish to save
-  #
-  #   path - character vector of where you want to save objects
-  #
-  #   rds - logical; if set to TRUE the objects will be saved in rds format
-  #         default is FALSE for backwards compatablity.
-  # 
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   All objects are saved as "objects.txt" or "objects.rds"
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # iris <- iris  # bringing into pos = 1
-  # save_objects(objects = "iris", path = "Objects", rds = TRUE)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   if (!all(objects %in% ls(pos = 1))) {
     stop(paste0(
