@@ -1,48 +1,47 @@
+#' Stratified Estimator using Bayesian output
+#'
+#' This function reads in BAYES output files (all chains) from multiple temporal strata (mixtures) and, by weighting by harvest from each stratum, produces a seasonal total harvest 
+#' estimate and C.I. for all defined regions (groups). Appologies for the number of arguments--this is necessary to give the required flexibility. The last four arguments will rarely need to be changed.
+#'
+#' WARNING -- A certain directory structure is required for successful execution. Particularly, each mixture's BAYES output files must be within their own sub-directory with the exact name as the mixture.
+#' Also, the BAYES output files need names that begin with the mixture name, followed by the the prior name, followed by Chain -- e.g. "MixnamePriorChain1RGN.RGN" or "MixnamePriorChain1BOT.BOT".
+#' The exact same prioname name must be used in all BAYES output file names.
+#'
+#' The output is an Excel file summarizing total harvest.
+#'
+#' @param groupvec A vector, the same length as the number of populations, each element is the group number for the corresponding population.
+#'                e.g. groupvec = c(1,1,1,2,2,3) will combine the first 3 pops into group 1, the 4th & 5th pops into group 2 and the 6th pop into group 3.
+#'                The elements of groupvec do not need to be in order -- e.g. groupvec = c(1,3,1,2,2,3) is acceptable.
+#' @param groupnames Character string vector of names for the groups.
+#' @param maindir The pathname to the sub-directories that contain the BAYES output files. This is also where the Excel output file will be written to.
+#' @param mixvec Character string vector of mixture names, one for each stratum.
+#' @param catchvec Vector of harvest numbers. Must have the same length as mixvec. Each element is the harvest for its corresponding stratum (mixture).
+#' @param newname Chosen name of the output file without extension.
+#' @param priorname Character string giving the name (type) of the prior used.
+#' @param ext Used to indicate if "RGN" or "BOT" files are to be read in. Defaults to "RGN".
+#' @param nchains The number of chains to read in from each mixture. Defaults to 3.
+#' @param burn Proportion of chain length to use as burn-in. Defaults to 0.5.
+#' @param alpha A proportion. Used to create a 100*(1-alpha)% confidence interval. Defaults to 0.1 (90% CI).
+#' @param xlxs Logical; if TRUE, the output will be written to an Excel file. Requires the `xlsx` package.
+#' @param PosteriorOutput Logical; if TRUE, the function will return both the summary statistics and the posterior output. If FALSE, it will return only the summary statistics.
+#'
+#' @return A summary of the stratified estimator, including mean, standard deviation, median, 90% confidence interval, proportion of values less than the threshold, and Gelman-Rubin statistic.
+#' @examples
+#' \dontrun{
+#' my.groupvec <- c(1,1,1,1,1,1,1,1,2,3,5,5,4,5) 
+#' my.groupnames <- c("Alaska","Nass","Skeena","Fraser","Other") 
+#' my.maindir <- "V:\\WORK\\SARA\\Sockeye\\SEAK\\Analysis\\Mixtures\\0405Dists101104\\Bayes\\Feb2009\\Output\\2005dist104" 
+#' my.mixvec <- c("year2005dist104stat2829a","year2005dist104stat30a","year2005dist104stat31a","year2005dist104stat32a","year2005dist104stat33a","year2005dist104stat34a") 
+#' my.catchvec <- c(14904,20786,36201,93584,66464,274455)
+#' my.newname <-  "TotalHarvest2005dist104_90percentCI"
+#' my.priorname <- "Flat" 
+#'
+#' StratifiedEstimator <- stratified_estimator_bayes(groupvec=my.groupvec, groupnames=my.groupnames, maindir=my.maindir, mixvec=my.mixvec, catchvec=my.catchvec, newname=my.newname, priorname=my.priorname)
+#' }
+#'
+#' @export
+#' 
 stratified_estimator_bayes=function(groupvec, groupnames, maindir, mixvec, catchvec, CVvec=rep(0,length(catchvec)), newname, priorname="", ext="RGN", nchains=5, burn=0.5, alpha=0.1, threshold=5e-7, xlxs=TRUE, PosteriorOutput=FALSE){
-##################################################################################################################################################################################################
-# This function reads in BAYES output files (all chains) from multiple temporal strata (mixtures) and, by weighting by harvest from each stratum, produces a seasonal total harvest 
-#	estimate and C.I. for all defined regions (groups).  Appologies for the number of arguments--this is necessary to give the required flexibility.  The last four arguments will rarely need to be changed.
-#
-#  WARNING -- A certain directory structure is required for successful execution.  Particularly, each mixture's BAYES output files must be within their own sub-directory with the exact name as the mixture.  
-#          -- Also, the BAYES output files need names that begin with the mixture name, followed by the the prior name, followed by Chain -- e.g. "MixnamePriorChain1RGN.RGN" or "MixnamePriorChain1BOT.BOT".
-#          -- The exact same prioname name must be used in all BAYES output file names.   
-#
-#  The output is an Excel file summarizing total harvest.
-# 
-##################################################################################################################################################################################################
-# ARGUMENTS:
-#?sd
-# groupvec -- A vector, the same length as the number of populations, each element is the group number for the corresponding population.
-#           e.g. groupvec = c(1,1,1,2,2,3) will combine the first 3 pops into group 1, the 4th & 5th pops into group 2 and the 6th pop into group 3. 
-#           The elements of groupvec do not need to be in order -- e.g. groupvec = c(1,3,1,2,2,3) is acceptable.                  
-# groupnames -- Charactor string vector of names for the groups. 
-# maindir -- The pathname to the sub-directories that contain the BAYES output files.  This is also where the Excel output file will be written to.     
-# mixvec -- Charactor string vector of mixture names, one for each stratum.  
-# catchvec -- Vector of harvest numbers.  Must have same length as mixvec. Each element is the harvest for its corresponding stratum (mixture).   
-# newname -- Chosen name of output file without extension. 
-# prioname -- Charactor string giving the name (type) of prior used.
-# ext -- Used to indicate if "RGN" or "BOT" files are to be read in.  Defaults to "RGN".
-# nchains -- The number of chains to read in from each mixture.  Defaults to 3.
-# burn -- Proportion of chain length to use as burn-in.  Defaults to 1/2.
-# alpha -- A proportion.  used to create a 100*(1-alpha)% confidence interval.  Defaults to 0.1 (90% CI).
-# nsamps -- The number of re-samplings of each mixture's posterior output.  Defaults to 100,000 which should be adequate for most situations.
-#
-##################################################################################################################################################################################################
-# EXAMPLE
-#
-#  my.groupvec <- c(1,1,1,1,1,1,1,1,2,3,5,5,4,5) 
-#  my.groupnames <- c("Alaska","Nass","Skeena","Fraser","Other") 
-#  my.maindir <- "V:\\WORK\\SARA\\Sockeye\\SEAK\\Analysis\\Mixtures\\0405Dists101104\\Bayes\\Feb2009\\Output\\2005dist104" 
-#  my.mixvec <- c("year2005dist104stat2829a","year2005dist104stat30a","year2005dist104stat31a","year2005dist104stat32a","year2005dist104stat33a","year2005dist104stat34a") 
-#  my.catchvec <- c(14904,20786,36201,93584,66464,274455)
-#  my.newname <-  "TotalHarvest2005dist104_90percentCI"
-#  my.priorname <- "Flat" 
-# 
-#  StratifiedEstimator=stratified_estimator_bayes(groupvec=my.groupvec, groupnames=my.groupnames, maindir=my.maindir, mixvec=my.mixvec, catchvec=my.catchvec, newname=my.newname, priorname=my.prior)
-#
-##################################################################################################################################################################################################
-# Written By JJ 3/1/09
-##################################################################################################################################################################################################
 
 nstrata=length(mixvec)
 

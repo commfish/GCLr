@@ -1,19 +1,20 @@
+#' Save sillys as R objects
+#'
+#' This function saves sillys as R objects with `dput`, it is a wrapper for `dput`.
+#'
+#' @param sillyvec character vector of sillys you wish to save
+#' @param path character vector of where you want to save sillys
+#' @param rds logical; if set to TRUE the sillys will be saved in rds format,
+#'        default is FALSE for backwards compatibility.
+#'
+#' @return All sillyvec are saved as "sillyvec.txt" or "sillyvec.rds", the .gcl is removed
+#'
+#' @examples
+#' iris <- iris  # bringing into pos = 1
+#' save_sillys(sillyvec = "SGILL15D15", path = "Raw genotypes")
+#'
+#' @export
 save_sillys <- function(sillyvec, path, rds = FALSE) {
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # This function saves sillys as R objects with `dput`, it is a wrapper for `dput`.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   sillyvec - character vector of sillys you wish to save
-  #   path - character vector of where you want to save sillys
-  #   rds - logical; if set to TRUE the sillys will be saved in rds format
-  #         default is FALSE for backwards compatablity.
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   All sillyvec are saved as "sillyvec.txt" or "sillyvec.rds", the .gcl is removed
-  #
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # iris <- iris  # bringing into pos = 1
-  # save_sillys(sillyvec = "SGILL15D15", path = "Raw genotypes")
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   sillyvec.gcl <- paste0(sillyvec, ".gcl")
   
