@@ -66,7 +66,7 @@
 #'
 #' The tissue importer requires that all 31 columns are in the correct order and are present. 
 #' When writing the import file, ensure it does not contain NAs. To export the tissue import file 
-#' using [readr::write_csv()], set the `eol` argument to "\r\n" for proper formatting:
+#' using [readr::write_csv()], set the `eol` argument to "\\r\\n" for proper formatting:
 #' \code{import_file %>% readr::write_csv(file = "ImportFile.csv", na = "", eol = "\\r\\n")}
 #'
 #' Additionally, if you have date columns, change their format to 'numeric' in Microsoft Excel 
