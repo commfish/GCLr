@@ -38,91 +38,105 @@
 failure_rate <- function(sillyvec) {
 
     # Pool all collections in to one master silly
-  pool_collections(collections = sillyvec, loci = loci, newname = "master")
+  GCLr::pool_collections(collections = sillyvec, loci = loci, newname = "master")
   
   # Tibble of Dose 1 scores and attributes
-  master.tbl <- dplyr::bind_cols(as_tibble(master.gcl$scores[, , "Dose1"]), as_tibble(master.gcl$attributes[, c("SILLY_CODE", "PLATE_ID", "SillySource")])) %>% 
-    tidyr::gather(locus, genotype, -SILLY_CODE, -PLATE_ID, -SillySource) %>% 
-    dplyr::rename(silly = SILLY_CODE, plate = PLATE_ID, silly_source = SillySource)
+  master.tbl <- master.gcl %>% 
+    dplyr::select(silly = SILLY_CODE,
+                  plate = PLATE_ID,
+                  silly_source = SillySource,
+                  tidyselect::all_of(loci)) %>% 
+    tidyr::pivot_longer(cols = tidyselect::starts_with(loci), names_to = "locus", values_to = "genotype")
+  
+  # master.tbl <- dplyr::bind_cols(tibble::as_tibble(master.gcl$scores[, , "Dose1"]), tibble::as_tibble(master.gcl$attributes[, c("SILLY_CODE", "PLATE_ID", "SillySource")])) %>% 
+  #   tidyr::gather(locus, genotype, -SILLY_CODE, -PLATE_ID, -SillySource) %>% 
+  #   dplyr::rename(silly = SILLY_CODE, plate = PLATE_ID, silly_source = SillySource)
   
   rm(master.gcl, pos = 1)
   
   # Failure rate by silly
   fail_silly <- master.tbl %>% 
     dplyr::group_by(silly) %>% 
-    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / n()) %>% 
+    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / dplyr::n()) %>% 
     dplyr::arrange(dplyr::desc(fail))
   
   # Failure rate by locus
   fail_locus <- master.tbl %>% 
     dplyr::group_by(locus) %>% 
-    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / n()) %>% 
+    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / dplyr::n()) %>% 
     dplyr::arrange(dplyr::desc(fail))
   
   # Failure rate by plate
   fail_plate <- master.tbl %>% 
     dplyr::group_by(plate) %>% 
-    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / n()) %>% 
+    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / dplyr::n()) %>% 
     dplyr::arrange(dplyr::desc(fail))
   
   # Failure rate overall
   fail_overall <- master.tbl %>% 
     dplyr::mutate(project = project) %>% 
     dplyr::group_by(project) %>% 
-    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / n())
+    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / dplyr::n())
   
   # Plot failure rate by silly and locus
   fail_silly_plot <- plotly::ggplotly(
-    ggplot(
+    ggplot2::ggplot(
       master.tbl %>%
         dplyr::group_by(silly, locus) %>%
-        dplyr::summarise(p_fail = sum(genotype == "0") / n()),
-      aes(x = silly, y = locus)
+        dplyr::summarise(p_fail = sum(genotype == "0") / dplyr::n(), .groups = "drop"),
+      ggplot2::aes(x = silly, y = locus)
     ) +
-      geom_tile(aes(fill = p_fail)) +
-      scale_fill_gradientn(
-        colours = colorRampPalette(colors = c("white", "black"))(101),
+      ggplot2::geom_tile(ggplot2::aes(fill = p_fail)) +
+      ggplot2::scale_fill_gradientn(
+        colours = grDevices::colorRampPalette(colors = c("white", "black"))(101),
         values = seq(0.00, 1.00, by = 0.01),
         na.value = "red",
         limit = c(0, 1)
       ) +
-      theme(axis.text.x = element_text(
+      ggplot2::theme(axis.text.x = ggplot2::element_text(
         angle = 45,
         hjust = 1,
         vjust = 1
       )) +
-      ggtitle("Failure Rate by Silly and Locus")
+      ggplot2::ggtitle("Failure Rate by Silly and Locus")
   )
   
   # Plot failure rate by plate and locus
   fail_plate_plot <- plotly::ggplotly(
-    ggplot(
+    ggplot2::ggplot(
       master.tbl %>%
         dplyr::group_by(plate, locus) %>%
-        dplyr::summarise(p_fail = sum(genotype == "0") / n()),
-      aes(x = plate, y = locus)
+        dplyr::summarise(p_fail = sum(genotype == "0") / dplyr::n(), .groups = "drop"),
+      ggplot2::aes(x = plate, y = locus)
     ) +
-      geom_tile(aes(fill = p_fail)) +
-      scale_fill_gradientn(
-        colours = colorRampPalette(colors = c("white", "black"))(101),
+      ggplot2::geom_tile(ggplot2::aes(fill = p_fail)) +
+      ggplot2::scale_fill_gradientn(
+        colours = grDevices::colorRampPalette(colors = c("white", "black"))(101),
         values = seq(0.00, 1.00, by = 0.01),
         na.value = "red",
         limit = c(0, 1)
       ) +
-      theme(axis.text.x = element_text(
+      ggplot2::theme(axis.text.x = ggplot2::element_text(
         angle = 45,
         hjust = 1,
         vjust = 1
       )) +
-      ggtitle("Failure Rate by Plate and Locus")
+      ggplot2::ggtitle("Failure Rate by Plate and Locus")
   )
   
-  failure_rate <- list(silly_failure_rate = fail_silly, 
-                       locus_failure_rate = fail_locus, 
-                       plate_failure_rate = fail_plate, 
-                       overall_failure_rate = fail_overall, 
-                       plot_silly_failure_rate = fail_silly_plot, 
-                       plot_plate_failure_rate = fail_plate_plot)
+  # xxx CSJ - do we just want the list output or something like what I did below (tibble w/ lists)? Does it matter?
+  # failure_rate <- list(silly_failure_rate = fail_silly, 
+  #                      locus_failure_rate = fail_locus, 
+  #                      plate_failure_rate = fail_plate, 
+  #                      overall_failure_rate = fail_overall, 
+  #                      plot_silly_failure_rate = fail_silly_plot, 
+  #                      plot_plate_failure_rate = fail_plate_plot)
+  
+  failure_rate <- tibble::tibble(
+    result_type = c("silly_failure_rate", "locus_failure_rate", "plate_failure_rate", 
+                    "overall_failure_rate", "plot_silly_failure_rate", "plot_plate_failure_rate"),
+    result_value = list(fail_silly, fail_locus, fail_plate, fail_overall, fail_silly_plot, fail_plate_plot)
+  )
   
   return(failure_rate)
 }

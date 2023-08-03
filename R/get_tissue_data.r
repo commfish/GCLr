@@ -1,62 +1,91 @@
-get_tissue_data <- function(sillyvec, username, password, file = NULL, import.vars = TRUE){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  This function connects to LOKI and pulls the tissue information for each silly in sillyvec.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   sillyvec - a character vector of silly codes (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART09"))
-  #
-  #   username - your state user name
-  #
-  #   password - your password used to access LOKI - see Eric Lardizabal if you don't have a password for LOKI
-  #
-  #   file - the file path, including .csv extension, for writing out a csv file of the output. 
-  #
-  #   import.vars - if TRUE (default), the output will only contain the 31 fields used by the Loki tissue importer (same as OceanAK report)
-  #                 if FALSE, the output will include 7 additional collection information fields
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   If import.vars = TRUE, the function outputs a tibble containing the following 31 variables:
-  #  
-  #   FK_COLLECTION_ID, FK_FISH_ID, PK_TISSUE_TYPE, CAPTURE_LOCATION, CAPTURE_DATE, END_CAPTURE_DATE, LATITUDE, LONGITUDE, MESH_SIZE, 
-  #   MESH_SIZE_COMMENT, IS_MISSING_PAIRED_DATA_EXISTS, WELL_HAS_MORE_THAN_ONE_SAMPLE, IS_PRESENT_IN_DATASHEET, IS_PRESENT_BUT_NOT_IN_DS, 
-  #   VIAL_BARCODE, CONTAINER_ARRAY_TYPE_ID, DNA_TRAY_WORKBENCH_ID, DNA_TRAY_CODE, DNA_TRAY_WELL_POS, DNA_TRAY_WELL_CODE, STORAGE_ID, 
-  #   UNIT, SHELF_RACK, SLOT, EXHAUSTED_HOW, EXHAUSTED_BY, EXHAUSTED_DATE, AGENCY, OTHER_AGENCY_KEY, NUM_OTOLITHS_MISSING, OTO_INVENTORY_COMMENT
-  #
-  #   If import.vars = FALSE, the function outputs a tibble containing 7 collection information variables (columns 1-7) and the 31 tissue import variables (columns 8-38). 
-  #   Here are the collection information variables:
-  #
-  #   SILLY_CODE, REGION_CODE, QUADRANT, LOCATION_CODE, LOCATION_DESCRIPTOR, LIFE_STAGE, COLLECTION_TYPE
-  #
-  #   If file is supplied, the tibble is written to a csv file with NAs removed.
-  #   
-  # Example~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  
-  #   password = "************"
-  #
-  #   source("~/R/Functions.R")# Load GCL functions; your path may differ.
-  #
-  #   get_tissue_data(sillyvec = c("KCDVF18", "KCDVF19", "KCDVF20"), username = "awbarclay", password = password, file = "C:/Users/awbarclay/Documents/R/test_tissue_table.csv", import.vars = FALSE)
-  #
-  # Note~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  # The output of this function is can be used for creating an import file for the Loki tissue importer to add additional information to Loki tissue table (default output) and 
-  # and extraction lists for lab projects.
-  #
-  # The tissue importer requires that all columns are in the correct order and spelled correctly. 
-  #
-  # When writing the import file, make sure it does not contain NAs. (see example above) 
-  #
-  # The tissue importer doesn't like some date formats. Before importing tissue information with dates, 
-  # open the file in excel and change the format of date columns to numeric and then save the file; the numbers will get converted to dates in Loki.
-  #
-  # Also, when using readr::write_csv to write out the tissue import file, make sure to change the eol argument to from the default "\n" to "\r\n" or the importer
-  # will give you an error message about the header names.  e.g.,  import_file %>% write_csv(file = "ImportFile.csv", na = "", eol = "\r\n")
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
- 
+#' Get Tissue Data
+#'
+#' This function connects to LOKI and pulls the tissue information for each silly in sillyvec.
+#'
+#' @param sillyvec A character vector of silly codes.
+#' @param username Your state user name.
+#' @param password Your password used to access LOKI.
+#' @param file The file path for writing out a CSV file of the output (optional).
+#' @param import.vars If TRUE, output contains the 31 fields used by the Loki tissue importer (same as OceanAK report).
+#' If FALSE, output includes 7 additional collection information fields.
+#'
+#' @returns A tibble containing the specific tissue data, as determined by `import.vars`.
+#' 
+#' @section Returns:
+#' If \code{import.vars = TRUE}, the function returns a tibble with the following 31 variables:
+#' \itemize{
+#'   \item{FK_COLLECTION_ID}{...}
+#'   \item{FK_FISH_ID}{...}
+#'   \item{PK_TISSUE_TYPE}{...}
+#'   \item{CAPTURE_LOCATION}{...}
+#'   \item{CAPTURE_DATE}{...}
+#'   \item{END_CAPTURE_DATE}{...}
+#'   \item{LATITUDE}{...}
+#'   \item{LONGITUDE}{...}
+#'   \item{MESH_SIZE}{...}
+#'   \item{MESH_SIZE_COMMENT}{...}
+#'   \item{IS_MISSING_PAIRED_DATA_EXISTS}{...}
+#'   \item{WELL_HAS_MORE_THAN_ONE_SAMPLE}{...}
+#'   \item{IS_PRESENT_IN_DATASHEET}{...}
+#'   \item{IS_PRESENT_BUT_NOT_IN_DS}{...}
+#'   \item{VIAL_BARCODE}{...}
+#'   \item{CONTAINER_ARRAY_TYPE_ID}{...}
+#'   \item{DNA_TRAY_WORKBENCH_ID}{...}
+#'   \item{DNA_TRAY_CODE}{...}
+#'   \item{DNA_TRAY_WELL_POS}{...}
+#'   \item{DNA_TRAY_WELL_CODE}{...}
+#'   \item{STORAGE_ID}{...}
+#'   \item{UNIT}{...}
+#'   \item{SHELF_RACK}{...}
+#'   \item{SLOT}{...}
+#'   \item{EXHAUSTED_HOW}{...}
+#'   \item{EXHAUSTED_BY}{...}
+#'   \item{EXHAUSTED_DATE}{...}
+#'   \item{AGENCY}{...}
+#'   \item{OTHER_AGENCY_KEY}{...}
+#'   \item{NUM_OTOLITHS_MISSING}{...}
+#'   \item{OTO_INVENTORY_COMMENT}{...}
+#' }
+#'
+#' If \code{import.vars = FALSE}, the function returns a tibble with 7 collection information variables and the 31 tissue import variables.
+#' The additional collection information variables are:
+#' \itemize{
+#'   \item{SILLY_CODE}{...}
+#'   \item{REGION_CODE}{...}
+#'   \item{QUADRANT}{...}
+#'   \item{LOCATION_CODE}{...}
+#'   \item{LOCATION_DESCRIPTOR}{...}
+#'   \item{LIFE_STAGE}{...}
+#'   \item{COLLECTION_TYPE}{...}
+#' }
+#'
+#' @note
+#' Output of this function can be used for creating an import file for the Loki tissue importer, 
+#' adding additional information to the Loki tissue table (default output), and 
+#' generating extraction lists for lab projects.
+#'
+#' The tissue importer requires that all 31 columns are in the correct order and are present. 
+#' When writing the import file, ensure it does not contain NAs. To export the tissue import file 
+#' using [readr::write_csv()], set the `eol` argument to "\r\n" for proper formatting:
+#' \code{import_file %>% readr::write_csv(file = "ImportFile.csv", na = "", eol = "\\r\\n")}
+#'
+#' Additionally, if you have date columns, change their format to 'numeric' in Microsoft Excel 
+#' before importing tissue information with dates.
+#' 
+#'
+#' @examples
+#' \dontrun{
+#' get_tissue_data(
+#'   sillyvec = c("KCDVF18", "KCDVF19", "KCDVF20"),
+#'   username = "user",
+#'   password = "password",
+#'   file = "test_tissue_table.csv",
+#'   import.vars = FALSE
+#' )
+#' }
+#'
+#' @export
+get_tissue_data <- function(sillyvec, username, password, file = NULL, import.vars = TRUE) {
   start.time <- Sys.time() 
   
   options(java.parameters = "-Xmx10g")
@@ -75,15 +104,15 @@ get_tissue_data <- function(sillyvec, username, password, file = NULL, import.va
   
   discon <- RJDBC::dbDisconnect(con) # Disconnect from Loki
   
-  if(import.vars == TRUE){
+  if (import.vars == TRUE) {
     
     output <- dataAll %>% 
       tibble::as_tibble() %>%
       dplyr::mutate(CAPTURE_DATE = lubridate::as_date(CAPTURE_DATE), END_CAPTURE_DATE = lubridate::as_date(END_CAPTURE_DATE)) %>% 
       dplyr::select(FK_COLLECTION_ID, FK_FISH_ID, PK_TISSUE_TYPE, CAPTURE_LOCATION, CAPTURE_DATE, END_CAPTURE_DATE, LATITUDE, LONGITUDE, MESH_SIZE, 
-             MESH_SIZE_COMMENT, IS_MISSING_PAIRED_DATA_EXISTS, WELL_HAS_MORE_THAN_ONE_SAMPLE, IS_PRESENT_IN_DATASHEET, IS_PRESENT_BUT_NOT_IN_DS, 
-             VIAL_BARCODE, CONTAINER_ARRAY_TYPE_ID, DNA_TRAY_WORKBENCH_ID, DNA_TRAY_CODE, DNA_TRAY_WELL_POS, DNA_TRAY_WELL_CODE, STORAGE_ID, 
-             UNIT, SHELF_RACK, SLOT, EXHAUSTED_HOW, EXHAUSTED_BY, EXHAUSTED_DATE, AGENCY, OTHER_AGENCY_KEY, NUM_OTOLITHS_MISSING, OTO_INVENTORY_COMMENT)
+                    MESH_SIZE_COMMENT, IS_MISSING_PAIRED_DATA_EXISTS, WELL_HAS_MORE_THAN_ONE_SAMPLE, IS_PRESENT_IN_DATASHEET, IS_PRESENT_BUT_NOT_IN_DS, 
+                    VIAL_BARCODE, CONTAINER_ARRAY_TYPE_ID, DNA_TRAY_WORKBENCH_ID, DNA_TRAY_CODE, DNA_TRAY_WELL_POS, DNA_TRAY_WELL_CODE, STORAGE_ID, 
+                    UNIT, SHELF_RACK, SLOT, EXHAUSTED_HOW, EXHAUSTED_BY, EXHAUSTED_DATE, AGENCY, OTHER_AGENCY_KEY, NUM_OTOLITHS_MISSING, OTO_INVENTORY_COMMENT)
     
   } else{
     
@@ -91,14 +120,14 @@ get_tissue_data <- function(sillyvec, username, password, file = NULL, import.va
       tibble::as_tibble() %>%
       dplyr::mutate(CAPTURE_DATE = lubridate::as_date(CAPTURE_DATE), END_CAPTURE_DATE = lubridate::as_date(END_CAPTURE_DATE)) %>% 
       dplyr::select(SILLY_CODE, REGION_CODE, QUADRANT, LOCATION_CODE, LOCATION_DESCRIPTOR, LIFE_STAGE, COLLECTION_TYPE,
-             FK_COLLECTION_ID, FK_FISH_ID, PK_TISSUE_TYPE, CAPTURE_LOCATION, CAPTURE_DATE, END_CAPTURE_DATE, LATITUDE, LONGITUDE, MESH_SIZE, 
-             MESH_SIZE_COMMENT, IS_MISSING_PAIRED_DATA_EXISTS, WELL_HAS_MORE_THAN_ONE_SAMPLE, IS_PRESENT_IN_DATASHEET, IS_PRESENT_BUT_NOT_IN_DS, 
-             VIAL_BARCODE, CONTAINER_ARRAY_TYPE_ID, DNA_TRAY_WORKBENCH_ID, DNA_TRAY_CODE, DNA_TRAY_WELL_POS, DNA_TRAY_WELL_CODE, STORAGE_ID, 
-             UNIT, SHELF_RACK, SLOT, EXHAUSTED_HOW, EXHAUSTED_BY, EXHAUSTED_DATE, AGENCY, OTHER_AGENCY_KEY, NUM_OTOLITHS_MISSING, OTO_INVENTORY_COMMENT)
+                    FK_COLLECTION_ID, FK_FISH_ID, PK_TISSUE_TYPE, CAPTURE_LOCATION, CAPTURE_DATE, END_CAPTURE_DATE, LATITUDE, LONGITUDE, MESH_SIZE, 
+                    MESH_SIZE_COMMENT, IS_MISSING_PAIRED_DATA_EXISTS, WELL_HAS_MORE_THAN_ONE_SAMPLE, IS_PRESENT_IN_DATASHEET, IS_PRESENT_BUT_NOT_IN_DS, 
+                    VIAL_BARCODE, CONTAINER_ARRAY_TYPE_ID, DNA_TRAY_WORKBENCH_ID, DNA_TRAY_CODE, DNA_TRAY_WELL_POS, DNA_TRAY_WELL_CODE, STORAGE_ID, 
+                    UNIT, SHELF_RACK, SLOT, EXHAUSTED_HOW, EXHAUSTED_BY, EXHAUSTED_DATE, AGENCY, OTHER_AGENCY_KEY, NUM_OTOLITHS_MISSING, OTO_INVENTORY_COMMENT)
     
   }
   
-  if(!is.null(file)){
+  if (!is.null(file)) {
     
     readr::write_csv(output, file, na = "") # Write out a csv file without NAs
     
@@ -111,5 +140,23 @@ get_tissue_data <- function(sillyvec, username, password, file = NULL, import.va
   print(fulltime)
   
   return(output)
-  
 }
+
+
+  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #
+  #   If import.vars = TRUE, the function outputs a tibble containing the following 31 variables:
+  #  
+  #   FK_COLLECTION_ID, FK_FISH_ID, PK_TISSUE_TYPE, CAPTURE_LOCATION, CAPTURE_DATE, END_CAPTURE_DATE, LATITUDE, LONGITUDE, MESH_SIZE, 
+  #   MESH_SIZE_COMMENT, IS_MISSING_PAIRED_DATA_EXISTS, WELL_HAS_MORE_THAN_ONE_SAMPLE, IS_PRESENT_IN_DATASHEET, IS_PRESENT_BUT_NOT_IN_DS, 
+  #   VIAL_BARCODE, CONTAINER_ARRAY_TYPE_ID, DNA_TRAY_WORKBENCH_ID, DNA_TRAY_CODE, DNA_TRAY_WELL_POS, DNA_TRAY_WELL_CODE, STORAGE_ID, 
+  #   UNIT, SHELF_RACK, SLOT, EXHAUSTED_HOW, EXHAUSTED_BY, EXHAUSTED_DATE, AGENCY, OTHER_AGENCY_KEY, NUM_OTOLITHS_MISSING, OTO_INVENTORY_COMMENT
+  #
+  #   If import.vars = FALSE, the function outputs a tibble containing 7 collection information variables (columns 1-7) and the 31 tissue import variables (columns 8-38). 
+  #   Here are the collection information variables:
+  #
+  #   SILLY_CODE, REGION_CODE, QUADRANT, LOCATION_CODE, LOCATION_DESCRIPTOR, LIFE_STAGE, COLLECTION_TYPE
+  #
+  #   If file is supplied, the tibble is written to a csv file with NAs removed.
+  #   
+ 

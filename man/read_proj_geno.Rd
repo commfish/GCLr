@@ -32,11 +32,13 @@ Returns \code{LocusControl} for all loci used in the project (including "loci", 
 }
 \description{
 This function is intended for use in the qc.R script. It pulls project genotypes to create "slim" .gcl objects for each silly and the LocusControl for all loci used in the project.
-Warning: Genotypes (pre-October 2016) may not exist in the LOKI lookup table with a project name, so genotypes will have to be pulled by sillyvec and loci.
 }
 \details{
 This function pulls project genotypes from LOKI database to create "slim" .gcl objects for each silly, along with the LocusControl for all loci used in the project.
 The function checks the combination of arguments to ensure the correct usage.
+}
+\note{
+Warning: Genotypes (pre-October 2016) may not exist in the LOKI lookup table with a project name, so genotypes will have to be pulled by sillyvec and loci.
 }
 \examples{
 \dontrun{
