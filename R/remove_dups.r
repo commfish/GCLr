@@ -31,7 +31,7 @@
 #' @export
 remove_dups <- function(dupcheck, remove_both = FALSE){
   
-  if(is_empty(dupcheck)){
+  if (rlang::is_empty(dupcheck)) {
     
     warning("Nothing removed. There are no duplicates to remove in dupcheck.", call. = FALSE)
     
@@ -44,7 +44,7 @@ remove_dups <- function(dupcheck, remove_both = FALSE){
   
   dupcheck_names <-  c("silly", "ID1", "ID2", "Missing1", "Missing2", "proportion")
   
-  if(!all(dupcheck_names %in% names(dupcheck))){
+  if (!all(dupcheck_names %in% names(dupcheck))) {
     
     stop(paste0("Nothing removed. Dupcheck must contain the folling variables: ", paste0(dupcheck_names, collapse = ", ")))
     
@@ -53,7 +53,7 @@ remove_dups <- function(dupcheck, remove_both = FALSE){
   sillys <- dupcheck$silly %>% 
     unique()
   
-  if(remove_both == TRUE) {
+  if (remove_both == TRUE) {
     
     to_remove <- dupcheck %>%
       tidyr::pivot_longer(
@@ -81,7 +81,7 @@ remove_dups <- function(dupcheck, remove_both = FALSE){
       dplyr::filter(silly == !!silly) %>% 
       dplyr::select(silly, removed_IDs = remove)
     
-    remove_ids(silly = silly, IDs = remove$removed_IDs)
+    GCLr::remove_ids(silly = silly, IDs = remove$removed_IDs)
     
   }) %>% dplyr::bind_rows()
   
