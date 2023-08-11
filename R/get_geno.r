@@ -1,54 +1,39 @@
+#' Get Genotypes
+#'
+#' This function pulls a genotypes report from LOKI and writes the data to a UTF-8 coded .csv file.
+#'
+#' @param project_name A character vector of GCL project names to pull from LOKI (default = NULL).
+#' @param sillyvec A character vector of silly codes without the ".gcl" extension (default = NULL).
+#' @param loci A character vector of locus names as spelled in LOKI (default = NULL).
+#' @param path The full file path with .csv extension for writing output genotypes file; with "\\" or "/" separator between folder.
+#' @param username Your user name for accessing LOKI.
+#' @param password Your password for accessing LOKI.
+#' @param open.file Logical, if set to TRUE, the .csv file will open after it has been written (default = FALSE).
+#' 
+#' @returns A slim, tibble and a UTF-8 coded .csv file with single column genotypes in a wide format (1 column per locus):
+#'     \itemize{
+#'       \item \code{LAB_PROJECT_NAME}: the lab project name
+#'       \item \code{FK_COLLECTION_ID}: the collection ID (internal to LOKI)
+#'       \item \code{SILLY_CODE}: the silly code
+#'       \item \code{FK_FISH_ID}: the fish ID
+#'       \item \code{DNA_PLATE_ID}: the plate ID that was genotyped (only if `project_name` is given) 
+#'       \item \code{Locus_1}: genotype for the first locus, 1 column (i.e., all alleles, separated by "/")
+#'       \item \code{Locus_n}: genotype for the nth locus, 1 column (i.e., all alleles, separated by "/")
+#'       }
+#' 
+#' @details This function requires the R package "RJDBC" for connecting to LOKI.
+#' It connects to LOKI using the provided \code{username} and \code{password}, and retrieves genotypes and and slim attributes.
+#' The genotypes report will only contain DNA plate IDs if project_name is supplied.
+#'
+#' @examples
+#' \dontrun{
+#' Geno_locisilly <- get_geno(sillyvec = sillyvec, loci = loci, path = "TestGenotypesReport_sillyloci.csv", username = username, password = password, project_name = NULL)
+#' Geno_silly <- get_geno(sillyvec = sillyvec, loci = NULL, path = "TestGenotypesReport_silly.csv", username = username, password = password, project_name = NULL)
+#' Geno_proj <- get_geno(project_name = "K205", path = "TestGenotypesReport_proj.csv", username = username, password = password, project_name = "S180", open.file = TRUE)
+#' }
+#' 
+#' @export
 get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, path, username, password, open.file = FALSE){  
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  This function pulls a genotypes report from LOKI and writes the data to aUTF-8 coded csv file.
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #  sillyvec - character vector of SILLYs - example: c("SCIMA18","SCIMA17")
-  #
-  #  loci - character vector of locus names as they are spelled in LOKI - example: c("One_E2","One_MHC2_251","One_Cytb_17")
-  #
-  #  path - file path with csv extension for writing output file with "\\" separator between folders example: "V:\\Analysis\\Staff\\Andy Barclay\\R\Genotypes report"
-  #
-  #  username - your user name for accessing LOKI through R example: "awbarclay"
-  #
-  #  password - your password for accessing LOKI through R example: "password"
-  #
-  #  project_name - a character vector of one or more project names as spelled in LOKI example: c("P014","P015","P016")
-  #
-  #  open.file - logical, if set to TRUE, the CSV file will open after it has been written. Default is FALSE.
-  #
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #   
-  #  CSV file - Crosstab format of silly individuals by loci with both alleles in one column. 
-  #
-  #  Function returns a tibble of the genotypes
-  # 
-  # Examples~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # password <- "************"
-  # username <- "awbarclay"
-  # sillyvec <- c("SCHIG09s","SCHIG09j","SCHIG11s","SCHIGL11s","SCHIG11j")
-  # loci <- c("One_E2","One_MHC2_251","One_Cytb_17")
-  # project_name <- c("P014","P015","P016")
-  #
-  # Geno_locisilly <- get_geno(sillyvec = sillyvec, loci = loci, path = "TestGenotypesReport_sillyloci.csv", username = username, password = password, project_name = NULL)
-  #
-  # Geno_silly <- get_geno(sillyvec = sillyvec, loci = NULL, path = "TestGenotypesReport_silly.csv", username = username, password = password, project_name = NULL)
-  #
-  # Geno_proj <- get_geno(sillyvec = NULL, loci = NULL, path = "TestGenotypesReport_proj.csv", username = username, password = password, project_name = "S180", open.file = TRUE)
-  #
-  # Geno_P014_16 <- get_geno(sillyvec = NULL, loci = NULL, path = "TestGenotypesReport_P014_16.csv", username = username, password = password, project_name = project_name)
-  # 
-  # Geno_olddata <- get_geno(sillyvec = sillyvec, loci = NULL, path = "TestGenotypesReport_olddata.csv", username = username, password = password, project_name = NULL, open.file = TRUE)
-  #
-  # Geno_loci <- get_geno(sillyvec = NULL, loci = loci, path = "TestGenotypesReport_allsillys.csv", username = username, password = password, project_name = NULL, open.file = TRUE)
-  # 
-  # Notes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # 
-  # The genotypes report will only contain DNA plate IDs if project_name is supplied.
-  #
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   # Recording function start time
   start.time <- Sys.time()
@@ -75,7 +60,7 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, path, us
   # Setting default java.parameters
   options(java.parameters = "-Xmx10g")
   
-  url <- GCLr::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
+  url <- GCLr:::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
   drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
   
@@ -136,7 +121,7 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, path, us
       dplyr::select(LAB_PROJECT_NAME, FK_COLLECTION_ID, SILLY_CODE, FK_FISH_ID, DNA_PLATE_ID, LOCUS, ALLELES) %>%
       tidyr::pivot_wider(names_from = LOCUS, values_from = ALLELES)
      
-  }else{
+  } else {
     
     dataAll <- RJDBC::dbGetQuery(con, gnoqry) %>% 
       tibble::as_tibble() 
