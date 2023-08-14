@@ -26,9 +26,7 @@
 ##' @export
 extract_photo_data <- function(folder, data.file = NULL, plot.map = TRUE, map.file = NULL){
   
-  setwd(folder)
-  
-  files <- list.files(folder, pattern = "*.jpg", full.names = FALSE, ignore.case = TRUE) #Get file names with .JPG extension
+  files <- list.files(folder, pattern = "*.jpg", full.names = TRUE, ignore.case = TRUE) #Get file names with .JPG extension
   
   data0 <- lapply(files, function(file){
     
@@ -69,7 +67,7 @@ extract_photo_data <- function(folder, data.file = NULL, plot.map = TRUE, map.fi
    
   if(!is.null(data.file)){
     
-    readr::write_csv(output, file = data.file)
+    readr::write_csv(output, file = paste0(folder, "/", data.file))
     
   }
   
@@ -81,7 +79,7 @@ extract_photo_data <- function(folder, data.file = NULL, plot.map = TRUE, map.fi
   
   if(plot.map == TRUE | !is.null(map.file)){
     
-    images <- paste0(folder, "/", output$FileName) # These are the images to add as popups
+    images <- paste0(folder, "/", output %>% dplyr::filter(!is.na(latitude)) %>% pull(FileName)) # These are the images to add as popups
     
     pts <- sf::st_as_sf(output %>% dplyr::filter(!is.na(latitude)), coords = c("longitude", "latitude"), crs = 4326) # Create sf object for plotting points
     
@@ -97,7 +95,7 @@ extract_photo_data <- function(folder, data.file = NULL, plot.map = TRUE, map.fi
       
   if(!is.null(map.file)){
       
-      htmlwidgets::saveWidget(map, file = map.file)
+      htmlwidgets::saveWidget(map, file = paste0(folder, "/", map.file))
     
   }
   
