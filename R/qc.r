@@ -183,7 +183,7 @@ qc <- function(dirqc, species, project, project_type, username, password, qcSumm
     
     ProjectSillys_SampleSizes[, "Genotyped"] <- sapply(paste(ProjectSillys, ".gcl", sep = ''), function(x) get(x)$n)
     
-    if (species %in% c("chum", "sockeye")) {
+    if (species %in% c("chum", "sockeye") & loci %in% c("Oke_U1018-50", "Oke_U2032-74",	"Oke_Cr386", "Oke_AhR1-78", "Oke_CKS1-94", "Oke_e2ig5-50", "Oke_U1002-262", "Oke_U1025-135", "Oke_u200-385", "Oke_U2025-86", "Oke_U502-241", "One_ctgf-301", "One_KCT1-453", "One_taf12-248", "One_U1013-108", "One_U1214-107", "One_Hsp47", "One_STC-410", "One_U1010-81", "One_MHC2_190", "One_cin-177", "One_vatf-214")) {
       
       Alternate <- GCLr::find_alt_species(sillyvec = ProjectSillys, species = species) %>% 
         dplyr::as_tibble()
