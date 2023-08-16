@@ -5,7 +5,7 @@
 #' @param project_name A character vector of GCL project names to pull from LOKI (default = NULL).
 #' @param sillyvec A character vector of silly codes without the ".gcl" extension (default = NULL).
 #' @param loci A character vector of locus names as spelled in LOKI (default = NULL).
-#' @param path The full file path with .csv extension for writing output genotypes file; with "\\" or "/" separator between folder.
+#' @param file The full file path with .csv extension for writing output genotypes file; with "\\" or "/" separator between folder.
 #' @param username Your user name for accessing LOKI.
 #' @param password Your password for accessing LOKI.
 #' @param open.file Logical, if set to TRUE, the .csv file will open after it has been written (default = FALSE).
@@ -27,13 +27,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' Geno_locisilly <- get_geno(sillyvec = sillyvec, loci = loci, path = "TestGenotypesReport_sillyloci.csv", username = username, password = password, project_name = NULL)
-#' Geno_silly <- get_geno(sillyvec = sillyvec, loci = NULL, path = "TestGenotypesReport_silly.csv", username = username, password = password, project_name = NULL)
-#' Geno_proj <- get_geno(project_name = "K205", path = "TestGenotypesReport_proj.csv", username = username, password = password, project_name = "S180", open.file = TRUE)
+#' Geno_locisilly <- get_geno(sillyvec = sillyvec, loci = loci, file = "TestGenotypesReport_sillyloci.csv", username = username, password = password, project_name = NULL)
+#' Geno_silly <- get_geno(sillyvec = sillyvec, loci = NULL, file = "TestGenotypesReport_silly.csv", username = username, password = password, project_name = NULL)
+#' Geno_proj <- get_geno(project_name = "K205", file = "TestGenotypesReport_proj.csv", username = username, password = password, open.file = TRUE)
 #' }
 #' 
 #' @export
-get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, path, username, password, open.file = FALSE){  
+get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, file, username, password, open.file = FALSE){  
 
   # Recording function start time
   start.time <- Sys.time()
@@ -51,7 +51,7 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, path, us
     }
   
   # Checking to make sure a file path is supplied
-  if(!exists("path") | !length(grep("*.csv", path, value = FALSE)) == 1){
+  if(!exists("file") | !length(grep("*.csv", file, value = FALSE)) == 1){
     
     stop("The user must supply a file path with csv extension for writing out genotypes table.")
     
@@ -112,7 +112,7 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, path, us
     
     dataAll <- dataAll %>% 
       dplyr::mutate(DNA_PLATE_ID = PLATE_ID) %>% 
-      dplyr::filter(LAB_PROJECT_NAME == project_name) %>% 
+      dplyr::filter(LAB_PROJECT_NAME %in% project_name) %>% 
       dplyr::select(-ALLELE_1, -ALLELE_2) %>%
       dplyr::rename(ALLELE_1 = ALLELE_1_FIXED, ALLELE_2 = ALLELE_2_FIXED) %>% 
       tidyr::unite(GENO, ALLELE_1, ALLELE_2, sep = "/", remove = FALSE) %>% 
@@ -136,7 +136,6 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, path, us
       tidyr::pivot_wider(names_from = LOCUS, values_from = ALLELES)
     
     }
-  
    
   # Disconnect from LOKI
   discon <- RJDBC::dbDisconnect(con)
@@ -149,24 +148,23 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, path, us
      }
     
   # Write data to an excel csv file
-  dataAll %>% 
-    readr::write_excel_csv(file = path)
+    dataAll %>% 
+      readr::write_excel_csv(file = file)
   
   # Open CSV file in excel if open.file is set to TRUE
   if(open.file == TRUE){
     
-    shell(path, wait = FALSE)
+    shell(file, wait = FALSE)
     
     }
   
   # Calculate the time it took the function to pull and write data and print time to console
   stop.time <- Sys.time() 
   
-  message(paste0("CSV file writen to:", tools::file_path_as_absolute(path)))
+  message(paste0("CSV file writen to:", tools::file_path_as_absolute(file)))
   print(stop.time-start.time)
   
   # Return data to assign to an object
   return(dataAll)
    
 }
-

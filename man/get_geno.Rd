@@ -8,7 +8,7 @@ get_geno(
   project_name = NULL,
   sillyvec = NULL,
   loci = NULL,
-  path,
+  file,
   username,
   password,
   open.file = FALSE
@@ -21,7 +21,7 @@ get_geno(
 
 \item{loci}{A character vector of locus names as spelled in LOKI (default = NULL).}
 
-\item{path}{The full file path with .csv extension for writing output genotypes file; with "\\" or "/" separator between folder.}
+\item{file}{The full file path with .csv extension for writing output genotypes file; with "\\" or "/" separator between folder.}
 
 \item{username}{Your user name for accessing LOKI.}
 
@@ -51,9 +51,9 @@ The genotypes report will only contain DNA plate IDs if project_name is supplied
 }
 \examples{
 \dontrun{
-Geno_locisilly <- get_geno(sillyvec = sillyvec, loci = loci, path = "TestGenotypesReport_sillyloci.csv", username = username, password = password, project_name = NULL)
-Geno_silly <- get_geno(sillyvec = sillyvec, loci = NULL, path = "TestGenotypesReport_silly.csv", username = username, password = password, project_name = NULL)
-Geno_proj <- get_geno(project_name = "K205", path = "TestGenotypesReport_proj.csv", username = username, password = password, project_name = "S180", open.file = TRUE)
+Geno_locisilly <- get_geno(sillyvec = sillyvec, loci = loci, file = "TestGenotypesReport_sillyloci.csv", username = username, password = password, project_name = NULL)
+Geno_silly <- get_geno(sillyvec = sillyvec, loci = NULL, file = "TestGenotypesReport_silly.csv", username = username, password = password, project_name = NULL)
+Geno_proj <- get_geno(project_name = "K205", file = "TestGenotypesReport_proj.csv", username = username, password = password, open.file = TRUE)
 }
 
 }
