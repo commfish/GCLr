@@ -212,7 +212,7 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
     nind <- length(sillyvials)
     
     silly_df_cols <- rep(NA_real_, nloci*2) %>% 
-      purrr::set_names(c(loci, paste0(loci, ".1")) %>% sort()) 
+      purrr::set_names(c(rbind(loci, paste0(loci, ".1")))) 
     
     silly_df0 <- sillydata %>%
       dplyr::arrange(LOCUS) %>%
