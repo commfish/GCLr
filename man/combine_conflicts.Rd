@@ -16,6 +16,7 @@ This function combines QC conflict reports and adds a column of PLATE_IDs associ
  \dontrun{
  
 combine_conflicts(files = c("CM31 qc 01 Import Results.csv", "CM31 qc 02 Import Results.csv", "CM31 qc Plate3 Imports.csv"))
+
 }
 
 }

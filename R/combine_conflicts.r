@@ -10,14 +10,12 @@
 #'  \dontrun{
 #'  
 #' combine_conflicts(files = c("CM31 qc 01 Import Results.csv", "CM31 qc 02 Import Results.csv", "CM31 qc Plate3 Imports.csv"))
+#' 
 #' }
 #' 
 #' @export
 combine_conflicts <- function(files) {
   
-  if (sys.call()[[1]] == quote(CombineConflictsWithPlateID.GCL.r)) {
-    warning("The function 'CombineConflictsWithPlateID.GCL.r' is deprecated. Please use 'combine_conflicts' instead.")
-  }
   # Read in concordance files
   suppressMessages(
     concordance <- files %>% 
@@ -38,7 +36,7 @@ combine_conflicts <- function(files) {
   
   # Re-format concordance tibble
   concordance <- concordance %>% 
-    tidyr::unite(silly_source, c(`Silly Code`, `Fish ID`), sep = "_", remove = FALSE) %>% 
+    tidyr::unite(SillySource, c(`Silly Code`, `Fish ID`), sep = "_", remove = FALSE) %>% 
     dplyr::mutate(`Silly Code` = factor(x = `Silly Code`, levels = ProjectSillys))
   
   # Old conflict report has "0" for mitochondrial conflicts, new has " " for mitochondrial conflicts, we will refer to them as "Homo-Homo".
@@ -46,16 +44,15 @@ combine_conflicts <- function(files) {
   types <- c("DB Zero", "File Zero", "Het-Het", "Het-Homo", "Homo-Het", "Homo-Homo")  # order with levels
   
   # Pool all collections in to one master silly
-  pool_collections(collections = ProjectSillys, loci = loci, newname = "master")
+  GCLr::pool_collections(collections = ProjectSillys, loci = loci, newname = "master")
   
   # Tibble of reduced attributes table
-  master.tbl <- master.gcl$attributes %>% 
-    dplyr::as_tibble() %>% 
+  master.tbl <- master.gcl %>% 
     dplyr::select(SillySource, PLATE_ID)
   
   # Join plate id
   concordance_join <- concordance %>% 
-    dplyr::left_join(master.tbl, by = c("silly_source" = "SillySource")) %>% 
+    dplyr::left_join(master.tbl, by = "SillySource") %>% 
     dplyr::rename(silly = `Silly Code`, 
                   fish_id = `Fish ID`,
                   locus = Locus,
@@ -66,7 +63,7 @@ combine_conflicts <- function(files) {
                   concordance = Concordance,
                   concordance_type = `Concordance Type`,
                   plate_id = PLATE_ID) %>% 
-    dplyr::select(silly, fish_id, silly_source, locus, file_allele_1, file_allele_2, db_allele_1, db_allele_2, concordance, concordance_type, plate_id) %>% 
+    dplyr::select(silly, fish_id, SillySource, locus, file_allele_1, file_allele_2, db_allele_1, db_allele_2, concordance, concordance_type, plate_id) %>% 
     dplyr::filter(concordance == "Conflict") %>% 
     dplyr::mutate(concordance_type = dplyr::recode_factor(concordance_type, !!!level_key)) %>%  # recode to deal with mitochondrial conflicts
     dplyr::mutate(concordance_type = factor(x = concordance_type, levels = types)) %>%  # new levels
@@ -75,7 +72,7 @@ combine_conflicts <- function(files) {
     dplyr::mutate(plate_id = factor(x = plate_id, levels = sort(unique(plate_id))))
   
   # Write copy
-  readr::write_csv(concordance_join, path = "Conflict Reports/CombinedConflictsWithPlateID.csv")
+  readr::write_csv(concordance_join, file = "Conflict Reports/CombinedConflictsWithPlateID.csv")
   
   # Assign to global environment
   assign(x = "combined_conflicts", value = concordance_join, pos = 1)
