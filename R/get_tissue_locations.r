@@ -1,115 +1,65 @@
-get_tssue_locations <- function(unit, username, password, bad_locations = TRUE, all_tissues = TRUE) {
-  #########################################
-  # This function pulls tissue data from OceanAK, for a given storage location, and updates the tissue location maps.
-  # Created by: Chase Jalbert
-  # Created on: 9/1/2020
-  #
-  # Inputs~~~~~~~~~~~~~~~~~~
-  #  unit - the storage unit(s) you're interested in; can be single or multiple units (e.g., "99" or c("WA","WB","WC"))
-  #         Note - this works best with a single type of unit (e.g., all of B7, all of Warehouse). You can combine but the output could get messy due to different shelf naming conventions
-  #  username - your LOKI username and password
-  #  password - your LOKI password
-  #  bad_locations - TRUE or FALSE, do you want a list of tissues with incorrect location information; default = FALSE
-  #  all_tissues- TRUE or FALSE, do you want a list of ALL tissues [potentially large file]]; default = FALSE
-  #
-  #
-  # Outputs~~~~~~~~~~~~~~~~~
-  #  tissuemap - an object mapping out all the tissues for a storage unit
-  #  all_tissues- an object consisting of all tissues within OceanAK, within a storage unit
-  #  bad_locations - an object consisting of all tissues within OceanAK, containing unexpected, missing, or otherwise incorrect location information (i.e., SHELF_RACK and/or SLOT)
-  #
-  #
-  # Example~~~~~~~~~~~~~~~~~
-  #  username = "awesomeuser"
-  #  password = "awesomepassword1"
-  #  unit = c("A", "B", "C", "D", "E", "F") # We want these units in B7
-  #  bad_locations = TRUE # yes, I want to identify all wrong/missing locations
-  #  all_tissues = TRUE # yes, I want all the data
-  #
-  #  TissueLocations_2R.GCL(unit = unit, username = username, password = password, bad_location = bad_location, all_data = all_data)
-  #  
-  # 
-  ##########################################
-  
-  # Setup  
-  
-  # Source R functions:
-  source("C:/Users/hahoyt1/Documents/R/Functions.GCL.R")
-  
-  # Database setup
-  ## This copies the "odbc8.jar" file to the R folder on your computer if it doesn't exist there. This file contains the java odbc drivers needed for RJDBC
-  if (!file.exists(path.expand("~/R"))) {
-    dir <- path.expand("~/R")
-    
-    dir.create(dir)
-    
-    bool <-
-      file.copy(from = "V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar", to = path.expand("~/R/ojdbc8.jar"))
-    
-  } else {
-    if (!file.exists(path.expand("~/R/ojdbc8.jar"))) {
-      bool <-
-        file.copy(from = "V:/Analysis/R files/OJDBC_Jar/ojdbc8.jar", to = path.expand("~/R/ojdbc8.jar"))
-      
-    }
-    
-  }
+#' Get Tissue Data from Loki
+#' 
+#' This function pulls tissue data from Loki, for a given storage location, and updates the tissue location maps.
+#'
+#' @param unit the storage unit(s) you're interested in; can be single or multiple units (e.g., "99" or c("WA","WB","WC")) (see details)
+#'         
+#' @param username your Loki username
+#' @param password your Loki password
+#' @param bad_locations TRUE or FALSE, do you want a list of tissues with incorrect location information (default = FALSE)
+#' @param all_tissues  TRUE or FALSE, do you want a list of ALL tissues (default = FALSE) (see details)
+#' 
+#' @returns this function assigns the following objects to your workspace:
+#' \itemize{
+#'    \item \code{tissuemap}: an object mapping out all the tissues for a storage unit
+#'    \item \code{all_tissues}: an object consisting of all tissues Loki, within a storage unit
+#'    \item \code{bad_locations}: an object consisting of all tissues within Loki, containing unexpected, missing, or otherwise incorrect location information (i.e., SHELF_RACK and/or SLOT)
+#'    }
+#' @details
+#' This function best when run with a single type of unit (e.g., all of B7, all of Warehouse). 
+#' You can combine but the output could get messy due to different shelf naming conventions.
+#' If you set `all_tissues = TRUE` the resulting output will be very large!
+#'    
+#'    
+#' @examples
+#' \dontrun{
+#'  username <- "awesomeuser"
+#'  password <- "awesomepassword1"
+#'  unit <- c("A", "B", "C", "D", "E", "F") # We want these units in B7
+#'  bad_locations <- TRUE # yes, I want to identify all wrong/missing locations
+#'  all_tissues <- TRUE # yes, I want all the data
+#'  
+#'  TissueLocations_2R.GCL(unit = unit, username = username, password = password, bad_locations = bad_location, all_data = all_data)
+#' }
+get_tissue_locations <- function(unit, username, password, bad_locations = TRUE, all_tissues = TRUE) {
   
   start.time <- Sys.time()
   
+  # Create database connection
   options(java.parameters = "-Xmx10g")
   
-  if (file.exists("C:/Program Files/R/RequiredLibraries/ojdbc8.jar")) {
-    drv <-
-      RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = "C:/Program Files/R/RequiredLibraries/ojdbc8.jar", " ")#https://blogs.oracle.com/R/entry/r_to_oracle_database_connectivity    C:/app/awbarclay/product/11.1.0/db_1/jdbc/lib
-    
-  } else {
-    drv <-
-      RJDBC::JDBC("oracle.jdbc.OracleDriver",
-                  classPath = path.expand("~/R/ojdbc8.jar"),
-                  " ")
-    
-  }
+  url <- GCLr:::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
   
-  ## Build database URL
-  url <-
-    loki_url() # This is a function that gets the correct URL to access the database on the oracle cloud
+  drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
   
-  ## Connect to database
-  con <-
-    RJDBC::dbConnect(
-      drv = drv,
-      url = url,
-      user = username,
-      password = password
-    ) #The database connection
+  drv <- RJDBC::JDBC("oracle.jdbc.OracleDriver", classPath = drvpath, " ")
+  
+  con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
   
   ## Create the query
-  gnoqry <-
-    paste(
-      "SELECT * FROM AKFINADM.V_GEN_SAMPLED_FISH_TISSUE WHERE UNIT IN (",
-      paste0("'", unit, "'", collapse = ","),
-      ")",
-      sep = ""
-    )
+  gnoqry <-paste("SELECT * FROM AKFINADM.V_GEN_SAMPLED_FISH_TISSUE WHERE UNIT IN (", paste0("'", unit, "'", collapse = ","), ")", sep = "")
   
   # Data import
   ## Open the connection and pull data from the database
-  dataAll <-
-    RJDBC::dbGetQuery(conn = con, statement = gnoqry)
+  dataAll <- RJDBC::dbGetQuery(conn = con, statement = gnoqry)
+  
+  discon <- RJDBC::dbDisconnect(con) #Disconnect from database
   
   ## Subset the data
-  dataSubset <- dataAll %>%
-    dplyr::filter(
-      !grepl("ERICTEST", SILLY_CODE, ignore.case = TRUE),
-      # drop Eric's test sillys
-      PK_TISSUE_TYPE != "DNA"
-      # drop DNA tissue type
-      #is.na(EXHAUSTED_HOW) |
-      #  EXHAUSTED_HOW != "Discarded"
-    ) %>% # drop tissues marked as discarded
+  dataSubset <- dataAll %>% 
+    dplyr::filter(!grepl("ERICTEST", SILLY_CODE, ignore.case = TRUE), # drop Eric's test sillys
+                  PK_TISSUE_TYPE != "DNA") %>% # drop tissues marked as discarded. These were in the filter but commented out: is.na(EXHAUSTED_HOW) | EXHAUSTED_HOW != "Discarded"
     dplyr::select(
-      c(
         FK_COLLECTION_ID,
         SILLY_CODE,
         FK_FISH_ID,
@@ -119,8 +69,7 @@ get_tssue_locations <- function(unit, username, password, bad_locations = TRUE, 
         SHELF_RACK,
         SLOT,
         EXHAUSTED_HOW
-      )
-    ) %>% # select columns
+      ) %>% # select columns
     tidyr::unite(
       col = "tissue_id",
       SILLY_CODE,
@@ -163,7 +112,7 @@ get_tssue_locations <- function(unit, username, password, bad_locations = TRUE, 
   if (bad_locations == TRUE) {
     
     # export CSV of incorrect tissues
-    write_csv(x = bad_location, path = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/bad_tissue_locations_", format(Sys.Date(), format = "%Y%m%d"), ".csv")) 
+    readr::write_csv(x = bad_location, file = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/bad_tissue_locations_", format(Sys.Date(), format = "%Y%m%d"), ".csv")) 
     
     assign(
       x = "bad_location",
@@ -257,7 +206,7 @@ get_tssue_locations <- function(unit, username, password, bad_locations = TRUE, 
   )
   
   ## write a csv of the tissue map to the folder:
-  write_csv(x = tissuemap, path = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/tissuemap_", format(Sys.Date(), format = "%Y%m%d"), ".csv"))
+  readr::write_csv(x = tissuemap, path = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/tissuemap_", format(Sys.Date(), format = "%Y%m%d"), ".csv"))
   
  # Wrap up function 
   stop.time <- Sys.time()
@@ -272,7 +221,7 @@ get_tssue_locations <- function(unit, username, password, bad_locations = TRUE, 
   if (all_tissues == TRUE) {
     
     # export CSV of ALL tissues
-    write_csv(x = dataAll, path = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/all_tissues_", format(Sys.Date(), format = "%Y%m%d"), ".csv"))
+    readr::write_csv(x = dataAll, path = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/all_tissues_", format(Sys.Date(), format = "%Y%m%d"), ".csv"))
     
     assign(
       x = "all_tissues",
@@ -282,5 +231,6 @@ get_tssue_locations <- function(unit, username, password, bad_locations = TRUE, 
     )
     
     message(paste("All fish (raw) from database stored in object `all_data` and a CSV was output"))
-  }
+  
+    }
 }
