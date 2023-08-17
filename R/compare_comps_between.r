@@ -15,18 +15,18 @@
 #'   \item{\code{one.sided}}{A tibble with one-sided p-values for each group.}
 #'   \item{\code{two.sided}}{A tibble with two-sided p-values for each group at different \code{diffs}.}
 #' }
+#' 
+#' This function also produces plots (frequency polygons) of the distribution of stock composition differences between mixtures for each group.
 #'
 #' @examples
-#'
+#' 
 #' \dontrun{
-#' load("V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2013 UCIfisheryMixtures/2013UCIfisheryMixtureAnalysis.RData")
-#' mixdir <- "V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2013 UCIfisheryMixtures/BAYES/Output"
-#' groups <- c("group1", "group2", "group3")  # Replace with actual group names
-#' compare_comps_between(mixnames = c("DriftExpCorr.Jul11", "Drift.Jul8"), groupnames = groups, mixdir = mixdir, diffs = seq(10)/100, nchains = 5, burn = 1/2)
+#' mixdir <- "V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2013 UCIfisheryMixtures/BAYES/Output/old files"
+#' groups <- paste0("group", 1:8)  # Replace with actual group names
+#' GCLr::compare_comps_between(mixnames = c("DriftExpCorr.Jul11", "Drift.Jul8"), groupnames = groups, mixdir = mixdir, diffs = seq(10)/100, nchains = 5, burn = 1/2)
 #' }
 #'
 #' @export
-#' 
 compare_comps_between <- function(mixnames, groupnames, mixdir, diffs = seq(10)/100, nchains = 5, burn = 1/2){
   
   if(length(mixnames)>2|length(mixnames)<2){
@@ -76,27 +76,28 @@ compare_comps_between <- function(mixnames, groupnames, mixdir, diffs = seq(10)/
   colnames(dsim0) <- groupnames
   
   # Create plots of posterior differences by group
-  dsim_df <- as_tibble(dsim0) %>% 
-    pivot_longer(everything(), names_to = "group", values_to = "difference") %>% 
-    mutate(group = factor(group, levels = groupnames))
+  dsim_df <- tibble::as_tibble(dsim0) %>% 
+    tidyr::pivot_longer(dplyr::everything(), names_to = "group", values_to = "difference") %>% 
+    dplyr::mutate(group = factor(group, levels = groupnames))
   
   suppressMessages( print(dsim_df %>% 
-    ggplot2::ggplot(aes(x = difference)) + 
-    geom_freqpoly() + 
-    facet_wrap(~group)+
-    geom_vline(xintercept = 0, lty = 2)))
+                            ggplot2::ggplot(ggplot2::aes(x = difference)) + 
+                            ggplot2::geom_freqpoly() + 
+                            ggplot2::facet_wrap(~group)+
+                            ggplot2::geom_vline(xintercept = 0, lty = 2))
+                    )
 
   dsim <- t(diag((-1) ^ (apply(dsim0, 2, mean) < 0)) %*% t(dsim0))
 
   one.sided <- cbind(one.sided = c(setNames(apply(dsim < 0, 2, mean), groupnames), Overall = mean(apply(dsim < 0, 1, all))), diff.mean = c(apply(dsim0, 2, mean), NA)) %>% 
-    as_tibble(rownames = "group")
+    tibble::as_tibble(rownames = "group")
 
-  two.sided <- sapply(setNames(diffs, diffs), function(dd){c(apply(abs(dsim0) < dd, 2, mean), Overall = mean(apply(abs(dsim0) < dd, 1, all)))}) %>% 
-    as_tibble(rownames = "group")  
+  two.sided <- sapply(setNames(diffs, diffs), function(dd){
+    
+    c(apply(abs(dsim0) < dd, 2, mean), Overall = mean(apply(abs(dsim0) < dd, 1, all)))
+    
+    }) %>% tibble::as_tibble(rownames = "group")  
 
   return(list(one.sided = one.sided, two.sided = two.sided))
 
 }  
-
-
-

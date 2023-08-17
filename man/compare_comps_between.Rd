@@ -32,6 +32,8 @@ A list with two elements: \code{one.sided} and \code{two.sided}.
 \item{\code{one.sided}}{A tibble with one-sided p-values for each group.}
 \item{\code{two.sided}}{A tibble with two-sided p-values for each group at different \code{diffs}.}
 }
+
+This function also produces plots (frequency polygons) of the distribution of stock composition differences between mixtures for each group.
 }
 \description{
 This function compares the difference in stock compositions between two mixtures.
@@ -40,10 +42,9 @@ This function compares the difference in stock compositions between two mixtures
 \examples{
 
 \dontrun{
-load("V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2013 UCIfisheryMixtures/2013UCIfisheryMixtureAnalysis.RData")
-mixdir <- "V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2013 UCIfisheryMixtures/BAYES/Output"
-groups <- c("group1", "group2", "group3")  # Replace with actual group names
-compare_comps_between(mixnames = c("DriftExpCorr.Jul11", "Drift.Jul8"), groupnames = groups, mixdir = mixdir, diffs = seq(10)/100, nchains = 5, burn = 1/2)
+mixdir <- "V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2013 UCIfisheryMixtures/BAYES/Output/old files"
+groups <- paste0("group", 1:8)  # Replace with actual group names
+GCLr::compare_comps_between(mixnames = c("DriftExpCorr.Jul11", "Drift.Jul8"), groupnames = groups, mixdir = mixdir, diffs = seq(10)/100, nchains = 5, burn = 1/2)
 }
 
 }
