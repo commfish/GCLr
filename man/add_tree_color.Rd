@@ -28,37 +28,43 @@ add_tree_color(
 
 \item{regionpch}{A vector with the same structure as \code{regioncol}, but each element is an R pch (plot character) number.}
 
-\item{write_nexus}{Logical value indicating whether to write out a Nexus tree file that can be opened in FigTree. FigTree can be downloaded from GitHub: \href{https://github.com/rambaut/figtree/releases}{FigTree Releases}.}
+\item{write_nexus}{Logical value indicating whether to write out a Nexus tree file that can be opened in FigTree. (see details)}
 
 \item{file}{When \code{write_nexus = TRUE}, the full file path for writing out a Nexus tree file including the .nex extension.}
 }
 \value{
-A new tree object with colors and tip labels.
+This function creates a new tree object with colors and tip labels and can also write out a Nexus tree file that can be opened and modified in FigTree (see details)
 }
 \description{
 This function takes a tree object produced by \code{\link[ape:nj]{ape::nj()}} and adds group colors to the branch lengths for each reporting groups. Additionally, this function can used to modified the tip labels with new name and optional symbols.
 }
+\details{
+FigTree can be downloaded from GitHub: \href{https://github.com/rambaut/figtree/releases}{FigTree Releases}.
+}
 \examples{
-attach("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline.Rdata")
-tree <- FstTree
-currentnames <- tree$tip.label
-treenames <- gsub(pattern = "\\\\)", x = gsub(pattern ="\\\\(", x = treenames104, replacement = ""), replacement = "")
-groupvec <- groupvec_11
-detach()
+tree <- ape::nj(GCLr::ex_pairwise_fst) #Create tree from pairwise Fst matrix
+currentnames <- tree$tip.label #current tip labels
+treenames <- currentnames #tip labels for tree
+groupvec <- GCLr::ex_baseline \%>\%
+            dplyr::select(repunit, collection) \%>\%
+            dplyr::distinct() \%>\%
+            dplyr::mutate(repunit = factor(repunit) \%>\% as.numeric()) \%>\%
+            dplyr::pull(repunit)
 
-r_colors <- c("purple", "blue", "forestgreen", "magenta", "red", "orange", "green", "yellow", "cyan", "gray", "brown") # R color names example
-hex_colors <- c("#A020F0FF", "#0000FFFF", "#228B22FF", "#FF00FFFF", "#FF0000FF", "#FFA500FF", "#00FF00FF", "#FFFF00FF", "#00FFFFFF", "#BEBEBEFF", "#A52A2AFF") # Hexadecimal colors example
+r_colors <- c("green", "blue", "red") # R color names example
+hex_colors <- GCLr::col2hex(r_colors) \%>\% dplyr::pull(hex)# Hexadecimal colors example
 r_color_numbers <- match(r_colors, colors()) # R color numbers example
 
 colortree <- GCLr::add_tree_color(tree = tree,
                             currentnames = currentnames,
                             treenames = treenames,
                             groupvec = groupvec,
-                            regioncol = r_color_numbers,
+                            regioncol = hex_colors,
                             regionpch = unique(groupvec),
-                            write_nexus = TRUE,
-                            file = "ColoredNexusTree.nex")
+                            write_nexus = FALSE,
+                            file = NULL)
 
+colortree$tree$edge.length[colortree$tree$edge.length < 0] <- 0 #Remove negative branch lengths
 ape::plot.phylo(x = colortree$tree, edge.color = colortree$color, edge.width = 3, use.edge.length = T, show.tip.label = T, adj = .02, cex = .7, font = 1, label.offset = 0.002)
 ape::tiplabels(pch = colortree$pch , offset = .0015, cex = .5)
 
