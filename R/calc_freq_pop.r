@@ -20,12 +20,12 @@
 #'     }
 #'
 #' @examples
-#' \dontrun{
-#' load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
-#' old2new_locuscontrol()
-#' old2new_gcl(sillyvec67)
-#' Freq <- calc_freq_pop(sillyvec = sillyvec67, loci = loci413)
-#' }
+#' 
+#' sillyvec <- GCLr::ex_baseline$collection %>% unique()
+#' 
+#' loci <- names(GCLr::ex_baseline)[-c(1:4)][c(TRUE, FALSE)]
+#' 
+#' calc_freq_pop(sillyvec = sillyvec, loci = loci, LocusCtl = GCLr::ex_LocusControl)
 #'
 #' @export
 calc_freq_pop <-
