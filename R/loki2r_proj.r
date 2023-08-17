@@ -1,4 +1,4 @@
-#' @title Read Project Genotypes
+#' @title Create GCL Objects for a Lab Project
 #'
 #' @description This function is intended for use in the qc.R script. It pulls project genotypes to create "slim" .gcl objects for each silly and the LocusControl for all loci used in the project.
 #'              
@@ -26,7 +26,7 @@
 #' }
 #'
 #' @export
-read_proj_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, username, password) {
+loki2r_proj <- function(project_name = NULL, sillyvec = NULL, loci = NULL, username, password) {
  
     # Recording function start time
   start.time <- Sys.time()
