@@ -1,135 +1,132 @@
 #' Get Difference in Allele Frequencies Between Baseline and BAYES Posteriors
 #' 
-#' This function reads in BAYES MCMC samples of baseline frequencies for each population (one file per chain) and compares them to the original baseline allele frequencies (see details).
+#' This function reads in BAYES MCMC samples of baseline frequencies (.FRQ output files) for each population (one file per chain) and compares them to the original baseline allele frequencies (see details).
 #' 
-#' @param sillyvec sillyvec Character vector of population sillys used to create the baseline file.
+#' @param sillyvec a character vector of population sillys used to create the baseline file.
+#' 
+#' @param group_names a character vector of reporting group names, where \code{length(group_names) == max(`groupvec`)}
+#' 
+#' @param groupvec a numeric vector indicating the reporting group affiliation of each population in `sillyvec`, where \code{length(groupvec) == length(sillyvec)}.
 #' 
 #' @param loci Character vector of the loci used to produce the baseline and mixture files.
 #' 
-#' @param mydir the director where the BAYES mixture output files are located.  e.g., "BAYES/output" This directory should contain a folder named `mixname`, where the .FRQ files are saved.
+#' @param dir the director where the BAYES mixture output files are located.  e.g., "BAYES/output" This directory should contain a folder named `mixname`, where the .FRQ files are saved.
 #' 
 #' @param nchains the number of MCMC chains analyzed for the mixture
 #' 
-#' @param mixname the name of the mixture. There should be a folder in `mydir` named mix
+#' @param mixname the name of the mixture. There should be a folder in `dir` named the same as the mixture
+#' 
+#' @param burn The proportion of iterations to drop from the beginning of each chain.
+#'                For example, for 40,000 iterations setting burn = 0.5 will drop the first 20,000 iterations.
+#' 
+#' @param ncores the number of cores to use when [GCLr::calc_freq_pop()] is called on (default = 4)
 #' 
 #' @details 
 #' During a mixed stock analysis in BAYES, the original allele frequencies get updated at each MCMC iteration. 
 #' Looking at the difference between the average MCMC allele frequency and the original baseline frequencies can be useful when looking into reasons for non-convergence among chains (i.e., Gelman-Ruban shrink factor > 1.2) 
 #' Populations/reporting groups with large changes in allele frequencies for certain population/reporting groups can indicate that the mixture contains fish from a distinct population that is not represented in the baseline.
+#'
+#' @note To run this function, you must have the baseline silly (.gcl objects) and LocusControl loaded in your current workspace and have BAYES frequency files for each chain of the mixture you are interested in.
 #' 
 #' @seealso See [BAYES manual](system.file("BAYES", "MANUAL.DOC", package = "GCLr")) for additional details.
 #' 
-#' @returns a list containing 4 elements:
+#' @returns a list containing 3 elements:
 #'   \itemize{
-#'     \item \code{Outliers}: a logical matrix with `nrows = length(sillyvec)` and `ncols = nchains` indicating where a population was an outlier for a given chain.
-#'     \item \code{MeanAbsDiffByPop}: a list with one element per chain containing a vector of mean (among loci) absolute allele frequency differences for each population in `sillyvec`
+#'     \item \code{MeanAbsDiffByPopLocus}: a tibble with 4 variables: 
+#'     \describe{
+#'       \item{\code{chain}}{character; the chain number (e.g. Chain1, Chain2, Chain3, etc.)}
+#'       \item{\code{pop}}{factor; the population silly}
+#'       \item{\code{locus}}{factor; the locus name}
+#'       \item{\code{mean_abs_diff}}{double; the mean absolute difference between the original baseline frequency and the MCMC allele frequencies at each iteration}
+#'       }
+#'    \item \code{MeanAbsDiffByPop}: a tibble with 4 variables: 
+#'     \describe{
+#'       \item{\code{chain}}{character; the chain number (e.g. Chain1, Chain2, Chain3, etc.)}
+#'       \item{\code{pop}}{factor; the population silly}
+#'       \item{\code{mean_abs_diff}}{double; the mean absolute difference between the original population baseline frequency and the group MCMC allele frequencies at each iteration over all loci}
+#'       \item{\code{outlier}}{logical; indicates whether the `mean_abs_diff` is an outlier}
+#'       }
+#'    \item \code{MeanAbsDiffByGroup}: a tibble with 4 variables: 
+#'     \describe{
+#'       \item{\code{chain}}{character; the chain number (e.g. Chain1, Chain2, Chain3, etc.)}
+#'       \item{\code{group}}{character; the group name}
+#'       \item{\code{mean_abs_diff}}{double; the mean absolute difference between the original group baseline frequency and the group MCMC allele frequencies at each iteration over all loci}
+#'       \item{\code{outlier}}{logical; indicates whether the `mean_abs_diff` is an outlier}
+#'       }
+#' }
+#'     1) chain - the chain number, 2) pop (factor) - the population name, 3) locus
 #'     \item \code{PriorAlleleFreqs}: a 3 dimensional array of baseline allele frequencies for each locus in `loci`, silly in `sillyvec`, and allele.
 #'     \item \code{PosteriorAlleleFreqs}: a list with one element per chain containing a vector of BAYES MCMC allele frequencies for each population in `sillyvec` and each locus in `loci`
 #'   }
 #'   
-#' list(Outliers = Outliers, MeanAbsDiffByPop = myabsdiffsByPop, PriorAlleleFreqs = rawQ, PosteriorAlleleFreqs = myQ)
 #' @examples
 #' \dontrun{
-#' 
-#' post_prior_diff_allele_freq(sillyvec = sillyvec, loci = loci, mydir = "BAYES/output", nchains = 5, mixname = "my.mixname")
+#' dir <- "V:/Analysis/2_Central/Sockeye/Cook Inlet/Missing Baseline Analysis/BAYES/output"
+#' load("V:/Analysis/2_Central/Sockeye/Cook Inlet/Missing Baseline Analysis/Missing Baseline Analysis.RData")
+#' post_prior_diff_allele_freq(sillyvec = PopNames69, group_names = Groups, groupvec = groupvec69, loci = loci, dir = dir, nchains = 7, mixname = "Western06early")
 #' 
 #' }
 #' 
 #' @export
-post_prior_diff_allele_freq <- function(sillyvec, loci, mydir, nchains, mixname){
-
-  require("outliers")
-
-  baseline <- calc_freq_pop(sillyvec,loci)
-
-  loci <- dimnames(baseline[1, , ])[[1]]
-
-  nalleles <- apply(baseline[1, , ], 1, function(vec){sum(!is.na(vec))})
-
-  C <- dim(baseline)[1]
-
-  L <- dim(baseline)[2]
-
-  rawQ <- baseline
-
-  for(i in 1:C){
-    
-    for(loc in 1:L){
-      
-       rawQ[i, loc, 1:nalleles[loc]] <- (baseline[i, loc, 1:nalleles[loc]] + 1/nalleles[loc])/sum(baseline[i, loc, 1:nalleles[loc]] + 1/nalleles[loc]) 
-       
-    }
-    
-  }
-
+post_prior_diff_allele_freq <- function(sillyvec, group_names, groupvec, loci, dir, nchains, mixname, burn = 0.5, ncores = 4){
+  
+  baseline <- GCLr::calc_freq_pop(sillyvec, loci, ncores)
+  
+  nalleles <- baseline %>% 
+    dplyr::group_by(locus) %>% 
+    dplyr::summarize(alleles = max(allele_no)) %>% 
+    tibble::deframe()
+  
+  C <- length(sillyvec)
+  
+  L <- length(loci)
+  
   ChainNames <- paste0("Chain", 1:nchains)
-
-  mydirs <- paste(mydir, "\\", mixname, ChainNames, "FRQ.FRQ", sep = "")
-
+  
+  mydirs <- paste0(dir, "/", mixname, "/", mixname, ChainNames, "FRQ.FRQ")
+  
   myfiles <- lapply(mydirs, function(dr){
     
-    myfile <- readLines(dr); 
+    myfile <- readr::read_lines(dr)
     
-    myfile[(length(myfile)/2+1):length(myfile)]
+    myfile[(length(myfile)*burn+1):length(myfile)] %>%
+      tibble::as_tibble() %>% 
+      tidyr::separate(col = value, into = c(NA, "iteration","pop", "locus", "n", paste0("allele", 1:max(nalleles))), sep = "\\s{1,}")
     
-    })
-
-  names(myfiles) <- ChainNames
-
-  myQ <- lapply(myfiles, function(myfile){
-    
-        ans <- t(vapply(myfile, function(strng){
-              vec <- strsplit(strng," ")[[1]];
-              vec <- vec[vec!=""];
-              vec2 <- rep(NA, max(nalleles)+4);
-              vec2[1:length(vec)] <- vec;
-              as.numeric(vec2)
-            }, as.numeric(rep(NA, 4+max(nalleles)))));
-        
-        dimnames(ans) <- list(1:nrow(ans), c("Iteration", "Pop", "Locus", "n", paste("Allele", 1:max(nalleles), sep = "")));
-        
-        ans <- data.frame(ans);
-        
-        q <- rawQ;
-        
-        for(i in 1:C){
-          
-          for(loc in 1:L){
-            
-            q[i, loc, 1:nalleles[loc]] <- apply(ans[ans$Pop==i & ans$Locus==loc, 5:(4+nalleles[loc])], 2, mean)
-            
-          }
-          
-        };
-        
-        q;
-        
-        })
-
-  names(myQ) <- ChainNames
-
-  myabsdiffsByPopByLocus <- sapply(myQ, function(qq){ 
-    
-    sapply(loci, function(locus){
-      
-      apply(abs(qq[1:C, locus, 1:nalleles[locus]]-rawQ[1:C, locus, 1:nalleles[locus]]), 1, mean) 
-      
-      }) 
-    
-    }, simplify = FALSE)
-
-  myabsdiffsByPop <- sapply(myabsdiffsByPopByLocus, function(diffs){
-    
-    apply(diffs, 1, mean)
-    
-    },simplify = FALSE)
-
-  Outliers <- sapply(myabsdiffsByPop, function(popdiffs){
-    
-    outliers::outlier(popdiffs, logical = TRUE)
-    
-    })
-
-  return(list(Outliers = Outliers, MeanAbsDiffByPop = myabsdiffsByPop, PriorAlleleFreqs = rawQ, PosteriorAlleleFreqs = myQ))
+  }) %>% 
+    setNames(ChainNames) %>% 
+    dplyr::bind_rows(.id = "chain")
+  
+  myQ <- myfiles %>% 
+    dplyr::mutate(pop = factor(sillyvec[as.numeric(pop)], levels = sillyvec),
+           locus = factor(loci[as.numeric(locus)], levels = loci)) %>% 
+    tidyr::pivot_longer(dplyr::all_of(paste0("allele", 1:max(nalleles))), names_to = "allele_no", values_to = "updated_proportion") %>% 
+    dplyr::mutate(allele_no = gsub(pattern = "allele", replacement = "", x = allele_no) %>% as.numeric(),
+           updated_proportion = as.numeric(updated_proportion)) %>% 
+    dplyr::group_by(chain, pop, locus, allele_no) %>% 
+    dplyr::summarize(mean_updated_proportion = mean(updated_proportion), .groups = "drop") %>% 
+    dplyr::left_join(baseline, by = c("pop" = "silly", "locus", "allele_no")) 
+  
+  MeanAbsDiffByPopLocus <- myQ %>% 
+    dplyr::filter(allele_no == 1) %>% 
+    dplyr::mutate(pop = factor(pop, levels = sillyvec),
+           locus = factor(locus, levels = loci)) %>% 
+    dplyr::group_by(chain, pop, locus) %>% 
+    dplyr::summarize(mean_abs_diff = abs(mean_updated_proportion-proportion), .groups = "drop") 
+  
+  MeanAbsDiffByPop <- MeanAbsDiffByPopLocus %>% 
+    dplyr::group_by(chain, pop) %>% 
+    dplyr::summarize(mean_abs_diff = mean(mean_abs_diff), .groups = "drop") %>% 
+    dplyr::group_by(chain) %>% 
+    dplyr::mutate(outlier = outliers::outlier(mean_abs_diff, logical = TRUE))
+  
+  MeanAbsDiffByGroup <- MeanAbsDiffByPop %>% 
+    dplyr::left_join(tibble::tibble(pop = sillyvec, group = group_names[groupvec]), by = "pop") %>% 
+    dplyr::group_by(chain, group) %>% 
+    dplyr::summarize(mean_abs_diff = mean(mean_abs_diff), .groups = "drop") %>% 
+    dplyr::group_by(chain) %>% 
+    dplyr::mutate(outlier = outliers::outlier(mean_abs_diff, logical = TRUE))
+  
+  return(list(MeanAbsDiffByPopLocus = MeanAbsDiffByPopLocus, MeanAbsDiffByPop = MeanAbsDiffByPop, MeanAbsDiffByGroup = MeanAbsDiffByGroup))
   
 }

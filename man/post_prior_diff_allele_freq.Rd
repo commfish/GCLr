@@ -4,42 +4,84 @@
 \alias{post_prior_diff_allele_freq}
 \title{Get Difference in Allele Frequencies Between Baseline and BAYES Posteriors}
 \usage{
-post_prior_diff_allele_freq(sillyvec, loci, mydir, nchains, mixname)
+post_prior_diff_allele_freq(
+  sillyvec,
+  group_names,
+  groupvec,
+  loci,
+  dir,
+  nchains,
+  mixname,
+  burn = 0.5,
+  ncores = 4
+)
 }
 \arguments{
-\item{sillyvec}{sillyvec Character vector of population sillys used to create the baseline file.}
+\item{sillyvec}{a character vector of population sillys used to create the baseline file.}
+
+\item{group_names}{a character vector of reporting group names, where \code{length(group_names) == max(`groupvec`)}}
+
+\item{groupvec}{a numeric vector indicating the reporting group affiliation of each population in \code{sillyvec}, where \code{length(groupvec) == length(sillyvec)}.}
 
 \item{loci}{Character vector of the loci used to produce the baseline and mixture files.}
 
-\item{mydir}{the director where the BAYES mixture output files are located.  e.g., "BAYES/output" This directory should contain a folder named \code{mixname}, where the .FRQ files are saved.}
+\item{dir}{the director where the BAYES mixture output files are located.  e.g., "BAYES/output" This directory should contain a folder named \code{mixname}, where the .FRQ files are saved.}
 
 \item{nchains}{the number of MCMC chains analyzed for the mixture}
 
-\item{mixname}{the name of the mixture. There should be a folder in \code{mydir} named mix}
+\item{mixname}{the name of the mixture. There should be a folder in \code{dir} named the same as the mixture}
+
+\item{burn}{The proportion of iterations to drop from the beginning of each chain.
+For example, for 40,000 iterations setting burn = 0.5 will drop the first 20,000 iterations.}
+
+\item{ncores}{the number of cores to use when \code{\link[=calc_freq_pop]{calc_freq_pop()}} is called on (default = 4)}
 }
 \value{
-a list containing 4 elements:
+a list containing 3 elements:
 \itemize{
-\item \code{Outliers}: a logical matrix with \code{nrows = length(sillyvec)} and \code{ncols = nchains} indicating where a population was an outlier for a given chain.
-\item \code{MeanAbsDiffByPop}: a list with one element per chain containing a vector of mean (among loci) absolute allele frequency differences for each population in \code{sillyvec}
+\item \code{MeanAbsDiffByPopLocus}: a tibble with 4 variables:
+\describe{
+\item{\code{chain}}{character; the chain number (e.g. Chain1, Chain2, Chain3, etc.)}
+\item{\code{pop}}{factor; the population silly}
+\item{\code{locus}}{factor; the locus name}
+\item{\code{mean_abs_diff}}{double; the mean absolute difference between the original baseline frequency and the MCMC allele frequencies at each iteration}
+}
+\item \code{MeanAbsDiffByPop}: a tibble with 4 variables:
+\describe{
+\item{\code{chain}}{character; the chain number (e.g. Chain1, Chain2, Chain3, etc.)}
+\item{\code{pop}}{factor; the population silly}
+\item{\code{mean_abs_diff}}{double; the mean absolute difference between the original population baseline frequency and the group MCMC allele frequencies at each iteration over all loci}
+\item{\code{outlier}}{logical; indicates whether the \code{mean_abs_diff} is an outlier}
+}
+\item \code{MeanAbsDiffByGroup}: a tibble with 4 variables:
+\describe{
+\item{\code{chain}}{character; the chain number (e.g. Chain1, Chain2, Chain3, etc.)}
+\item{\code{group}}{character; the group name}
+\item{\code{mean_abs_diff}}{double; the mean absolute difference between the original group baseline frequency and the group MCMC allele frequencies at each iteration over all loci}
+\item{\code{outlier}}{logical; indicates whether the \code{mean_abs_diff} is an outlier}
+}
+}
+1) chain - the chain number, 2) pop (factor) - the population name, 3) locus
 \item \code{PriorAlleleFreqs}: a 3 dimensional array of baseline allele frequencies for each locus in \code{loci}, silly in \code{sillyvec}, and allele.
 \item \code{PosteriorAlleleFreqs}: a list with one element per chain containing a vector of BAYES MCMC allele frequencies for each population in \code{sillyvec} and each locus in \code{loci}
 }
-
-list(Outliers = Outliers, MeanAbsDiffByPop = myabsdiffsByPop, PriorAlleleFreqs = rawQ, PosteriorAlleleFreqs = myQ)
 }
 \description{
-This function reads in BAYES MCMC samples of baseline frequencies for each population (one file per chain) and compares them to the original baseline allele frequencies (see details).
+This function reads in BAYES MCMC samples of baseline frequencies (.FRQ output files) for each population (one file per chain) and compares them to the original baseline allele frequencies (see details).
 }
 \details{
 During a mixed stock analysis in BAYES, the original allele frequencies get updated at each MCMC iteration.
 Looking at the difference between the average MCMC allele frequency and the original baseline frequencies can be useful when looking into reasons for non-convergence among chains (i.e., Gelman-Ruban shrink factor > 1.2)
 Populations/reporting groups with large changes in allele frequencies for certain population/reporting groups can indicate that the mixture contains fish from a distinct population that is not represented in the baseline.
 }
+\note{
+To run this function, you must have the baseline silly (.gcl objects) and LocusControl loaded in your current workspace and have BAYES frequency files for each chain of the mixture you are interested in.
+}
 \examples{
 \dontrun{
-
-post_prior_diff_allele_freq(sillyvec = sillyvec, loci = loci, mydir = "BAYES/output", nchains = 5, mixname = "my.mixname")
+dir <- "V:/Analysis/2_Central/Sockeye/Cook Inlet/Missing Baseline Analysis/BAYES/output"
+load("V:/Analysis/2_Central/Sockeye/Cook Inlet/Missing Baseline Analysis/Missing Baseline Analysis.RData")
+post_prior_diff_allele_freq(sillyvec = PopNames69, group_names = Groups, groupvec = groupvec69, loci = loci, dir = dir, nchains = 7, mixname = "Western06early")
 
 }
 
