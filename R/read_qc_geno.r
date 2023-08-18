@@ -147,7 +147,7 @@ read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, typ
     
     # Add the missing attnames, as NA values, and arrange (19 attributes first)
     my.dat <- my.dat %>%
-      tibble::add_column(!!!setNames(rep(NA, length(missing_columns)), missing_columns)) %>% 
+      tibble::add_column(.data = ., !!!setNames(rep(NA, length(missing_columns)), missing_columns)) %>% 
       dplyr::select(dplyr::all_of(attnames), sort(names(.), na.last = TRUE))
     
     assign(paste(silly, "qc.gcl", sep = ""), my.dat, pos = 1)
