@@ -61,10 +61,6 @@ a list containing 3 elements:
 \item{\code{outlier}}{logical; indicates whether the \code{mean_abs_diff} is an outlier}
 }
 }
-1) chain - the chain number, 2) pop (factor) - the population name, 3) locus
-\item \code{PriorAlleleFreqs}: a 3 dimensional array of baseline allele frequencies for each locus in \code{loci}, silly in \code{sillyvec}, and allele.
-\item \code{PosteriorAlleleFreqs}: a list with one element per chain containing a vector of BAYES MCMC allele frequencies for each population in \code{sillyvec} and each locus in \code{loci}
-}
 }
 \description{
 This function reads in BAYES MCMC samples of baseline frequencies (.FRQ output files) for each population (one file per chain) and compares them to the original baseline allele frequencies (see details).

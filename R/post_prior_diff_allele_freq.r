@@ -54,10 +54,6 @@
 #'       \item{\code{outlier}}{logical; indicates whether the `mean_abs_diff` is an outlier}
 #'       }
 #' }
-#'     1) chain - the chain number, 2) pop (factor) - the population name, 3) locus
-#'     \item \code{PriorAlleleFreqs}: a 3 dimensional array of baseline allele frequencies for each locus in `loci`, silly in `sillyvec`, and allele.
-#'     \item \code{PosteriorAlleleFreqs}: a list with one element per chain containing a vector of BAYES MCMC allele frequencies for each population in `sillyvec` and each locus in `loci`
-#'   }
 #'   
 #' @examples
 #' \dontrun{
