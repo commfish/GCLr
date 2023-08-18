@@ -40,7 +40,7 @@
 #' @export
 create_hierfstat_data <- function(sillyvec, region = NULL, pop, loci, ncores  = 4, LocusCtl = LocusControl){
   
-  if(!exists("LocusControl")){
+  if(!exists("LocusCtl")){
     
     stop("'LocusControl' not yet built.")
     
