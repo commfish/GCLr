@@ -72,7 +72,7 @@ pool_collections <- function(collections, loci = LocusControl$locusnames, IDs = 
   
   IDs <- purrr::set_names(IDs, collections)  # Making sure IDs has names
   
-  SubsetLoci <- c(loci, paste0(loci, ".1")) %>% sort()  # These are the locus score headers for subsetting by loci.
+  SubsetLoci <- sapply(loci, function(locus) {c(locus, paste0(locus, ".1"))}) %>% as.vector()  # These are the locus score headers for subsetting by loci.
   
   output <- lapply(collections, function(collection){
     
