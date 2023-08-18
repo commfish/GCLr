@@ -55,7 +55,7 @@ read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, typ
       suppressMessages(readr::read_csv(file = pth, show_col_types = FALSE, na = c("", "NA", "0", "0/0")))
       
     }) %>% dplyr::bind_rows() %>% 
-      dplyr::rename(FK_FISH_ID = as.numberic(SAMPLE_NUM), locus = LOCUS) %>% 
+      dplyr::rename(FK_FISH_ID = SAMPLE_NUM, locus = LOCUS) %>% 
       tidyr::unite(SillySource, c(SILLY_CODE, FK_FISH_ID), sep = "_", remove = FALSE) %>% 
       tidyr::separate(GENOTYPE, into = c("allele1", "allele2"), sep = "/") %>% 
       dplyr::select(SILLY_CODE, FK_FISH_ID, SillySource, locus, allele1, allele2) 
