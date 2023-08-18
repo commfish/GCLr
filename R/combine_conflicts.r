@@ -50,6 +50,9 @@ combine_conflicts <- function(files) {
   master.tbl <- master.gcl %>% 
     dplyr::select(SillySource, PLATE_ID)
   
+  # Remove master.gcl from workspace, since no longer needed 
+  rm(master.gcl)
+  
   # Join plate id
   concordance_join <- concordance %>% 
     dplyr::left_join(master.tbl, by = "SillySource") %>% 
