@@ -51,7 +51,7 @@ combine_conflicts <- function(files) {
     dplyr::select(SillySource, PLATE_ID)
   
   # Remove master.gcl from workspace, since no longer needed 
-  rm(master.gcl)
+  rm(master.gcl, envir = .GlobalEnv)
   
   # Join plate id
   concordance_join <- concordance %>% 
