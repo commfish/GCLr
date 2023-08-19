@@ -58,10 +58,12 @@ create_bayes_mix <- function(mixvec, loci, dir, ncores = 4, LocusCtl = LocusCont
     
     doParallel::registerDoParallel(cl, cores = ncores)  
     
+    `%dopar%` <- foreach::`%dopar%`
+    
     #Had to suppress an anoying message which only printed to console when running the foreach loop.
     suppressMessages(
       
-      mix_scores <-  foreach::foreach(loc = loci, .packages = c("tidyverse", "tidyselect", "janitor"), .export = c("LocusCtl"), .combine = dplyr::bind_cols) %dopar% { #Start multicore loop: loci
+      mix_scores <-  foreach::foreach(loc = loci, .packages = c("tidyverse", "tidyselect", "janitor"), .combine = dplyr::bind_cols) %dopar% { #Start multicore loop: loci
       
       variables <- c(loc, paste(loc, 1, sep = "."))
         
