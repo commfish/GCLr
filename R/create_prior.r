@@ -15,12 +15,11 @@
 #'   The rubias prior object is supplied to the pi_prior argument in \code{run_rubias_mix()}.
 #'
 #' @examples
-#' \dontrun{
+#'
 #' groupvec <- c(1, 1, 2, 2, 3, 4, 4, 5, 2, 5)
 #' sillyvec <- c("KQUART060809", "KCRESC06", "KKENU09", "KJUNE050607", "KRUSSR05060708", "KBENJ0506", "KKILL0506", "KFUNN0506", "KKENAI030406", "KSLIK040508")
-#' BAYES_prior <- create_prior(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), minval = 0.01, type = "BAYES", sillyvec = NULL)
-#' rubias_prior <- create_prior(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), minval = 0.01, type = "rubias", sillyvec = sillyvec)
-#' }
+#' create_prior(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), minval = 0.01, type = "BAYES", sillyvec = NULL)
+#' create_prior(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), minval = 0.01, type = "rubias", sillyvec = sillyvec)
 #'
 #' @details This function is also used by [GCLr::multichain_inits()] to create initial starting values.
 #'
