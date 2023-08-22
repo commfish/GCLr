@@ -11,16 +11,18 @@
 #' 
 #' @return A dataframe in \pkg{rubias} mixture format and writes out a ".csv" file of each mixture.
 #' 
-#' @examples
-#' attach("V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/UCI_sockeye_2019_postseason/UCI_2019_sockeye_postseason_analysis.Rdata")
-#' old2new_locuscontrol()
-#' sapply(mixvec, function(mix){assign(paste0(mix, ".gcl"), get(paste0(mix, ".gcl")), pos = -1, envir = .GlobalEnv)})
-#' mixvec <- mixvec
-#' loci <- loci
-#' detach()
-#' old2new_gcl(mixvec)
+#' @seealso [GCLr::ex_mixtures]
 #' 
-#' UCI_sockeye_2019.rubias_mix <- GCLr::create_rubias_mix(sillyvec = mixvec, loci = loci, path = "rubias/mixture")
+#' @examples
+#' \dontrun{
+#'  
+#'  mixvec <- c("S1_2018", "S2_2018", "S3_2018", "S4_2018", "S5_2018")
+#'  
+#'  loci <- LocusControl$locusnames
+#'  
+#'  GCLr::create_rubias_mix(sillyvec = mixvec, loci = loci, path = "rubias/mixture")
+#'  
+#' }
 #' 
 #' @export
 create_rubias_mix <- function(sillyvec, loci, path = "rubias/mixture") {
