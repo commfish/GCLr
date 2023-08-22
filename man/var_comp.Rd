@@ -9,8 +9,8 @@ var_comp(
   loci,
   groupvec,
   fstatfile = NULL,
-  dir,
-  LocusCtl = LocusControl
+  LocusCtl = LocusControl,
+  ncores = parallel::detectCores()
 )
 }
 \arguments{
@@ -20,30 +20,41 @@ var_comp(
 
 \item{groupvec}{A numeric vector specifying the reporting group affiliation for each silly code.}
 
-\item{fstatfile}{Optional character string specifying the path to an existing FSTAT file (".dat"). If provided, the function verifies compatibility with the input data. Default is NULL.}
-
-\item{dir}{A character string specifying the directory where an FSTAT file (".dat") will be created. This argument is used only when \code{fstatfile} is NULL.}
+\item{fstatfile}{Optional character string specifying the path to an existing FSTAT file (".dat"). If provided, the function verifies compatibility with the input data. (default = NULL)}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
-A matrix containing the four variance components for each locus:
+A tibble containing the four variance components for each locus:
 \itemize{
 \item P: For populations (reporting groups in this case).
 \item S: For subpopulations within populations (populations within reporting groups).
 \item I: For individuals within subpopulations (individuals within populations).
 \item G: For alleles within individuals (akin to heterozygosity).
 }
-Component definitions in () assume that you are running this function on silly codes that are populations. This function could also be run on silly codes that are collections, but the definitions in () would be different.
 }
 \description{
 This function calculates the variance components of a three-level hierarchy. This function is intended to help with marker selection (i.e., going from a 96 to 24 SNP baseline).
 }
 \details{
-The original function is "BackwardEliminationThetaP.GCL" in the temp folder.
+Component definitions in the output assume that you are running this function on silly codes that are populations (see Value section).
+This function could also be run on silly codes that are collections, but the definitions in the output would be different.
 }
 \examples{
-GCLr::var_comp(sillyvec = Kodiak49Pops, loci = loci90, groupvec = Kodiak49GroupVec9, dir = "V:/WORK/Sockeye/Kodiak/Kodiak Afognak Baseline Look 2014/Kyle/ThetaP")
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+
+groupvec <- GCLr::ex_baseline \%>\% 
+  dplyr::group_by(collection) \%>\% 
+  dplyr::summarize(group = unique(repunit)) \%>\% 
+  dplyr::mutate(group = factor(group) \%>\% as.numeric()) \%>\% 
+  dplyr::pull(group)
+
+loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
+  names() \%>\%
+  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+  unique()
+
+GCLr::var_comp(sillyvec = sillyvec, loci = loci, groupvec = groupvec, LocusCtl = GCLr::ex_LocusControl)
 
 }
 \references{
