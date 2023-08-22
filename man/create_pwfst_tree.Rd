@@ -7,7 +7,7 @@
 create_pwfst_tree(
   sillyvec,
   loci,
-  dir,
+  dir = NULL,
   nboots = 1000,
   ncores = 4,
   returnbootstrapFst = FALSE,
@@ -19,7 +19,7 @@ create_pwfst_tree(
 
 \item{loci}{A character vector of locus names.}
 
-\item{dir}{Directory to save the \code{PairwiseFstTree} list object using \code{\link[base:dput]{base::dput()}}.}
+\item{dir}{Directory to save the \code{PairwiseFstTree} list object using \code{\link[base:dput]{base::dput()}}. If NULL (default), no file will be saved.}
 
 \item{nboots}{A numeric value indicating the number of bootstrap iterations (default = 1000).}
 
@@ -55,13 +55,26 @@ It can utilize multicore processing with \pkg{foreach} to speed up the calculati
 \details{
 Older versions of this function used to write out an FSTAT .dat file, but this is no longer the case.
 The function now calls on \code{\link[=create_hierfstat_data]{create_hierfstat_data()}} to create a \pkg{hierfstat} data object internally.
-Depending on the size of your baseline and number of bootstrap iterations, this function can take a while.
+Depending on the size of your baseline and number of bootstrap iterations, this function can take a while to run.
 }
 \examples{
 \dontrun{
-source(paste0(path.expand("~/R/"), "Functions.R")) # GCL functions
-load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-PWFSTtree <- create_pwfst_tree(sillyvec = sillyvec31, loci = loci82, dir = "output", nboots = 1000, ncores = 8, returnbootstrapFst = FALSE)
+  
+  sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+  
+  groupvec <- GCLr::ex_baseline \%>\%
+    dplyr::group_by(collection) \%>\%
+    dplyr::summarize(group = unique(repunit)) \%>\%
+    dplyr::mutate(group = factor(group) \%>\% as.numeric()) \%>\%
+    dplyr::pull(group)
+  
+  loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
+    names() \%>\%
+    gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+    unique()
+  
+  GCLr::create_pwfst_tree(sillyvec = sillyvec, loci = loci, dir = NULL, nboots = 1000, ncores = parallel::detectCores(), returnbootstrapFst = FALSE)
+  
 }
 
 }
