@@ -162,9 +162,9 @@ gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, nco
           
           scores %>%
             dplyr::select(tidyselect::all_of(variables)) %>%
-            tidyr::replace_na(replace = list(0, 0) %>% 
+            tidyr::replace_na(replace = list("0", "0") %>% 
                                 purrr::set_names(variables)) %>%
-            dplyr::mutate(dplry::across(dplyr::everything(), ~stringr::str_pad(string = ., width = maxchar, pad = "0", side = "left"))) %>% 
+            dplyr::mutate(dplyr::across(dplyr::everything(), ~stringr::str_pad(string = ., width = maxchar, pad = "0", side = "left"))) %>% 
             tidyr::unite(col = !!rlang::as_name(loc), tidyselect::all_of(variables), sep = "")
           
         }) %>% 
