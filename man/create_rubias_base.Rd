@@ -36,14 +36,21 @@ This function creates the baseline dataframe needed for \pkg{rubias}.
 This function saves the baseline as a ".csv" file for posterity. To read in these ".csv" files, use \code{readr::read_csv(file = file, col_types = cols(.default = "c")} to make sure all columns are character vectors (if homozygous for T, it will become a logical vector).
 }
 \examples{
-create_locuscontrol(markersuite = "Coho_Baseline2016_95SNPs", username = "awbarclay", password = password)
-dat <- readr::read_csv("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/output/Final_Pops.csv")
-load("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline.Rdata")
-#' sillyvec <- dat$collection
-old2new_gcl(sillyvec)
-group_names <- dat$groups_10 \%>\% unique()
-groupvec <- dat$groups_10 \%>\% factor(levels = group_names) \%>\% as.numeric()
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
-UCIcoho104pops_96loci.rubias_base <- GCLr::create_rubias_base(sillyvec = sillyvec, loci = loci, group_names = group_names, groupvec = groupvec, file = "rubias/baseline", baseline_name = "UCIcoho104pops_96loci")
+groupvec <- GCLr::ex_baseline \%>\%
+   dplyr::group_by(collection) \%>\%
+   dplyr::summarize(group = unique(repunit)) \%>\%
+   dplyr::mutate(group = factor(group) \%>\% as.numeric()) \%>\%
+   dplyr::pull(group)
+
+loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
+   names() \%>\%
+   gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+   unique()
+
+group_names <- GCLr::ex_baseline$repunit \%>\% unique()
+
+GCLr::create_rubias_base(sillyvec = sillyvec, loci = loci, group_names = group_names, groupvec = groupvec, file =  path.expand("~"), baseline_name = "my_baseline")#saves tree to documents folder
 
 }
