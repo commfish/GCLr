@@ -32,17 +32,14 @@
 
 sampn_by_locus <- function(sillyvec, loci = LocusControl$locusnames, LocusCtl = LocusControl){
   
-  if(!all(loci %in% LocusCtl$locusnames)){
+  if (!all(loci %in% LocusCtl$locusnames)) {
     
     stop(paste0("'", setdiff(loci, LocusCtl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
     
   }
   
-  
-  nsilly <- length(sillyvec)
-  
   output <- lapply(sillyvec, function(silly){
-    
+
     my.gcl <- get(paste0(silly, ".gcl"))
     
     my.gcl %>%

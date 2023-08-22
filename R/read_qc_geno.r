@@ -24,14 +24,13 @@ read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, typ
       
     }) %>% dplyr::bind_rows() %>% 
       dplyr::filter(Name != "NTC") %>%
-      dplyr::mutate(Converted = dplyr::case_when(Converted == "No Call"| Converted == "Invalid" ~ NA_character_,
+      dplyr::mutate(Converted = dplyr::case_when(Converted == "No Call"| Converted == "Invalid" | Converted == "0" ~ NA_character_,
                                                  TRUE~Converted)) %>% 
       tidyr::separate(Name, into = c("SILLY_CODE", "FK_FISH_ID"), sep = "_", remove = FALSE) %>% 
       dplyr::mutate(FK_FISH_ID = as.numeric(FK_FISH_ID)) %>% 
       dplyr::rename(SillySource = Name) %>% 
       tidyr::separate(Converted, into = c("allele1", "allele2"), sep = ":") %>% 
-      dplyr::select(SillySource, SILLY_CODE, FK_FISH_ID, allele1, allele2, locus = Assay) %>% 
-      tidyr::replace_na(replace = list(allele1 = "0", allele2 = "0"))
+      dplyr::select(SillySource, SILLY_CODE, FK_FISH_ID, allele1, allele2, locus = Assay) 
     
   }
   
@@ -46,8 +45,7 @@ read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, typ
       dplyr::mutate(allele1 = as.character(`Allele 1`), allele2 = as.character(`Allele 2`)) %>% 
       tidyr::separate(SillySource, into = c("SILLY_CODE", "FK_FISH_ID"), sep = "_", remove = FALSE) %>% 
       dplyr::mutate(FK_FISH_ID = as.numeric(FK_FISH_ID)) %>% 
-      dplyr::select(SillySource, SILLY_CODE, FK_FISH_ID, allele1, allele2, locus) %>% 
-      tidyr::replace_na(replace = list(allele1 = "0", allele2 = "0"))
+      dplyr::select(SillySource, SILLY_CODE, FK_FISH_ID, allele1, allele2, locus) 
   }
   
   if(type == "GT-seq"){
@@ -57,11 +55,10 @@ read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, typ
       suppressMessages(readr::read_csv(file = pth, show_col_types = FALSE, na = c("", "NA", "0", "0/0")))
       
     }) %>% dplyr::bind_rows() %>% 
-      dplyr::rename(FK_FISH_ID = as.numberic(SAMPLE_NUM), locus = LOCUS) %>% 
+      dplyr::rename(FK_FISH_ID = SAMPLE_NUM, locus = LOCUS) %>% 
       tidyr::unite(SillySource, c(SILLY_CODE, FK_FISH_ID), sep = "_", remove = FALSE) %>% 
       tidyr::separate(GENOTYPE, into = c("allele1", "allele2"), sep = "/") %>% 
-      dplyr::select(SILLY_CODE, FK_FISH_ID, SillySource, locus, allele1, allele2) %>% 
-      tidyr::replace_na(replace = list(allele1 = "0", allele2 = "0"))
+      dplyr::select(SILLY_CODE, FK_FISH_ID, SillySource, locus, allele1, allele2) 
   }
   
   # Add extra columns as NAs for compatibility with all other functions
@@ -88,7 +85,7 @@ read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, typ
     
     # Add the missing attnames, as NA values, and arrange (19 attributes first)
     my.dat <- my.dat %>%
-      tibble::add_column(!!!setNames(rep(NA, length(missing_columns)), missing_columns)) %>% 
+      tibble::add_column(.data = ., !!!setNames(rep(NA, length(missing_columns)), missing_columns)) %>% 
       dplyr::select(dplyr::all_of(attnames), sort(names(.), na.last = TRUE))
     
     assign(paste(silly, "qc.gcl", sep = ""), my.dat, pos = 1)
@@ -99,4 +96,4 @@ read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, typ
   
   assign(x = "qcSillys", value = paste(sillyvecqc, "qc", sep = ""), pos = 1)
   
-}
+} 

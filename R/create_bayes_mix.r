@@ -4,11 +4,11 @@
 #'
 #' @param mixvec Character vector of ".gcl" objects you want to produce mixture files for.
 #' @param loci Character vector of the loci you wish to include.
-#' @param dir Character vector of where to save the ".bse" file.
+#' @param dir Character vector of where to save the ".mix" file.
 #' @param ncores Number of cores to use for parallel processing.
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #'
-#' @returns Returns the fortran format of the mixture file, which is needed for [create_bayes_ctl()].
+#' @returns Returns the FORTRAN format of the mixture file, which is needed for [create_bayes_ctl()].
 #' It also saves each mixture in `mixvec` as a .mix file.
 #' 
 #' @note If you want to analyze more than one silly as a mixture, use [pool_collections()] to combine them into a new silly.gcl

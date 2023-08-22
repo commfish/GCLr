@@ -11,14 +11,14 @@ create_bayes_mix(mixvec, loci, dir, ncores = 4, LocusCtl = LocusControl)
 
 \item{loci}{Character vector of the loci you wish to include.}
 
-\item{dir}{Character vector of where to save the ".bse" file.}
+\item{dir}{Character vector of where to save the ".mix" file.}
 
 \item{ncores}{Number of cores to use for parallel processing.}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
-Returns the fortran format of the mixture file, which is needed for \code{\link[=create_bayes_ctl]{create_bayes_ctl()}}.
+Returns the FORTRAN format of the mixture file, which is needed for \code{\link[=create_bayes_ctl]{create_bayes_ctl()}}.
 It also saves each mixture in \code{mixvec} as a .mix file.
 }
 \description{

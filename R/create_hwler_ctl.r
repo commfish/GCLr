@@ -2,21 +2,21 @@
 #'
 #' This function creates HWLER (Hardy-Weinberg and Linkage Equilibrium Sampler) control files for each chain based on the specified parameters.
 #'
-#' @param sillyvec A character vector of silly codes for the populations used to create the baseline file.
+#' @param sillyvec a character vector of baseline sillys included in the input file. Leave this `NULL` if no baseline individuals are present in the input file.
 #' @param loci  character vector of the loci used to produce the baseline and mixture files.
-#' @param input The base name for the control files.
-#' @param mixbase A character vector indicating mixture and/or baseline individuals are present in the data.
-#' @param nsamples A vector specifying the number of samples for each chain.
-#' @param nchains The number of MCMC chains to analyze the mixtures.
-#' @param dir The directory path where the control files will be saved.
-#' @param initval The initial starting value for each MCMC chain.
-#' @param seeds A matrix of random seeds containing 3 seeds per chain, where \code{nrow(seeds) == 3} and \code{ncol(seeds) == nchains}.
-#' @param thin Thinning intervals for MCMC sample of 1) stock proportions, 2) baseline allele or type relative frequencies, and 3) stock assignments of each mixture individual.
-#' @param inputfortran The input is in The Fortran format.
-#' @param switches A character string of logical switches, with default value "T T T F T T T T T" (see details).
+#' @param input The mixture and/or baseline input file name without the extension. This file can contain mixture data only, baseline data only, or a combination mixture and baseline. (see [HWLER manual](system.file("HWLER", "HWLER_manual.doc", package = "GCLr")) for more details) 
+#' @param nsamples a vector specifying the number of samples for each chain
+#' @param nchains the number of MCMC chains to analyze the mixtures
+#' @param dir the directory path where the control files will be saved
+#' @param initval the initial starting value for each MCMC chain 
+#' @param seeds a matrix of random seeds containing 3 seeds per chain, where \code{nrow(seeds) = 3} and \code{ncol(seeds) = nchains}.
+#' @param thin thinning intervals for MCMC sample of 1) stock proportions, 2) baseline allele or type relative frequencies, and 3) stock assignments of each mixture individual.
+#' @param inputfortran the FORTRAN format of the input created by [GCLr::create_hwler_input()]
+#' @param switches a character string of logical switches, with default value "T T T F T T T T T" (see details).
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #' 
 #' @details 
+#' The HWLER input file can contain only mixture individuals, only baseline individuals, or a combination of mixture and baseline individuals depending on the type of analysis you are doing. 
 #' The `switches` argument has 9 program options turned “on” with “T” for true or “off” with “F” for false:
 #'   \enumerate{
 #'     \item Baseline printed
@@ -30,14 +30,24 @@
 #'     \item Sample the Dirichlet mass parameter
 #'     }
 #'     
-#' @return Writes out HWLER control (.ctl) files.
+#' @seealso See HWLER manual for additional details: [HWLER manual](system.file("HWLER", "HWLER_manual.doc", package = "GCLr"))
+#'     
+#' @returns Writes out HWLER control (.ctl) files.
 #'
 #' @examples
-#' GCLr::create_hwler_ctl()
-#'
+#' \dontrun{
+#' load("V:/Analysis/2_Central/Sockeye/Cook Inlet/Missing Baseline Analysis/Missing Baseline Analysis.RData")
+#' HWLERControlFile.GCL(sillyvec = PopNames69, loci = loci34, input = "myHWLER.input", nsamples = c(22000, 2, 5), nchains = 1, dir = "HWLER/control", initval = "1.0", seeds = matrix(sample(seq(2000000000), 3*nchains), nrow = 3), thin = c(1, 100, 4), inputfortran = inputfortran, switches = "F F T F T T T T F")
+#'}
 #' @export
-create_hwler_ctl <- function(sillyvec, loci, input, mixbase = "mix", nsamples = c(1000, 2, 5), nchains = 5, dir, initval = "1.0", seeds = matrix(sample(seq(10000), 3*nchains), nrow = 3), thin = c(1, 1, 1), inputfortran, switches = "T T T F T T T T T", LocusCtl = LocusControl){
+create_hwler_ctl <- function(sillyvec = NULL, loci, input, nsamples = c(1000, 2, 5), nchains = 5, dir, initval = "1.0", seeds = matrix(sample(seq(10000), 3*nchains), nrow = 3), thin = c(1, 1, 1), inputfortran, switches = "T T T F T T T T T", LocusCtl = LocusControl){
 
+  if(sum(is.na(match(loci, LocCtl$locusnames)))){
+    
+    stop(paste("'", loci[is.na(match(loci, LocCtl$locusnames))], "' from argument 'loci' not found in 'LocusControl' object!!!", sep = ""))
+    
+  }
+  
   chains <- paste("Chain", 1:nchains, sep = "")
 
   dirs <- paste(dir, "\\", input, "Chain", 1:nchains, ".ctl", sep = "")
@@ -50,64 +60,66 @@ create_hwler_ctl <- function(sillyvec, loci, input, mixbase = "mix", nsamples = 
   nloci <- length(loci)
   
   seeds <- cbind(seeds)
-  dimnames(seeds) <- list(1:3,chains)
+  dimnames(seeds) <- list(1:3, chains)
 
-  files <- lapply(chains, function(chain){paste(input, chain, sep = "")})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){paste(input, chain, sep = "")})
+  names(file) <- chains
 
-  files <- lapply(files,function(file){rbind(file, paste(input, mixbase, sep = "."))})
-  names(files) <- chains
+  file <- lapply(file,function(file){rbind(file, paste(input, "input", sep = "."))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], paste(input, chain, "SUM.SUM", sep = ""))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], paste(input, chain, "SUM.SUM", sep = ""))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], paste(input, chain, "BOT.BOT", sep = ""))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], paste(input, chain, "BOT.BOT", sep = ""))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], paste(input, chain, "CLS.CLS", sep = ""))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], paste(input, chain, "CLS.CLS", sep = ""))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], paste(input, chain, "STK.STK", sep = ""))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], paste(input, chain, "STK.STK", sep = ""))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], paste(input, chain, "TXT.TXT", sep = ""))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], paste(input, chain, "TXT.TXT", sep = ""))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], paste(input, chain, "ALP.ALP", sep = ""))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], paste(input, chain, "ALP.ALP", sep = ""))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], paste(nsamples[1], nsamples[2], nsamples[3], colapse = "    "))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], paste(nsamples[1], nsamples[2], nsamples[3], colapse = "    "))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], length(sillyvec))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], length(sillyvec))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], length(loci))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], length(loci))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], initval)})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], initval)})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], cbind(seeds[, chain]))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], cbind(seeds[, chain]))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], cbind(thin))})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], cbind(thin))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], inputfortran)})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], inputfortran)})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], switches)})
-  names(files) <- chains
+  file <- lapply(chains, function(chain){rbind(file[[chain]], switches)})
+  names(file) <- chains
 
-  files <- lapply(seq(length(chains)), function(chain){rbind(files[[chain]], cbind(sapply(1:nloci, function(d){paste(sprintf("%3s", d), sprintf("%2s", nalleles[loci[d]]), "", loci[d], collapse = "")})))})
-  names(files) <- chains
+  file <- lapply(seq(length(chains)), function(chain){rbind(file[[chain]], cbind(sapply(1:nloci, function(d){paste(sprintf("%3s", d), sprintf("%2s", nalleles[loci[d]]), "", loci[d], collapse = "")})))})
+  names(file) <- chains
 
-  files <- lapply(chains, function(chain){rbind(files[[chain]], cbind(sapply(1:nsillys, function(i){paste(sprintf("%3s", i), "", format(ifelse(nchar(sillyvec[i]) < 18, sillyvec[i], substr(sillyvec[i], start = 1, stop = 18)), width = 18), collapse = "")})))})
-  names(files) <- chains
+  if(!is.null(sillyvec)){
+    
+    file <- lapply(chains, function(chain){rbind(file[[chain]], cbind(sapply(1:nsillys, function(i){paste(sprintf("%3s", i), "", format(ifelse(nchar(sillyvec[i]) < 18, sillyvec[i], substr(sillyvec[i], start = 1, stop = 18)), width = 18), collapse = "")})))})
+    names(file) <- chains
+    
+  }
 
-  empty <- sapply(chains, function(chain){write.table(files[[chain]], dirs[chain], quote = FALSE, row.names = FALSE, col.names = FALSE)})
-
-  return(NULL)
+  empty <- sapply(chains, function(chain){write.table(file[[chain]], dirs[chain], quote = FALSE, row.names = FALSE, col.names = FALSE)})
 
 }

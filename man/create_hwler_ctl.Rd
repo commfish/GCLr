@@ -5,10 +5,9 @@
 \title{Create HWLER Control Files}
 \usage{
 create_hwler_ctl(
-  sillyvec,
+  sillyvec = NULL,
   loci,
   input,
-  mixbase = "mix",
   nsamples = c(1000, 2, 5),
   nchains = 5,
   dir,
@@ -21,29 +20,27 @@ create_hwler_ctl(
 )
 }
 \arguments{
-\item{sillyvec}{A character vector of silly codes for the populations used to create the baseline file.}
+\item{sillyvec}{a character vector of baseline sillys included in the input file. Leave this \code{NULL} if no baseline individuals are present in the input file.}
 
 \item{loci}{character vector of the loci used to produce the baseline and mixture files.}
 
-\item{input}{The base name for the control files.}
+\item{input}{The mixture and/or baseline input file name without the extension. This file can contain mixture data only, baseline data only, or a combination mixture and baseline. (see \link{HWLER manual}(system.file("HWLER", "HWLER_manual.doc", package = "GCLr")) for more details)}
 
-\item{mixbase}{A character vector indicating mixture and/or baseline individuals are present in the data.}
+\item{nsamples}{a vector specifying the number of samples for each chain}
 
-\item{nsamples}{A vector specifying the number of samples for each chain.}
+\item{nchains}{the number of MCMC chains to analyze the mixtures}
 
-\item{nchains}{The number of MCMC chains to analyze the mixtures.}
+\item{dir}{the directory path where the control files will be saved}
 
-\item{dir}{The directory path where the control files will be saved.}
+\item{initval}{the initial starting value for each MCMC chain}
 
-\item{initval}{The initial starting value for each MCMC chain.}
+\item{seeds}{a matrix of random seeds containing 3 seeds per chain, where \code{nrow(seeds) = 3} and \code{ncol(seeds) = nchains}.}
 
-\item{seeds}{A matrix of random seeds containing 3 seeds per chain, where \code{nrow(seeds) == 3} and \code{ncol(seeds) == nchains}.}
+\item{thin}{thinning intervals for MCMC sample of 1) stock proportions, 2) baseline allele or type relative frequencies, and 3) stock assignments of each mixture individual.}
 
-\item{thin}{Thinning intervals for MCMC sample of 1) stock proportions, 2) baseline allele or type relative frequencies, and 3) stock assignments of each mixture individual.}
+\item{inputfortran}{the FORTRAN format of the input created by \code{\link[=create_hwler_input]{create_hwler_input()}}}
 
-\item{inputfortran}{The input is in The Fortran format.}
-
-\item{switches}{A character string of logical switches, with default value "T T T F T T T T T" (see details).}
+\item{switches}{a character string of logical switches, with default value "T T T F T T T T T" (see details).}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
@@ -54,6 +51,7 @@ Writes out HWLER control (.ctl) files.
 This function creates HWLER (Hardy-Weinberg and Linkage Equilibrium Sampler) control files for each chain based on the specified parameters.
 }
 \details{
+The HWLER input file can contain only mixture individuals, only baseline individuals, or a combination of mixture and baseline individuals depending on the type of analysis you are doing.
 The \code{switches} argument has 9 program options turned “on” with “T” for true or “off” with “F” for false:
 \enumerate{
 \item Baseline printed
@@ -68,6 +66,11 @@ The \code{switches} argument has 9 program options turned “on” with “T” 
 }
 }
 \examples{
-GCLr::create_hwler_ctl()
-
+\dontrun{
+load("V:/Analysis/2_Central/Sockeye/Cook Inlet/Missing Baseline Analysis/Missing Baseline Analysis.RData")
+HWLERControlFile.GCL(sillyvec = PopNames69, loci = loci34, input = "myHWLER.input", nsamples = c(22000, 2, 5), nchains = 1, dir = "HWLER/control", initval = "1.0", seeds = matrix(sample(seq(2000000000), 3*nchains), nrow = 3), thin = c(1, 100, 4), inputfortran = inputfortran, switches = "F F T F T T T T F")
+}
+}
+\seealso{
+See HWLER manual for additional details: \link{HWLER manual}(system.file("HWLER", "HWLER_manual.doc", package = "GCLr"))
 }
