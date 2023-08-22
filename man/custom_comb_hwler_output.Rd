@@ -40,8 +40,23 @@ This function computes summary statistics from HWLER (Hardy-Weinberg and Linkage
 }
 \details{
 This function makes all accommodations for the extra baseline group.
+In addition to summary statistics, this function also produces a pdf file of trace plots for each group and mixture.
 }
 \examples{
-GCLr::custom_comb_hwler_output()
+\dontrun{
+setwd("V:/Analysis/2_Central/Sockeye/Cook Inlet/Missing Baseline Analysis") 
+
+groupvec <- c(1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 
+  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5, 4, 4, 5, 5, 
+  5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 
+  6, 6, 6, 7, 7, 7, 7)
+groupnames <- c("A", "B", "C", "D", "E", "F", "G")
+
+mixvec <-  c("Western06early", "Western06late")
+
+maindir <- "HWLER/output"
+
+custom_comb_hwler_output(groupvec = groupvec69, groupnames = groupnames, maindir = maindir, mixvec = mixvec, ext = "BOT", burn = 0.5, alpha = 0.1, PosteriorOutput = TRUE)
+}
 
 }
