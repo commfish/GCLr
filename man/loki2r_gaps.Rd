@@ -14,7 +14,50 @@ loki2r_gaps(sillyvec, username, password)
 \item{password}{Password for LOKI connection.}
 }
 \value{
-The runtime of the function in seconds.
+The runtime of the function in seconds
+
+Assigns the following objects to the global environment:
+
+A tibble of individuals missing data at one or more loci called \code{missing_indvs_loci}.
+
+A tibble with the following columns for each silly:
+\itemize{
+\item \code{FK_FISH_ID} (double): fish ID numbers for each individual
+\item \code{COLLECTION_ID} (double): the unique collection ID number for each individual
+\item \code{SILLY_CODE} (character): the silly code for each individual
+\item \code{PLATE_ID} (character): the extraction plate ID for each individual
+\item \code{PK_TISSUE_TYPE} (character): the tissue type extracted for DNA for each individual
+\item \code{CAPTURE_LOCATION} (character): the location where each individual was captured for sampling
+\item \code{CAPTURE_DATE} (date): the date each individual was captured (e.g., May 5, 2020 = "2020-05-05")
+\item \code{END_CAPTURE_DATE} (date): the last collection date for a silly (e.g., May 5, 2020 = "2020-05-05")
+\item \code{MESH_SIZE} (character): the mesh size of the net used to capture (harvest) each individual
+\item \code{MESH_SIZE_COMMENT} (character): comments about mesh size
+\item \code{LATITUDE} (double): the latitude where each individual was captured in decimal degrees
+\item \code{LONGITUDE} (double): the longitude where each individual was captured in decimal degrees
+\item \code{AGENCY} (character): the name of the agency or organization that collected each individual
+\item \code{VIAL_BARCODE} (character): the barcode on the collection vial
+\item \code{DNA_TRAY_CODE} (character): the barcode on the collection tray/card
+\item \code{DNA_TRAY_WELL_CODE} (double): the unique number assigned to each position in the collection tray/card for each individual (e.g., positions A1-A10 = codes 1-10)
+\item \code{DNA_TRAY_WELL_POS} (character): the position in the collection tray/card (e.g., A1, A2, B1, B2, etc.)
+\item \code{CONTAINER_ARRAY_TYPE_ID} (double): the number code for the collection container (e.g., tray or card)
+\item \code{SillySource} (double): the original silly code and fish ID for each individual (e.g., KQUART06_1). When pulled from loki this will be the SILLY_CODE and FK_FISH_ID
+\item \code{genotypes} with a column for each allele for each locus
+\item \code{CAPTURE_LOCATION} (character): the location where each individual was captured for sampling
+\item \code{CAPTURE_DATE} (date): the date each individual was captured (e.g., May 5, 2020 = "2020-05-05")
+\item \code{END_CAPTURE_DATE} (date): the last collection date for a silly (e.g., May 5, 2020 = "2020-05-05")
+\item \code{MESH_SIZE} (character): the mesh size of the net used to capture (harvest) each individual
+\item \code{MESH_SIZE_COMMENT} (character): comments about mesh size
+\item \code{LATITUDE} (double): the latitude where each individual was captured in decimal degrees
+\item \code{LONGITUDE} (double): the longitude where each individual was captured in decimal degrees
+\item \code{AGENCY} (character): the name of the agency or organization that collected each individual
+\item \code{VIAL_BARCODE} (character): the barcode on the collection vial
+\item \code{DNA_TRAY_CODE} (character): the barcode on the collection tray/card
+\item \code{DNA_TRAY_WELL_CODE} (double): the unique number assigned to each position in the collection tray/card for each individual (e.g., positions A1-A10 = codes 1-10)
+\item \code{DNA_TRAY_WELL_POS} (character): the position in the collection tray/card (e.g., A1, A2, B1, B2, etc.)
+\item \code{CONTAINER_ARRAY_TYPE_ID} (double): the number code for the collection container (e.g., tray or card)
+\item \code{SillySource} (double): the original silly code and fish ID for each individual (e.g., KQUART06_1). When pulled from loki this will be the SILLY_CODE and FK_FISH_ID
+\item \code{genotypes} with a column for each allele for each locus
+}
 }
 \description{
 This function connects to LOKI and creates a ".gcl" object for each silly code in \code{sillyvec}. A "*.gcl" object is a Gene Conservation Laboratory genotypes object with associated sample attributes.
@@ -26,7 +69,7 @@ The genotypes and attributes are stored in separate "*.gcl" objects named after 
 }
 \examples{
 \dontrun{
-sillyvec <- c("KQUART06", "KQUART08", "KQUART09")
+sillyvec <- c("KQUART06", "KCRESC06", "KJUNE05")
 loki2r_gaps(sillyvec = sillyvec, username = "awbarclay", password)
 }
 
