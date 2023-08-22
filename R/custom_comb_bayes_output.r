@@ -36,15 +36,20 @@
 #' @seealso custom_comb_rubias_output()
 #'
 #' @examples
+#' \dontrun{
+#' 
 #'   setwd("V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/2016 UCIfisheryMixtures")
 #'   attach("2016UCIfisheryMixtureAnalysis.RData")
 #'   groupvec <- groupvec
 #'   group_names <- groups
 #'   mixvec <- mixvec
 #'   detach()
+#'   
 #'   maindir <- "BAYES/Output"
 #'
 #'   results <- custom_comb_bayes_output(groupvec = groupvec, group_names = group_names, maindir = maindir, mixvec = mixvec, ext = "BOT", nchains = 5, burn = 0.5, alpha = 0.1, threshold = 5e-7, plot_trace = TRUE, ncores = 8)
+#' 
+#' }
 #'
 #' @export
 custom_comb_bayes_output <- function(groupvec, group_names, maindir, mixvec, ext = "RGN", nchains = 5, burn = 0.5, alpha = 0.1, threshhold = 5e-7, plot_trace = FALSE, ncores = 4){
