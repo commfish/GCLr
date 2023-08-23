@@ -19,9 +19,11 @@
 #'   }
 #'   
 #' @examples
-#' source("/R/Functions.GCL.R")
-#' source(file = "Examples/qcExample.R")
+#' \dontrun{
+#' 
 #' wrong_spp <- GCLr::find_alt_species(sillyvec = sillys, species = "sockeye")
+#' 
+#' }
 #' 
 #' @export
 find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl){

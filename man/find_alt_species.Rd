@@ -30,8 +30,10 @@ This function requires a \code{LocusControl} object and ."gcl" objects. Run [GCL
 The Alternate and Failed marker lists were text files in a random folder on a random network drive; marker lists were hard-coded into function so it doesn't relying on hidden files. In the future, if applicable, we can simply add more markers here.
 }
 \examples{
-source("/R/Functions.GCL.R")
-source(file = "Examples/qcExample.R")
+\dontrun{
+
 wrong_spp <- GCLr::find_alt_species(sillyvec = sillys, species = "sockeye")
+
+}
 
 }
