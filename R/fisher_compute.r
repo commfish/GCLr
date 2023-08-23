@@ -23,11 +23,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
-#' old2new_locuscontrol()
-#' old2new_gcl(sillyvec = c("KKILL05","KKILL06"), save_old = FALSE)
-#' freq <- calc_freq_pop(sillyvec = c("KKILL05","KKILL06"), loci = loci443)
-#' fisher_compute(freq = freq, loci = loci443, prec = 4)
+#' 
+#' freq <- calc_freq_pop(sillyvec = sillys, loci = loci)
+#' 
+#' fisher_compute(freq = freq, loci = loci, prec = 4)
 #' }
 #'
 #' @export
