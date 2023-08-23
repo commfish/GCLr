@@ -4,7 +4,8 @@
 #'
 #' @param sillyvec A character vector of silly codes to include in the GENEPOP file.
 #' @param loci A character vector of locus names to include in the GENEPOP file.
-#' @param path The full file path to write out the GENEPOP file; with "\\" or "/" separator between folders.
+#' @param path When `npops = NULL` full file path to write out the GENEPOP file; with "\\" or "/" separator between folders.
+#'             When setting `npops`, `path` is the folder were the generic genepop files are saved.
 #' @param VialNums Logical; if TRUE (default), vial numbers will be included for each individual next to their silly code separated by an underscore (e.g., "KCRESC10_1"). If FALSE, only the silly code will be included for each individual (e.g., "KCRESC10").
 #' @param usat Logical; whether the data are from microsatellites (TRUE) or not (FALSE). This is included because GENEPOP only accepts numeric alleles; SNP alleles have to be converted from character to numeric, and microsatellite alleles are already numeric.
 #' @param ncores The number of cores for multithreading using [doParallel()] and [foreach()]. Default is 4. 
@@ -13,40 +14,20 @@
 #' 
 #' @details
 #' This function requires a `LocusControl` object. Run [GCLr::create_locuscontrol()] prior to this function.
-#' The `npops` argument is useful when running Linkage Disequilibrium tests in \pkg{genepop} using the [GCLr::gcltest_LD] function so things finish faster. For example, if there are 10 pops in `sillyvec` and `npops` = 2, the following files will be written to the folder supplied in the `path` argument: Pops1to2.gen.txt, Pops3to4.gen.txt, Pops5to6.gen.txt, Pops7to8.gen.txt, Pops9to10.gen.txt 
+#' The `npops` argument is useful when running Linkage Disequilibrium tests in \pkg{genepop} using the [GCLr::gcltest_LD] function, so things finish faster. 
+#' For example, if there are 10 pops in `sillyvec` and `npops` = 2, the following files will be written to the folder supplied in the `path` argument: Pops1to2.gen.txt, Pops3to4.gen.txt, Pops5to6.gen.txt, Pops7to8.gen.txt, Pops9to10.gen.txt 
 #' 
 #' @return Writes out a GENEPOP file to the specified path.
 #' 
 #' @examples
-#' source(paste0(path.expand("~/R/"), "Functions.R"))#GCL functions
-#'
 #' ### SNP
-#' attach("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline.RData")
-#' old2new_locuscontrol()
-#' sapply(sillyvec104, function(silly){assign(paste0(silly, ".gcl"), get(paste0(silly, ".gcl")), pos = -1, envir = .GlobalEnv)})
-#' sillyvec <- sillyvec104
-#' loci <- loci81
-#' detach()
-#' old2new_gcl(sillyvec)
 #' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = "GENEPOP/genepopfile.gen", VialNums = TRUE, usat = FALSE, ncores = 8, npops = NULL)
 #' 
 #' ### uSAT
-#' attach("V:/Analysis/2_Central/Chinook/Susitna-Watana/2017/Upper and Middle River Analysis/SuWuUpperMiddleRiverAnalysis_tidy.RData")
-#' sapply(Sillys, function(silly){assign(paste0(silly, ".gcl"), get(paste0(silly, ".gcl")), pos = -1, envir = .GlobalEnv)})
-#' sillyvec <- Sillys
-#' loci <- loci13
-#' LocusControl <- LocusControl
-#' detach()
-#' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = "V:/Analysis/2_Central/Chinook/Susitna-Watana/2017/Upper and Middle River Analysis/Genepop/genepopfile.gen", VialNums = TRUE, usat = TRUE, ncores = 4)
+#' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = "Genepop/genepopfile.gen", VialNums = TRUE, usat = TRUE, ncores = 4)
 #' 
 #' ### SNP with npops argument
-#' attach("C:/2019 coho baseline/2019_Cook_Inlet_coho_baseline_new.RData")
-#' LocusControl <- LocusControl
-#' sapply(sillyvec104, function(silly){assign(paste0(silly, ".gcl"), get(paste0(silly, ".gcl")), pos = -1, envir = .GlobalEnv)})
-#' sillyvec <- sillyvec104
-#' loci <- loci81
-#' detach()
-#' GCLr::gcl2genepop(sillyvec = sillyvec[1:36], loci = loci, path = "GENEPOP", VialNums = TRUE, usat = FALSE, ncores = 8, npops = 2)
+#' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = "Genepop", VialNums = TRUE, usat = FALSE, ncores = 8, npops = 2)
 #' 
 #' @export
 gcl2genepop <- function(sillyvec, loci, path, VialNums = TRUE, usat = FALSE, ncores = 4, npops = NULL, LocusCtl = LocusControl){
