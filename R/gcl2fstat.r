@@ -9,13 +9,18 @@
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #' 
 #' @details 
-#' This function requires a `LocusControl` object. Run [GCLr::create_locuscontrol()] prior to this function.
+#' This function requires a `LocusControl` object. Run [GCLr::create_locuscontrol()] prior to this function. 
+#' Use this function when you want to run an analysis in `FSTAT`. 
 #' 
 #' @return Writes out an FSTAT file to the specified path.
 #' 
 #' @examples
-#' load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-#' GCLr::gcl2fstat(sillyvec = sillyvec31, loci = loci82, path = "FSTAT/FSTATfile.dat", ncores = 8)
+#' 
+#' sillys <- GCLr::base2gcl(GCLr::ex_baseline)
+#' 
+#' GCLr::gcl2fstat(sillyvec = sillys, loci = loci, path = path.expand("~/FSTATfile.dat"), ncores = 4)
+#' 
+#' @seealso [GCLr::create_hierfstat_data()]
 #' 
 #' @export
 gcl2fstat <- function(sillyvec, loci, path, ncores = 4, LocusCtl = LocusControl){
@@ -50,7 +55,11 @@ gcl2fstat <- function(sillyvec, loci, path, ncores = 4, LocusCtl = LocusControl)
     dplyr::pull(nalleles) %>% 
     purrr::set_names(loci)
   
-  my.gcl <- lapply(sillyvec,function(silly){get(paste(silly,".gcl",sep=""),pos=1)}) %>% 
+  my.gcl <- lapply(sillyvec, function(silly){
+    
+    get(paste(silly, ".gcl", sep = ""), pos = 1)
+    
+    }) %>% 
     purrr::set_names(sillyvec)
   
   # Multicore loop
@@ -66,7 +75,11 @@ gcl2fstat <- function(sillyvec, loci, path, ncores = 4, LocusCtl = LocusControl)
     
     pop_no <- match(silly, sillyvec)
     
-    scores_names <- sapply(loci, function(locus) {c(locus, paste0(locus, ".1"))}) %>% 
+    scores_names <- sapply(loci, function(locus) {
+      
+      c(locus, paste0(locus, ".1"))
+      
+      }) %>% 
       as.vector() 
     
     scores <- new.gcl %>% 
@@ -82,12 +95,12 @@ gcl2fstat <- function(sillyvec, loci, path, ncores = 4, LocusCtl = LocusControl)
       
       scores %>%
         dplyr::select(tidyselect::all_of(variables)) %>% 
-        dplyr::mutate(across(dplyr::everything(), .fns = ~factor(., levels = my.alleles$call))) %>% 
-        dplyr::mutate(across(dplyr::everything(), .fns = as.numeric)) %>% 
-        dplyr::mutate(across(dplyr::everything(), .fns = as.character)) %>%
+        dplyr::mutate(dplyr::across(dplyr::everything(), .fns = ~factor(., levels = my.alleles$call))) %>% 
+        dplyr::mutate(dplyr::across(dplyr::everything(), .fns = as.numeric)) %>% 
+        dplyr::mutate(dplyr::across(dplyr::everything(), .fns = as.character)) %>%
         tidyr::replace_na(replace = list("0", "0") %>%
                             set_names(variables)) %>%
-        dplyr::mutate(across(dplyr::everything(), .fns = ~stringr::str_pad(., width = maxchar, pad = "0", side = "left"))) %>% 
+        dplyr::mutate(dplyr::across(dplyr::everything(), .fns = ~stringr::str_pad(., width = maxchar, pad = "0", side = "left"))) %>% 
         tidyr::unite(col = !!rlang::as_name(loc), tidyselect::all_of(variables), sep = "")
       
     }) %>% 

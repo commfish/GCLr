@@ -25,9 +25,15 @@ Write out an FSTAT input file from ".gcl" objects.
 }
 \details{
 This function requires a \code{LocusControl} object. Run \code{\link[=create_locuscontrol]{create_locuscontrol()}} prior to this function.
+Use this function when you want to run an analysis in \code{FSTAT}.
 }
 \examples{
-load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-GCLr::gcl2fstat(sillyvec = sillyvec31, loci = loci82, path = "FSTAT/FSTATfile.dat", ncores = 8)
 
+sillys <- GCLr::base2gcl(GCLr::ex_baseline)
+
+GCLr::gcl2fstat(sillyvec = sillys, loci = loci, path = path.expand("~/FSTATfile.dat"), ncores = 4)
+
+}
+\seealso{
+\code{\link[=create_hierfstat_data]{create_hierfstat_data()}}
 }
