@@ -39,21 +39,14 @@ This function checks for duplicate individuals within each silly in the provided
 }
 \details{
 When quantile is set to NULL, this function utilizes \code{\link[rubias:close_matching_samples]{rubias::close_matching_samples()}} to perform the duplicate check, and it is much faster than when you set a quantile.
+Set quantile if you know that your collection contains individuals from a population or populations very little variation (similar genotypes) to avoid identifying too many duplicate samples.
 }
 \examples{
 \dontrun{
-# Set up required objects
-password <- "password"
-username <- "username"
-create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = username, password = password)
-sillyvec <- c("SMCDO03", "SNEVA13")
-GCLr::loki2r(sillyvec = sillyvec, username = username, password = password)
-GCLr::remove_ind_miss_loci(sillyvec = sillyvec)
-GCLr::pool_collections(c("SMCDO03", "SNEVA13"))
 
-# Check for duplicate individuals
 dupcheck <- GCLr::dupcheck_within_silly(sillyvec = sillyvec, loci = LocusControl$locusnames, quantile = 0.99, minproportion = 0.95, ncores = 4)
 dupcheckNULLQuantile <- GCLr::dupcheck_within_silly(sillyvec = sillyvec, loci = LocusControl$locusnames, quantile = NULL, minnonmissing = 0.6, minproportion = 0.95, ncores = 4)
+
 }
 
 }
