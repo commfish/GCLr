@@ -27,11 +27,8 @@
 #' 
 #' @examples
 #' \dontrun{
-#' load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
-#' old2new_locuscontrol()
-#' old2new_gcl(sillyvec = c("KKILL05","KKILL06", "KFUNN05", "KFUNN06"), save_old = FALSE)
-#' freq <- calc_freq_pop(sillyvec = c("KKILL05","KKILL06", "KFUNN05", "KFUNN06"), loci = loci443)
-#' fishers_test(freq = freq, loci = loci443, tests = list(c("KKILL05","KKILL06"), c("KFUNN05", "KFUNN06")))
+#' freq <- calc_freq_pop(sillyvec = c("KKILL05","KKILL06", "KFUNN05", "KFUNN06"), loci = loci)
+#' fishers_test(freq = freq, loci = loci, tests = list(c("KKILL05","KKILL06"), c("KFUNN05", "KFUNN06")))
 #' }
 #'
 #' @export
