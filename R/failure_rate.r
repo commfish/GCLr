@@ -46,44 +46,41 @@ failure_rate <- function(sillyvec) {
                   plate = PLATE_ID,
                   silly_source = SillySource,
                   tidyselect::all_of(loci)) %>% 
-    tidyr::pivot_longer(cols = tidyselect::starts_with(loci), names_to = "locus", values_to = "genotype")
-  
-  # master.tbl <- dplyr::bind_cols(tibble::as_tibble(master.gcl$scores[, , "Dose1"]), tibble::as_tibble(master.gcl$attributes[, c("SILLY_CODE", "PLATE_ID", "SillySource")])) %>% 
-  #   tidyr::gather(locus, genotype, -SILLY_CODE, -PLATE_ID, -SillySource) %>% 
-  #   dplyr::rename(silly = SILLY_CODE, plate = PLATE_ID, silly_source = SillySource)
+    tidyr::pivot_longer(cols = tidyselect::starts_with(loci), names_to = "locus", values_to = "genotype") %>% 
+    dplyr::arrange(locus, silly_source)
   
   rm(master.gcl, pos = 1)
   
   # Failure rate by silly
   fail_silly <- master.tbl %>% 
     dplyr::group_by(silly) %>% 
-    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / dplyr::n()) %>% 
+    dplyr::summarise(fail = sum(is.na(genotype), na.rm = FALSE) / dplyr::n()) %>% 
     dplyr::arrange(dplyr::desc(fail))
   
   # Failure rate by locus
   fail_locus <- master.tbl %>% 
     dplyr::group_by(locus) %>% 
-    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / dplyr::n()) %>% 
+    dplyr::summarise(fail = sum(is.na(genotype), na.rm = FALSE) / dplyr::n()) %>% 
     dplyr::arrange(dplyr::desc(fail))
   
   # Failure rate by plate
   fail_plate <- master.tbl %>% 
     dplyr::group_by(plate) %>% 
-    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / dplyr::n()) %>% 
+    dplyr::summarise(fail = sum(is.na(genotype), na.rm = FALSE) / dplyr::n()) %>% 
     dplyr::arrange(dplyr::desc(fail))
   
   # Failure rate overall
   fail_overall <- master.tbl %>% 
     dplyr::mutate(project = project) %>% 
     dplyr::group_by(project) %>% 
-    dplyr::summarise(fail = sum(genotype == "0", na.rm = TRUE) / dplyr::n())
+    dplyr::summarise(fail = sum(is.na(genotype), na.rm = FALSE) / dplyr::n())
   
   # Plot failure rate by silly and locus
   fail_silly_plot <- plotly::ggplotly(
     ggplot2::ggplot(
       master.tbl %>%
         dplyr::group_by(silly, locus) %>%
-        dplyr::summarise(p_fail = sum(genotype == "0") / dplyr::n(), .groups = "drop"),
+        dplyr::summarise(p_fail = sum(is.na(genotype), na.rm = FALSE) / dplyr::n(), .groups = "drop"),
       ggplot2::aes(x = silly, y = locus)
     ) +
       ggplot2::geom_tile(ggplot2::aes(fill = p_fail)) +
@@ -106,7 +103,7 @@ failure_rate <- function(sillyvec) {
     ggplot2::ggplot(
       master.tbl %>%
         dplyr::group_by(plate, locus) %>%
-        dplyr::summarise(p_fail = sum(genotype == "0") / dplyr::n(), .groups = "drop"),
+        dplyr::summarise(p_fail = sum(is.na(genotype), na.rm = FALSE) / dplyr::n(), .groups = "drop"),
       ggplot2::aes(x = plate, y = locus)
     ) +
       ggplot2::geom_tile(ggplot2::aes(fill = p_fail)) +
@@ -123,14 +120,6 @@ failure_rate <- function(sillyvec) {
       )) +
       ggplot2::ggtitle("Failure Rate by Plate and Locus")
   )
-  
-  # xxx CSJ - do we just want the list output or something like what I did below (tibble w/ lists)? Does it matter?
-  # failure_rate <- list(silly_failure_rate = fail_silly, 
-  #                      locus_failure_rate = fail_locus, 
-  #                      plate_failure_rate = fail_plate, 
-  #                      overall_failure_rate = fail_overall, 
-  #                      plot_silly_failure_rate = fail_silly_plot, 
-  #                      plot_plate_failure_rate = fail_plate_plot)
   
   failure_rate <- tibble::tibble(
     result_type = c("silly_failure_rate", "locus_failure_rate", "plate_failure_rate", 
