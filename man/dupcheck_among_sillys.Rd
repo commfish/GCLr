@@ -17,11 +17,11 @@ dupcheck_among_sillys(
 )
 }
 \arguments{
-\item{KeySillys}{A character vector of silly codes without the ".gcl" extension.}
+\item{KeySillys}{A character vector of silly codes without the ".gcl" extension. These are the sillys with the fish IDs that might be duplicated in \code{BetweenSillys}}
 
 \item{KeySillyIDs}{A named list of character vectors containing FK_FISH_IDs for each silly code in \code{KeySillys} to check against all silly codes in \code{BetweenSillys}. If NULL, all FK_FISH_IDs for each silly code in \code{KeySillys} are checked against all silly codes in \code{BetweenSillys}.}
 
-\item{BetweenSillys}{A character vector of silly codes without the ".gcl" extension.}
+\item{BetweenSillys}{A character vector of silly codes without the ".gcl" extension. These are the sillys that may contain duplicates.}
 
 \item{loci}{A character vector of locus names. If set to NULL, all loci in the ".gcl" objects will be used.}
 
@@ -29,7 +29,7 @@ dupcheck_among_sillys(
 
 \item{minproportion}{The proportion of shared non-missing loci that must be shared between the individuals to be reported as a matching pair.}
 
-\item{ncores}{The number of cores to use in a \link[foreach:foreach]{foreach::\%dopar\%} loop. If the number of cores exceeds the number on your device, then \code{ncores} defaults to \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
+\item{ncores}{The number of cores to use in a \link[foreach:foreach]{foreach::\%dopar\%} loop. If the number of cores exceeds the number on your device, then \code{ncores} defaults to \code{parallel::detectCores()}.}
 
 \item{plot.results}{Logical value indicating whether to produce histograms of duplicate rates for each silly code in \code{KeySillyIDs}.}
 
@@ -38,31 +38,28 @@ dupcheck_among_sillys(
 \value{
 A tibble that includes the duplicate individuals that exceeded \code{minproportion} or had the maximum duplicate rate, as well as duplicate individuals that came from the same original collection (i.e., project duplicates). The tibble includes the following variables:
 \itemize{
-\item Keysillyvial: The KeySilly_ID.
-\item Betweensillyvial: The BetweenSilly_ID.
-\item Keymissing: The number of loci without genotypes for each KeySilly_ID.
-\item Betweenmissing: The number of loci without genotypes for each BetweenSilly_ID.
-\item DuplicateRate: The proportion of duplicate genotypes between each KeySilly_ID and BetweenSilly_ID.
+\item \code{Keysillyvial}: The KeySilly_ID.
+\item \code{Betweensillyvial}: The BetweenSilly_ID.
+\item \code{Keymissing}: The number of loci without genotypes for each KeySilly_ID.
+\item \code{Betweenmissing}: The number of loci without genotypes for each BetweenSilly_ID.
+\item \code{DuplicateRate}: The proportion of duplicate genotypes between each KeySilly_ID and BetweenSilly_ID.
 }
 The function also prints a histogram of duplicate rates for each silly code in \code{KeySillyIDs}. Each plot has a vertical red line indicating the \code{minproportion}, and the highest duplicate rate bar is labeled with the \code{BetweenSillyIDs} with that duplicate rate. The title of each plot indicates the \code{KeySillyID} that was checked for duplicates.
 }
 \description{
 This function checks for duplicate individuals between silly code ".gcl" objects. It is mainly used for quality control purposes.
 }
+\details{
+This function is a wrapper for \code{\link[rubias:close_matching_samples]{rubias::close_matching_samples()}} and is intended for finding duplicate fish among sillys, mainly for lab quality control analyses to look for extraction/loading errors. To check for duplicates within a silly, use \code{\link[=dupcheck_within_silly]{dupcheck_within_silly()}}
+}
 \examples{
-password <- "************"
-create_locuscontrol(markersuite = "CookInletChinook2013_43SNPs", username = "awbarclay", password = password)
-loki2r(sillyvec = c("KKILL05", "KKILL06", "KFUNN05", "KFUNN06"), username = "awbarclay", password = password)
-pool_collections(collections = c("KKILL05", "KFUNN05"), IDs = list(KKILL05 = KKILL05.gcl$FK_FISH_ID, KFUNN05 = c(9, 30)), newname = "KKILL05")
-pool_collections(collections = c("KFUNN06", "KKILL06"), IDs = list(KFUNN06 = KFUNN06.gcl$FK_FISH_ID, KKILL06 = c(101, 176)), newname = "KFUNN06")
-KKILL05.gcl <- KKILL05.gcl \%>\% mutate(SillySource = case_when(FK_FISH_ID \%in\% c(69, 70) ~ paste(SILLY_CODE, FK_FISH_ID, sep = "_"), TRUE ~ SillySource))
-KFUNN06.gcl <- KFUNN06.gcl \%>\% mutate(SillySource = case_when(FK_FISH_ID \%in\% c(184, 185) ~ paste(SILLY_CODE, FK_FISH_ID, sep = "_"), TRUE ~ SillySource))
-KKILL06qc.gcl <- KKILL06.gcl \%>\% mutate(SILLY_CODE = "KKILL06qc") \%>\% mutate(SillySource = paste(SILLY_CODE, FK_FISH_ID, sep ="_"))
-KFUNN05qc.gcl <- KFUNN05.gcl \%>\% mutate(SILLY_CODE = "KFUNN05qc") \%>\% mutate(SillySource = paste(SILLY_CODE, FK_FISH_ID, sep ="_"))
-KeySillys <- c("KKILL06qc", "KFUNN05qc")
-KeySillyIDs <- list(KKILL06qc = c(101, 176), KFUNN05qc = c(9, 30))
-BetweenSillys <- c("KKILL05", "KKILL06", "KFUNN05", "KFUNN06")
-loci <- LocusControl$locusnames
-results <- GCLr::dupcheck_among_sillys(KeySillys = c("KKILL06qc", "KFUNN05qc"), KeySillyIDs = list(KKILL06qc = c(101, 176), KFUNN05qc = c(9, 30)), BetweenSillys = c("KKILL05", "KKILL06", "KFUNN05", "KFUNN06"), loci = LocusControl$locusnames, minnonmissing = 0.6, minproportion = 0.9, ncores = 4)
-
+\dontrun{
+  
+  GCLr::dupcheck_among_sillys(KeySillys = c("KKILL06qc", "KFUNN05qc"), KeySillyIDs = list(KKILL06qc = c(101, 176), KFUNN05qc = c(9, 30)), BetweenSillys = c("KKILL05", "KKILL06", "KFUNN05", "KFUNN06"), loci = LocusControl$locusnames, minnonmissing = 0.6, minproportion = 0.9, ncores = 20) 
+  
+}
+                                                                                                                                                                                                                                                                                                          
+}
+\seealso{
+\code{\link[=dupcheck_within_silly]{dupcheck_within_silly()}}
 }
