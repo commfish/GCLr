@@ -17,12 +17,17 @@ fisher_combinations(sillys, min_length = 2, max_length)
 a list item containing each of the tests
 }
 \description{
-This function generates all possible pooling tests for a list of silly codes. The output is plugged into fishers_test(freq = x, loci = x, tests = combos)
+This function generates all possible pooling tests for a list of silly codes. The output is plugged into \code{GCLr::fishers_test(freq = x, loci = x, tests = combos)}
 }
 \examples{
+\dontrun{
 silly_elements <- c("silly1", "silly2", "silly3", "silly4", "silly5", "silly6")
 min_length <- 2
 max_length <- 6
 combos <- fisher_combinations(silly_elements, min_length, max_length)
+}
 
+}
+\seealso{
+\code{\link[=fishers_test]{fishers_test()}}
 }
