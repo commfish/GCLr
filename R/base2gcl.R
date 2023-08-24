@@ -49,7 +49,8 @@ base2gcl <- function(base){
     dplyr::mutate(SillySource = indiv,
                   SILLY_CODE = collection) %>% 
     tidyr::separate(indiv, into = c(NA, "FK_FISH_ID")) %>% 
-    dplyr::mutate(FK_FISH_ID = as.double(FK_FISH_ID),
+    dplyr::group_by(collection) %>% 
+    dplyr::mutate(FK_FISH_ID = seq(length(FK_FISH_ID)),
                   COLLECTION_ID = NA_real_,
                   PLATE_ID = NA_character_,
                   PK_TISSUE_TYPE = NA_character_,
