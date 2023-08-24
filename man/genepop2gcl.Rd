@@ -19,6 +19,6 @@ Create ".gcl" and \code{LocusControl} objects from a GENEPOP file.
 An allele conversion argument may be added in the future if there is a need (mainly for SNPs). This would require a conversion input file from the user to define the corresponding alleles for each locus (e.g., 1 = A, 2 = C, 3 = G, 4 = T).
 }
 \examples{
-sillyvec <- GCLr::genepop2gcl(filename = "V:/Analysis/2_Central/Coho/Cook Inlet/2013/mSat/GenepopCICohoData.gen")
+GCLr::genepop2gcl(filename = system.file("genepop", "ex_genepop.txt", package = "GCLr"))
 
 }

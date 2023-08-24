@@ -10,7 +10,7 @@
 #' @return Assigns ".gcl" and LocusControl objects to the current workspace and returns a vector of the ".gcl" objects created without the ".gcl" extension (i.e., `sillyvec`).
 #' 
 #' @examples
-#' sillyvec <- GCLr::genepop2gcl(filename = "V:/Analysis/2_Central/Coho/Cook Inlet/2013/mSat/GenepopCICohoData.gen")
+#' GCLr::genepop2gcl(filename = system.file("genepop", "ex_genepop.txt", package = "GCLr"))
 #' 
 #' @export
 genepop2gcl <- function(filename){
@@ -27,7 +27,6 @@ genepop2gcl <- function(filename){
     
   }
 
-  
   rawdat <- scan(filename, what = "", sep = "\n")
 
   len <- length(rawdat)
@@ -94,11 +93,11 @@ genepop2gcl <- function(filename){
   }else{
     
     dat0 <- dat0 %>%
-      rename(SILLY_CODE = SillySource) %>% 
-      group_by(SILLY_CODE) %>% 
-      mutate(FK_FISH_ID = 1:length(SILLY_CODE)) %>% 
-      ungroup() %>% 
-      mutate(SillySource = paste0(SILLY_CODE, "_", FK_FISH_ID))
+      dplyr::rename(SILLY_CODE = SillySource) %>% 
+      dplyr::group_by(SILLY_CODE) %>% 
+      dplyr::mutate(FK_FISH_ID = 1:length(SILLY_CODE)) %>% 
+      dplyr::ungroup() %>% 
+      dplyr::mutate(SillySource = paste0(SILLY_CODE, "_", FK_FISH_ID))
     
     message("New FK_FISH_ID's were created because none were supplied in the GENEPOP file.")
 
@@ -125,16 +124,16 @@ genepop2gcl <- function(filename){
   
   # Separate genotypes into two variables
   nchar <- dat0 %>% 
-    dplyr::select(all_of(loci)) %>% 
-    dplyr::summarize(across(everything(), ~base::nchar(.))) %>% 
+    dplyr::select(dplyr::all_of(loci)) %>% 
+    dplyr::summarize(dplyr::across(dplyr::everything(), ~base::nchar(.) %>% max())) %>% 
     max()
   
   for(locus in loci){
     
     dat0 <- dat0 %>%
-      tidyr::separate(!!sym(locus), into = c(locus, paste0(locus, ".1")), sep = nchar/2, remove = FALSE) %>% 
-      dplyr::mutate(across(all_of(c(locus, paste0(locus, ".1"))), ~as.numeric(.))) %>% 
-      dplyr::mutate(across(all_of(c(locus, paste0(locus, ".1"))), ~as.character(.)))
+      tidyr::separate(!!dplyr::sym(locus), into = c(locus, paste0(locus, ".1")), sep = nchar/2, remove = FALSE) %>% 
+      dplyr::mutate(dplyr::across(dplyr::all_of(c(locus, paste0(locus, ".1"))), ~as.numeric(.))) %>% 
+      dplyr::mutate(dplyr::across(dplyr::all_of(c(locus, paste0(locus, ".1"))), ~as.character(.)))
     
   }
   
@@ -144,11 +143,12 @@ genepop2gcl <- function(filename){
     dplyr::select(dplyr::all_of(c(attr, loc_vars)))
   
   # Assign silly objects to workspace
-  sillyvec <- dat$SILLY_CODE %>% unique()
+  sillyvec <- dat$SILLY_CODE %>% 
+    unique()
   
   for(silly in sillyvec){
     
-    my.dat <- dat %>% filter(SILLY_CODE == silly)
+    my.dat <- dat %>% dplyr::filter(SILLY_CODE == silly)
     
     assign(x = paste0(silly, ".gcl"), value = my.dat, pos = 1)
     
@@ -160,7 +160,7 @@ genepop2gcl <- function(filename){
   # alleles
   alleles <- lapply(loci, function(locus){
     
-    tibble(call = dat %>% 
+    tibble::tibble(call = dat %>% 
              dplyr::select(dplyr::starts_with(locus)) %>% 
              unlist() %>% 
              unique() %>% 
@@ -168,8 +168,8 @@ genepop2gcl <- function(filename){
              as.numeric() %>% 
              sort() %>% 
              as.character()) %>% 
-      mutate(allele = seq(length(call))) %>% 
-      select(allele, call)
+      dplyr::mutate(allele = seq(length(call))) %>% 
+      dplyr::select(allele, call)
   }) %>% purrr::set_names(loci) 
   
   # nalleles
