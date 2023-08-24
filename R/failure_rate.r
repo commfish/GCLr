@@ -1,45 +1,49 @@
-#' @title Calculate Failure Rates by Silly, Locus, Plate, and Project
+#' @title Calculate Failure Rates by Silly, Locus, Plate, and Overall
 #'
 #' @description
-#' This function calculates failure rates by SILLY, locus, plate, and project.
-#' It should be run after the "remove_na_indv" step but before any other steps
-#' in the quality control (QC) process, such as removing duplicate fish,
-#' alternate fish, or missing fish. Note that this function does not connect to LOKI;
+#' This function calculates failure rates by SILLY, locus, plate, and overall.
+#' The main purpose for this function is for use in the [GCLr::qc()] markdown; however, it can also be use in other analyses (i.e., baseline, mixture) to calculate failure rates.
+#' Note that this function does not connect to LOKI;
 #' it simply calculates failure rates (0's / total fish run) from the silly.gcl objects.
 #'
-#' @param sillyvec Character vector of SILLY codes in the project.
+#' @param sillyvec Character vector of SILLY codes you want to include in the failure rate calculation.
+#' @param loci A character vector of locus names to include in the failure rate calculation (default = LocusControl$locusnames)
 #'
-#' @returns A list of failure rates by SILLY, locus, plate, and project.
-#'
+#' @returns A list of failure rates by SILLY, locus, plate, and overall.
 #'
 #' @details
 #'   The [GCLr::failure_rate()] function calculates failure rates by SILLY, locus, plate, and project. It performs the following steps:
 #'   - Pools all collections into one master silly using the [GCLr::pool_collections()] function
 #'   - Creates a tibble of Dose 1 scores and attributes from the master silly.
-#'   - Calculates failure rates by SILLY, locus, plate, and project using group_by and summarise functions from the `dplyr` package.
+#'   - Calculates failure rates by SILLY, locus, plate, and overall using [dplyr::group_by()] and [dplyr::summarise()].
 #'   - Generates plots of failure rates by SILLY and locus, as well as by plate and locus, using `ggplot2` and `plotly` packages.
 #'   - Returns a list of failure rates and plots.
 #'
 #'   Note: This function relies on the [GCLr::pool_collections()] function from the GCL package.
 #'
 #' @seealso
-#'   \code{\link{remove_na_indv}}: Function to remove NA individuals
 #'   \code{\link{pool_collections}}: Function to pool collections
 #'
 #' @family QC Functions
 #'
 #' @examples
-#' 
+#'  
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 #' 
-#' GCLr::failure_rate(sillyvec = sillyvec)
+#' loci <- GCLr::ex_baseline[,-c(1:5)] %>%
+#'   names() %>%
+#'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
+#'   unique()
 #' 
+#' failure_rate(sillyvec = sillyvec, loci = loci, LocusCtl = ex_LocusControl)
+#'  
 #' @export
-failure_rate <- function(sillyvec) {
+failure_rate <- function(sillyvec, loci = LocusControl$locusnames, LocusCtl = LocusControl) {
   # Pool all collections in to one master silly
   GCLr::pool_collections(collections = sillyvec,
                          loci = loci,
-                         newname = "master")
+                         newname = "master",
+                         LocusCtl = LocusCtl)
   
   # Tibble of Dose 1 scores and attributes
   master.tbl <- master.gcl %>%
@@ -57,6 +61,16 @@ failure_rate <- function(sillyvec) {
   
   rm(master.gcl, pos = 1)
   
+  # Add in a fake plate ID if none exists. This is needed to plot failure rate by plate and locus
+  if(is.na(unique(master.tbl$plate))){
+    
+    message("The .gcl objects supplies do not contain plate IDs. Assigning a fake plate ID ('00000') to all sillys.")
+    
+    master.tbl <- master.tbl %>% 
+      dplyr::mutate(plate = "00000")
+    
+  }
+   
   # Failure rate by silly
   fail_silly <- master.tbl %>%
     dplyr::group_by(silly) %>%
@@ -77,8 +91,6 @@ failure_rate <- function(sillyvec) {
   
   # Failure rate overall
   fail_overall <- master.tbl %>%
-    dplyr::mutate(project = project) %>%
-    dplyr::group_by(project) %>%
     dplyr::summarise(fail = sum(is.na(genotype), na.rm = FALSE) / dplyr::n())
   
   # Plot failure rate by silly and locus

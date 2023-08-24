@@ -2,21 +2,22 @@
 % Please edit documentation in R/failure_rate.r
 \name{failure_rate}
 \alias{failure_rate}
-\title{Calculate Failure Rates by Silly, Locus, Plate, and Project}
+\title{Calculate Failure Rates by Silly, Locus, Plate, and Overall}
 \usage{
-failure_rate(sillyvec)
+failure_rate(sillyvec, loci = LocusControl$locusnames, LocusCtl = LocusControl)
 }
 \arguments{
-\item{sillyvec}{Character vector of SILLY codes in the project.}
+\item{sillyvec}{Character vector of SILLY codes you want to include in the failure rate calculation.}
+
+\item{loci}{A character vector of locus names to include in the failure rate calculation (default = LocusControl$locusnames)}
 }
 \value{
-A list of failure rates by SILLY, locus, plate, and project.
+A list of failure rates by SILLY, locus, plate, and overall.
 }
 \description{
-This function calculates failure rates by SILLY, locus, plate, and project.
-It should be run after the "remove_na_indv" step but before any other steps
-in the quality control (QC) process, such as removing duplicate fish,
-alternate fish, or missing fish. Note that this function does not connect to LOKI;
+This function calculates failure rates by SILLY, locus, plate, and overall.
+The main purpose for this function is for use in the \code{\link[=qc]{qc()}} markdown; however, it can also be use in other analyses (i.e., baseline, mixture) to calculate failure rates.
+Note that this function does not connect to LOKI;
 it simply calculates failure rates (0's / total fish run) from the silly.gcl objects.
 }
 \details{
@@ -24,7 +25,7 @@ The \code{\link[=failure_rate]{failure_rate()}} function calculates failure rate
 \itemize{
 \item Pools all collections into one master silly using the \code{\link[=pool_collections]{pool_collections()}} function
 \item Creates a tibble of Dose 1 scores and attributes from the master silly.
-\item Calculates failure rates by SILLY, locus, plate, and project using group_by and summarise functions from the \code{dplyr} package.
+\item Calculates failure rates by SILLY, locus, plate, and overall using \code{\link[dplyr:group_by]{dplyr::group_by()}} and \code{\link[dplyr:summarise]{dplyr::summarise()}}.
 \item Generates plots of failure rates by SILLY and locus, as well as by plate and locus, using \code{ggplot2} and \code{plotly} packages.
 \item Returns a list of failure rates and plots.
 }
@@ -32,14 +33,18 @@ The \code{\link[=failure_rate]{failure_rate()}} function calculates failure rate
 Note: This function relies on the \code{\link[=pool_collections]{pool_collections()}} function from the GCL package.
 }
 \examples{
-
+ 
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
-GCLr::failure_rate(sillyvec = sillyvec)
+loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
+  names() \%>\%
+  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+  unique()
 
+failure_rate(sillyvec = sillyvec, loci = loci, LocusCtl = ex_LocusControl)
+ 
 }
 \seealso{
-\code{\link{remove_na_indv}}: Function to remove NA individuals
 \code{\link{pool_collections}}: Function to pool collections
 }
 \concept{QC Functions}
