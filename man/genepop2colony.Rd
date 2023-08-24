@@ -23,6 +23,5 @@ If you are doing parentage analysis, you'll need to run this separately for pare
 If you are using adult sex data, you'll run the parents separately for Mum and Dad.
 }
 \examples{
-GCLr::gcl2genepop(sillyvec = "unuk_parr", loci = LocusControl$locusnames, path = "../data/genotypes/combined_postQA/unuk_parr.gen", VialNums = TRUE, usat = FALSE, ncores = 4)
-GCLr::genepop2colony(path_genepop, path_colony)
+GCLr::genepop2colony(path_genepop = system.file("genepop", "ex_genepop.txt", package = "GCLr"), path_colony = path.expand("~/example_colony_file.txt"))
 }

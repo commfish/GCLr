@@ -13,10 +13,10 @@
 #' @return A .txt file of genotypes for COLONY. The first column is the ID, followed by a 2 column genotypes (2 columns per locus).
 #' 
 #' @examples
-#' GCLr::gcl2genepop(sillyvec = "unuk_parr", loci = LocusControl$locusnames, path = "../data/genotypes/combined_postQA/unuk_parr.gen", VialNums = TRUE, usat = FALSE, ncores = 4)
-#' GCLr::genepop2colony(path_genepop, path_colony)
+#' GCLr::genepop2colony(path_genepop = system.file("genepop", "ex_genepop.txt", package = "GCLr"), path_colony = path.expand("~/example_colony_file.txt"))
 #' @export
 genepop2colony <- function(path_genepop, path_colony) {
+  
   rawdat <- scan(path_genepop, what = "", sep = "\n")
   
   len <- length(rawdat)
@@ -47,15 +47,18 @@ genepop2colony <- function(path_genepop, path_colony) {
     ) %>%
     tidyr::separate(col = geno, sep = " ", into = loci)
   
+  nchars <- nchar(dat0[[loci[1]]]) %>% 
+    unique()
   
   numeric_geno <- dat0 %>%
     tidyr::pivot_longer(cols = -1,
                         names_to = "locus",
                         values_to = "genotype") %>%
+    
     tidyr::separate(
       col = "genotype",
       into = c("allele_1", "allele_2"),
-      sep = 3,
+      sep = nchars/2,
       remove = TRUE
     ) %>%
     dplyr::mutate(allele_1 = as.numeric(allele_1),
@@ -77,7 +80,7 @@ genepop2colony <- function(path_genepop, path_colony) {
       suffix = c("", ".1")
     ) %>%
     dplyr::select(SillySource, tidyselect::all_of(paste0(
-      rep(LocusControl$locusnames, each = 2), c("", ".1")
+      rep(loci, each = 2), c("", ".1")
     )))
   
   readr::write_delim(
@@ -86,4 +89,5 @@ genepop2colony <- function(path_genepop, path_colony) {
     delim = "\t",
     col_names = FALSE
   )
+  
 }
