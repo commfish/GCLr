@@ -27,9 +27,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' Geno_locisilly <- get_geno(sillyvec = sillyvec, loci = loci, file = "TestGenotypesReport_sillyloci.csv", username = username, password = password, project_name = NULL)
-#' Geno_silly <- get_geno(sillyvec = sillyvec, loci = NULL, file = "TestGenotypesReport_silly.csv", username = username, password = password, project_name = NULL)
-#' Geno_proj <- get_geno(project_name = "K205", file = "TestGenotypesReport_proj.csv", username = username, password = password, open.file = TRUE)
+#' Geno_locisilly <- GCLr::get_geno(sillyvec = sillyvec, loci = loci, file = path.expand("~/TestGenotypesReport_sillyloci.csv"), username = "awbarclay", password = password, project_name = NULL)
+#' Geno_silly <- GCLr::get_geno(sillyvec = sillyvec, loci = NULL, file = path.expand("~/TestGenotypesReport_silly.csv"), username = "awbarclay", password = password, project_name = NULL)
+#' Geno_proj <- GCLr::get_geno(project_name = "K205", file = path.expand("~/TestGenotypesReport_proj.csv"), username = "awbarclay", password = password, open.file = TRUE)
 #' }
 #' 
 #' @export
