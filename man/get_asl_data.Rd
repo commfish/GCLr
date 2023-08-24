@@ -42,7 +42,9 @@ Also, if you use \code{\link[readr:write_delim]{readr::write_csv()}} to write ou
 }
 \examples{
 \dontrun{
-get_asl_data(sillyvec = c("PPORTCH21", "PBARABCR21"), username = "awbarclay", password = password, import.vars = FALSE, file = "C:/Users/awbarclay/Documents/R/test_fish_table.csv")
+
+ GCLr::get_asl_data(sillyvec = c("PPORTCH21", "PBARABCR21"), username = "awbarclay", password = password, import.vars = FALSE, file = path.expand("~/test_fish_table.csv"))
+
 }
 
 }
