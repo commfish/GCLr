@@ -4,7 +4,15 @@
 \alias{gcl2nexus}
 \title{Convert ".gcl" Objects to NEXUS File}
 \usage{
-gcl2nexus(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, ncores = 4)
+gcl2nexus(
+  sillyvec,
+  loci,
+  path,
+  VialNums = TRUE,
+  PopNames = NULL,
+  ncores = 4,
+  LocusCtl = LocusControl
+)
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes to include in the NEXUS file.}
@@ -31,9 +39,13 @@ Write out a NEXUS file in GDA input format from ".gcl" objects.
 This function requires a \code{LocusControl} object. Run \code{\link[=create_locuscontrol]{create_locuscontrol()}} prior to this function.
 }
 \examples{
-load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-combine_loci(sillyvec31, markerset = c("Ots_U211", "Ots_U212-297"), update = TRUE)
-combine_loci(sillyvec31, markerset = c("Ots_UNKN4-150", "Ots_UNKN6-187"), update = TRUE)
-GCLr::gcl2nexus(sillyvec = sillyvec31, loci = c(loci80, "Ots_U211.Ots_U212-297", "Ots_UNKN4-150.Ots_UNKN6-187"), path = "nexusfile.nex", VialNums = TRUE, PopNames = Final_Pops$location, ncores = 8)
+sillys <- GCLr::base2gcl(GCLr::ex_baseline)
+
+loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
+  names() \%>\%
+  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+  unique()
+
+gcl2nexus(sillyvec = sillys, loci = loci, path = path.expand("~/nexusfile.nex"), VialNums = TRUE, PopNames = NULL, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
 
 }
