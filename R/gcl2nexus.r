@@ -215,7 +215,5 @@ gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, nc
   write.table(file, path, quote = FALSE, row.names = FALSE, col.names = FALSE)
   
   Sys.time()-start_time
-  
-  return(NULL) 
  
 }
