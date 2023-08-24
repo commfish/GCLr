@@ -31,7 +31,12 @@ Use this function when you want to run an analysis in \code{FSTAT}.
 
 sillys <- GCLr::base2gcl(GCLr::ex_baseline)
 
-GCLr::gcl2fstat(sillyvec = sillys, loci = loci, path = path.expand("~/FSTATfile.dat"), ncores = 4)
+loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
+  names() \%>\%
+  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+  unique()
+  
+GCLr::gcl2fstat(sillyvec = sillys, loci = loci, path = path.expand("~/FSTATfile.dat"), ncores = 4, LocusCtl = GCLr::ex_LocusControl)
 
 }
 \seealso{
