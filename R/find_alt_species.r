@@ -29,7 +29,7 @@
 find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl){
 
   # First, load the alternate & failed markers for a given species, or stop if incorrect species is provided. 
-  if(species == "chum"){
+  if (species == "chum") {
     
     AlternateGenotypes <- dplyr::tribble(~AlternateMarker,	~AlternateGenotype,
                                          "Oke_U1018-50", "TT",
@@ -79,7 +79,7 @@ find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl
     dplyr::tally() %>% 
     dplyr::pull(n)
   
-  if( AlternateCount == 0 ) { # If no alternate markers found in LocusControl,
+  if ( AlternateCount == 0 ) { # If no alternate markers found in LocusControl,
     
     stop("None of the alternate markers found in LocusControl.") # Halt - no matching markers
     
@@ -101,7 +101,7 @@ find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl
   # How many failed markers are present in Locus Control?
   FailedCount <- length(MyFailedMarkers) # Total number of failed markers found in LocusControl
   
-  if( FailedCount == 0 ) { # If no failed markers found in LocusControl,
+  if ( FailedCount == 0 ) { # If no failed markers found in LocusControl,
     
     stop("None of the Failed markers found in LocusControl.") # Halt - no matching markers
     
@@ -174,7 +174,7 @@ find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl
    plotly::ggplotly(
      Results %>% 
        dplyr::filter(!is.na(alternate)) %>%
-       ggplot2::ggplot(aes(x = failure, y = alternate)) +
+       ggplot2::ggplot(ggplot2::aes(x = failure, y = alternate)) +
        ggplot2::geom_count(alpha = 0.5) +
        ggplot2::labs(title = "Number of failed vs alternate markers",
             x = "Failed", 
