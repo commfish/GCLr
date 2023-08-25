@@ -87,7 +87,7 @@ find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl
     
     warning(
       
-      paste0("Performing analyses on ", AlternateCount, " out of ", length(AlternateGenotypes$AlternateMarker), " alternative markers.") # Pasting in values to display number of markers
+      paste0("Performing analyses on ", AlternateCount, " out of ", length(AlternateGenotypes$AlternateMarker), " alternative markers.\n") # Pasting in values to display number of markers
      
       ) # Warning msg displaying number of alternate markers found in LocusControl
     
@@ -109,7 +109,7 @@ find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl
     
     warning(
       
-      paste0("Performing analyses on ", FailedCount, " out of ", length(FailedMarkers$FailedMarker), " failed markers.") # Pasting in values to display number of markers
+      paste0("Performing analyses on ", FailedCount, " out of ", length(FailedMarkers$FailedMarker), " failed markers.\n") # Pasting in values to display number of markers
     
       ) # Warning msg displaying number of failed markers found in LocusControl
     
@@ -185,7 +185,4 @@ find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl
  return(Results)
   
 }
-
-
-
 
