@@ -20,8 +20,10 @@ A character vector of the objects loaded into the workspace.
 This function loads R objects saved with \code{\link[=dput]{dput()}} or \code{\link[=saveRDS]{saveRDS()}}, serving as a wrapper for \code{\link[=dget]{dget()}} and \code{\link[=readRDS]{readRDS()}}.
 }
 \examples{
-setwd("V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/")
-GCLr::load_objects(path = "Objects", pattern = "^loci") # Loads loci objects from "Objects" directory
-GCLr::load_objects(path = "Objects", pattern = c("^loci", "sample_size")) # Loads loci and sample size objects from "Objects" directory
+\dontrun{
+
+GCLr::load_objects(path = "V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/Objects", pattern = "^loci") # Loads loci objects from "Objects" directory
+
+}
 
 }

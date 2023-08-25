@@ -9,24 +9,27 @@
 #' @return A character vector of the objects loaded into the workspace.
 #' 
 #' @examples
-#' setwd("V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/")
-#' GCLr::load_objects(path = "Objects", pattern = "^loci") # Loads loci objects from "Objects" directory
-#' GCLr::load_objects(path = "Objects", pattern = c("^loci", "sample_size")) # Loads loci and sample size objects from "Objects" directory
+#' \dontrun{
+#' 
+#' GCLr::load_objects(path = "V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/Objects", pattern = "^loci") # Loads loci objects from "Objects" directory
+#' 
+#' }
 #' 
 #' @export
 load_objects <- function(path, pattern = NULL, rds = FALSE) {
   
-  if (!require("pacman")) {install.packages("pacman")}
-  library(pacman)
-  pacman::p_load(tidyverse)  #  Install packages, if not in library and then load them
-  
   if (rds) {
+    
     extension <- ".rds"
+    
   } else {
+    
     extension <- ".txt"
+    
   }
   
   if (is.null(pattern)) {
+    
     files_to_load <-
       list.files(
         path = path,
@@ -35,10 +38,13 @@ load_objects <- function(path, pattern = NULL, rds = FALSE) {
       )
     
     if (length(files_to_load) == 0) {
+      
       stop(paste0("There are no '", extension, "'files in the path provided"))
+      
     }
     
   } else {
+    
     files_to_load <-
       list.files(
         path = path,
@@ -51,6 +57,7 @@ load_objects <- function(path, pattern = NULL, rds = FALSE) {
       stringr::str_subset(files_to_load, pattern = paste(pattern, collapse = "|")) #  multiple pattern matches
     
     if (length(files_to_load) == 0) {
+      
       stop(
         paste0(
           "There are no '",
@@ -66,7 +73,9 @@ load_objects <- function(path, pattern = NULL, rds = FALSE) {
   }
   
   if (length(files_to_load) == 0) {
+    
     stop(paste0("No files contain the pattern ", "'", pattern, "'"))
+    
   }
   
   objects <- invisible(sapply(files_to_load, function(file) {
