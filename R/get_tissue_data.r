@@ -79,13 +79,14 @@
 #'   sillyvec = c("KCDVF18", "KCDVF19", "KCDVF20"),
 #'   username = "user",
 #'   password = "password",
-#'   file = "test_tissue_table.csv",
+#'   file = path.expand("~/test_tissue_table.csv"),
 #'   import.vars = FALSE
 #' )
 #' }
 #'
 #' @export
 get_tissue_data <- function(sillyvec, username, password, file = NULL, import.vars = TRUE) {
+  
   start.time <- Sys.time() 
   
   options(java.parameters = "-Xmx10g")
@@ -141,22 +142,3 @@ get_tissue_data <- function(sillyvec, username, password, file = NULL, import.va
   
   return(output)
 }
-
-
-  # Outputs~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #
-  #   If import.vars = TRUE, the function outputs a tibble containing the following 31 variables:
-  #  
-  #   FK_COLLECTION_ID, FK_FISH_ID, PK_TISSUE_TYPE, CAPTURE_LOCATION, CAPTURE_DATE, END_CAPTURE_DATE, LATITUDE, LONGITUDE, MESH_SIZE, 
-  #   MESH_SIZE_COMMENT, IS_MISSING_PAIRED_DATA_EXISTS, WELL_HAS_MORE_THAN_ONE_SAMPLE, IS_PRESENT_IN_DATASHEET, IS_PRESENT_BUT_NOT_IN_DS, 
-  #   VIAL_BARCODE, CONTAINER_ARRAY_TYPE_ID, DNA_TRAY_WORKBENCH_ID, DNA_TRAY_CODE, DNA_TRAY_WELL_POS, DNA_TRAY_WELL_CODE, STORAGE_ID, 
-  #   UNIT, SHELF_RACK, SLOT, EXHAUSTED_HOW, EXHAUSTED_BY, EXHAUSTED_DATE, AGENCY, OTHER_AGENCY_KEY, NUM_OTOLITHS_MISSING, OTO_INVENTORY_COMMENT
-  #
-  #   If import.vars = FALSE, the function outputs a tibble containing 7 collection information variables (columns 1-7) and the 31 tissue import variables (columns 8-38). 
-  #   Here are the collection information variables:
-  #
-  #   SILLY_CODE, REGION_CODE, QUADRANT, LOCATION_CODE, LOCATION_DESCRIPTOR, LIFE_STAGE, COLLECTION_TYPE
-  #
-  #   If file is supplied, the tibble is written to a csv file with NAs removed.
-  #   
- 

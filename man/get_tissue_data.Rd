@@ -93,7 +93,7 @@ get_tissue_data(
   sillyvec = c("KCDVF18", "KCDVF19", "KCDVF20"),
   username = "user",
   password = "password",
-  file = "test_tissue_table.csv",
+  file = path.expand("~/test_tissue_table.csv"),
   import.vars = FALSE
 )
 }
