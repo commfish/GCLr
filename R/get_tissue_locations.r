@@ -23,13 +23,9 @@
 #'    
 #' @examples
 #' \dontrun{
-#'  username <- "awesomeuser"
-#'  password <- "awesomepassword1"
 #'  unit <- c("A", "B", "C", "D", "E", "F") # We want these units in B7
-#'  bad_locations <- TRUE # yes, I want to identify all wrong/missing locations
-#'  all_tissues <- TRUE # yes, I want all the data
 #'  
-#'  TissueLocations_2R.GCL(unit = unit, username = username, password = password, bad_locations = bad_location, all_data = all_data)
+#'  TissueLocations_2R.GCL(unit = unit, username = "awbarclay", password = password, bad_locations = TRUE, all_data = TRUE)
 #' }
 get_tissue_locations <- function(unit, username, password, bad_locations = TRUE, all_tissues = TRUE) {
   
@@ -92,7 +88,7 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
           !stringr::str_detect(string = shelf_id, pattern = "[0-9]{3}_[A-Z]") ~ "wrong",
         # Warehouse - acceptable locations are: W[1-33]_[1-10]
         UNIT %in% unit[stringr::str_detect(unit, "^(W[A-Z])$")] &
-          !str_detect(string = shelf_id, pattern = "^([1-9]|1[0-9]|2[0-9]|3[0-3])_([1-9]|10)$") ~ "wrong",
+          !stringr::str_detect(string = shelf_id, pattern = "^([1-9]|1[0-9]|2[0-9]|3[0-3])_([1-9]|10)$") ~ "wrong",
         # Freezer 7 or 8 - acceptable locations are: UppercaseLetter[A-E]_[1-6]
         UNIT %in% unit[stringr::str_detect(unit, "^([7-8])$")] &
           !stringr::str_detect(string = shelf_id, pattern = "^([A-E])_([1-6])$") ~ "wrong",
@@ -186,7 +182,7 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
     dplyr::group_by(UNIT, SHELF_RACK, SLOT) %>%
     dplyr::group_modify( ~ {
       .x %>%
-        dplyr::mutate(row = row_number())
+        dplyr::mutate(row = dplyr::row_number())
     }) # experimental magic... - modifies groups, based on previous group_by(); I am simply getting row numbers here
   
   ## Create tissue location map
@@ -212,7 +208,6 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
   stop.time <- Sys.time()
   
   fulltime <- stop.time - start.time
-  
   
   print(fulltime)
   message(paste0("Map of tissue locations stored in object 'tissuemap' and a CSV was output"))

@@ -41,12 +41,8 @@ If you set \code{all_tissues = TRUE} the resulting output will be very large!
 }
 \examples{
 \dontrun{
- username <- "awesomeuser"
- password <- "awesomepassword1"
  unit <- c("A", "B", "C", "D", "E", "F") # We want these units in B7
- bad_locations <- TRUE # yes, I want to identify all wrong/missing locations
- all_tissues <- TRUE # yes, I want all the data
  
- TissueLocations_2R.GCL(unit = unit, username = username, password = password, bad_locations = bad_location, all_data = all_data)
+ TissueLocations_2R.GCL(unit = unit, username = "awbarclay", password = password, bad_locations = TRUE, all_data = TRUE)
 }
 }
