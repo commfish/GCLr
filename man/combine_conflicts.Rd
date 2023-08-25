@@ -10,7 +10,7 @@ combine_conflicts(files)
 \item{files}{A vector of CSV files that you want to combine, including the file extension.}
 }
 \description{
-This function combines QC conflict reports and adds a column of PLATE_IDs associated with each individual conflict.  The function requires "*.gcl" objects and the "ProjectSillys" vector created by ReadProjectloki2r.
+This function combines QC conflict reports and adds a column of PLATE_IDs associated with each individual conflict.  The function requires "*.gcl" objects and the "project_sillys" vector created by \code{\link[=loki2r_proj]{loki2r_proj()}}
 }
 \examples{
  \dontrun{

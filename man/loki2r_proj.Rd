@@ -24,7 +24,7 @@ loki2r_proj(
 \item{password}{Your password for accessing LOKI through R.}
 }
 \value{
-Returns \code{ProjectSillys}, a character vector of all sillys in the project (sillyvec).
+Returns \code{project_sillys}, a character vector of all sillys in the project (sillyvec).
 
 Returns "slim" .gcl objects for each silly (slim = not all attributes table).
 
