@@ -8,7 +8,7 @@
 #' @param username Your username for accessing LOKI through R.
 #' @param password Your password for accessing LOKI through R.
 #'
-#' @return Returns `ProjectSillys`, a character vector of all sillys in the project (sillyvec).
+#' @return Returns `project_sillys`, a character vector of all sillys in the project (sillyvec).
 #' @return Returns "slim" .gcl objects for each silly (slim = not all attributes table).
 #' @return Returns `LocusControl` for all loci used in the project (including "loci", "nallales", "ploidy", "alleles").
 #'
@@ -84,9 +84,9 @@ loki2r_proj <- function(project_name = NULL, sillyvec = NULL, loci = NULL, usern
       dplyr::filter(LAB_PROJECT_NAME == project_name)
   }
   
-  # Get list of unique sillys and assign `ProjectSillys`; this is needed for qc script
+  # Get list of unique sillys and assign `project_sillys`; this is needed for qc script
   sillyvec <- unique(dataAll$SILLY_CODE)
-  assign(x = "ProjectSillys", value = sillyvec, pos = 1)
+  assign(x = "project_sillys", value = sillyvec, pos = 1)
   
   # Disconnect from LOKI
   discon <- RJDBC::dbDisconnect(con)

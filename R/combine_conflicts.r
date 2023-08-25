@@ -1,5 +1,5 @@
 #' @title Combine QC Conflict Reports and Add PLATE_ID Column
-#' @description This function combines QC conflict reports and adds a column of PLATE_IDs associated with each individual conflict.  The function requires "*.gcl" objects and the "ProjectSillys" vector created by ReadProjectloki2r.
+#' @description This function combines QC conflict reports and adds a column of PLATE_IDs associated with each individual conflict.  The function requires "*.gcl" objects and the "project_sillys" vector created by [GCLr::loki2r_proj()]
 #'
 #' @param files A vector of CSV files that you want to combine, including the file extension.
 #'
@@ -37,14 +37,14 @@ combine_conflicts <- function(files) {
   # Re-format concordance tibble
   concordance <- concordance %>% 
     tidyr::unite(SillySource, c(`Silly Code`, `Fish ID`), sep = "_", remove = FALSE) %>% 
-    dplyr::mutate(`Silly Code` = factor(x = `Silly Code`, levels = ProjectSillys))
+    dplyr::mutate(`Silly Code` = factor(x = `Silly Code`, levels = project_sillys))
   
   # Old conflict report has "0" for mitochondrial conflicts, new has " " for mitochondrial conflicts, we will refer to them as "Homo-Homo".
   level_key <- list(`DB Zero` = "DB Zero", `File Zero` = "File Zero", `Het-Het` = "Het-Het", `Het-Homo` = "Het-Homo", `Homo-Het` = "Homo-Het", `Homo-Homo` = "Homo-Homo", `0` = "Homo-Homo", ` ` = "Homo-Homo")
   types <- c("DB Zero", "File Zero", "Het-Het", "Het-Homo", "Homo-Het", "Homo-Homo")  # order with levels
   
   # Pool all collections in to one master silly
-  GCLr::pool_collections(collections = ProjectSillys, loci = loci, newname = "master")
+  GCLr::pool_collections(collections = project_sillys, loci = loci, newname = "master")
   
   # Tibble of reduced attributes table
   master.tbl <- master.gcl %>% 
@@ -71,7 +71,7 @@ combine_conflicts <- function(files) {
     dplyr::mutate(concordance_type = dplyr::recode_factor(concordance_type, !!!level_key)) %>%  # recode to deal with mitochondrial conflicts
     dplyr::mutate(concordance_type = factor(x = concordance_type, levels = types)) %>%  # new levels
     dplyr::mutate(locus = factor(x = locus, levels = loci)) %>%  # new levels
-    dplyr::mutate(silly = factor(x = silly, levels = ProjectSillys)) %>% 
+    dplyr::mutate(silly = factor(x = silly, levels = project_sillys)) %>% 
     dplyr::mutate(plate_id = factor(x = plate_id, levels = sort(unique(plate_id))))
   
   # Write copy
