@@ -8,6 +8,8 @@
 #' 
 #' @note this function is called on by [GCLr::combine_loci()] and requires a LocusControl object. Run [GCLr::create_locuscontrol()] prior to this function.
 #' 
+#' @seealso [GCLr::combine_loci()]
+#' 
 #' @return a vector of phenotypes
 #'
 #' @examples

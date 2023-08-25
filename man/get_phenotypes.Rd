@@ -25,3 +25,6 @@ this function is called on by \code{\link[=combine_loci]{combine_loci()}} and re
 GCLr::get_phenotypes(markerset = c("One_vatf-214", "One_ZNF-61"), LocusCtl = GCLr::ex_LocusControl)
 
 }
+\seealso{
+\code{\link[=combine_loci]{combine_loci()}}
+}
