@@ -22,7 +22,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   metadata <- get_gtseq_metadata(project_name = "K158", dir = "C:\\Users\\awbarclay\\Documents", file_name = "test_metadat", username = "awbarclay", password = "************", open.file = FALSE)
+#'   metadata <- get_gtseq_metadata(project_name = "K158", dir = path.expand("~"), file_name = "test_metadat", username = "awbarclay", password = "************", open.file = FALSE)
 #' }
 #' 
 #' @export
@@ -116,4 +116,3 @@ get_gtseq_metadata <- function(project_name, dir, file_name, username, password,
   return(dataAll)
   
 }
-

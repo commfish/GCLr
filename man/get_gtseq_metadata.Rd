@@ -38,7 +38,7 @@ Reports that exceed the maximum number of rows for Excel (1048575 rows max) will
 }
 \examples{
 \dontrun{
-  metadata <- get_gtseq_metadata(project_name = "K158", dir = "C:\\\\Users\\\\awbarclay\\\\Documents", file_name = "test_metadat", username = "awbarclay", password = "************", open.file = FALSE)
+  metadata <- get_gtseq_metadata(project_name = "K158", dir = path.expand("~"), file_name = "test_metadat", username = "awbarclay", password = "************", open.file = FALSE)
 }
 
 }
