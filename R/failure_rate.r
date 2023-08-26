@@ -62,7 +62,7 @@ failure_rate <- function(sillyvec, loci = LocusControl$locusnames, LocusCtl = Lo
   rm(master.gcl, pos = 1)
   
   # Add in a fake plate ID if none exists. This is needed to plot failure rate by plate and locus
-  if(is.na(unique(master.tbl$plate))){
+  if (any(is.na(unique(master.tbl$plate)))) {
     
     message("The .gcl objects supplies do not contain plate IDs. Assigning a fake plate ID ('00000') to all sillys.")
     
