@@ -33,7 +33,7 @@ The \code{\link[=failure_rate]{failure_rate()}} function calculates failure rate
 Note: This function relies on the \code{\link[=pool_collections]{pool_collections()}} function from the GCL package.
 }
 \examples{
- 
+  
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
 loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
@@ -41,8 +41,8 @@ loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
   gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
   unique()
 
-failure_rate(sillyvec = sillyvec, loci = loci, LocusCtl = ex_LocusControl)
- 
+GCLr::failure_rate(sillyvec = sillyvec, loci = loci, LocusCtl = GCLr::ex_LocusControl)
+
 }
 \seealso{
 \code{\link{pool_collections}}: Function to pool collections
