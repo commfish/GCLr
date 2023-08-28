@@ -5,14 +5,14 @@
 \title{Read QC Data}
 \usage{
 read_qc_geno(
-  qccsvFilepaths,
+  qc_csv_filepaths,
   skip = 15,
   LocusCtl = LocusControl,
   type = c("Biomark", "uSat", "GT-seq")[1]
 )
 }
 \arguments{
-\item{qccsvFilepaths}{character vector specifying the file paths of the QC CSV files.}
+\item{qc_csv_filepaths}{character vector specifying the file paths of the QC CSV files.}
 
 \item{skip}{number of lines to skip while reading the CSV files when type = "Biomark". (default = 15).}
 
@@ -24,7 +24,7 @@ read_qc_geno(
 Returns a few silly objects to the global environment
 \itemize{
 \item \code{qc.gcl} tibble objects
-\item \code{qcSillys}; a character vector of qc sillys
+\item \code{qc_sillys}; a character vector of qc sillys
 }
 }
 \description{

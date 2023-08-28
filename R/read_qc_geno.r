@@ -2,23 +2,23 @@
 #'
 #' @description This function reads QC data from Biomark CSV files. It's called on by [GCLr::qc()].
 #'
-#' @param qccsvFilepaths character vector specifying the file paths of the QC CSV files.
+#' @param qc_csv_filepaths character vector specifying the file paths of the QC CSV files.
 #' @param skip number of lines to skip while reading the CSV files when type = "Biomark". (default = 15).
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
 #' @param type the type of project ("Biomark", "uSat", or "GT-seq"), (default = "Biomark") 
 #'
 #' @returns Returns a few silly objects to the global environment 
 #'   - `qc.gcl` tibble objects
-#'   - `qcSillys`; a character vector of qc sillys
+#'   - `qc_sillys`; a character vector of qc sillys
 #'
 #' @export
-read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, type = c("Biomark", "uSat", "GT-seq")[1]) {
+read_qc_geno <- function(qc_csv_filepaths, skip = 15, LocusCtl = LocusControl, type = c("Biomark", "uSat", "GT-seq")[1]) {
   
   sillyvec <- as.vector(sapply(objects(pattern = "*\\.gcl", pos = 1), function(gclname){strsplit(gclname, split = "\\.gcl")[[1]][1]}))
   
   if(type == "Biomark"){
     
-    Genotypesqc <- lapply(qccsvFilepaths, function(pth){
+    Genotypesqc <- lapply(qc_csv_filepaths, function(pth){
       
       read.table(pth, header = TRUE, sep = ",", colClasses = "character", stringsAsFactors = FALSE, skip = skip)[ , c("Name", "Converted", "Assay", "ID", "Allele.X", "Allele.Y")]
       
@@ -36,7 +36,7 @@ read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, typ
   
   if(type == "uSat"){
     
-    Genotypesqc <- lapply(qccsvFilepaths, function(pth){
+    Genotypesqc <- lapply(qc_csv_filepaths, function(pth){
       
       suppressMessages(readr::read_csv(file = pth, show_col_types = FALSE)[, 1:4])
       
@@ -50,7 +50,7 @@ read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, typ
   
   if(type == "GT-seq"){
     
-    Genotypesqc <- lapply(qccsvFilepaths, function(pth){
+    Genotypesqc <- lapply(qc_csv_filepaths, function(pth){
       
       suppressMessages(readr::read_csv(file = pth, show_col_types = FALSE, na = c("", "NA", "0", "0/0")))
       
@@ -94,6 +94,6 @@ read_qc_geno <- function(qccsvFilepaths, skip = 15, LocusCtl = LocusControl, typ
     
     }
   
-  assign(x = "qcSillys", value = paste(sillyvecqc, "qc", sep = ""), pos = 1)
+  assign(x = "qc_sillys", value = paste(sillyvecqc, "qc", sep = ""), pos = 1)
   
 } 
