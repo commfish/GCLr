@@ -145,24 +145,14 @@ failure_rate <- function(sillyvec, loci = LocusControl$locusnames, LocusCtl = Lo
       ggplot2::ggtitle("Failure Rate by Plate and Locus")
   )
   
-  failure_rate <- tibble::tibble(
-    result_type = c(
-      "silly_failure_rate",
-      "locus_failure_rate",
-      "plate_failure_rate",
-      "overall_failure_rate",
-      "plot_silly_failure_rate",
-      "plot_plate_failure_rate"
-    ),
-    result_value = list(
-      fail_silly,
-      fail_locus,
-      fail_plate,
-      fail_overall,
-      fail_silly_plot,
-      fail_plate_plot
+  failure_rate <- list(
+      silly_failure_rate = fail_silly,
+      locus_failure_rate = fail_locus,
+      plate_failure_rate = fail_plate,
+      overall_failure_rate = fail_overall,
+      plot_silly_failure_rate = fail_silly_plot,
+      plot_plate_failure_rate = fail_plate_plot
     )
-  )
   
   return(failure_rate)
 }
