@@ -80,8 +80,10 @@ pool_collections <- function(collections, loci = LocusControl$locusnames, IDs = 
     
     attr <-  c("FK_FISH_ID", "COLLECTION_ID", "SILLY_CODE", "PLATE_ID", "PK_TISSUE_TYPE", "CAPTURE_LOCATION", "CAPTURE_DATE", "END_CAPTURE_DATE", "MESH_SIZE", "MESH_SIZE_COMMENT", "LATITUDE", "LONGITUDE", "AGENCY", "VIAL_BARCODE", "DNA_TRAY_CODE", "DNA_TRAY_WELL_CODE", "DNA_TRAY_WELL_POS", "CONTAINER_ARRAY_TYPE_ID", "SillySource")  # required attribute names
     
+    my.IDs <- IDs[[collection]]
+    
     my.gcl %>% 
-      dplyr::filter(FK_FISH_ID %in% IDs[[collection]]) %>% 
+      dplyr::filter(FK_FISH_ID %in% my.IDs) %>% 
       dplyr::select(tidyselect::all_of(attr), tidyselect::all_of(SubsetLoci))
     
   }) %>% 
