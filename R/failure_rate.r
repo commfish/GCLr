@@ -27,7 +27,7 @@
 #' @family QC Functions
 #'
 #' @examples
-#'  
+#'   
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 #' 
 #' loci <- GCLr::ex_baseline[,-c(1:5)] %>%
@@ -35,8 +35,8 @@
 #'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
 #'   unique()
 #' 
-#' failure_rate(sillyvec = sillyvec, loci = loci, LocusCtl = ex_LocusControl)
-#'  
+#' GCLr::failure_rate(sillyvec = sillyvec, loci = loci, LocusCtl = GCLr::ex_LocusControl)
+#' 
 #' @export
 failure_rate <- function(sillyvec, loci = LocusControl$locusnames, LocusCtl = LocusControl) {
   # Pool all collections in to one master silly
@@ -62,13 +62,14 @@ failure_rate <- function(sillyvec, loci = LocusControl$locusnames, LocusCtl = Lo
   rm(master.gcl, pos = 1)
   
   # Add in a fake plate ID if none exists. This is needed to plot failure rate by plate and locus
-  if (any(is.na(unique(master.tbl$plate)))) {
+  if (any(is.na(master.tbl$plate))) {
     
-    message("The .gcl objects supplies do not contain plate IDs. Assigning a fake plate ID ('00000') to all sillys.")
+    message("Some or all of the .gcl objects supplies do not contain plate IDs. Assigning a fake plate ID ('00000') where they are missing.")
     
     master.tbl <- master.tbl %>% 
-      dplyr::mutate(plate = "00000")
-    
+      dplyr::mutate(plate = dplyr::case_when(is.na(plate)~"00000",
+                                      TRUE~plate))
+
   }
    
   # Failure rate by silly
