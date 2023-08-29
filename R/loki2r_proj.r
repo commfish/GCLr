@@ -94,15 +94,8 @@ loki2r_proj <- function(project_name = NULL, sillyvec = NULL, loci = NULL, usern
 
   # Get list of unique loci and assign `LocusControl`; this is needed for qc script
   loci <- sort(unique(dataAll$LOCUS))
-  #nloci <- length(loci) # xxx CSJ I don't think this is needed anymore
   
   GCLr::create_locuscontrol(locusnames = loci, username = username, password = password)
-  
-  assign(x = "loci", value = LocusControl$locusnames, pos = 1)
-  assign(x = "nalleles", value = LocusControl$nalleles, pos = 1)
-  assign(x = "ploidy", value = LocusControl$ploidy, pos = 1)
-  assign(x = "alleles", value = LocusControl$alleles, pos = 1)
-  
   
 # This section generates the .gcl objects  
   # xxx CSJ - shouldn't I be able to pivot without the left join??
