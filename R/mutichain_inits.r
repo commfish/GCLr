@@ -10,10 +10,10 @@
 #' @param prop Numeric (optional). The proportion of the prior distribution to
 #'   allocate to each group in the chain initialization matrix. Default is 0.9.
 #' @param type Character (optional). The type of initialization to be performed.
-#'   Possible values are "BAYES" for Bayesian analysis or "rubias" for rubias
+#'   Possible values are "BAYES" for [BAYES] or "rubias" for [rubias]
 #'   modeling. Default is "BAYES".
 #' @param sillyvec Numeric vector (optional). Required only when `type` is set
-#'   to "rubias". The user must supply a vector containing silly values for each
+#'   to rubias". The user must supply a vector containing silly values for each
 #'   chain. Default is NULL.
 #'
 #' @return A matrix or a list of tibbles, depending on the chosen `type`, where
@@ -41,21 +41,14 @@
 #'   each population in each chain in the "pi_init" column.
 #'
 #' @examples
-#' \dontrun{
-#' # Bayesian initialization with 5 populations and 3 chains
-#' init_matrix_bayes <- mutichain_inits(npops = 5, nchains = 3, prop = 0.8)
+#' #Bayesian initialization with 5 populations and 3 chains
+#' init_matrix_bayes <- GCLr::mutichain_inits(npops = 5, nchains = 3, prop = 0.8)
 #'
 #' # Rubias initialization with 10 populations, 4 chains, and a supplied sillyvec
-#' silly_vector <- c(0.5, 0.3, 0.7, 0.1)
-#' init_matrix_rubias <- mutichain_inits(npops = 10, nchains = 4, type = "rubias",
-#'                                       sillyvec = silly_vector)
-#'
-#' # Rubias initialization will throw an error if sillyvec is not provided
-#' init_matrix_rubias_error <- mutichain_inits(npops = 10, nchains = 4, type = "rubias")
-#' }
+#' init_matrix_rubias <- GCLr::mutichain_inits(npops = 10, nchains = 4, prop = 0.8, type = "rubias",
+#'                                      sillyvec = paste0("Pop", 1:10))
 #'
 #' @export
-
 mutichain_inits <- function(npops, nchains, prop = 0.9, type = c("BAYES", "rubias")[1], sillyvec = NULL){    
   
   if(!type%in%c("BAYES", "rubias")){
@@ -90,7 +83,7 @@ mutichain_inits <- function(npops, nchains, prop = 0.9, type = c("BAYES", "rubia
     
     initmat <- apply(GroupWeights, 1, function(groupweights){
       
-      create_prior(groupvec = groupvec, groupweights = groupweights, minval = 0)
+      GCLr::create_prior(groupvec = groupvec, groupweights = groupweights, minval = 0)
       
       })  
     
@@ -102,7 +95,7 @@ mutichain_inits <- function(npops, nchains, prop = 0.9, type = c("BAYES", "rubia
     
     initmat <- lapply(1:nchains, function(chain){
       
-     tibble::tibble(collection = sillyvec, pi_init = create_prior(groupvec = groupvec, groupweights = GroupWeights[, chain], minval = 0) %>% as.numeric())
+     tibble::tibble(collection = sillyvec, pi_init = GCLr::create_prior(sillyvec = sillyvec, groupvec = groupvec, groupweights = GroupWeights[, chain], minval = 0, type = type) %>% as.numeric())
         
     }) %>% purrr::set_names(paste0("Chain", 1:nchains))
     
@@ -111,5 +104,3 @@ mutichain_inits <- function(npops, nchains, prop = 0.9, type = c("BAYES", "rubia
   return(initmat)
   
 }
-
-
