@@ -19,13 +19,10 @@
 #' in the global environment.
 #'
 #'
-#' @details The function uses the 'pacman' package to ensure that required 
-#' packages are installed and loaded. If 'pacman' is not installed, it will 
-#' automatically install it.
-#'
+#' @details
 #' The function loads the silly files into the global environment as '.gcl' 
-#' objects. If the \code{rds} argument is set to TRUE, 'readRDS' from the 
-#' 'base' package will be used to read the '.rds' files. Otherwise, the 'dget' 
+#' objects. If the \code{rds} argument is set to TRUE, `readRDS()` from the 
+#' 'base' package will be used to read the '.rds' files. Otherwise, the `dget()` 
 #' function from the 'base' package will be used to read the '.txt' files.
 #'
 #' If the \code{sillyvec} argument is provided, the function will only load the 
@@ -47,19 +44,16 @@
 #' }
 #'
 #' @export
-
 load_sillys <- function(path, sillyvec = NULL, rds = FALSE) {  
   
-  if (!require("pacman")) {
-    install.packages("pacman")
-  }
-  library(pacman)
-  pacman::p_load(tidyverse)  #  Install packages, if not in library and then load them
-  
   if (rds) {
+    
     extension <- ".rds"
+    
   } else {
+    
     extension <- ".txt"
+    
   }
   
   if (is.null(sillyvec)) {
@@ -74,27 +68,29 @@ load_sillys <- function(path, sillyvec = NULL, rds = FALSE) {
   } else {
     files_to_load <- base::paste0(sillyvec, extension)
     
-    if (!all(
-      files_to_load %in% base::list.files(
+    if (!all(files_to_load %in% base::list.files(
         path = path,
         pattern = extension,
         full.names = FALSE,
-        recursive = FALSE
-      )
+        recursive = FALSE)
     )) {
+      
       stop("Not all sillys in `sillyvec` are in `path`")
+      
     }
   }
   
   if (length(files_to_load) == 0) {
+    
     stop(base::paste0("There are no '", extension, "'files in the path provided"))
+    
   }
   
   objects <- invisible(sapply(files_to_load, function(file) {
-    obj <-
-      stringr::str_replace(string = file,
-                           pattern = extension,
-                           replacement = ".gcl")
+    
+    obj <- stringr::str_replace(string = file,
+                                pattern = extension,
+                                replacement = ".gcl")
     
     if (rds) {
       base::assign(x = obj,

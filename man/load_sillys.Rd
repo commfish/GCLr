@@ -28,13 +28,9 @@ given \code{path} with the specified \code{extension}, loads them into the
 global environment as '.gcl' objects, and returns the names of the loaded objects.
 }
 \details{
-The function uses the 'pacman' package to ensure that required
-packages are installed and loaded. If 'pacman' is not installed, it will
-automatically install it.
-
 The function loads the silly files into the global environment as '.gcl'
-objects. If the \code{rds} argument is set to TRUE, 'readRDS' from the
-'base' package will be used to read the '.rds' files. Otherwise, the 'dget'
+objects. If the \code{rds} argument is set to TRUE, \code{readRDS()} from the
+'base' package will be used to read the '.rds' files. Otherwise, the \code{dget()}
 function from the 'base' package will be used to read the '.txt' files.
 
 If the \code{sillyvec} argument is provided, the function will only load the
