@@ -18,9 +18,7 @@
 #'       }       
 #'       
 #' @details
-#' This function uses the [hierfstat::hierfstat()] to calculate locus statistics for Ho, Fis, and Fst.
-#' Previous versions of this function used [GCLr::gcl2fstat()] to write out an FSTAT (".dat") file, but this is no longer the case.
-#' Use [GCLr::gcl2fstat()] if you want to create an FSTAT (".dat") file.
+#' This function uses [hierfstat::hierfstat()] to calculate locus statistics for Ho, Fis, and Fst.
 #' 
 #' @seealso 
 #' [hierfstat::hierfstat()]
@@ -29,38 +27,14 @@
 #' [GCLr::create_hierfstat_data()]
 #' 
 #' @examples
-#' \dontrun{
-#' GCLr::create_locuscontrol(markersuite = "Sockeye2011_96SNPs",
-#'                           username = .username,
-#'                           password = .password)
-#' sillyvec = c("SKARLSE11", "SKARLSE99L", "SREDCRY11", "SDOGSC08")
-#' GCLr::loki2r(sillyvec = sillyvec,
-#'              username = .username,
-#'              password = .password)
-#' (my_locus_stats <- GCLr::locus_stats(sillyvec = sillyvec, loci = LocusControl$locusnames, ncores = 4))
-#' }
-#'  
+#'   
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+#'   
+#' GCLr::locus_stats(sillyvec = sillyvec, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl )
+#' 
 #' @export
-locus_stats <-
-  function(sillyvec,
-           loci,
-           ncores = 4,
-           LocusCtl = LocusControl,
-           ...) {
+locus_stats <- function(sillyvec, loci, ncores = 4, LocusCtl = LocusControl) {
     
-  unused_args <- list(...)
-  
-  if (!length(unused_args) == 0){ 
-    
-    if(names(unused_args) %in% c("fstatdir", "dir")){
-      
-      warning("This function no longer writes out an FSTAT .dat file; therefore; the 'fstatdir' and 'dir' arguemnts are no longer used. 
-            Use gcl2fstat to produce an FSTAT file if needed.")
-      
-      }
-    
-    }
-  
   if(ncores > parallel::detectCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
@@ -71,7 +45,7 @@ locus_stats <-
   
   ploidy <- LocusCtl$ploidy[loci]
   
-  dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = ncores)
+  dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = ncores, LocusCtl = LocusCtl)
 
   cl <- parallel::makePSOCKcluster(ncores)
   

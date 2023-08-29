@@ -4,7 +4,7 @@
 \alias{locus_stats}
 \title{Calculate Basic Locus Statistics}
 \usage{
-locus_stats(sillyvec, loci, ncores = 4, LocusCtl = LocusControl, ...)
+locus_stats(sillyvec, loci, ncores = 4, LocusCtl = LocusControl)
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes without the ".gcl" extension.}
@@ -29,22 +29,14 @@ A tibble with 1 row per locus in \code{loci} + "Overall" and the following 4 col
 This function calculates basic locus statistics (Ho, Fis, Fst) for each locus across collections (silly code).
 }
 \details{
-This function uses the \code{\link[hierfstat:hierfstat]{hierfstat::hierfstat()}} to calculate locus statistics for Ho, Fis, and Fst.
-Previous versions of this function used \code{\link[=gcl2fstat]{gcl2fstat()}} to write out an FSTAT (".dat") file, but this is no longer the case.
-Use \code{\link[=gcl2fstat]{gcl2fstat()}} if you want to create an FSTAT (".dat") file.
+This function uses \code{\link[hierfstat:hierfstat]{hierfstat::hierfstat()}} to calculate locus statistics for Ho, Fis, and Fst.
 }
 \examples{
-\dontrun{
-GCLr::create_locuscontrol(markersuite = "Sockeye2011_96SNPs",
-                          username = .username,
-                          password = .password)
-sillyvec = c("SKARLSE11", "SKARLSE99L", "SREDCRY11", "SDOGSC08")
-GCLr::loki2r(sillyvec = sillyvec,
-             username = .username,
-             password = .password)
-(my_locus_stats <- GCLr::locus_stats(sillyvec = sillyvec, loci = LocusControl$locusnames, ncores = 4))
-}
- 
+  
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+  
+GCLr::locus_stats(sillyvec = sillyvec, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl )
+
 }
 \seealso{
 \code{\link[hierfstat:hierfstat]{hierfstat::hierfstat()}}
