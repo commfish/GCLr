@@ -3,7 +3,7 @@ title: ""
 author: ""
 date: "`r Sys.Date()`"
 output:
-  html_notebook:
+  html_document:
     toc: true
     toc_float: true
     code_folding: hide
