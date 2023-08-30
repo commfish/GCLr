@@ -13,10 +13,10 @@
 #' @details This function checks if all the required objects exist in the environment and converts the new style tibble "*.gcl" objects to the old style list format. It performs various checks and transformations on the objects, and assigns the converted objects to the workspace.
 #'
 #' @examples
-#' \dontrun{
+#' 
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
-#' GCLr::new2old.GCL(sillyvec = sillyvec, save_new = TRUE, ncores = 8)
-#' }
+#' 
+#' GCLr::new2old_gcl(sillyvec = sillyvec, save_new = TRUE, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
 #' 
 #' @export
 new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4, LocusCtl = LocusControl){
@@ -49,7 +49,7 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4, LocusCtl = Locus
     
     locvars <- names(get(paste0(silly, ".gcl")))[-c(1:19)]
     
-    loc <- locvars[-grep(pattern = "\\.1$", x = locvars)]  # Need to run this regular expression by Chase to make sure it will always work.
+    loc <- locvars[c(TRUE, FALSE)]
     
     setdiff(loc, LocusCtl$locusnames)
     
@@ -68,7 +68,7 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4, LocusCtl = Locus
     
   })]
   
-  if(is_empty(sillyvec_)){
+  if(purrr::is_empty(sillyvec_)){
     
     stop("All of the sillys in sillyvec are already in the old-style format")
     
@@ -93,7 +93,7 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4, LocusCtl = Locus
   
   `%dopar%` <- foreach::`%dopar%`
   
-  gcls <- foreach::foreach(silly = sillyvec_, .packages = c("tidyverse", "janitor"), .export = "LocusCtl") %dopar% {
+  gcls <- foreach::foreach(silly = sillyvec_, .packages = c("tidyverse", "janitor")) %dopar% {
     
     my.gcl <- all.gcl[[silly]]
     
@@ -104,8 +104,9 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4, LocusCtl = Locus
     mt <- all_ploid %>% 
       dplyr::filter(ploidy == 1)
     
-    mtloci <- mt$locus %>% 
-      unique()
+    mtloci <- locvars[c(TRUE, FALSE)] %>% 
+      unique() %>% 
+      intersect(mt$locus)
     
     dploci <- base::setdiff(loci, mtloci)
   
@@ -191,7 +192,7 @@ new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4, LocusCtl = Locus
       dplyr::mutate(CAPTURE_DATE = CAPTURE_DATE %>% as.character() %>%  as.POSIXct(format = "%Y-%m-%d"), END_CAPTURE_DATE = END_CAPTURE_DATE %>% as.character() %>%  as.POSIXct(format = "%Y-%m-%d")) %>% 
       as.data.frame()
     
-   list(counts = counts[, LocusCtl$locusnames, ], scores = scores[, LocusCtl$locusnames, ], n = length(ids), attributes = attributes)
+   list(counts = counts[, loci, ], scores = scores[, loci, ], n = length(ids), attributes = attributes)
   
   } %>% purrr::set_names(sillyvec_)
   

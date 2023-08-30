@@ -22,9 +22,9 @@ This function converts new style ".gcl" objects from tibbles to a list of arrays
 This function checks if all the required objects exist in the environment and converts the new style tibble "*.gcl" objects to the old style list format. It performs various checks and transformations on the objects, and assigns the converted objects to the workspace.
 }
 \examples{
-\dontrun{
+
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
-GCLr::new2old.GCL(sillyvec = sillyvec, save_new = TRUE, ncores = 8)
-}
+
+GCLr::new2old_gcl(sillyvec = sillyvec, save_new = TRUE, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
 
 }
