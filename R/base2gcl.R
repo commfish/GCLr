@@ -67,8 +67,8 @@ base2gcl <- function(base){
                   DNA_TRAY_WELL_CODE = NA_real_,
                   DNA_TRAY_WELL_POS = NA_character_,
                   CONTAINER_ARRAY_TYPE_ID = NA_real_) %>% 
-    dplyr::select(dplyr::all_of(c(attr.vars, loc.vars))) %>% 
-    dplyr::ungroup()
+    dplyr::ungroup() %>% 
+    dplyr::select(dplyr::all_of(c(attr.vars, loc.vars)))
   
   sillys <- all.df$SILLY_CODE %>% unique()
   
