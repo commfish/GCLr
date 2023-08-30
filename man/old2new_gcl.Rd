@@ -44,8 +44,8 @@ names of the converted *.gcl objects.
 }
 \examples{
 \dontrun{
-# load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
-# old2new_gcl(sillyvec = sillyvec157, save_old = TRUE)
+ load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
+ old2new_gcl(sillyvec = sillyvec157, save_old = TRUE)
 }
 
 }

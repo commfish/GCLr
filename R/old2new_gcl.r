@@ -34,15 +34,14 @@
 #'
 #' @examples
 #' \dontrun{
-#' # load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
-#' # old2new_gcl(sillyvec = sillyvec157, save_old = TRUE)
+#'  load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
+#'  old2new_gcl(sillyvec = sillyvec157, save_old = TRUE)
 #' }
 #'
 #' @seealso
 #' \code{\link{new2old_gcl}} to convert tibbles back to old *.gcl format.
 #'
 #' @export
-
 old2new_gcl <- function(sillyvec, save_old = FALSE){
   
   if(!all(sillyvec %in% stringr::str_remove(string = objects(pattern = "\\.gcl", pos = -1, envir = .GlobalEnv), pattern = "\\.gcl"))) {  # Do all sillys exist in the environment?
@@ -69,7 +68,11 @@ old2new_gcl <- function(sillyvec, save_old = FALSE){
     
     my.gcl <- get(paste0(silly, ".gcl"))
     
-    if(save_old){assign(paste0(silly, ".gcl_old"), value = my.gcl, pos = -1, envir = .GlobalEnv)}  # Saving old gcl
+    if(save_old){
+      
+      assign(paste0(silly, ".gcl_old"), value = my.gcl, pos = -1, envir = .GlobalEnv)
+      
+      }  # Saving old gcl
     
     my_attr <- my.gcl$attributes %>% 
       names()
