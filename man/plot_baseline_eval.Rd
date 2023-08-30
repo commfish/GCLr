@@ -15,15 +15,9 @@ plot_baseline_eval(
 \arguments{
 \item{summary}{A baseline evaluation summary list produced by \code{\link[=summarize_rubias_baseline_eval]{summarize_rubias_baseline_eval()}}.}
 
-\item{file}{A tibble produced by \code{\link[=base_eval_sample_sizes]{base_eval_sample_sizes()}} containing the following variables:
-\itemize{
-\item \code{test_group}
-\item \code{scenario}
-\item \code{repunit}
-\item  \code{samps}
-}}
+\item{file}{the file path including '.pdf' extension for saving the baseline evaluation plots}
 
-\item{method}{A character string indicating the rubias output to summarize. Select one of three choices:
+\item{method}{A character string indicating the \code{rubias} output to summarize. Select one of three choices:
 \itemize{
 \item {"MCMC"(plot MCMC output)}
 \item{"PB" (plot bias corrected output)}
@@ -35,34 +29,43 @@ plot_baseline_eval(
 \item{group_colors}{A character vector of R \code{colors()} the same length as \code{test_groups}. If \code{group_colors} is not supplied, colors will be automatically selected using \code{rainbow()}.}
 }
 \value{
-If \code{method == "MCMC"} or \code{"PB"}, the function produces a single page pdf file containing the plots and returns the faceted plots. If \code{method == "both"}, the function produces a two-page pdf file containing the plots for both methods and no plots are returned.
+If \code{method == "MCMC"} or \code{"PB"}, the function produces a single page pdf file containing the plots and returns the faceted plots.
+If \code{method == "both"}, the function produces a two-page pdf file containing the plots for both methods and no plots are returned. (see details)
 }
 \description{
 This function takes the baseline evaluation summary object produced by \code{\link[=summarize_rubias_baseline_eval]{summarize_rubias_baseline_eval()}} and produces plots of correct allocation for each test_group with summary statistics placed in the upper left corner of each plot.
 }
 \details{
 The solid line on the plots indicates where the true proportion equals the estimated proportion. The two dotted lines indicate where the estimates fall within +/- 10\% of the true proportion.
+The plot for each reporting group includes the following baseline evaluation test statistics:
+\itemize{
+\item RMSE: root-mean-square error
+\item Bias: overall bias
+\item 90\%_within: the proportion of tests with correct allocations falling within 10 percentage points of the true value
+\item Within Interval: the proportion of tests with credibility intervals that contain the true value.
+}
 If a large number of \code{test_groups} are supplied, the faceted plots will become too small to see on one page. If so, you may need to supply a subset of \code{test_groups} to plot.
 This function is not intended for producing publication-ready plots; however, the code from this function can be copied and modified to produce plots formatted for publication.
+Currently, this function only returns plots for one method (MCMC or PB) at a time because it's cumbersome to view two plots at a time below an R markdown code chunk.
 }
 \examples{
 
 \dontrun{
+   #Get test mixture sample sizes
    sample_sizes <- GCLr::base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
+   
+   #Produce test mixture and baseline files
    GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
+   
+   #Run the baseline evaluation tests
    tests <- sample_sizes \%>\% group_by(test_group, scenario) \%>\% summarize(test_group = test_group \%>\% unique(), scenario = scenario \%>\% unique(), .groups = "drop_last")
-   GCLr::run_rubias_base_eval(tests = tests, group_names = Final_Pops$group \%>\% levels(), gen_start_col = 5, base.path = "rubias/baseline",mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = 8)
+   GCLr::run_rubias_base_eval(tests = tests, group_names = Final_Pops$group \%>\% levels(), gen_start_col = 5, base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = 8)
+   
+   #Summarize results
    summary <- GCLr::summarize_rubias_base_eval(mixvec = mixvec, sample_sizes = sample_sizes, method = "both", group_names = NULL, group_names_new = NULL, groupvec = NULL, groupvec_new = NULL, path = path, alpha = 0.1, burn_in = 5000, threshold = 5e-7, ncores = 8)
-
+   
+   #Plot results
    GCLr::plot_baseline_eval(summary = summary, file = "Baseline_eval_plots.pdf", method = "PB", test_groups = groups3, group_colors = c("green", "magenta", "red"))
 }
-load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-require(tidyverse)
-tests <- sample_sizes \%>\% group_by(test_group, scenario) \%>\% summarize(test_group = test_group \%>\% unique(), scenario = scenario \%>\% unique(), .groups = "drop_last")#Total of 510 tests  #
-mixvec <- tests \%>\% unite(col = "mixvec", test_group, scenario, sep ="_" ) \%>\% pull()
-path <-  "V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/rubias/3groups/output"
-summary <- summarize_rubias_base_eval (mixvec = mixvec, sample_sizes = sample_sizes, method = "both", group_names = NULL, group_names_new = NULL, groupvec = NULL, groupvec_new = NULL, path = path, alpha = 0.1, burn_in = 5000, threshold = 5e-7, ncores = 8)
-
-plot_baseline_eval(summary = summary, file = "Baseline_eval_plots.pdf", method = "PB", test_groups = groups3, group_colors = c("green", "magenta", "red"))
 
 }
