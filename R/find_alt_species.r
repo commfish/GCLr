@@ -85,7 +85,7 @@ find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl
     
   } else { # Otherwise, subset based on which alternate markers are present
     
-    warning(
+    message(
       
       paste0("Performing analyses on ", AlternateCount, " out of ", length(AlternateGenotypes$AlternateMarker), " alternative markers.\n") # Pasting in values to display number of markers
      
@@ -107,7 +107,7 @@ find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl
     
   } else { # Otherwise, subset based on which failed markers are present
     
-    warning(
+    message(
       
       paste0("Performing analyses on ", FailedCount, " out of ", length(FailedMarkers$FailedMarker), " failed markers.\n") # Pasting in values to display number of markers
     
