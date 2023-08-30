@@ -31,7 +31,7 @@ loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
   names() \%>\%
   gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
   unique()
-  
-GCLr::pairwise_fst(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), ncores = 4)
+
+GCLr::pairwise_fst(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), ncores = parallel::detectCores())
 
 }
