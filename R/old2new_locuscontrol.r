@@ -39,21 +39,20 @@
 #' }
 #'
 #' Note that this function will save the old LocusControl object as 
-#' "LocusControl_old" in the global environment if the \code{save_old} parameter 
+#' "LocusControl_old" in the global environment if the \code{save_old} argument 
 #' is set to TRUE.
 #'
 #' @examples
 #' \dontrun{
 #' load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
 #'
-#' old2new_locuscontrol(LocCtrl = LocusControl, save_old = TRUE)
+#' GCLr::old2new_locuscontrol(LocCtrl = LocusControl, save_old = TRUE)
 #' }
 #'
 #' @seealso
 #' \code{\link{LocusControl}}, \code{\link{combine_loci}}
 #'
 #' @export
-  
 old2new_locuscontrol <- function (LocCtrl = LocusControl, save_old = FALSE){
   
   if(tibble::is_tibble(LocCtrl)){
