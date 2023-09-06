@@ -67,7 +67,7 @@ dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, 
       get(paste0(silly, ".gcl")) %>% 
         dplyr::filter(FK_FISH_ID %in% KeySillyIDs[[silly]])
       
-    }) %>% bind_rows()
+    }) %>% dplyr::bind_rows()
       
   } else{
     
@@ -75,7 +75,7 @@ dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, 
       
       get(paste0(silly, ".gcl"))
       
-    }) %>% bind_rows()
+    }) %>% dplyr::bind_rows()
     
   }
   
@@ -87,7 +87,7 @@ dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, 
   }) %>% purrr::set_names(BetweenSillys)
   
   # Added this if statement code for haploid markers, rubias::close_matching_samples() was counting them as missing loci because of the NAs in the allele2 column. 
-  # This can be removed Eric Anderson fixes the function. 
+  # This can be removed if Eric Anderson fixes the function. 
   if(any(ploidy == 1)) {
     
     haploci <- names(ploidy[ploidy == 1])
@@ -101,7 +101,6 @@ dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, 
          my.between[[silly]][[paste0(locus, ".1")]] <- my.between[[silly]][[locus]]
         
       }
-      
     }
   } 
     
@@ -141,71 +140,81 @@ dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, 
   
   parallel::stopCluster(cl) 
   
-  # Plots
-  
-  if(plot.results == TRUE){ #Added this as an option to not produce plots
+  # Print a message if no dups are found, otherwise continue.
+  if(nrow(dupcheck0) == 0){
     
-    sapply(dupcheck0$Keysillyvial %>% unique(), function(key){
+    message("None of the key silly individuals are duplicated in BetweenSillys.")
+    
+  }else{
+    
+    # Plots
+    
+    if(plot.results == TRUE){ #Added this as an option to not produce plots
       
-      dc <- dupcheck0 %>% 
-        tidyr::separate(Betweensillyvial, into = c("Betweensilly", NA), sep = "_", remove = FALSE) %>% 
-        dplyr::filter(Keysillyvial == key)
+      sapply(dupcheck0$Keysillyvial %>% unique(), function(key){
+        
+        dc <- dupcheck0 %>% 
+          tidyr::separate(Betweensillyvial, into = c("Betweensilly", NA), sep = "_", remove = FALSE) %>% 
+          dplyr::filter(Keysillyvial == key)
+        
+        max_dup <- dc %>% 
+          dplyr::filter(DuplicateRate == max(DuplicateRate))
+        
+        plot <- dc %>% 
+          ggplot2::ggplot(ggplot2::aes(x = DuplicateRate, fill = Betweensilly)) + # I added "fill = BetweenSilly" so the histogram will show which between sillys make up the distribution - this may be removed if others don't like it.
+          ggplot2::geom_histogram(bins = 100) +
+          ggplot2::geom_vline(xintercept = minproportion, color = "red", size = 1.25)+
+          ggplot2::xlab("Duplicate Rate")+
+          ggplot2::ylab("Frequency") +
+          ggplot2::xlim(0, 1.02) +
+          ggplot2::ggtitle(label = paste0("KeySillyID: ", key))+
+          ggplot2::geom_text(ggplot2::aes(x = max_dup$DuplicateRate %>% unique, y = length(max_dup$DuplicateRate)), label = paste0(max_dup$Betweensillyvial, collapse = "_"), angle = 90, hjust = -.05)
+        
+        suppressWarnings(print(plot))
+        
+      }) # End plots
       
-      max_dup <- dc %>% 
-        dplyr::filter(DuplicateRate == max(DuplicateRate))
-      
-      plot <- dc %>% 
-        ggplot2::ggplot(ggplot2::aes(x = DuplicateRate, fill = Betweensilly)) + # I added "fill = BetweenSilly" so the histogram will show which between sillys make up the distribution - this may be removed if others don't like it.
-        ggplot2::geom_histogram(bins = 100) +
-        ggplot2::geom_vline(xintercept = minproportion, color = "red", size = 1.25)+
-        ggplot2::xlab("Duplicate Rate")+
-        ggplot2::ylab("Frequency") +
-        ggplot2::xlim(0, 1.02) +
-        ggplot2::ggtitle(label = paste0("KeySillyID: ", key))+
-        ggplot2::geom_text(ggplot2::aes(x = max_dup$DuplicateRate %>% unique, y = length(max_dup$DuplicateRate)), label = paste0(max_dup$Betweensillyvial, collapse = "_"), angle = 90, hjust = -.05)
-      
-      suppressWarnings(print(plot))
-      
-    }) # End plots
+    }
+    
+    max_dups <- dupcheck0 %>% 
+      dplyr::filter(DuplicateRate == max(DuplicateRate))
+    
+    threshold_dups <- dupcheck0 %>% 
+      dplyr::filter(DuplicateRate >= minproportion)
+    
+    project_dups <- dupcheck0 %>% 
+      dplyr::mutate(Keysillyvial_2 = gsub(pattern = "qc_", replacement = "_", x = Keysillyvial)) %>% 
+      dplyr::filter(Keysillyvial_2 == Betweensillyvial) %>% 
+      dplyr::select(Keysillyvial, Betweensillyvial, DuplicateRate)
+    
+    suppressMessages(dupcheck <- dplyr::bind_rows(max_dups, threshold_dups, project_dups) %>% unique)
+    
+    scores1 <- paste0(loci, ".1")
+    
+    Keymissing <- my.key %>% 
+      dplyr::select(Keysillyvial = SillySource, all_of(scores1)) %>% 
+      dplyr::mutate(dplyr::across(all_of(scores1), is.na)) %>% 
+      dplyr::group_by(Keysillyvial) %>% 
+      dplyr::mutate(Keymissing = sum(!!!syms(scores1))) %>% 
+      dplyr::select(Keysillyvial, Keymissing)
+    
+    Betweenmissing <- my.between %>% 
+      dplyr::bind_rows() %>% 
+      dplyr::filter(SillySource %in% dupcheck0$Betweensillyvial) %>% 
+      dplyr::select(Betweensillyvial = SillySource, tidyselect::all_of(scores1)) %>% 
+      dplyr::mutate(dplyr::across(all_of(scores1), is.na)) %>%  
+      dplyr::group_by(Betweensillyvial) %>% 
+      dplyr::mutate(Betweenmissing = sum(!!!syms(scores1))) %>% 
+      dplyr::select(Betweensillyvial, Betweenmissing)
+    
+    duplicate_summary <- dupcheck %>% 
+      dplyr::left_join(Keymissing, by = "Keysillyvial") %>% 
+      dplyr::left_join(Betweenmissing, by = "Betweensillyvial") %>% 
+      dplyr::select(Keysillyvial, Betweensillyvial, Keymissing, Betweenmissing, DuplicateRate)
+    
+    return(duplicate_summary)
     
   }
+  
     
-  max_dups <- dupcheck0 %>% 
-    dplyr::filter(DuplicateRate == max(DuplicateRate))
-  
-  threshold_dups <- dupcheck0 %>% 
-    dplyr::filter(DuplicateRate >= minproportion)
-   
-  project_dups <- dupcheck0 %>% 
-    dplyr::mutate(Keysillyvial_2 = gsub(pattern = "qc_", replacement = "_", x = Keysillyvial)) %>% 
-    dplyr::filter(Keysillyvial_2 == Betweensillyvial) %>% 
-    dplyr::select(Keysillyvial, Betweensillyvial, DuplicateRate)
-  
-  suppressMessages(dupcheck <- dplyr::bind_rows(max_dups, threshold_dups, project_dups) %>% unique)
-  
-  scores1 <- paste0(loci, ".1")
-  
-  Keymissing <- my.key %>% 
-    dplyr::select(Keysillyvial = SillySource, all_of(scores1)) %>% 
-    dplyr::mutate(dplyr::across(all_of(scores1), is.na)) %>% 
-    dplyr::group_by(Keysillyvial) %>% 
-    dplyr::mutate(Keymissing = sum(!!!syms(scores1))) %>% 
-    dplyr::select(Keysillyvial, Keymissing)
-  
-  Betweenmissing <- my.between %>% 
-    dplyr::bind_rows() %>% 
-    dplyr::filter(SillySource %in% dupcheck0$Betweensillyvial) %>% 
-    dplyr::select(Betweensillyvial = SillySource, tidyselect::all_of(scores1)) %>% 
-    dplyr::mutate(dplyr::across(all_of(scores1), is.na)) %>%  
-    dplyr::group_by(Betweensillyvial) %>% 
-    dplyr::mutate(Betweenmissing = sum(!!!syms(scores1))) %>% 
-    dplyr::select(Betweensillyvial, Betweenmissing)
-  
-  duplicate_summary <- dupcheck %>% 
-    dplyr::left_join(Keymissing, by = "Keysillyvial") %>% 
-    dplyr::left_join(Betweenmissing, by = "Betweensillyvial") %>% 
-    dplyr::select(Keysillyvial, Betweensillyvial, Keymissing, Betweenmissing, DuplicateRate)
-  
-  return(duplicate_summary)
-  
 }
