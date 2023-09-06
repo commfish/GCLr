@@ -58,7 +58,7 @@ remove_ind_miss_loci <- function(sillyvec, loci = LocusControl$locusnames, propo
     
     if(!purrr::is_empty(IDsToRemove)) {
       
-      remove_ids(silly = silly, IDs = IDsToRemove)
+      GCLr::remove_ids(silly = silly, IDs = IDsToRemove)
       
     }
 
