@@ -17,7 +17,7 @@ dupcheck_qc_conflicts(
 This function checks samples with conflict rates > \code{conflict_rate} and runs \code{\link[=dupcheck_among_sillys]{dupcheck_among_sillys()}} to see if they match any samples in \code{project_sillys}.(see details)
 
 @param conflicts a tibble containing 3 variables:
-\iemize{
+\itemize{
 \item \code{SillySource} original silly code and fish ID for each individual with conflicts
 \item \code{n} the number of conflicts among loci
 \item \code{p} the proportion of conflicts among loci
