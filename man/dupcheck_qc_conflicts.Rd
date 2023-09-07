@@ -18,12 +18,12 @@ This function checks samples with conflict rates > \code{conflict_rate} and runs
 
 @param conflicts a tibble containing 3 variables:
 \iemize{
-\item \code(SillySource) original silly code and fish ID for each individual with conflicts
-\item \code(n) the number of conflicts among loci
-\item \code(p) the proportion of conflicts among loci
+\item \code{SillySource} original silly code and fish ID for each individual with conflicts
+\item \code{n} the number of conflicts among loci
+\item \code{p} the proportion of conflicts among loci
 }
 
-@param conflict_rate the conflict rate for determining which samples to investigate. This is assinged at the beginging of the QC script.
+@param conflict_rate the conflict rate for determining which samples to investigate. This is assigned at the beginning of the QC script.
 @param project_sillys a character vector of silly codes included in the project
 @param LocusCtl an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = \code{LocusControl})
 @param ncores the number of cores to run in parallel (default = \code{\link[parallel:detectCores]{parallel::detectCores()}})
