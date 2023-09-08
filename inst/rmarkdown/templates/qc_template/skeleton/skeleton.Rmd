@@ -1,6 +1,6 @@
 ---
-title: ""
-author: ""
+title: "S242QC"
+author: "Andy Barclay"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -43,9 +43,9 @@ The previous QC script consisted of an R script with Excel and other outputs, th
 # Project Leader Review
 *Here is a section for project leaders to take notes, and give a summary of the QC*
 
-    Author:
-    Date:
-    Notes:
+    Author: Andy Barclay
+    Date: 9/5/23
+    Notes: Testing QC script
 
 
 
@@ -55,20 +55,21 @@ The previous QC script consisted of an R script with Excel and other outputs, th
 # Inputs
 Now we can move onto required user inputs.
 *This is the only spot where you need to enter information!*
-```{r class.source = `fold-show`}
-username <- "" # LOKI username 
+```{r }
+username <- Sys.getenv("USERNAME") # LOKI username 
 
-.password <- "" # LOKI password
+.password <- scan(path.expand("~/R/usr.pw"), what = "")[2] # LOKI password
 
-dirqc <- "" # The directory where the QC files are located.
+dirqc <- "C:/Users/awbarclay/Desktop/Project S242 Copper River Comm_PU_Subs Post Season 2022/QC" # The directory where the QC files are located.
 
-species <- "" # The species for the project (e.g., "pink").
+species <- "sockeye" # The species for the project (e.g., "pink").
 
-project <- "" # The project name (e.g., "P014").
+project <- "S242" # The project name (e.g., "P014").
 
-project_type <- "" # The type of project ("Biomark", "uSat", or "GT-seq").
+project_type <- "Biomark" # The type of project ("Biomark", "uSat", or "GT-seq").
 ```
 
+# Optional inputs
 Here are a few more inputs, but are optional and should probably remain the defaults (i.e., do not change unless you know what you are doing.)
 ```{r}
 qc_summary_file <- paste("Project", project,"QC Summary R Script.xlsx") # The file path for the QC summary file; This is automatically generated using `project` (i.e., don't change unless you know what you're doing).
@@ -80,14 +81,35 @@ This is for project set up. Do not change.
 ```{r}
 knitr::opts_chunk$set(
   root.dir = dirqc, # set the working directory to dirqc for all subsequent chunks!
-  echo = FALSE,    # Show code by default
-  collapse = TRUE,   # Collapse code by default
   fig.pos = '!h',    # Place figures here and don't float
   fig.width = 12     # Set figure width
 )
 
 library(magrittr) #get tidy pipe from this
 ```
+
+This is a function for making the tables look nice. Do not change.
+```{r}
+qc_table <- function(x, page.length = NULL){
+  DT::datatable(data = x,
+    rownames = FALSE,
+    filter = "top",
+    extensions = "Buttons",
+    options = list(dom = 'Bfrtip',
+                   pageLength = page.length,
+                   buttons =
+                     list(
+                       'copy',
+                       'print',
+                       list(
+                         extend = 'collection',
+                         buttons = c('csv', 'excel'),
+                         text = 'Download'
+                       )
+                     ))
+)}
+```
+
 
 Those were all of the user inputs/modifiable sections. The remainder of the script is set up to be run, in order, line by line. Please do not change anything, unless you know what you're doing. Further, if changes are required, it may be worth updating the template so it's fixed for everyone.
 
@@ -110,24 +132,11 @@ failure_rate <- GCLr::failure_rate(sillyvec = project_sillys)
 
 ### Failure Rate by Silly
 This is a table showing the failure rate by silly for the project.
+**Chase, maybe we can highlight failure rates above a certain cutoff? (see example below)**
 ```{r}
 failure_rate$silly_failure_rate %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table() %>% 
+  DT::formatStyle('fail', backgroundColor = DT::styleInterval(0.04, c('white', 'red')))
 ```
 
 And here is a plot showing those data. 
@@ -138,74 +147,32 @@ failure_rate$plot_silly_failure_rate
 
 ### Failure Rate by Locus
 This is the failure rate by locus for the project.
+**Chase, maybe we can highlight failure rates above a certain cutoff? (see example below)**
 ```{r}
 failure_rate$locus_failure_rate %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table() %>%
+  DT::formatStyle('fail', backgroundColor = DT::styleInterval(0.04, c('white', 'red')))
+  
 ```
 
 ### Failure Rate by Plate
 This is a table showing the failure rate by plate for the project.
+**Chase, same as previous comment. **
 ```{r}
 failure_rate$plate_failure_rate %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table()
 ```                               
 
 And here is a plot showing those data. 
+**Chase, the x-axis gets weird with nonconsecutive plate IDs. I think if you convert the plate number variable to character in GCLr::failure_rate, this won't happen.**
 ```{r}
 failure_rate$plot_plate_failure_rate
 ```
-
-
 ### Overall Failure Rate
 This is the overall failure rate for the project.
 ```{r}
 failure_rate$overall_failure_rate %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table()
 ```
 
 
@@ -243,7 +210,7 @@ The next step is to summarize the conflicts. This will be done a few ways - by p
 
 ### By plate
 First, we'll take a look at the number of conflicts by plate:
-
+**Chase, maybe highlight homo-homo conflicts?**
 ```{r}
 conflicts_by_plate <- combined_conflicts %>% 
   dplyr::group_by(plate_id, concordance_type) %>%
@@ -252,28 +219,14 @@ conflicts_by_plate <- combined_conflicts %>%
   dplyr::mutate(Conflict = sum(`Het-Het`, `Het-Homo`, `Homo-Het`, `Homo-Homo`)) %>%
   dplyr::ungroup()
 
-conflicts_by_plate %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+conflicts_by_plate %>%
+  qc_table() %>% 
+  DT::formatStyle('Homo-Homo', backgroundColor = DT::styleInterval(0.00, c('white', 'red')))
 ```
 
 ### By SILLY
 Next, we'll look at the number of conflicts by silly code.
-
+**Chase, same as last comment**
 ```{r}
 conflicts_by_silly <- combined_conflicts %>% 
   dplyr::group_by(silly, concordance_type) %>%
@@ -283,26 +236,13 @@ conflicts_by_silly <- combined_conflicts %>%
   dplyr::ungroup()
 
 conflicts_by_silly %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table() %>% 
+  DT::formatStyle('Homo-Homo', backgroundColor = DT::styleInterval(0.00, c('white', 'red')))
 ```
 
 ### By locus
 Finally, we can look at the number of conflicts by locus.
+**Chase, same as last comment** 
 ```{r}
 conflicts_by_locus <- combined_conflicts %>%
   dplyr::group_by(locus, concordance_type) %>%
@@ -312,26 +252,9 @@ conflicts_by_locus <- combined_conflicts %>%
   dplyr::ungroup()
 
 conflicts_by_locus %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table() %>% 
+  DT::formatStyle('Homo-Homo', backgroundColor = DT::styleInterval(0.00, c('white', 'red')))
 ```
-
-
-
 # Sample Sizes by Locus
 We'll calculate the sample sizes, by locus, for project and qc genotypes.
 
@@ -341,26 +264,12 @@ original_proj_n_by_locus <- GCLr::sampn_by_locus(sillyvec = project_sillys, loci
 
 original_proj_n_by_locus %>% 
   tidyr::pivot_longer(names_to = "locus", values_to = "n",-silly) %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table()
 ```
 
 ## QC Genotypes
 *Note - you will not get output from this section, unless something fails (i.e., below 0.8)*
+**I was a little confused by the output of this chunk. Could it print a message with a list of the failed loci by silly?**
 ```{r}
 original_qc_n_by_locus <-
   GCLr::sampn_by_locus(sillyvec = qc_sillys, loci = loci)
@@ -388,6 +297,7 @@ if (any(original_qc_percent_by_locus %>%
 
 Now let's check out a quick plot. This plot is interactive, so you can easily see what's going on - it allows you to zoom, hover over points for info, move around the plot, etc.
 
+**Can the failed loci be highlighted a different color so they stand out?**
 ```{r}
 plotly::ggplotly(
   ggplot2::ggplot(
@@ -428,6 +338,10 @@ project_sillys_n # view sample size table
 Now, we'll check for alternate species. Note that this is only done for chum and sockeye and if there are certain markers in the markersuite. Otherwise, NA is added to the sample size tibble. 
 
 *Note, we're not removing these fish as you would during a normal project (i.e., GCLr::remove_alt_species), as they may be helpful in resolving conflicts. It's also important to note that the sample size is calculated based on assumed defaults, please read the sample size calculation commentary below for details.* 
+
+**This plot needs some explanation, so people understand how to interpret it. Is "alternate" the proportion of alternates that failed or proportion of alternate markers with alternate genotypes?  In the plot below, are the two fish in the upper right hand corner of the plot potential alternates? Maybe highlight circles that are likely alternates?**
+
+**I modified the code to calculate "wrong_spp" for `project_sillys_n`. The original code was applying the same number of wrong species to each silly**
 ```{r}
 # only run if spp = chum or sockeye and the loci are in the list, otherwise nothing to check
 if (any(species %in% c("chum", "sockeye")) &
@@ -437,12 +351,21 @@ if (any(species %in% c("chum", "sockeye")) &
   
   # run alternate species checks
   alternate_spp <-
-    GCLr::find_alt_species(sillyvec = project_sillys, species = species)
+    suppressMessages(GCLr::find_alt_species(sillyvec = project_sillys, species = species))
   
   # since we're not removing these fish, we must manually calculate the number of alternates. Important to note that we're using a 0.5 cutoff for alternate and failure, as this is the default for GCLr::remove_alt_species(). Any desired changes to the defaults need to be reflected here!
-  project_sillys_n <- project_sillys_n %>%
-    dplyr::mutate(wrong_spp = alternate_spp %>% dplyr::filter(failure > 0.5 & alternate > 0.5) %>% nrow())
   
+  # Chase, I modified this code - A.B. 9/6/23
+  n_alts <- alternate_spp %>% 
+                    dplyr::mutate(alternate = dplyr::case_when(failure > 0.5 & alternate > 0.5 ~ TRUE,
+                                                        TRUE~FALSE)) %>%
+                    tidyr::separate(silly_fish, into = c("silly", "fishID")) %>% 
+                    dplyr::group_by(silly) %>% 
+                    dplyr::summarize(wrong_spp = sum(alternate))
+  
+  project_sillys_n <- project_sillys_n %>%
+    dplyr::left_join(n_alts, by = "silly")
+                     
 } else {
   # update sample size table with NA if does not meet species or loci criteria
   project_sillys_n <- project_sillys_n %>%
@@ -452,56 +375,26 @@ if (any(species %in% c("chum", "sockeye")) &
 ```
 
  Check out sample size table:
+ 
+ **Are there really 2 alternates per silly? 
 ```{r}
 project_sillys_n  %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )# view sample size table
+  qc_table()# view sample size table
 ```
 
 Here we can view the table containing failed and alternate markers for each fish. This table shows the proportion of 'failure' and 'alternate' indicator markers that were found for each fish. These data are what's used to determine whether a chum or sockeye was incorrectly identified. 
+
+**Maybe bring the alternates to the top of this table and/or highlight?**
 ```{r}
 alternate_spp %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table()
 ```
-
-
-
 ### Missing (80% rule)
 Check for individuals missing \>=20% of genotypes (i.e. the 80% rule). 
 
 *Note that we are removing fish here, since they have poor quality data and are not useful in resolving conflicts.*
 ```{r}
-MissLoci <-
-  GCLr::remove_ind_miss_loci(sillyvec = project_sillys, proportion = 0.8, loci = loci)
+MissLoci <- GCLr::remove_ind_miss_loci(sillyvec = project_sillys, proportion = 0.8, loci = loci)
 
 project_sillys_n <- project_sillys_n %>%
     dplyr::mutate(missing =  genotyped - GCLr::silly_n(sillyvec = project_sillys) %>% dplyr::pull(n))
@@ -510,22 +403,7 @@ project_sillys_n <- project_sillys_n %>%
 Check out the sample size table, after removing the fish with poor quality data
 ```{r}
 project_sillys_n %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  ) # view sample size table
+  qc_table() # view sample size table
 ```
 
 
@@ -552,12 +430,8 @@ dup_check_95_minproportion <-
 dup_check_95_minproportion
 
 #calculate the number of duplicates. First check if the dup check object is 0, and stop there, otherwise, continue and calculate the number of duplicates as the number of unique ID's found in the duplicate check function above. 
-project_sillys_n <- project_sillys_n %>%
-  dplyr::mutate(duplicate = ifelse(
-    nrow(dup_check_95_minproportion) == 0,
-    0,
-    nrow(
-      dup_check_95_minproportion %>%
+
+n_dups <- dup_check_95_minproportion %>%
         dplyr::mutate(
           remove = dplyr::case_when(
             Missing1 > Missing2 ~ ID1,
@@ -565,55 +439,33 @@ project_sillys_n <- project_sillys_n %>%
             Missing1 == Missing2 ~ ID1
           )
         ) %>%
-        dplyr::distinct(remove)
-    )
-  ))
+        dplyr::distinct(silly, remove) %>% 
+      dplyr::group_by(silly) %>% 
+      dplyr::summarise(duplicate = length(remove))
+
+(project_sillys_n <- project_sillys_n %>%
+  dplyr::left_join(n_dups, by = "silly") %>% 
+  tidyr::replace_na(replace = list(duplicate = 0)))
+  
+  
 ```
 
 Check out the sample size table, after checking for duplicates
 ```{r}
 project_sillys_n %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  ) # view sample size table
+  qc_table() # view sample size table
 ```
 
 ### Final Sample Size
+**Chase, it might be good to make the datatable code a function since it's repeated many times throughout this script. I created an example function in the chunk below.**
 ```{r}
 project_sillys_n <- project_sillys_n %>%
     dplyr::mutate(final = genotyped - wrong_spp - missing - duplicate)
 
+
 # view sample size table
-project_sillys_n %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  ) 
+qc_table(project_sillys_n)
+
 ```
 
 
@@ -623,7 +475,6 @@ Here we'll do QA for the QC extractions. We're not calculating the full sample s
 ```{r}
 miss_loci_qc <- GCLr::remove_ind_miss_loci(sillyvec = qc_sillys, proportion = 0.8)
 ```
-    
   
 # Perform Duplicate Check on High Conflict Individuals
 The last step in the process is to perform a duplicate check on any individuals which show a high degree of conflicts.
@@ -646,136 +497,17 @@ conflicts %>%
   ggplot2::ylab("Frequency") +
   ggplot2::ggtitle("QC Individual Conflict Rate")
 ```
-
-
 Now identify anything to investigate by running a duplicate check on anything with high degree of conflicts
 ```{r}
-# Filter for conflicts > conflict_rate
-conflicts_investigate <- conflicts %>%
-  dplyr::filter(p > conflict_rate)
 
-# run the duplicate check, if necessary
-if (nrow(conflicts_investigate) == 0) {
-  message(
-    paste0("No individuals have > ", conflict_rate * 100, "% loci with conflicts between project and qc.")
-    )
-  
-  dup_check_results <- tibble::tibble(x = "Not applicable")
-  
-} else {
-  message(
-    paste0("The following individuals have > ", conflict_rate * 100, "% loci with conflicts between project and qc:\n"),
-    paste(conflicts_investigate$SillySource, conflicts_investigate$n, "conflicts", collapse = "\n")
-  )
-  
-  # Loop through individuals to see if missing loci are an issue
-  conflict_indv <- NULL
-  
-  for (silly_ind in conflicts_investigate$SillySource) {
-    silly <-
-      stringr::str_split(string = silly_ind,
-                         pattern = "_",
-                         simplify = TRUE)[, 1]
-    
-    ind <-
-      stringr::str_split(string = silly_ind,
-                         pattern = "_",
-                         simplify = TRUE)[, 2]
-    
-    # qc fish lost in QA?
-    if (ind %in% miss_loci_qc[[paste0(silly, "qc")]]) {
-      message(
-        paste0("\n", silly, "qc_", ind," does not have at least 80% loci genotyped, not running DupCheck for this individual.")
-      )
-    }  # print if any qc fish were removed due to missing genotypes
-    
-    # Project fish lost in QA
-    if (ind %in% MissLoci[[silly]]) {
-      message(
-        paste0("\n", silly, "_", ind, " does not have at least 80% loci genotyped, not running DupCheck for this individual.")
-      )
-    }  # print if any project fish were removed due to missing genotypes
-    
-    conflict_indv <-
-      c(conflict_indv, paste(silly, ind, sep = "_")[!(ind %in% miss_loci_qc[[paste0(silly, "qc")]] |
-                                                        ind %in% MissLoci[[silly]])])  # Confirm qc fish and Project fish were not removed
-    
-  }  # silly_ind
-  
-  # If no more, stop
-  if (is.null(conflict_indv) | length(conflict_indv) == 0) {
-    message("\nNo remaining high conflict individuals.")
-    
-    dup_check_results <- tibble::tibble(x = "Not applicable")
-    
-  } else {
-    conflicts_investigate <- conflicts_investigate %>%
-      dplyr::filter(SillySource %in% conflict_indv)
-    
-    message(
-      "\nRunning dupcheck_among_sillys on these high conflict individuals, as they have at least 80% loci genotyped for Project and qc extractions."
-    )
-    message(
-      paste(conflicts_investigate$SillySource, conflicts_investigate$n, "conflicts", collapse = "\n")
-    )
-    
-    conflict_silly <-
-      unique(
-        stringr::str_split(string = conflicts_investigate$SillySource, pattern = "_", simplify = TRUE)[, 1]
-      )
-    
-    KeySillyIDs <- setNames(lapply(conflict_silly, function(silly) {
-      sapply(grep(
-        pattern = silly,
-        x = conflict_indv,
-        value = TRUE
-      ), function(ind) {
-        stringr::str_split(string = ind,
-                           pattern = "_",
-                           simplify = TRUE)[, 2]
-      }, USE.NAMES = FALSE)
-    }),
-    paste0(conflict_silly, "qc"))
-    
-    dup_check_results <- sapply(conflict_silly, function(silly) {
-      GCLr::dupcheck_among_sillys(
-        KeySillys = paste0(silly, "qc"),
-        KeySillyIDs = KeySillyIDs[paste0(silly, "qc")],
-        BetweenSillys = project_sillys,
-        loci = loci,
-        threshold = 0.9
-      )
-    }, simplify = FALSE)  # FALSE
-    
-    dup_check_results <-
-      dplyr::bind_rows(dup_check_results, .id = "silly") %>%
-      tibble::as_tibble()
-    
-  }  # conflict_ind, post missing individuals
-  
-}  # else, conflicts_to_investigate
+(dup_check_results <- GCLr:::dupcheck_qc_conflicts(conflicts = conflicts, conflict_rate = conflict_rate, project_sillys = project_sillys))
 
 ```
 
 We can take a look at the duplicate check results. Note that if the section above notes that there are no individuals with > 10% loci with conflicts between project and qc, this table will say "Not applicable".
 ```{r}
 dup_check_results %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table()
 ```
 
 
@@ -799,26 +531,12 @@ summary_by_silly <-
                   dplyr::pull(n))
 
 summary_by_silly %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table()
 ```
 ## Conflicts by Silly
 Here is a table that shows the conflicts, by silly, for the project.
 
+**Chase, I don't think you need to factor silly in the qc_silly_genotypes. I think it was to make sure things lined up when combining objects in the old script. The new tidy code takes care of this issue.**
 ```{r}
 qc_silly_genotypes <- 
   tibble::tibble(silly = project_sillys) %>% # does this need to be factored? old script had it, I don't think it's needed
@@ -858,27 +576,11 @@ conflicts_by_silly_qc <- conflicts_by_silly %>%
   )
 
 conflicts_by_silly_qc %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table()
 ```
 
 ## Conflicts by Locus
 Here is a table that shows the conflicts by locus for the project.
-                                         
 ```{r}
 conflicts_by_locus_qc <- conflicts_by_locus %>%
   tidyr::pivot_longer(names_to = "type", values_to = "number", -locus) %>%  # make tall
@@ -908,22 +610,7 @@ conflicts_by_locus_qc <- conflicts_by_locus %>%
   )
 
 conflicts_by_locus_qc %>% 
-  DT::datatable(
-    rownames = FALSE,
-    filter = "top",
-    extensions = "Buttons",
-    options = list(dom = 'Bfrtip',
-                   buttons =
-                     list(
-                       'copy',
-                       'print',
-                       list(
-                         extend = 'collection',
-                         buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-  )
+  qc_table()
 ```
 
 # Save Workspace
@@ -938,7 +625,9 @@ Once you've run through this script and have added comments to the top, you can 
 
 *There are a few ways to do this and you only need to pick one*
 
-Option 1 -
+**Chase, saving the .Rmd only produces an .html if you click the "Knit on Save" box or you are saving a 'html_notebook'**
+**Maybe option 1 could be to click the Knit button and then change the name of the html?**
+Option 1 - 
 
     1) File > Save (or Control + S or the little "Save" icon on the top bar)
     2) Navigate to the QC directory in Windows Explorer
@@ -947,6 +636,7 @@ Option 1 -
 
 Option 2 - 
 An alternate option is to run the code below, which will rerun everything and make your notebook.This is also handy if you just wanted to run the entire qc...use at your own risk.
+**Chase, using rmarkdown::render() doesn't work for folding the code, but clicking the Knit button works perfectly.**
 ```{r eval=FALSE}
 rm(list = setdiff(ls(), c("project","dirqc"))) # remove everything except for project and dirqc
 
@@ -954,6 +644,6 @@ rm(list = setdiff(ls(), c("project","dirqc"))) # remove everything except for pr
 rmarkdown::render(input = paste0(project,"QC.Rmd"),
                   output_file = paste0(project, "_qc_final.html"),
                   output_dir = dirqc,
-                  output_format = "html_notebook"
+                  output_format = rmarkdown::html_document(toc = TRUE, toc_float = TRUE, code_folding = "hide")
 ) # save html document to the qc directory
 ```
