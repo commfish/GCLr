@@ -124,6 +124,7 @@ failure_rate <- function(sillyvec, loci = LocusControl$locusnames, LocusCtl = Lo
   fail_plate_plot <- plotly::ggplotly(
     ggplot2::ggplot(
       master.tbl %>%
+        dplyr::mutate(plate = as.character(plate)) %>% 
         dplyr::group_by(plate, locus) %>%
         dplyr::summarise(
           p_fail = sum(is.na(genotype), na.rm = FALSE) / dplyr::n(),
