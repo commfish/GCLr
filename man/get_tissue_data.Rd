@@ -4,10 +4,22 @@
 \alias{get_tissue_data}
 \title{Get Tissue Data}
 \usage{
-get_tissue_data(sillyvec, username, password, file = NULL, import.vars = TRUE)
+get_tissue_data(
+  sillyvec = NULL,
+  unit = NULL,
+  shelf.rack = NULL,
+  username,
+  password,
+  file = NULL,
+  import.vars = TRUE
+)
 }
 \arguments{
-\item{sillyvec}{A character vector of silly codes.}
+\item{sillyvec}{A character vector of silly codes}
+
+\item{unit}{the archive storage unit}
+
+\item{shelf.rack}{the archive shelf.rack}
 
 \item{username}{Your state user name.}
 
@@ -16,13 +28,17 @@ get_tissue_data(sillyvec, username, password, file = NULL, import.vars = TRUE)
 \item{file}{The file path for writing out a CSV file of the output (optional).}
 
 \item{import.vars}{If TRUE, output contains the 31 fields used by the Loki tissue importer (same as OceanAK report).
-If FALSE, output includes 7 additional collection information fields.}
+If FALSE, output includes 7 additional collection information fields, including \strong(SILLY_CODE).}
 }
 \value{
 A tibble containing the specific tissue data, as determined by \code{import.vars}.
 }
 \description{
 This function connects to LOKI and pulls the tissue information for each silly in sillyvec.
+}
+\details{
+There are several ways to pull tissue data with this function. You can pull by sillyvec, by unit, or by unit and shelf.rack.
+Any other combination of those arguments will throw an error message.
 }
 \note{
 Output of this function can be used for creating an import file for the Loki tissue importer,
@@ -89,13 +105,39 @@ The additional collection information variables are:
 
 \examples{
 \dontrun{
+#By sillyvec
 get_tissue_data(
   sillyvec = c("KCDVF18", "KCDVF19", "KCDVF20"),
-  username = "user",
-  password = "password",
+  unit = NULL,
+  shelf.rack = NULL,
+  username = username,
+  password = password,
   file = path.expand("~/test_tissue_table.csv"),
   import.vars = FALSE
 )
+
+#By unit
+ get_tissue_data(
+  sillyvec = NULL,
+  unit = "WQ",
+  shelf.rack = NULL,
+  username = username,
+  password = password,
+  file = path.expand("~/test_tissue_table.csv"),
+  import.vars = FALSE
+)
+
+#By unit and shelf.rack
+ get_tissue_data(
+  sillyvec = NULL,
+  unit = "WQ",
+  shelf.rack = 1:10,
+  username = username,
+  password = password,
+  file = path.expand("~/test_tissue_table.csv"),
+  import.vars = FALSE
+)
+
 }
 
 }
