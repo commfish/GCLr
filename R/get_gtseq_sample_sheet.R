@@ -13,7 +13,7 @@
 #' For this function to work, the project information must be entered into [iStrategy] first. 
 #' i7 barcodes come in individual vials and get used up over time. 
 #' To make sure the vials are used evenly (i.e., run out at the same time), each project will start with the next i7_NAME after the last i7 name that was use in the previous project. 
-#' To determine which what i7 barcode that was used last, look 'NextSeq Flow Cell Log.xlsx' located here ["S:\GCL\Lab\Genotyping\SNP Projects"]("S:/GCL/Lab/Genotyping/SNP Projects").
+#' To determine which what i7 barcode that was used last, look 'NextSeq Flow Cell Log.xlsx' located [here]("S:/GCL/Lab/Genotyping/SNP Projects").
 #' The last project should be at the bottom of the sheet if the "Run Date" field is sorted lowest to highest. The "i7s" field will contain the range of i7s used in the project.   
 #' 
 #' @returns This function writes out a .csv file containing the following fields:
