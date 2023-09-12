@@ -28,7 +28,7 @@ get_tissue_data(
 \item{file}{The file path for writing out a CSV file of the output (optional).}
 
 \item{import.vars}{If TRUE, output contains the 31 fields used by the Loki tissue importer (same as OceanAK report).
-If FALSE, output includes 7 additional collection information fields, including \strong(SILLY_CODE).}
+If FALSE, output includes 7 additional collection information fields, including SILLY_CODE.}
 }
 \value{
 A tibble containing the specific tissue data, as determined by \code{import.vars}.
