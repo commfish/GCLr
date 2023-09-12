@@ -2,12 +2,14 @@
 #'
 #' This function connects to LOKI and pulls the tissue information for each silly in sillyvec.
 #'
-#' @param sillyvec A character vector of silly codes.
+#' @param sillyvec A character vector of silly codes
+#' @param unit the archive storage unit
+#' @param shelf.rack the archive shelf.rack
 #' @param username Your state user name.
 #' @param password Your password used to access LOKI.
 #' @param file The file path for writing out a CSV file of the output (optional).
 #' @param import.vars If TRUE, output contains the 31 fields used by the Loki tissue importer (same as OceanAK report).
-#' If FALSE, output includes 7 additional collection information fields.
+#' If FALSE, output includes 7 additional collection information fields, including SILLY_CODE.
 #'
 #' @returns A tibble containing the specific tissue data, as determined by `import.vars`.
 #' 
@@ -72,20 +74,59 @@
 #' Additionally, if you have date columns, change their format to 'numeric' in Microsoft Excel 
 #' before importing tissue information with dates.
 #' 
+#' @details
+#' There are several ways to pull tissue data with this function. You can pull by sillyvec, by unit, or by unit and shelf.rack. 
+#' Any other combination of those arguments will throw an error message.
+#' 
 #'
 #' @examples
 #' \dontrun{
+#' #By sillyvec
 #' get_tissue_data(
 #'   sillyvec = c("KCDVF18", "KCDVF19", "KCDVF20"),
-#'   username = "user",
-#'   password = "password",
+#'   unit = NULL,
+#'   shelf.rack = NULL,
+#'   username = username,
+#'   password = password,
 #'   file = path.expand("~/test_tissue_table.csv"),
 #'   import.vars = FALSE
 #' )
+#' 
+#' #By unit
+#'  get_tissue_data(
+#'   sillyvec = NULL,
+#'   unit = "WQ",
+#'   shelf.rack = NULL,
+#'   username = username,
+#'   password = password,
+#'   file = path.expand("~/test_tissue_table.csv"),
+#'   import.vars = FALSE
+#' )
+#' 
+#' #By unit and shelf.rack
+#'  get_tissue_data(
+#'   sillyvec = NULL,
+#'   unit = "WQ",
+#'   shelf.rack = 1:10,
+#'   username = username,
+#'   password = password,
+#'   file = path.expand("~/test_tissue_table.csv"),
+#'   import.vars = FALSE
+#' )
+#' 
 #' }
 #'
 #' @export
-get_tissue_data <- function(sillyvec, username, password, file = NULL, import.vars = TRUE) {
+get_tissue_data <- function(sillyvec = NULL, unit = NULL, shelf.rack = NULL, username, password, file = NULL, import.vars = TRUE) {
+  
+  if(!is.null(sillyvec) & !is.null(unit) & !is.null(shelf.rack)| 
+     !is.null(sillyvec) & is.null(unit) & !is.null(shelf.rack)|
+     !is.null(sillyvec) & !is.null(unit) & is.null(shelf.rack)|
+     is.null(sillyvec) & is.null(unit) & !is.null(shelf.rack)){
+    
+    stop("Only supply one of the following: sillyvec, unit, or unit and shelf.rack")
+    
+  }
   
   start.time <- Sys.time() 
   
@@ -99,7 +140,28 @@ get_tissue_data <- function(sillyvec, username, password, file = NULL, import.va
   
   con <- RJDBC::dbConnect(drv, url = url, user = username, password = password)
   
-  qry <- paste("SELECT * FROM AKFINADM.V_GEN_SAMPLED_FISH_TISSUE WHERE SILLY_CODE IN (", paste0("'", sillyvec, "'", collapse = ","), ")", sep = "") #Query
+  #By sillyvec
+  if(!is.null(sillyvec) & is.null(unit) & is.null(shelf.rack)){
+    
+    qry <- paste("SELECT * FROM AKFINADM.V_GEN_SAMPLED_FISH_TISSUE WHERE SILLY_CODE IN (", paste0("'", sillyvec, "'", collapse = ","), ")", sep = "") #Query
+    
+  }
+  
+  #By unit
+
+  if(is.null(sillyvec) & !is.null(unit) & is.null(shelf.rack)){
+    
+    qry <- paste("SELECT * FROM AKFINADM.V_GEN_SAMPLED_FISH_TISSUE WHERE UNIT IN (", paste0("'", unit, "'", collapse = ","), ")", sep = "") #Query
+    
+  }
+  
+  #By unit and self.rack
+  
+  if(is.null(sillyvec) & !is.null(unit) & !is.null(shelf.rack)){
+    
+    qry <- paste("SELECT * FROM AKFINADM.V_GEN_SAMPLED_FISH_TISSUE WHERE UNIT IN (", paste0("'", unit, "'", collapse = ",") , ") AND SHELF_RACK IN (", paste0("'", shelf.rack, "'", collapse = ","), ")", sep = "") #Query
+    
+  }
   
   dataAll <- RJDBC::dbGetQuery(con, qry)  #Pulling data from LOKI using the connection and tissue data query
   
