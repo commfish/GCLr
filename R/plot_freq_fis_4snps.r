@@ -9,7 +9,8 @@
 #' must be the same length as `sillyvec` (default = `NULL`). If `NULL`, `groupvec` will be `1:length(sillyvec)`
 #' @param alpha A numeric vector of length 1 specifying the critical HWE p-value for plotting.
 #' @param group_col An optional character vector of colors corresponding to each group in `groupvec` (default = `NULL`).
-#' @param file A character vector of length 1 with the full file path including ".pdf" extension where plots will be saved.
+#' @param file A character vector of length 1 with the full file path including ".pdf" extension where plots will be saved. 
+#'             If `file = NULL`, a file named 'FreqFisPlot.pdf' will be saved in your current working directory.
 #' @param group.pch A vector of point shape `pch` values corresponding to each group with `length = max(groupvec)`. 
 #' If only 1 `pch` is supplied it will be recycled for all groups (default `pch` = 19).
 #' @param point.size A numeric vector of length 1 specifying the size of points on the plot, used by [ggplot2::geom_point()] 
@@ -49,8 +50,8 @@
 #'
 #' @examples
 #' sillys <- GCLr::base2gcl(GCLr::ex_baseline)
-#' loci <- GCLr::ex_LocusControl$locusnames[-c(97,98)]
-#' GCLr::plot_freq_fis_4snps(sillyvec = sillys, loci = loci, LocusCtl = GCLr::ex_LocusControl)
+#' loci <- GCLr::ex_LocusControl$locusnames[-c(10,12,13,32,33)]
+#' GCLr::plot_freq_fis_4snps(sillyvec = sillys, loci = loci, LocusCtl = GCLr::ex_LocusControl, file = path.expand("~/plot_freq_fis_4snps_Example.pdf"))
 #' 
 #' @export
 plot_freq_fis_4snps <-

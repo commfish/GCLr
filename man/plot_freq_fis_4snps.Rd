@@ -30,7 +30,8 @@ must be the same length as \code{sillyvec} (default = \code{NULL}). If \code{NUL
 
 \item{alpha}{A numeric vector of length 1 specifying the critical HWE p-value for plotting.}
 
-\item{file}{A character vector of length 1 with the full file path including ".pdf" extension where plots will be saved.}
+\item{file}{A character vector of length 1 with the full file path including ".pdf" extension where plots will be saved.
+If \code{file = NULL}, a file named 'FreqFisPlot.pdf' will be saved in your current working directory.}
 
 \item{group.pch}{A vector of point shape \code{pch} values corresponding to each group with \code{length = max(groupvec)}.
 If only 1 \code{pch} is supplied it will be recycled for all groups (default \code{pch} = 19).}
@@ -76,8 +77,8 @@ The allele frequency is that of the 1st allele in \code{LocusCtl} (i.e., alphabe
 }
 \examples{
 sillys <- GCLr::base2gcl(GCLr::ex_baseline)
-loci <- GCLr::ex_LocusControl$locusnames[-c(97,98)]
-GCLr::plot_freq_fis_4snps(sillyvec = sillys, loci = loci, LocusCtl = GCLr::ex_LocusControl)
+loci <- GCLr::ex_LocusControl$locusnames[-c(10,12,13,32,33)]
+GCLr::plot_freq_fis_4snps(sillyvec = sillys, loci = loci, LocusCtl = GCLr::ex_LocusControl, file = path.expand("~/plot_freq_fis_4snps_Example.pdf"))
 
 }
 \seealso{
