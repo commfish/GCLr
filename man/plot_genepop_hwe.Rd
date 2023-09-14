@@ -40,11 +40,11 @@ overall p-value, or if there are several loci/populations that have low p-values
 patterns of Fis to determine the root cause.
 }
 \examples{
-\dontrun{
-genepop_hwe <- read_genepop_hwe(file = "~/R/test.txt.P", sillyvec = sillyvec)
-plot_genepop_hwe(GenepopHWE_report = genepop_hwe, plot_type = "silly")
-plot_genepop_hwe(GenepopHWE_report = genepop_hwe, plot_type = "locus")
-}
+ sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+ genepop::test_HW(inputFile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), outputFile = path.expand("~/ex_genepop.p"))
+ genepop_hwe <- GCLr::read_genepop_hwe(file = path.expand("~/ex_genepop.p"), sillyvec = sillyvec)
+ GCLr::plot_genepop_hwe(GenepopHWE_report = genepop_hwe, plot_type = "silly")
+ GCLr::plot_genepop_hwe(GenepopHWE_report = genepop_hwe, plot_type = "locus")
 
 }
 \references{
