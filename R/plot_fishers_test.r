@@ -20,7 +20,7 @@
 #' it can also be helpful to see the distribution of locus-specific p-values to determine if there are just a few loci driving the overall p-value, or
 #' if there are several loci that have low p-values.
 #'
-#' #' @examples
+#' @examples
 #' sillys <- GCLr::base2gcl(GCLr::ex_baseline, unpool = TRUE)
 #' loci <- GCLr::ex_LocusControl$locusnames[-c(10,12,13,32,33)]
 #' freq <- GCLr::calc_freq_pop(sillyvec = sillys, loci = loci, LocusCtl = GCLr::ex_LocusControl)
