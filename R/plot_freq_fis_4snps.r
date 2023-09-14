@@ -48,9 +48,9 @@
 #' [GCLr::plot_allele_freq()]
 #'
 #' @examples
-#' \dontrun{
-#' freqs_fis <- GCLr::plot_freq_fis_4snps()
-#' }
+#' sillys <- GCLr::base2gcl(GCLr::ex_baseline)
+#' loci <- GCLr::ex_LocusControl$locusnames[-c(97,98)]
+#' GCLr::plot_freq_fis_4snps(sillyvec = sillys, loci = loci, LocusCtl = GCLr::ex_LocusControl)
 #' 
 #' @export
 plot_freq_fis_4snps <-
@@ -170,7 +170,7 @@ plot_freq_fis_4snps <-
 
   PopCol <- groupcol[groupvec] 
   
-  Freq <- suppressMessages(GCLr::calc_freq_pop(sillyvec = sillyvec, loci = loci, ncores = ncores))
+  Freq <- suppressMessages(GCLr::calc_freq_pop(sillyvec = sillyvec, loci = loci, ncores = ncores, LocusCtl = LocusCtl))
     
   q <- Freq %>% 
     dplyr::filter(allele_no == 1) %>% 

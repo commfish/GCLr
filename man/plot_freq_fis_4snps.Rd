@@ -75,9 +75,9 @@ HWE p-values are printed if less than alpha. Loci with a ploidy of 1 (e.g., mito
 The allele frequency is that of the 1st allele in \code{LocusCtl} (i.e., alphabetical alleles).
 }
 \examples{
-\dontrun{
-freqs_fis <- GCLr::plot_freq_fis_4snps()
-}
+sillys <- GCLr::base2gcl(GCLr::ex_baseline)
+loci <- GCLr::ex_LocusControl$locusnames[-c(97,98)]
+GCLr::plot_freq_fis_4snps(sillyvec = sillys, loci = loci, LocusCtl = GCLr::ex_LocusControl)
 
 }
 \seealso{
