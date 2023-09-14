@@ -26,10 +26,10 @@
 #' estimates of allele frequencies.
 #' 
 #' @examples
-#' \dontrun{
-#' freq <- calc_freq_pop(sillyvec = c("KKILL05","KKILL06", "KFUNN05", "KFUNN06"), loci = loci)
-#' fishers_test(freq = freq, loci = loci, tests = list(c("KKILL05","KKILL06"), c("KFUNN05", "KFUNN06")))
-#' }
+#' sillys <- GCLr::base2gcl(GCLr::ex_baseline, unpool = TRUE)
+#' loci <- GCLr::ex_LocusControl$locusnames[-c(10,12,13,32,33)]
+#' freq <- GCLr::calc_freq_pop(sillyvec = sillys, loci = loci, LocusCtl = GCLr::ex_LocusControl)
+#' GCLr::fishers_test(freq = freq, loci = loci, tests = list(c("SRAIL97","SJOHN97"), c("SMOOK93","SMOOK94"), c("SPTAR92","SPTAR93"),c("STERN92","STERN93")), LocusCtl = GCLr::ex_LocusControl)
 #'
 #' @export
 fishers_test <- function(freq, loci, tests, LocusCtl = LocusControl) {
