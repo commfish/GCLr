@@ -3,18 +3,20 @@
 #' This function creates a `.gcl` object for each collection in a \emph{rubias} baseline object.
 #' 
 #' @param base a rubias baseline (aka reference) object.
+#' @param unpool if TRUE, pooled baseline collections will be separated into their original `SillySource` collections.
 #' 
 #' @return `.gcl` objects are assigned to your global environment and a vector of silly codes (aka `sillyvec`) is returned (see details)
 #' 
 #' @details
-#' This function is a quick way of creating `.gcl` objects from a \emph{rubias} baseline object. The objects will contain the same variables as `.gcl` objects produced by [GCLr::loki2r] and [GCLr::loki2r_gaps] for compatibility with the [GCLr] package; however, most of the attribute variables will contain NAs.  
+#' This function is a quick way of creating `.gcl` objects from a \emph{rubias} baseline object. 
+#' The objects will contain the same variables as `.gcl` objects produced by [GCLr::loki2r] and [GCLr::loki2r_gaps] for compatibility with the [GCLr] package; however, most of the attribute variables will contain NAs. 
 #' 
 #' @examples
 #' 
-#' GCLr::base2gcl(base = GCLr::ex_baseline)
+#' GCLr::base2gcl(base = GCLr::ex_baseline, pooled = FALSE)
 #'
 #' @export
-base2gcl <- function(base){
+base2gcl <- function(base, unpool = FALSE){
   
   #Check if supplied object
   vars.check <- base %>% 
@@ -45,31 +47,60 @@ base2gcl <- function(base){
     dplyr::select(-sample_type, -repunit, -collection, -indiv) %>% 
     names()
   
-  all.df <- base %>% 
-    dplyr::mutate(SillySource = indiv,
-                  SILLY_CODE = collection) %>% 
-    tidyr::separate(indiv, into = c(NA, "FK_FISH_ID")) %>% 
-    dplyr::group_by(collection) %>% 
-    dplyr::mutate(FK_FISH_ID = seq(length(FK_FISH_ID)),
-                  COLLECTION_ID = NA_real_,
-                  PLATE_ID = NA_character_,
-                  PK_TISSUE_TYPE = NA_character_,
-                  CAPTURE_LOCATION = NA_character_,
-                  CAPTURE_DATE = NA,
-                  END_CAPTURE_DATE = NA,
-                  MESH_SIZE = NA_character_,
-                  MESH_SIZE_COMMENT = NA_character_,
-                  LATITUDE = NA_real_,
-                  LONGITUDE = NA_real_,
-                  AGENCY = NA_character_,
-                  VIAL_BARCODE = NA_character_,
-                  DNA_TRAY_CODE = NA_character_,
-                  DNA_TRAY_WELL_CODE = NA_real_,
-                  DNA_TRAY_WELL_POS = NA_character_,
-                  CONTAINER_ARRAY_TYPE_ID = NA_real_) %>% 
-    dplyr::ungroup() %>% 
-    dplyr::select(dplyr::all_of(c(attr.vars, loc.vars)))
+  if(unpool == TRUE){
+    
+    all.df <- base %>% 
+      dplyr::mutate(SillySource = indiv) %>% 
+      tidyr::separate(indiv, into = c("SILLY_CODE", "FK_FISH_ID"), sep = "_") %>% 
+      dplyr::mutate(COLLECTION_ID = NA_real_,
+                    PLATE_ID = NA_character_,
+                    PK_TISSUE_TYPE = NA_character_,
+                    CAPTURE_LOCATION = NA_character_,
+                    CAPTURE_DATE = NA,
+                    END_CAPTURE_DATE = NA,
+                    MESH_SIZE = NA_character_,
+                    MESH_SIZE_COMMENT = NA_character_,
+                    LATITUDE = NA_real_,
+                    LONGITUDE = NA_real_,
+                    AGENCY = NA_character_,
+                    VIAL_BARCODE = NA_character_,
+                    DNA_TRAY_CODE = NA_character_,
+                    DNA_TRAY_WELL_CODE = NA_real_,
+                    DNA_TRAY_WELL_POS = NA_character_,
+                    CONTAINER_ARRAY_TYPE_ID = NA_real_) %>% 
+      dplyr::select(dplyr::all_of(c(attr.vars, loc.vars)))
+    
+  }
   
+  if(unpool == FALSE){
+    
+    all.df <- base %>% 
+      dplyr::mutate(SillySource = indiv,
+                    SILLY_CODE = collection) %>% 
+      tidyr::separate(indiv, into = c(NA, "FK_FISH_ID")) %>% 
+      dplyr::group_by(collection) %>% 
+      dplyr::mutate(FK_FISH_ID = seq(length(FK_FISH_ID)),
+                    COLLECTION_ID = NA_real_,
+                    PLATE_ID = NA_character_,
+                    PK_TISSUE_TYPE = NA_character_,
+                    CAPTURE_LOCATION = NA_character_,
+                    CAPTURE_DATE = NA,
+                    END_CAPTURE_DATE = NA,
+                    MESH_SIZE = NA_character_,
+                    MESH_SIZE_COMMENT = NA_character_,
+                    LATITUDE = NA_real_,
+                    LONGITUDE = NA_real_,
+                    AGENCY = NA_character_,
+                    VIAL_BARCODE = NA_character_,
+                    DNA_TRAY_CODE = NA_character_,
+                    DNA_TRAY_WELL_CODE = NA_real_,
+                    DNA_TRAY_WELL_POS = NA_character_,
+                    CONTAINER_ARRAY_TYPE_ID = NA_real_) %>% 
+      dplyr::ungroup() %>% 
+      dplyr::select(dplyr::all_of(c(attr.vars, loc.vars)))
+    
+  }
+   
   sillys <- all.df$SILLY_CODE %>% unique()
   
   for(silly in sillys){

@@ -4,10 +4,12 @@
 \alias{base2gcl}
 \title{Create \code{.gcl} Objects from a \emph{rubias} Baseline Object}
 \usage{
-base2gcl(base)
+base2gcl(base, unpool = FALSE)
 }
 \arguments{
 \item{base}{a rubias baseline (aka reference) object.}
+
+\item{unpool}{if TRUE, pooled baseline collections will be separated into their original \code{SillySource} collections.}
 }
 \value{
 \code{.gcl} objects are assigned to your global environment and a vector of silly codes (aka \code{sillyvec}) is returned (see details)
@@ -16,10 +18,11 @@ base2gcl(base)
 This function creates a \code{.gcl} object for each collection in a \emph{rubias} baseline object.
 }
 \details{
-This function is a quick way of creating \code{.gcl} objects from a \emph{rubias} baseline object. The objects will contain the same variables as \code{.gcl} objects produced by \link{loki2r} and \link{loki2r_gaps} for compatibility with the \link{GCLr} package; however, most of the attribute variables will contain NAs.
+This function is a quick way of creating \code{.gcl} objects from a \emph{rubias} baseline object.
+The objects will contain the same variables as \code{.gcl} objects produced by \link{loki2r} and \link{loki2r_gaps} for compatibility with the \link{GCLr} package; however, most of the attribute variables will contain NAs.
 }
 \examples{
 
-GCLr::base2gcl(base = GCLr::ex_baseline)
+GCLr::base2gcl(base = GCLr::ex_baseline, pooled = FALSE)
 
 }
