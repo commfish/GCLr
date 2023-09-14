@@ -54,11 +54,11 @@ plot_confusion_matrix <- function(confusion_matrix, plot = c("group_group", "pop
     
     hm <- cm %>% 
       dplyr::mutate(group = factor(x = group, levels = group_names), inferred_group = factor(inferred_group, levels = group_names)) %>% 
-      ggplot2::ggplot(aes(x = group, y = inferred_group, z = mean_group_group_scaled_like, fill = mean_group_group_scaled_like)) +
+      ggplot2::ggplot(ggplot2::aes(x = group, y = inferred_group, z = mean_group_group_scaled_like, fill = mean_group_group_scaled_like)) +
       ggplot2::geom_tile()+
       ggplot2::scale_fill_gradient(high = high_color, low = low_color, name = "Mean Scaled Likelihood") +
       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
-      ggplot2::geom_text(aes(x = group, y = inferred_group, label = round(mean_group_group_scaled_like, digits = 3)), color = text_color, show.legend = FALSE, size = 2.5)+
+      ggplot2::geom_text(ggplot2::aes(x = group, y = inferred_group, label = round(mean_group_group_scaled_like, digits = 3)), color = text_color, show.legend = FALSE, size = 2.5)+
       ggplot2::ggtitle(label = "Group by Group confusion matrix", subtitle = paste0(length(group_names)," reporting groups"))+
       ggplot2::xlab("Reporting Group") +
       ggplot2::ylab("Inferred Reporting Group")
@@ -91,7 +91,7 @@ plot_confusion_matrix <- function(confusion_matrix, plot = c("group_group", "pop
     
     hm <- cm %>% 
       dplyr::mutate(pop = factor(x = pop, levels = pop_names), inferred_group = factor(inferred_group, levels = group_names)) %>% 
-      ggplot2::ggplot(aes(x = pop, y = inferred_group, z = mean_pop_group_scaled_like, fill = mean_pop_group_scaled_like)) +
+      ggplot2::ggplot(ggplot2::aes(x = pop, y = inferred_group, z = mean_pop_group_scaled_like, fill = mean_pop_group_scaled_like)) +
       ggplot2::geom_tile()+
       ggplot2::scale_fill_gradient(high = high_color, low = low_color, name = "Mean Scaled Likelihood") +
       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
@@ -118,11 +118,11 @@ plot_confusion_matrix <- function(confusion_matrix, plot = c("group_group", "pop
     
     hm <- cm %>% 
       dplyr::mutate(pop = factor(pop, levels = pop_names), inferred_pop = factor(inferred_pop, levels = pop_names)) %>% 
-      ggplot2::ggplot(aes(x = pop, y = inferred_pop, z = mean_pop_pop_scaled_like, fill = mean_pop_pop_scaled_like)) +
+      ggplot2::ggplot(ggplot2::aes(x = pop, y = inferred_pop, z = mean_pop_pop_scaled_like, fill = mean_pop_pop_scaled_like)) +
       ggplot2::geom_tile()+
       ggplot2::scale_fill_gradient(high = high_color, low = low_color, name = "Mean Scaled Likelihood") +
       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
-      ggplot2::geom_text(aes(x = pop, y = inferred_pop, label = round(mean_pop_pop_scaled_like, digits = 3)), color = text_color, show.legend = FALSE, size = 2.5)+
+      ggplot2::geom_text(ggplot2::aes(x = pop, y = inferred_pop, label = round(mean_pop_pop_scaled_like, digits = 3)), color = text_color, show.legend = FALSE, size = 2.5)+
       ggplot2::ggtitle(label = "Pop by Pop confusion matrix", subtitle = paste0(length(pop_names), "populations"))+
       ggplot2::xlab("Population") +
       ggplot2::ylab("Inferred Population")
