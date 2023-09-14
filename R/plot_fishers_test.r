@@ -20,15 +20,12 @@
 #' it can also be helpful to see the distribution of locus-specific p-values to determine if there are just a few loci driving the overall p-value, or
 #' if there are several loci that have low p-values.
 #'
-#' @examples
-#' \dontrun{
-#' load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
-#' old2new_locuscontrol()
-#' old2new_gcl(sillyvec = c("KKILL05","KKILL06", "KFUNN05", "KFUNN06"), save_old = FALSE)
-#' freq <- calc_freq_pop(sillyvec = c("KKILL05","KKILL06", "KFUNN05", "KFUNN06"), loci = loci443)
-#' temp_pool <- fishers_test(freq = freq, loci = loci443, tests = list(c("KKILL05","KKILL06"), c("KFUNN05", "KFUNN06")))
-#' plot_fishers_test(pooling_test = temp_pool)
-#' }
+#' #' @examples
+#' sillys <- GCLr::base2gcl(GCLr::ex_baseline, unpool = TRUE)
+#' loci <- GCLr::ex_LocusControl$locusnames[-c(10,12,13,32,33)]
+#' freq <- GCLr::calc_freq_pop(sillyvec = sillys, loci = loci, LocusCtl = GCLr::ex_LocusControl)
+#' test.results <- GCLr::fishers_test(freq = freq, loci = loci, tests = list(c("SRAIL97","SJOHN97"), c("SMOOK93","SMOOK94"), c("SPTAR92","SPTAR93"),c("STERN92","STERN93")), LocusCtl = GCLr::ex_LocusControl)
+#' GCLr::plot_fishers_test(pooling_test = test.results)
 #'
 #' @references While testing for homogeneity of allele frequencies is not the same as testing for conformance to Hardy-Weinberg expectations,
 #' the idea for the plots created by this function comes from:  
