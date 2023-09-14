@@ -104,7 +104,7 @@ create_bayes_mix <- function(mixvec, loci, dir, ncores = 4, LocusCtl = LocusCont
   
   mix_fortran <- paste0("(", paste0(sapply(seq(length(a_rle$values)), function(locus){
     
-    paste(a_rle$lengths[locus], "(1X,", a_rle$values[locus], "I1)")
+    paste0(a_rle$lengths[locus], "(1X,", a_rle$values[locus], "I1)")
     
     }), collapse = ","), ")")
   
