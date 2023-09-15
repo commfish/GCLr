@@ -39,8 +39,21 @@ a neighbor-joining phylogram based on pairwise Fst values.
 This function quickly creates a neighbor-joining Fst tree using the \pkg{genepop} and \pkg{ape} packages.
 }
 \examples{
-source(paste0(path.expand("~/R/"), "Functions.R"))  # GCL functions
-load("V:/Analysis/2_Central/Chinook/Susitna River/Susitna_Chinook_baseline_2020/Susitna_Chinook_baseline_2020.Rdata")
-plot_quick_tree(sillyvec = sillyvec31, loci = loci82, inputfile = "genepop/Susitna31pops82loci.txt", popnames = treenames31, ncores = 8, groupvec = groupvec4, regioncol = grcol4, cex = 0.75)
+
+groupvec <- GCLr::ex_baseline \%>\%
+  dplyr::group_by(collection) \%>\%
+  dplyr::filter(dplyr::row_number()==1) \%>\%
+  dplyr::pull(repunit) \%>\%
+  factor() \%>\%
+  as.numeric()
+
+sillyvec <- GCLr::base2gcl(ex_baseline)
+
+loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
+  names() \%>\%
+  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
+  unique()
+
+ GCLr::plot_quick_tree(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), popnames = paste0("Pop", seq(sillyvec)), ncores = parallel::detectCores(), groupvec = groupvec, regioncol = c("red", "green", "blue"), cex = 0.75)
 
 }
