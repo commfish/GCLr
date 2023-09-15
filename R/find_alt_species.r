@@ -176,8 +176,8 @@ find_alt_species <- function(sillyvec, species = "chum", LocusCtl = LocusControl
        dplyr::filter(!is.na(alternate)) %>%
        ggplot2::ggplot(ggplot2::aes(x = failure, y = alternate)) +
        ggplot2::geom_count(alpha = 0.5) +
-       ggplot2::labs(title = "Number of failed vs alternate markers",
-            x = "Failed", 
+       ggplot2::labs(title = "Proportion of failure vs alternate indicator markers",
+            x = "Failure", 
             y = "Alternate", 
             size = 12)
    ) %>% print() # Trick to print plotly plots AND return tibble of results! 
