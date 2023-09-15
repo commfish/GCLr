@@ -27,25 +27,24 @@ random_inits(
 If \code{type = "BAYES"}, the function outputs a matrix with \code{nrow = npops} and \code{ncol = nchains}.
 If \code{type = "rubias"}, the function outputs a list of l\code{ength = nchains}, and each element is a tibble
 with "collection" and "pi_init" variables.
-
-#' @examples
-sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
-
-groupvec <- GCLr::ex_baseline \%>\%
-dplyr::group_by(collection) \%>\%
-dplyr::filter(dplyr::row_number()==1) \%>\%
-dplyr::pull(repunit) \%>\%
-factor() \%>\%
-as.numeric()
-
-#BAYES format
-random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "BAYES", sillyvec = NULL)
-
-#rubias format
-random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "rubias", sillyvec = sillyvec)
 }
 \description{
 This function creates either a matrix of randomly generated initial start values for multiple \code{BAYES} chains
 or a list of tibbles (length = nchain) containing randomly generated initial start values for multiple \code{rubias} chains.
 The values for each chain add to 1.
+}
+\examples{
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+
+groupvec <- GCLr::ex_baseline \%>\%
+  dplyr::group_by(collection) \%>\%
+  dplyr::filter(dplyr::row_number()==1) \%>\%
+  dplyr::pull(repunit) \%>\%
+  factor() \%>\%
+  as.numeric()
+  
+random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "BAYES", sillyvec = NULL) 
+
+random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "rubias", sillyvec = sillyvec)
+
 }

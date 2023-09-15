@@ -14,7 +14,7 @@
 #' If `type = "rubias"`, the function outputs a list of l`ength = nchains`, and each element is a tibble
 #' with "collection" and "pi_init" variables.
 #'
-#' #' @examples
+#' @examples
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 #' 
 #' groupvec <- GCLr::ex_baseline %>%
@@ -24,10 +24,8 @@
 #'   factor() %>%
 #'   as.numeric()
 #'   
-#' #BAYES format
 #' random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "BAYES", sillyvec = NULL) 
 #' 
-#' #rubias format
 #' random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "rubias", sillyvec = sillyvec)
 #' 
 #' @export
