@@ -35,7 +35,7 @@ This function combines "*.gcl" objects into a new one called "newname.gcl".
 This function is useful for pooling collections from the same location into a single population ("pooled collection") and for producing "pooled mixture" objects for mixed stock analysis.
 }
 \examples{
-sillyvec <- GCLr::base2gcl(newbase, unpool = TRUE)
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline, unpool = TRUE)
 
 loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)]
 
