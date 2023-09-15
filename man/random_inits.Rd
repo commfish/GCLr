@@ -24,20 +24,28 @@ random_inits(
 \item{sillyvec}{A vector of silly codes without the ".gcl" extension. This argument is needed when type = "rubias".}
 }
 \value{
-If type = "BAYES", the function outputs a matrix with nrow = npops and ncol = nchains.
-If type = "rubias", the function outputs a list of length = nchains, and each element is a tibble
+If \code{type = "BAYES"}, the function outputs a matrix with \code{nrow = npops} and \code{ncol = nchains}.
+If \code{type = "rubias"}, the function outputs a list of l\code{ength = nchains}, and each element is a tibble
 with "collection" and "pi_init" variables.
+
+#' @examples
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+
+groupvec <- GCLr::ex_baseline \%>\%
+dplyr::group_by(collection) \%>\%
+dplyr::filter(dplyr::row_number()==1) \%>\%
+dplyr::pull(repunit) \%>\%
+factor() \%>\%
+as.numeric()
+
+#BAYES format
+random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "BAYES", sillyvec = NULL)
+
+#rubias format
+random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "rubias", sillyvec = sillyvec)
 }
 \description{
-This function creates either a matrix of randomly generated initial start values for multiple BAYES chains
-or a list of tibbles (length = nchain) containing randomly generated initial start values for multiple rubias chains.
+This function creates either a matrix of randomly generated initial start values for multiple \code{BAYES} chains
+or a list of tibbles (length = nchain) containing randomly generated initial start values for multiple \code{rubias} chains.
 The values for each chain add to 1.
-}
-\examples{
-sillyvec <- c("KQUART060809", "KCRESC06", "KKENU09", "KJUNE050607", "KRUSSR05060708", "KBENJ0506", "KKILL0506", "KFUNN0506", "KKENAI030406", "KSLIK040508")
-groupvec <- c(1, 1, 2, 2, 3, 4, 4, 5, 2, 5)
-
-BAYES_inits <- random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "BAYES", sillyvec = NULL)
-rubias_inits <- random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "rubias", sillyvec = sillyvec)
-
 }

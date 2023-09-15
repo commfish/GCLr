@@ -1,7 +1,7 @@
 #' Generate Random Initial Start Values for BAYES or rubias Chains
 #'
-#' This function creates either a matrix of randomly generated initial start values for multiple BAYES chains 
-#' or a list of tibbles (length = nchain) containing randomly generated initial start values for multiple rubias chains.
+#' This function creates either a matrix of randomly generated initial start values for multiple `BAYES` chains 
+#' or a list of tibbles (length = nchain) containing randomly generated initial start values for multiple `rubias` chains.
 #' The values for each chain add to 1.
 #'
 #' @param groupvec Numeric vector indicating the group affiliation of each population in sillyvec.
@@ -10,17 +10,26 @@
 #' @param type Character vector indicating whether you want an initial start value object for "BAYES" or "rubias".
 #' @param sillyvec A vector of silly codes without the ".gcl" extension. This argument is needed when type = "rubias".
 #'
-#' @return If type = "BAYES", the function outputs a matrix with nrow = npops and ncol = nchains.
-#' If type = "rubias", the function outputs a list of length = nchains, and each element is a tibble
+#' @return If `type = "BAYES"`, the function outputs a matrix with `nrow = npops` and `ncol = nchains`.
+#' If `type = "rubias"`, the function outputs a list of l`ength = nchains`, and each element is a tibble
 #' with "collection" and "pi_init" variables.
 #'
-#' @examples
-#' sillyvec <- c("KQUART060809", "KCRESC06", "KKENU09", "KJUNE050607", "KRUSSR05060708", "KBENJ0506", "KKILL0506", "KFUNN0506", "KKENAI030406", "KSLIK040508")
-#' groupvec <- c(1, 1, 2, 2, 3, 4, 4, 5, 2, 5)
+#' #' @examples
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 #' 
-#' BAYES_inits <- random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "BAYES", sillyvec = NULL)
-#' rubias_inits <- random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "rubias", sillyvec = sillyvec)
-#'
+#' groupvec <- GCLr::ex_baseline %>%
+#'   dplyr::group_by(collection) %>%
+#'   dplyr::filter(dplyr::row_number()==1) %>%
+#'   dplyr::pull(repunit) %>%
+#'   factor() %>%
+#'   as.numeric()
+#'   
+#' #BAYES format
+#' random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "BAYES", sillyvec = NULL) 
+#' 
+#' #rubias format
+#' random_inits(groupvec = groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5, type = "rubias", sillyvec = sillyvec)
+#' 
 #' @export
 random_inits <- function(groupvec, groupweights = rep(1/max(groupvec), max(groupvec)), nchains = 5,  type = c("BAYES", "rubias")[1], sillyvec = NULL){
 
@@ -83,4 +92,3 @@ random_inits <- function(groupvec, groupweights = rep(1/max(groupvec), max(group
   return(ans)
   
 }
-
