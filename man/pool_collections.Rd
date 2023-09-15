@@ -26,7 +26,7 @@ the collection names collapsed with a period between each name (e.g., "KQUART06.
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
-assigns a new "pooled collection" to your workspace
+assigns a new "pooled collection" to your global environment
 }
 \description{
 This function combines "*.gcl" objects into a new one called "newname.gcl".
@@ -35,15 +35,10 @@ This function combines "*.gcl" objects into a new one called "newname.gcl".
 This function is useful for pooling collections from the same location into a single population ("pooled collection") and for producing "pooled mixture" objects for mixed stock analysis.
 }
 \examples{
-newbase <- GCLr::ex_baseline \%>\% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
+sillyvec <- GCLr::base2gcl(newbase, unpool = TRUE)
 
-sillyvec <- GCLr::base2gcl(newbase)
+loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)]
 
-loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
-  names() \%>\%
-  gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
-  unique()
-  
-pool_collections(collections = sillyvec[1:2], loci = loci, IDs = NULL, newname =  paste(sillyvec[1:2], collapse = "."))
+GCLr::pool_collections(collections = sillyvec[1:2], loci = loci, IDs = NULL, newname =  paste(sillyvec[1:2], collapse = "."), LocusCtl = GCLr::ex_LocusControl)
 
 }

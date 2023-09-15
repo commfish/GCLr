@@ -17,19 +17,14 @@
 #' @details
 #' This function is useful for pooling collections from the same location into a single population ("pooled collection") and for producing "pooled mixture" objects for mixed stock analysis.
 #'
-#' @return assigns a new "pooled collection" to your workspace
+#' @return assigns a new "pooled collection" to your global environment
 #' 
 #' @examples
-#' newbase <- GCLr::ex_baseline %>% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)
+#' sillyvec <- GCLr::base2gcl(newbase, unpool = TRUE)
 #' 
-#' sillyvec <- GCLr::base2gcl(newbase)
+#' loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)]
 #' 
-#' loci <- GCLr::ex_baseline[,-c(1:5)] %>%
-#'   names() %>%
-#'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
-#'   unique()
-#'   
-#' pool_collections(collections = sillyvec[1:2], loci = loci, IDs = NULL, newname =  paste(sillyvec[1:2], collapse = "."))
+#' GCLr::pool_collections(collections = sillyvec[1:2], loci = loci, IDs = NULL, newname =  paste(sillyvec[1:2], collapse = "."), LocusCtl = GCLr::ex_LocusControl)
 #' 
 #' @export
 pool_collections <- function(collections, loci = LocusControl$locusnames, IDs = NULL, newname = paste(collections, collapse = "."), LocusCtl = LocusControl){
@@ -90,6 +85,8 @@ pool_collections <- function(collections, loci = LocusControl$locusnames, IDs = 
     dplyr::bind_rows() %>% 
     dplyr::mutate(FK_FISH_ID = seq(length(unlist(IDs))), SILLY_CODE = newname)
   
-  assign(paste0(newname, ".gcl"), output, pos = 1, envir = .GlobalEnv)  
+  assign(paste0(newname, ".gcl"), output, pos = 1, envir = .GlobalEnv) 
+  
+  message(paste0(newname, ".gcl has been assigned to your global environment."))
   
 }
