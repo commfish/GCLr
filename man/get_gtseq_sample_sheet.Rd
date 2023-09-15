@@ -4,12 +4,23 @@
 \alias{get_gtseq_sample_sheet}
 \title{Get a GTSeq Project Sample Sheet}
 \usage{
-get_gtseq_sample_sheet(project, i7_NAME_start, dir, username, password)
+get_gtseq_sample_sheet(
+  project,
+  i7_NAME_start,
+  i7_NAME_max = 75,
+  dir,
+  username,
+  password
+)
 }
 \arguments{
 \item{project}{the project name from Loki iStrategy (e.g., "P015")}
 
 \item{i7_NAME_start}{a character string with three characters (i.e., \code{nchar(i7_NAME_start) = 3}) and leading zeros.}
+
+\item{i7_NAME_max}{this is the maximum i7 name to use when creating the sample sheet.
+This may change periodically depending on what barcodes the lab has in stock. Allowable values are \code{1:150}.
+Check with lab staff if you aren't sure what to put here.}
 
 \item{dir}{the directory (folder) where you want to write out the sample sheet .csv file. \emph{Note: The file will be named automatically using the supplied project name.}}
 
@@ -18,7 +29,7 @@ get_gtseq_sample_sheet(project, i7_NAME_start, dir, username, password)
 \item{password}{your password used to access LOKI; see Eric Lardizabal if you need to set up a password}
 }
 \value{
-This function writes out a .csv file containing the following fields:
+This function produces a tibble containing the following fields:
 \itemize{
 \item \strong{Project}: project name
 \item \strong{SILLY_FISH_ID}: silly code and fish number
@@ -30,22 +41,29 @@ This function writes out a .csv file containing the following fields:
 \item \strong{i5sequence}: i5 barcode sequence
 \item \strong{Panel}: the marker panel name (marker suite)
 }
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{     The tibble is then written out to a .csv file.
+}\if{html}{\out{</div>}}
 }
 \description{
 This function connects to Loki and gets the GTSeq sample sheet for a given project.
 i7 barcodes are added to the sheet starting with the supplied \code{i7_NAME_start}. (see details)
 }
 \details{
-For this function to work, the project information must be entered into \link{iStrategy} first.
+Before running this function, the project information must be entered into \code{iStrategy}.
+
 i7 barcodes come in individual vials and get used up over time.
 To make sure the vials are used evenly (i.e., run out at the same time), each project will start with the next i7_NAME after the last i7 name that was use in the previous project.
-To determine which what i7 barcode that was used last, look 'NextSeq Flow Cell Log.xlsx' located \link{here}("S:/GCL/Lab/Genotyping/SNP Projects").
+To determine which what i7 barcode that was used last, look in "S:/GCL/Lab/Genotyping/SNP Projects/NextSeq Flow Cell Log.xlsx".
 The last project should be at the bottom of the sheet if the "Run Date" field is sorted lowest to highest. The "i7s" field will contain the range of i7s used in the project.
+}
+\note{
+as of 9/12/23 the lab is only using i7 barcodes '001'-'075'.
 }
 \examples{
 \dontrun{
 
-  get_gtseq_sample_sheet (project = "P015", i7_NAME_start = "001", dir = path.expand("~"), username = "awbarclay", password = scan(path.expand("~/R/usr.pw"), what = "")[2])
+ get_gtseq_sample_sheet (project = "P015", i7_NAME_start = "001", i7_NAME_max = 75, dir = path.expand("~"), username = "awbarclay", password = scan(path.expand("~/R/usr.pw"), what = "")[2])
 
 }
            
