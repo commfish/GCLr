@@ -39,3 +39,6 @@ sampn_df <- GCLr::sampn_by_locus(sillyvec, loci = GCLr::ex_LocusControl$locusnam
 
 GCLr::plot_sampn_by_locus(sampn_df)
 }
+\seealso{
+\code{\link[=sampn_by_locus]{sampn_by_locus()}}
+}

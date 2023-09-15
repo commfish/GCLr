@@ -22,6 +22,8 @@
 #' overall sample size. The function finally uses the `ggplot2` package to create a heatmap
 #' plot with "silly" on the x-axis, "locus" on the y-axis, and the "proportion" mapped to
 #' the fill color.
+#' 
+#' @seealso [GCLr::sampn_by_locus()]
 #'
 #' @examples
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
