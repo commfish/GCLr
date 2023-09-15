@@ -31,17 +31,11 @@ The function then iterates through each sample in 'sillyvec', retrieves the data
 Note the output tibble from this function can be fed to Plot_SampleSizeByLocus.GCL to produce an interactive heatmap of the proportion of fish with scores for each locus and silly
 }
 \examples{
-\dontrun{
-create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = password)
-sillyvec = c("SMCDO03", "SNEVA13")
-password = "************"
-loki2r(sillyvec = sillyvec, username = "awbarclay", password = password)
-remove_ind_miss_loci(sillyvec = sillyvec)
-  
-sampn_by_locus(sillyvec = sillyvec, loci = LocusControl$locusnames)
-}
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+
+GCLr::sampn_by_locus(sillyvec, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], LocusCtl = GCLr::ex_LocusControl)
 
 }
 \seealso{
-\code{\link{LocusControl}}
+\code{\link[=sampn_by_locus]{sampn_by_locus()}}
 }
