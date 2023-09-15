@@ -36,13 +36,21 @@
 #'   factor() %>%
 #'   as.numeric()
 #' 
-#' pwfst <- GCLr::read_genepop_pwfst(file = system.file("genepop", "ex_genepop.txt.MIG", package = "GCLr"), popnames = paste0("Pop", seq(14)))
-#'  
+#' sillyvec <- GCLr::base2gcl(ex_baseline)
+#' 
+#' loci <- GCLr::ex_baseline[,-c(1:5)] %>%
+#'   names() %>%
+#'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
+#'   unique()
+#' 
+#' pwfst <- GCLr::pairwise_fst(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), ncores = parallel::detectCores())
+#' 
 #' FstTree <- ape::nj(pwfst)
-#'  
+#' 
 #' colortree <- GCLr::add_tree_color(tree = FstTree , currentnames = FstTree$tip.label, treenames = FstTree$tip.label, groupvec = groupvec, regioncol = c("red", "green", "blue"))
+#' 
 #' GCLr::plot_color_tree(color.tree = colortree, rm.neg.branch = TRUE, type = "phylogram", scale = TRUE, show.tip.label = TRUE, edge.width = 3, adj = 0.02, cex = 0.7, font = 1, label.offset = 0.001, gen.dist = "FST")
-#'
+#' 
 #' @export
 
 plot_color_tree <- function(color.tree, rm.neg.branch = TRUE, type = "phylogram", scale = TRUE, show.tip.label = TRUE, edge.width = 3, adj = NULL, cex = 1, font = 1, label.offset = 0, gen.dist = "FST", ...){
