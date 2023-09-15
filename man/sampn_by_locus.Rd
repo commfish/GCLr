@@ -13,29 +13,29 @@ sampn_by_locus(
 \arguments{
 \item{sillyvec}{A vector of sample names to extract data from.}
 
-\item{loci}{A character vector containing the names of loci for which data will be extracted. Defaults to the locus names in the 'LocusControl' object.}
+\item{loci}{A character vector containing the names of loci for which data will be extracted. Defaults to the locus names in the \code{LocusControl} object.}
 
-\item{LocusCtl}{The 'LocusControl' object containing the data for all loci. Default is the global 'LocusControl' object.}
+\item{LocusCtl}{The \code{LocusControl} object containing the data for all loci. Default is the global \code{LocusControl} object.}
 }
 \value{
 A data frame containing the counts of non-missing values for each locus in each sample. The output will have one row per sample and one column per locus, along with an additional 'silly' column indicating the sample name.
 }
 \description{
-This function takes a vector of sample names (sillyvec) and extracts data for specified loci from a 'LocusControl' object. It returns a data frame with the counts of non-missing values for each locus in each sample.
+This function takes a vector of sample names (\code{sillyvec}) and extracts data for specified loci from a \code{LocusControl} object. It returns a data frame with the counts of non-missing values for each locus in each sample.
 }
 \details{
-The function first checks if all specified loci in the 'loci' argument exist in the 'LocusControl' object. If any locus is not found, an error message is thrown.
+The function first checks if all specified loci in the \code{loci} argument exist in the \code{LocusControl} object. If any locus is not found, an error message is thrown.
 
-The function then iterates through each sample in 'sillyvec', retrieves the data for the specified loci from the 'LocusControl' object, and calculates the count of non-missing values for each locus. The results are combined into a single data frame.
+The function then iterates through each sample in \code{sillyvec}, retrieves the data for the specified loci from the \code{LocusControl} object, and calculates the count of non-missing values for each locus. The results are combined into a single data frame.
 
-Note the output tibble from this function can be fed to Plot_SampleSizeByLocus.GCL to produce an interactive heatmap of the proportion of fish with scores for each locus and silly
+Note the output tibble from this function can be fed to \code{\link[=plot_sampn_by_locus]{plot_sampn_by_locus()}} to produce an interactive heatmap of the proportion of fish with scores for each locus and silly
 }
 \examples{
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
-GCLr::sampn_by_locus(sillyvec, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], LocusCtl = GCLr::ex_LocusControl)
+GCLr::sampn_by_locus(sillyvec = sillyvec, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], LocusCtl = GCLr::ex_LocusControl)
 
 }
 \seealso{
-\code{\link[=sampn_by_locus]{sampn_by_locus()}}
+\code{\link[=plot_sampn_by_locus]{plot_sampn_by_locus()}}
 }
