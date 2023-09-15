@@ -7,9 +7,9 @@
 #'
 #' @param SampSizeByLocus A data frame with two columns: "silly" and "count". The "silly"
 #'   column contains categorical data, and the "count" column contains the count of samples
-#'   for each category. This data frame is produced by sampn_by_locus().
+#'   for each category. This data frame is produced by [GCLr::sampn_by_locus()].
 #'
-#' @return A plotly interactive plot showing a heatmap of the proportion of counts for each
+#' @return A `plotly` interactive plot showing a heatmap of the proportion of counts for each
 #'   locus relative to the overall sample size.
 #'
 #' @details
@@ -24,17 +24,11 @@
 #' the fill color.
 #'
 #' @examples
-#' \dontrun{
-#' create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = password)
-#' sillyvec = c("SMCDO03", "SNEVA13")
-#' password = "************"
-#' loki2r(sillyvec = sillyvec, username = "awbarclay", password = password)
-#' remove_ind_miss_loci(sillyvec = sillyvec)
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 #' 
-#' Output <- sampn_by_locus(sillyvec = sillyvec, loci = LocusControl$locusnames)
-#' plot_sampn_by_locus(SampSizeByLocus = Output)
-#' }
-#'
+#' sampn_df <- GCLr::sampn_by_locus(sillyvec, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], LocusCtl = GCLr::ex_LocusControl)
+#' 
+#' GCLr::plot_sampn_by_locus(sampn_df)
 #' @export
 plot_sampn_by_locus <- function(SampSizeByLocus){
   
@@ -48,7 +42,7 @@ plot_sampn_by_locus <- function(SampSizeByLocus){
       tidyr::pivot_longer(-silly, names_to = "locus", values_to = "count") %>% 
       dplyr::full_join(silly_n, by = "silly") %>% 
       dplyr::mutate(proportion = count/n) %>% 
-      ggplot2::ggplot(aes(x = silly, y = locus, fill = proportion))+
+      ggplot2::ggplot(ggplot2::aes(x = silly, y = locus, fill = proportion))+
       ggplot2::geom_tile() +
       ggplot2::scale_fill_gradient(low = "white", high = "blue4", limits = c(0, 1)) +
       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))

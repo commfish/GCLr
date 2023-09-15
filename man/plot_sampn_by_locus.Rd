@@ -9,10 +9,10 @@ plot_sampn_by_locus(SampSizeByLocus)
 \arguments{
 \item{SampSizeByLocus}{A data frame with two columns: "silly" and "count". The "silly"
 column contains categorical data, and the "count" column contains the count of samples
-for each category. This data frame is produced by sampn_by_locus().}
+for each category. This data frame is produced by \code{\link[=sampn_by_locus]{sampn_by_locus()}}.}
 }
 \value{
-A plotly interactive plot showing a heatmap of the proportion of counts for each
+A \code{plotly} interactive plot showing a heatmap of the proportion of counts for each
 locus relative to the overall sample size.
 }
 \description{
@@ -33,15 +33,9 @@ plot with "silly" on the x-axis, "locus" on the y-axis, and the "proportion" map
 the fill color.
 }
 \examples{
-\dontrun{
-create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = password)
-sillyvec = c("SMCDO03", "SNEVA13")
-password = "************"
-loki2r(sillyvec = sillyvec, username = "awbarclay", password = password)
-remove_ind_miss_loci(sillyvec = sillyvec)
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
-Output <- sampn_by_locus(sillyvec = sillyvec, loci = LocusControl$locusnames)
-plot_sampn_by_locus(SampSizeByLocus = Output)
-}
+sampn_df <- GCLr::sampn_by_locus(sillyvec, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], LocusCtl = GCLr::ex_LocusControl)
 
+GCLr::plot_sampn_by_locus(sampn_df)
 }
