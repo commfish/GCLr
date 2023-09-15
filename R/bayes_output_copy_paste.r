@@ -41,11 +41,11 @@ bayes_output_copy_paste <- function(origindir, targetdir, mixvec){
   invisible(lapply(filestoremove, file.remove)) # Remove input files from server
   
   # Copy/paste output files (".BO1", ".BOT", ".RGN", ".SUM", and ".CLS")
-  outputfiles = unlist(sapply(c(".BO1", ".BOT", ".RGN", ".SUM", ".CLS"), function(outfile) {list.files(path = origindir, pattern = outfile, full.names = TRUE, recursive = TRUE)})) # All output files in origindir
+  outputfiles = unlist(sapply(c(".BO1", ".BOT", ".RGN", ".SUM", ".CLS"), function(outfile) {list.files(path = origindir, pattern = outfile, full.names = FALSE, recursive = TRUE)})) # All output files in origindir
   
   filestocopy = sapply(mixvec, function(mix) {
     
-    outputfiles[grep(pattern = mix, x = outputfiles)]
+    paste(origindir, outputfiles[grep(pattern = mix, x = outputfiles)], sep = "/")
     
     }, simplify = FALSE) # Create list of output files by mixvec
   
@@ -59,6 +59,14 @@ bayes_output_copy_paste <- function(origindir, targetdir, mixvec){
   
   invisible(sapply(mixvec, function(mix) {file.copy(from = filestocopy[[mix]], to = paste(targetdir, "/Output/", mix, sep = ""))})) # Move to appropriate V drive directory
   
-  invisible(lapply(filestocopy, file.remove)) # Remove output files from server
+  if(all(sapply(mixvec, function(mix) {file.exists(paste(targetdir, "Output", mix, outputfiles[grep(pattern = mix, x = outputfiles)], sep = "/"))}))) {  # Confirm copy/paste works
+    
+    invisible(lapply(filestocopy, file.remove)) # Remove output files from server
+    
+  } else {
+    
+    stop("BAYES Output files have not been removed from `origindir` because they were not all detected in `targetdir`. The copy/paste must have failed.")
+    
+  }
   
 }
