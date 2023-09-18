@@ -16,13 +16,14 @@
 #' @seealso [base::saveRDS()]
 #'
 #' @examples
-#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+#' LocusControl <- GCLr::ex_LocusControl
+#' pairwisefst <- GCLr::ex_pairwise_fst
 #' 
 #' dir.create(path.expand("~/objects"))
 #' 
-#' save_objects(objects = paste0(sillyvec, ".gcl"), path = path.expand("~/objects"), rds = TRUE)
+#' GCLr::save_objects(objects = c("LocusControl", "pairwisefst"), path = path.expand("~/objects"), rds = TRUE)
 #' 
-#' save_objects(objects = paste0(sillyvec, ".gcl"), path = path.expand("~/objects"), rds = FALSE)
+#' GCLr::save_objects(objects = c("LocusControl", "pairwisefst"), path = path.expand("~/objects"), rds = FALSE)
 #' 
 #' @export
 save_objects <- function(objects, path, rds = FALSE) {
@@ -46,7 +47,7 @@ save_objects <- function(objects, path, rds = FALSE) {
       
     }  # resolves issue with readr::read_csv not playing nicely with dget if attr-problems exist
     
-    if (rds == FALSE) {.
+    if (rds == FALSE) {
       
       dput(x, paste0(path, "/", obj, ".txt"))
       

@@ -25,13 +25,14 @@ This function saves R objects with either \code{\link[base:dput]{base::dput()}} 
 \code{\link[base:readRDS]{base::saveRDS()}} saves objects in rds format, which is a compressed format - saves and reads back into R much faster than a text file.
 }
 \examples{
-sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+LocusControl <- GCLr::ex_LocusControl
+pairwisefst <- GCLr::ex_pairwise_fst
 
 dir.create(path.expand("~/objects"))
 
-save_objects(objects = paste0(sillyvec, ".gcl"), path = path.expand("~/objects"), rds = TRUE)
+GCLr::save_objects(objects = c("LocusControl", "pairwisefst"), path = path.expand("~/objects"), rds = TRUE)
 
-save_objects(objects = paste0(sillyvec, ".gcl"), path = path.expand("~/objects"), rds = FALSE)
+GCLr::save_objects(objects = c("LocusControl", "pairwisefst"), path = path.expand("~/objects"), rds = FALSE)
 
 }
 \seealso{
