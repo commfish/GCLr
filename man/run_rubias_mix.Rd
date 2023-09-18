@@ -26,7 +26,7 @@ run_rubias_mix(
 )
 }
 \arguments{
-\item{reference}{A data frame containing the reference samples.}
+\item{reference}{A data frame containing the reference samples (i.e., baseline object).}
 
 \item{mixture}{A data frame containing the mixture samples.}
 
@@ -63,19 +63,19 @@ run_rubias_mix(
 \item{seed}{An integer specifying the random seed for reproducibility. Default is 56.}
 }
 \value{
-A list containing the results of the rubias mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
+A list containing the results of the \code{rubias} mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
 }
 \description{
-This function performs the rubias mixture analysis using the provided reference and mixture data frames.
+This function is a wrapper for \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}. It performs the \code{rubias} mixture analysis using the provided reference and mixture data frames.
 The function estimates population proportions and allele frequencies for the mixture samples given the reference samples.
 }
 \details{
-This function performs the rubias mixture analysis by estimating the proportions of each reference group in the mixture samples
+This function performs the \code{rubias} mixture analysis by estimating the proportions of each reference group in the mixture samples
 and the allele frequencies of each reference group. It uses the provided method for estimation, such as Markov Chain Monte Carlo (MCMC)
 or parametric bootstrap (PB) for uncertainty quantification. The output is saved as .csv files for further analysis and visualization.
 
 The \code{reference} and \code{mixture} data frames should have the same structure with matching variable names. The \code{group_names} should represent the
-names of reference groups, and these names should correspond to the unique values in the 'repunit' column of the \code{reference} data frame.
+names of reference groups, and these names should correspond to the unique values in the \code{repunit} column of the \code{reference} data frame.
 
 The \code{pi_prior} argument allows users to specify prior information for mixture proportions. It should be a data frame or tibble with two variables,
 'collection' and 'pi_param', representing the collection name and prior parameter for the mixture proportions, respectively.
@@ -83,10 +83,12 @@ The \code{pi_prior} argument allows users to specify prior information for mixtu
 When the method is set to "PB" (parametric bootstrap), the function also saves parametric bootstrap bias corrections in separate .csv files.
 }
 \examples{
-\dontrun{
-load(".RData")
-lynncanal_2015 <- run_rubias_mix(reference = , mixture = , gen_start_col = 5, file = "rubias/output")
-}
+
+dir.create(path = path.expand("~/rubias/output"), recursive = TRUE)
+
+group_names <- GCLr::ex_baseline$repunit \%>\% unique()
+
+run_rubias_mix(reference = GCLr::ex_baseline, mixture = GCLr::ex_mixtures, group_names = group_names, gen_start_col = 5, file = path.expand("~/rubias/output"))
 
 }
 \seealso{
