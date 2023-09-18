@@ -53,3 +53,10 @@ GCLr::test_LD(genepopFiles = list.files(path.expand("~/GENEPOP")), path = path.e
 }
 
 }
+\seealso{
+\code{\link[genepop:Linkage]{genepop::test_LD()}}
+
+\code{\link[=read_genepop_dis]{read_genepop_dis()}}
+
+\code{\link[=gcl2genepop]{gcl2genepop()}}
+}

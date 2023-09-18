@@ -20,6 +20,10 @@
 #'     \item \code{Pop} - Population name
 #'     \item \code{Pvalue} - P-value for LD test
 #'     }
+#'    
+#' @seealso [genepop::test_LD()]     
+#' @seealso [GCLr::read_genepop_dis()]
+#' @seealso [GCLr::gcl2genepop()]
 #'
 #' @examples
 #' \dontrun{
