@@ -24,7 +24,7 @@ run_rubias_base_eval(
   sample_theta = TRUE,
   pi_prior_sum = 1,
   seed = 56,
-  ncores = 4,
+  ncores = parallel::detectCores(),
   file_type = c("fst", "csv")[1]
 )
 }
@@ -91,11 +91,17 @@ The function can read in .csv or .fst files.  .fst files are compressed, so they
 }
 \examples{
 \dontrun{
+
    sample_sizes <- GCLr::base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
-   GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
+   GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = parallel::detectCores())
    tests <- sample_sizes \%>\% group_by(test_group, scenario) \%>\% summarize(test_group = test_group \%>\% unique(), scenario = scenario \%>\% unique(), .groups = "drop_last")
-   GCLr::run_rubias_base_eval(tests = tests, group_names = Final_Pops$group \%>\% levels(), gen_start_col = 5, base.path = "rubias/baseline",mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = 8)
+   GCLr::run_rubias_base_eval(tests = tests, group_names = group_names, gen_start_col = 5, base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = parallel::detectCores())
 
 }
    
+}
+\seealso{
+\code{\link[=run_rubias_mix]{run_rubias_mix()}}
+
+\code{\link[=create_rubias_base_eval]{create_rubias_base_eval()}}
 }

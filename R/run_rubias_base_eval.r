@@ -56,22 +56,25 @@
 #'        \item straight dump of the `indiv_posteriors` tibble - without column `missing_loci`
 #'        \item straight dump of the `bootstrapped_proportions`
 #'    }
+#'    
+#' @seealso [GCLr::run_rubias_mix()]
+#' @seealso [GCLr::create_rubias_base_eval()]
 #'
 #' @examples
 #' \dontrun{
+#' 
 #'    sample_sizes <- GCLr::base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
-#'    GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
+#'    GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = parallel::detectCores())
 #'    tests <- sample_sizes %>% group_by(test_group, scenario) %>% summarize(test_group = test_group %>% unique(), scenario = scenario %>% unique(), .groups = "drop_last")
-#'    GCLr::run_rubias_base_eval(tests = tests, group_names = Final_Pops$group %>% levels(), gen_start_col = 5, base.path = "rubias/baseline",mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = 8)
+#'    GCLr::run_rubias_base_eval(tests = tests, group_names = group_names, gen_start_col = 5, base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = parallel::detectCores())
 #' 
 #' }
 #'    
 #' @export
 run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", method = "MCMC", alle_freq_prior = list(const_scaled = 1), pi_prior = NA, 
-                                  pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100, prelim_reps = NULL, prelim_burn_in = NULL, sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1, seed = 56, ncores = 4, file_type = c("fst", "csv")[1]){
+                                  pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100, prelim_reps = NULL, prelim_burn_in = NULL, sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1, seed = 56, ncores = parallel::detectCores(), file_type = c("fst", "csv")[1]){
  
   start_time <- Sys.time()
-  
   
   test_groups = tests$test_group %>% 
     unique()
@@ -85,7 +88,7 @@ run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.pa
   
   foreach::foreach(g = test_groups, .export = "run_rubias_mix", .packages = c("tidyverse", "rubias", "readr")) %dopar% {
     
-    scenario_names = tests %>% 
+    scenario_names <- tests %>% 
       dplyr::filter(test_group==g) %>% 
       tidyr::unite(col = "name", test_group, scenario) %>% 
       dplyr::pull(name)
@@ -108,7 +111,7 @@ run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.pa
         
       }
       
-      run_rubias_mix(reference = baseline, 
+      GCLr::run_rubias_mix(reference = baseline, 
                          mixture = mixture, 
                          group_names = group_names, 
                          gen_start_col = gen_start_col ,
