@@ -7,7 +7,7 @@
 remove_dups(dupcheck, remove_both = FALSE)
 }
 \arguments{
-\item{dupcheck}{A data frame or tibble containing the information to check for duplicates. This object is produced by dupcheck_within_silly().}
+\item{dupcheck}{A data frame or tibble containing the information to check for duplicates. This object is produced by \code{\link[=dupcheck_within_silly]{dupcheck_within_silly()}}.}
 
 \item{remove_both}{Logical. If set to TRUE, the function will remove duplicates from both "ID1" and "ID2" columns. If set to FALSE (default), the function will remove duplicates based on the "Missing1" and "Missing2" columns.}
 }
@@ -18,25 +18,23 @@ A data frame containing the results after removing duplicates.
 This function removes duplicates from the input data frame based on specific criteria.
 }
 \details{
-The \code{remove_dups} function takes an input data frame \code{dupcheck} and checks for duplicates based on the columns "silly", "ID1", "ID2", "Missing1", "Missing2", and "proportion". If there are no duplicates or if the input \code{dupcheck} is empty, the function will return an empty data frame with a warning message. The function will first check if \code{dupcheck} is a tibble; if not, it assumes the data is stored in a column named "report" and extracts the tibble from that column.
+This function takes an input data frame produced by \code{\link[=dupcheck_within_silly]{dupcheck_within_silly()}} and checks for duplicates based on the columns "silly", "ID1", "ID2", "Missing1", "Missing2", and "proportion". If there are no duplicates or if the input in the data frame is empty, the function will return an empty data frame with a warning message. The function will first check if the input is a tibble; if not, it assumes the data is stored in a column named "report" and extracts the tibble from that column.
 
 If the \code{remove_both} argument is set to TRUE, the function removes duplicates from both "ID1" and "ID2" columns using tidyr::pivot_longer. Otherwise, it calculates which duplicates to remove based on the "Missing1" and "Missing2" columns using dplyr::mutate and dplyr::case_when.
 
-The function then processes the data for each unique value of "silly" and removes the corresponding duplicates using the \code{remove_ids} function.
+The function then processes the data for each unique value of "silly" and removes the corresponding duplicates using \code{\link[=remove_ids]{remove_ids()}}.
 }
 \examples{
 \dontrun{
-password = "************"
-create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = password)
-sillyvec = c("SMCDO03", "SNEVA13")
-loki2r(sillyvec = sillyvec, username = "awbarclay", password = password)
-remove_ind_miss_loci(sillyvec = sillyvec)
+dupcheck <- GCLr::dupcheck_within_silly(sillyvec = sillyvec, loci = LocusControl$locusnames, quantile = NULL, minproportion = 0.95, ncores = 8)
 
-dupcheck <- dupcheck_within_silly(sillyvec = sillyvec, loci = LocusControl$locusnames, quantile = NULL, minproportion = 0.95, ncores = 8)
-removed_dups <- remove_dups(dupcheck)
+GCLr::remove_dups(dupcheck)
+
 }
 
 }
 \seealso{
-\code{\link{remove_ids}}
+\code{\link[=dupcheck_within_silly]{dupcheck_within_silly()}}
+
+\code{\link[=remove_ids]{remove_ids()}}
 }
