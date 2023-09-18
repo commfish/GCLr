@@ -85,7 +85,6 @@ add_tree_color <- function(tree, currentnames, treenames, groupvec, regioncol, r
   edgeind <- match(xx$edge[ , 2], 1:C)
   EdgeReg <- regInd[edgeind]
 
-
   all <- cbind(1:length(EdgeReg), xx$edge[ , 1], EdgeReg)
 
   edgereg <- EdgeReg
@@ -121,7 +120,7 @@ add_tree_color <- function(tree, currentnames, treenames, groupvec, regioncol, r
   
   if(write_nexus == TRUE ){
     
-    save_nexus_color_tree(tree = tree, file = file, groupvec = groupvec, group.col = regioncol, tip.labs = xx$tip.label , sep = "_")
+    GCLr::save_nexus_color_tree(tree = tree, file = file, groupvec = groupvec, group.col = regioncol, tip.labs = xx$tip.label , sep = "_")
     
   }
 
