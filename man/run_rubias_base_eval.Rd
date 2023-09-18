@@ -43,7 +43,7 @@ run_rubias_base_eval(
 
 \item{method}{a choice among "MCMC", "PB", and "BR" methods for estimating mixture proportions (see details)}
 
-\item{alle_freq_prior}{a one-element named list specifying the prior to be used when generating Dirichlet parameters for genotype likelihood calculations. Valid methods include "const", "scaled_const", and "empirical". See \code{?rubias::list_diploid_params()} for method details. (default: list(const_scaled = 1))}
+\item{alle_freq_prior}{a one-element named list specifying the prior to be used when generating Dirichlet parameters for genotype likelihood calculations. Valid methods include "const", "scaled_const", and "empirical". See \code{\link[rubias:list_diploid_params]{rubias::list_diploid_params()}} for method details. (default: \code{list(const_scaled = 1)})}
 
 \item{pi_prior}{The prior to be added to the collection allocations, in order to generate pseudo-count Dirichlet parameters for the simulation of new pi vectors in MCMC. Default value of NA leads to the calculation of a symmetrical prior based on pi_prior_sum. To provide other values to certain collections, you can pass in a data frame with two columns, "collection" listing the relevant collection, and "pi_param" listing the desired prior for that collection (see \code{\link[=create_prior]{create_prior()}}. Specific priors may be listed for as few as one collection. The special collection name "DEFAULT_PI" is used to set the prior for all collections not explicitly listed; if no "DEFAULT_PI" is given, it is taken to be 1/(# collections).}
 
