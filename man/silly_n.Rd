@@ -16,13 +16,9 @@ A two-column tibble containing the silly codes (silly) and their corresponding s
 This function retrieves the sample sizes of *.gcl objects associated with given silly codes.
 }
 \examples{
-\dontrun{
-# Load the necessary data
-load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
+ 
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
-# Get sample sizes for specific silly codes
-silly_n(sillyvec = sillyvec157)
-}
-
+GCLr::silly_n(sillyvec = sillyvec)
 
 }
