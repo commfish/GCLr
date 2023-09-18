@@ -1,24 +1,25 @@
-#' Remove Rows with NA Values for Each Element in a List
+#' Remove IDs with NA Values for all Loci
 #'
-#' This function removes any individuals from a SILLY.gcl object that were not genotyped for all markers in markersuite. It iterates through the list of individuals and removes the individuals with NA values in the specified columns for each element, storing the removed IDs in a tibble. The modified list is then returned.
+#' This function removes any individuals from a SILLY.gcl object that were not genotyped for all Loci in markersuite.
 #'
-#' @param sillyvec a character vector of silly codes (e.g. sillyvec <- c("KQUART06","KQUART08","KQUART09")) 
-#' @param LocusCtl An optional LocusControl object (default: LocusControl) created by [GCLr::create_locuscontrol()] that specifies the columns to be checked for NA values. The function will use the \code{locusnames} attribute of the LocusCtl object to identify the columns.
+#' @param sillyvec a character vector of silly codes (e.g. `sillyvec <- c("KQUART06","KQUART08","KQUART09")`) 
+#' @param LocusCtl An optional `LocusControl` object (default: `LocusControl`) created by [GCLr::create_locuscontrol()] that specifies the columns to be checked for NA values. The function will use the \code{locusnames} attribute of the LocusCtl object to identify the columns.
 #'
-#' @return A tibble with two columns: \code{SILLY_CODE} contains the element names (SILLY_CODE) from \code{sillyvec}, and \code{IDs_Removed} contains the identifiers (IDs) of the rows removed for each element in the list.
+#' @return A tibble with two columns: \code{SILLY_CODE} contains the element names (`SILLY_CODE`) from `sillyvec`, and `IDs_Removed` contains the identifiers (IDs) of the rows removed for each element in the list.
 #'
 #' @details
-#' The \code{remove_na_indv} function takes a list of elements, where each element is expected to be a character string representing a variable name. It then iterates through the list and processes each element separately. For each element, the function retrieves the corresponding data frame using the variable name and checks for NA values in the specified columns (taken from \code{LocusCtl$locusnames}). If a row contains any NA value in the specified columns, it is removed from the data frame. The function also creates a tibble that pairs the element name (SILLY_CODE) with the identifiers (IDs) of the removed rows (drop). Finally, all the tibbles are combined into one using \code{dplyr::bind_rows()} and returned as the output.
+#' In Loki, NA genotypes mean that no genotyping was performed. 
+#' This function checks each silly in `sillyvec` for individuals with NAs across all loci and removes them. 
+#' This function should be run immediately after pulling genotypes using [GCLr::loki2r()], [GCLr::loki2r_gaps()], or [GCLr::loki2r_proj()] 
 #'
 #' @examples
 #' \dontrun{
-#' load("V:/Analysis/2_Central/Chinook/Cook Inlet/2019/2019_UCI_Chinook_baseline_hap_data/2019_UCI_Chinook_baseline_hap_data.RData")
-#'  
-#' removedInd <- remove_na_indv(sillyvec = sillyvec157)
+#' 
+#' removedInd <- GCLr::remove_na_indv(sillyvec = sillyvec, LocusCtl = LocusControl)
+#' 
 #' }
 #'
 #' @export
-
 remove_na_indv <- function(sillyvec, LocusCtl = LocusControl) {
   
   scores_cols <- LocusCtl$locusnames
