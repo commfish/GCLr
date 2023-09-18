@@ -10,10 +10,8 @@
 #' 
 #' @return This function returns a named pairwise Fst matrix. If `!is.null(outfile)` the function produces a tab delimited text file of the pairwise matrix, otherwise no file is produced. 
 #' 
-#' @seealso [genepop::Fst]
 #' @seealso [genepop::Fst()]
 #' @seealso [GCLr::gcl2genepop()]: 
-#' 
 #' 
 #' @examples
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)

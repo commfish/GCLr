@@ -35,8 +35,6 @@ GCLr::read_genepop_pwfst(file = path.expand("~/GENEPOP/my_genepop.txt.MIG"), pop
 
 }
 \seealso{
-\link[genepop:Fst]{genepop::Fst}
-
 \code{\link[genepop:Fst]{genepop::Fst()}}
 
 \code{\link[=gcl2genepop]{gcl2genepop()}}:
