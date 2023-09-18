@@ -40,9 +40,9 @@ sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
 loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33, 97, 98)]
 
-naloci <- dimnames(SURGOATM09.gcl)[[2]][100:199]
-SURGOATM09.gcl <- SURGOATM09.gcl
-SURGOATM09.gcl[, naloci] <- NA
+naloci <- dimnames(SURGOATM09.gcl)[[2]][100:201]
+SURGOATM09.gcl[c(1, 5, 30), naloci] <- NA
+assign("SURGOATM09.gcl", SURGOATM09.gcl, pos = -1)
 
 GCLr::remove_ind_miss_loci(sillyvec = sillyvec, loci = loci, proportion = 0.8, LocusCtl = ex_LocusControl)
 
