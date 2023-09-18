@@ -2,7 +2,7 @@
 % Please edit documentation in R/save_objects.r
 \name{save_objects}
 \alias{save_objects}
-\title{Save R objects to disk}
+\title{Save R Objects to Disk}
 \usage{
 save_objects(objects, path, rds = FALSE)
 }
@@ -11,21 +11,31 @@ save_objects(objects, path, rds = FALSE)
 
 \item{path}{character vector of where you want to save objects}
 
-\item{rds}{logical; if set to TRUE the objects will be saved in rds format,
-default is FALSE for backwards compatibility.}
+\item{rds}{logical; if set to \code{TRUE} the objects will be saved in rds format,
+default is \code{FALSE} for backwards compatibility.}
 }
 \value{
-All objects are saved as "objects.txt" or "objects.rds"
+All objects are saved as "object.txt" or "object.rds"
 }
 \description{
-This function saves R objects with either \code{dput} or \code{saveRDS}.
+This function saves R objects with either \code{\link[base:dput]{base::dput()}} or \code{\link[base:readRDS]{base::saveRDS()}}.
 }
 \details{
-\code{dput} saves object code to a text file.
-\code{saveRDS} saves objects in rds format, which is a compressed format - saves and reads back into R much faster than a text file.
+\code{\link[base:dput]{base::dput()}} saves object code to a text file.
+\code{\link[base:readRDS]{base::saveRDS()}} saves objects in rds format, which is a compressed format - saves and reads back into R much faster than a text file.
 }
 \examples{
-iris <- iris  # bringing into pos = 1
-save_objects(objects = "iris", path = "Objects", rds = TRUE)
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
+dir.create(path.expand("~/objects"))
+
+save_objects(objects = paste0(sillyvec, ".gcl"), path = path.expand("~/objects"), rds = TRUE)
+
+save_objects(objects = paste0(sillyvec, ".gcl"), path = path.expand("~/objects"), rds = FALSE)
+
+}
+\seealso{
+\code{\link[base:dput]{base::dput()}}
+
+\code{\link[base:readRDS]{base::saveRDS()}}
 }
