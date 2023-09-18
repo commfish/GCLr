@@ -1,7 +1,7 @@
 #' Stratified Estimator using Bayesian output
 #'
 #' This function reads in BAYES output files (all chains) from multiple temporal strata (mixtures) and, by weighting by harvest from each stratum, produces a seasonal total harvest 
-#' estimate and C.I. for all defined regions (groups). Appologies for the number of arguments--this is necessary to give the required flexibility. The last four arguments will rarely need to be changed.
+#' estimate and C.I. for all defined regions (groups). Apologies for the number of arguments--this is necessary to give the required flexibility. The last four arguments will rarely need to be changed.
 #'
 #' WARNING -- A certain directory structure is required for successful execution. Particularly, each mixture's BAYES output files must be within their own sub-directory with the exact name as the mixture.
 #' Also, the BAYES output files need names that begin with the mixture name, followed by the the prior name, followed by Chain -- e.g. "MixnamePriorChain1RGN.RGN" or "MixnamePriorChain1BOT.BOT".
@@ -27,6 +27,8 @@
 #' @param PosteriorOutput Logical; if TRUE, the function will return both the summary statistics and the posterior output. If FALSE, it will return only the summary statistics.
 #'
 #' @return A summary of the stratified estimator, including mean, standard deviation, median, 90% confidence interval, proportion of values less than the threshold, and Gelman-Rubin statistic.
+#' 
+#' @seealso [coda::gelman.diag()]
 #' 
 #' @examples
 #' \dontrun{
@@ -156,7 +158,9 @@ stratified_estimator_bayes <- function(groupvec, groupnames, maindir, mixvec, ca
   n <- unique(nCombinedSamps)
   
   groupvec <- as.numeric(groupvec)
+  
   catchvec <- setNames(as.numeric(catchvec), mixvec)
+  
   CVvec <- setNames(as.numeric(CVvec), mixvec)
   
   C <- length(groupvec)

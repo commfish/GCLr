@@ -57,7 +57,7 @@ A summary of the stratified estimator, including mean, standard deviation, media
 }
 \description{
 This function reads in BAYES output files (all chains) from multiple temporal strata (mixtures) and, by weighting by harvest from each stratum, produces a seasonal total harvest
-estimate and C.I. for all defined regions (groups). Appologies for the number of arguments--this is necessary to give the required flexibility. The last four arguments will rarely need to be changed.
+estimate and C.I. for all defined regions (groups). Apologies for the number of arguments--this is necessary to give the required flexibility. The last four arguments will rarely need to be changed.
 }
 \details{
 WARNING -- A certain directory structure is required for successful execution. Particularly, each mixture's BAYES output files must be within their own sub-directory with the exact name as the mixture.
@@ -84,4 +84,7 @@ GCLr::stratified_estimator_bayes(groupvec = groupvec, groupnames = groupnames, m
 
 }
 
+}
+\seealso{
+\code{\link[coda:gelman.diag]{coda::gelman.diag()}}
 }
