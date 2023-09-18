@@ -43,13 +43,22 @@ If MCMC, replace hard 0 p-values with \code{1 / (batches * iterations)} and calc
 if Exact test, p-values overall pops or overall loci are pulled directly from \code{genepop} ("*.P") file
 }
 \examples{
-\dontrun{
-genepop::test_HW(inputFile = "C:/Users/krshedd/Documents/R/test.txt")  # needs full file path
-genepop_hwe <- GCLr::read_genepop_hwe(file = "~/R/test.txt.P", sillyvec = sillyvec)
-}
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+
+loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33, 97, 98)]
+
+dir.create(path = "~/GENEPOP")
+
+GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = path.expand("~/GENEPOP/my_genepop.txt"), VialNums = TRUE, usat = FALSE,
+                  ncores = parallel::detectCores(), npops = NULL, LocusCtl = GCLr::ex_LocusControl)
+
+genepop::test_HW(inputFile = path.expand("~/GENEPOP/my_genepop.txt"))
+
+GCLr::read_genepop_hwe(file =  path.expand("~/GENEPOP/my_genepop.txt.P"), sillyvec = sillyvec)
 
 }
 \seealso{
 \code{\link[genepop:genepop-package]{genepop::genepop-package()}}
 \code{\link[genepop:Hardy-Weinberg]{genepop::test_HW()}}
+\code{\link[=gcl2genepop]{gcl2genepop()}}
 }

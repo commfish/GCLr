@@ -35,12 +35,21 @@
 #' @seealso 
 #' [genepop::genepop-package()]
 #' [genepop::test_HW()]
+#' [GCLr::gcl2genepop()]
 #' 
 #' @examples
-#' \dontrun{
-#' genepop::test_HW(inputFile = "C:/Users/krshedd/Documents/R/test.txt")  # needs full file path
-#' genepop_hwe <- GCLr::read_genepop_hwe(file = "~/R/test.txt.P", sillyvec = sillyvec)
-#' }
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+#' 
+#' loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33, 97, 98)]
+#' 
+#' dir.create(path = "~/GENEPOP")
+#' 
+#' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = path.expand("~/GENEPOP/my_genepop.txt"), VialNums = TRUE, usat = FALSE,
+#'                   ncores = parallel::detectCores(), npops = NULL, LocusCtl = GCLr::ex_LocusControl)
+#' 
+#' genepop::test_HW(inputFile = path.expand("~/GENEPOP/my_genepop.txt"))
+#' 
+#' GCLr::read_genepop_hwe(file =  path.expand("~/GENEPOP/my_genepop.txt.P"), sillyvec = sillyvec)
 #' 
 #' @export
 read_genepop_hwe <-
@@ -48,19 +57,19 @@ read_genepop_hwe <-
            sillyvec = NULL,
            summaryAsNumeric = TRUE) {
     
-  hwp=scan(file,what='',sep = "\n")
+  hwp <- scan(file, what='', sep = "\n")
 
-  npops=as.numeric(strsplit(hwp[grep("Number of populations detected:    ",hwp)],split="Number of populations detected:    ")[[1]][2])
+  npops <- as.numeric(strsplit(hwp[grep("Number of populations detected:    ", hwp)], split = "Number of populations detected:    ")[[1]][2])
   
-  nloci=as.numeric(strsplit(hwp[grep("Number of loci detected:           ",hwp)],split="Number of loci detected:           ")[[1]][2])
+  nloci <- as.numeric(strsplit(hwp[grep("Number of loci detected:           ",hwp)], split = "Number of loci detected:           ")[[1]][2])
   
-  popstart=grep("Pop : ",hwp)
+  popstart <- grep("Pop : ",hwp)
   
   if(is.null(sillyvec)) {
     
-    pops=strsplit(hwp[popstart],split="Pop : ")
+    pops <- strsplit(hwp[popstart], split = "Pop : ")
     
-    pops=unlist(pops)[seq(2,2*npops,by=2)]
+    pops <- unlist(pops)[seq(2, 2*npops, by = 2)]
     
   } else {
     
@@ -68,16 +77,22 @@ read_genepop_hwe <-
     
   }
   
-  nmonoloci=length(grep("not diploid.",hwp))
+  nmonoloci <- length(grep("not diploid.", hwp))
   
-  ndiploci=nloci-nmonoloci
+  ndiploci <- nloci-nmonoloci
   
-  HWdata=NULL
+  HWdata <- NULL
   
-  for(i in 1:npops){  
-    HWdata=rbind(HWdata,cbind(Pop=rep(pops[i],ndiploci),reshape2::colsplit(
-      sapply((popstart[i]+6):(popstart[i]+6+ndiploci-1),function(row){gsub(pattern="[[:blank:]]+",x=hwp[row],replacement="/",fixed=F)}),
-      pattern="/",names=c("Locus","PValue","SE","WC Fis","RH Fis","Steps","Switches","Low"))[,1:6]))
+  for(i in 1:npops){
+    
+    HWdata <- rbind(HWdata, cbind(Pop = rep(pops[i], ndiploci), reshape2::colsplit(
+      
+      sapply((popstart[i]+6):(popstart[i]+6+ndiploci-1), function(row){
+        
+        gsub(pattern = "[[:blank:]]+", x = hwp[row], replacement = "/", fixed = F)
+        
+        }), pattern = "/", names = c("Locus", "PValue", "SE", "WC Fis", "RH Fis", "Steps", "Switches", "Low"))[ , 1:6]))
+    
   }
   
   # Break if Pop = 1
@@ -88,32 +103,33 @@ read_genepop_hwe <-
   
   # Proceed as normal
   
-  loci=gsub(reshape2::colsplit(hwp[grep("Locus ",hwp)],pattern="\"",names=c("Locus","Locus"))[,2],pattern="\"",replacement="")
+  loci <- gsub(reshape2::colsplit(hwp[grep("Locus ", hwp)], pattern = "\"", names = c("Locus", "Locus"))[ , 2], pattern = "\"", replacement = "")
   
-  invisible(ifelse(length(grep(" not diploid.",loci))==0,assign("mono",0),assign("mono",grep(" not diploid.",loci))))
+  invisible(ifelse(length(grep(" not diploid.", loci))==0, assign("mono", 0), assign("mono", grep(" not diploid.", loci))))
   
-  invisible(ifelse(mono==0,assign("diploci",loci),assign("diploci",loci[-mono])))
+  invisible(ifelse(mono==0, assign("diploci", loci), assign("diploci", loci[-mono])))
   
-  HWdata[,"Locus"]=diploci
+  HWdata[ , "Locus"] <- diploci
   
-  HWdata$PValue=suppressWarnings(as.numeric(gsub(HWdata$PValue,pattern="No",replacement="NA")))
+  HWdata$PValue <- suppressWarnings(as.numeric(gsub(HWdata$PValue, pattern = "No", replacement = "NA")))
   
-  HWdata$SE=suppressWarnings(as.numeric(gsub(HWdata$SE,pattern="information.",replacement="NA")))
+  HWdata$SE <- suppressWarnings(as.numeric(gsub(HWdata$SE, pattern = "information.", replacement = "NA")))
   
-  loci=gsub(loci,pattern=" not diploid.",replacement="")
+  loci <- gsub(loci, pattern = " not diploid.", replacement = "")
   
-  smmry=matrix(nrow=nloci+1,ncol=npops+1,dimnames=list(c(loci,"Overall Loci"),c(pops,"Overall Pops")))
+  smmry <- matrix(nrow = nloci+1, ncol = npops+1, dimnames = list(c(loci, "Overall Loci"), c(pops, "Overall Pops")))
   
   for(i in 1:npops){
+    
     for(j in 1:nloci){
-      smmry[j,i]=HWdata[(match(x=loci[j],table=HWdata[,"Locus"])+((i-1)*ndiploci)),"PValue"]      
+      
+      smmry[j,i] <- HWdata[(match(x = loci[j], table = HWdata[ , "Locus"])+((i-1)*ndiploci)), "PValue"]    
+      
     }
+    
   }
   
   ## Overall probability using Fisher's method, checked with Genepop to verify results, not the same when p-values = 0 for a population at a locus (rounding issue)
-  # smmry[,"Overall"]=t(t(round(pchisq(-2*apply(log(smmry[,1:npops]),1,function(x) sum(x,na.rm=TRUE)),2*apply(smmry[,1:npops],1,function(x) sum(!is.na(x))),lower.tail=FALSE),4)))
-
-  ## Overall probability using Fisher's method
   # If MCMC, replace hard 0 with repzero and calculate overall pops and overall loci via Fisher's ChiSqaure method
   # Else, if Exact test, p-values overall pops or overall loci are pulled directly from Genepop *.P file if Exact test
   
@@ -131,9 +147,9 @@ read_genepop_hwe <-
     
   } else {
     
-    overallpops=reshape2::colsplit(hwp[grep("Locus ",hwp)+5+npops+4],pattern=" Prob :    ",names=c("Trash","P-value"))[,2]
+    overallpops <- reshape2::colsplit(hwp[grep("Locus ", hwp)+5+npops+4], pattern = " Prob :    ", names = c("Trash", "P-value"))[ , 2]
     
-    overallloci=reshape2::colsplit(hwp[grep("Pop : ",hwp)+5+ndiploci+4],pattern=" Prob :    ",names=c("Trash","P-value"))[,2]
+    overallloci <- reshape2::colsplit(hwp[grep("Pop : ", hwp)+5+ndiploci+4], pattern = " Prob :    ", names = c("Trash","P-value"))[ , 2]
     
     ## Force SummaryPValues matrix to be numeric for Exact test
     # If using Genepop version 4.6 or lower, "High. sign." is forced to "0.0000"
@@ -143,17 +159,17 @@ read_genepop_hwe <-
       
       if(any(grepl(pattern = "High. sign.", overallpops)) | any(grepl(pattern = "High. sign.", overallloci))) {
         
-        overallpops=as.numeric(gsub(overallpops,pattern="High. sign.",replacement="0.0000"))
+        overallpops <- as.numeric(gsub(overallpops, pattern="High. sign.", replacement = "0.0000"))
         
-        overallloci=as.numeric(gsub(overallloci,pattern="High. sign.",replacement="0.0000"))
+        overallloci <- as.numeric(gsub(overallloci, pattern = "High. sign.", replacement = "0.0000"))
         
       }  # 4.6 and older
       
       if(any(grepl(pattern = "<", overallpops)) | any(grepl(pattern = "<", overallloci))) {
         
-        overallpops=as.numeric(gsub(overallpops,pattern=" < ",replacement=""))
+        overallpops <- as.numeric(gsub(overallpops, pattern = " < ",replacement = ""))
         
-        overallloci=as.numeric(gsub(overallloci,pattern=" < ",replacement=""))
+        overallloci <- as.numeric(gsub(overallloci, pattern = " < ", replacement = ""))
         
       }  # 4.7 and newer
       
@@ -161,21 +177,21 @@ read_genepop_hwe <-
     
   }  # Exact test
    
-  smmry[1:nloci,"Overall Pops"]=overallpops
+  smmry[1:nloci, "Overall Pops"] <- overallpops
   
-  smmry["Overall Loci",1:npops]=overallloci
+  smmry["Overall Loci", 1:npops] <- overallloci
   
   if(storage.mode(smmry) == "character") {
     
-    smmry[nrow(smmry),ncol(smmry)] = NA
+    smmry[nrow(smmry), ncol(smmry)] <- NA
     
   } else {
     
-    smmry[nrow(smmry),ncol(smmry)]=round(pchisq(q=(-2*sum(log(smmry[1:(nrow(smmry)-1),ncol(smmry)]))), df=(2*(nrow(smmry)-1)), lower.tail=FALSE), 4)
+    smmry[nrow(smmry), ncol(smmry)] <- round(pchisq(q = (-2*sum(log(smmry[1:(nrow(smmry)-1), ncol(smmry)]))), df = (2*(nrow(smmry)-1)), lower.tail = FALSE), 4)
     
   }
     
-  lst=list("DataByPop"=HWdata,"SummaryPValues"=smmry)
+  lst <- list("DataByPop" = HWdata, "SummaryPValues" = smmry)
   
   print(cat("All p-values are pulled directly from the Genepop *.P file if calculated via Exact test.\nIf calculated via MCMC then over all loci/pops are derived in this function, correcting p = 0 for the number of batches * iterations!\nNA in 'smmry' dataframe means that locus in either 1) monomorphic (or very low MAF) or 2) not diploid (haploid mtSNP).\nHaploid loci are not included in the 'HWdata' data.frame."))
   
