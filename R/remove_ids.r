@@ -20,19 +20,12 @@
 #' Additionally, if the Silly GCL object becomes empty after the removal, a warning is issued to notify the user.
 #'
 #' @examples
-#' \dontrun{
-#' password <- "************"
 #' 
-#' create_locuscontrol(markersuite = "Sockeye2011_96SNPs", username = "awbarclay", password = password)
-#' sillyvec <- c("SMCDO03", "SNEVA13")
-#' loki2r(sillyvec = sillyvec, username = "awbarclay", password = password)
-#' remove_ind_miss_loci(sillyvec = sillyvec)
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 #' 
-#' remove_ids(silly = "SMCDO03", IDs = 1:10)
-#' }
+#' remove_ids(silly = sillyvec[1], IDs = c(1, 4, 20))
 #'
 #' @export
-  
 remove_ids <- function(silly, IDs){
   
   if(purrr::is_empty(silly)){
