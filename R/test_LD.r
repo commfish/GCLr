@@ -23,7 +23,17 @@
 #'
 #' @examples
 #' \dontrun{
-#' GCLr::test_LD(genepopFiles = my.files, path = "GENEPOP", batches = 1, iterations = 1, ncores = 18)
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+#' 
+#' loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33, 97, 98)]
+#' 
+#' dir.create(path = "~/GENEPOP")
+#' 
+#' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = path.expand("~/GENEPOP"), VialNums = TRUE, usat = FALSE, 
+#'                   ncores = parallel::detectCores(), npops = 1, LocusCtl = GCLr::ex_LocusControl) 
+#' 
+#' GCLr::test_LD(genepopFiles = list.files(path.expand("~/GENEPOP")), path = path.expand("~/GENEPOP"), batches = 14, iterations = 1, ncores = parallel::detectCores())
+#'
 #' }
 #'
 #' @export
