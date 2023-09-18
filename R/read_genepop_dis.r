@@ -1,7 +1,7 @@
 #' @title Read Genepop DIS Output
 #' 
 #' @description
-#' This function reads in output from a `genepop` Linkage Disequilibrium test ("*.DIS") file.
+#' This function reads in output from a `genepop` Linkage Disequilibrium test ("*.DIS") file and produces a summary object.
 #'
 #' @param file The full file path to the `genepop` LD output, including the ".DIS" extension.
 #' @param loci An optional character vector of locus names (default = `NULL`).
@@ -24,6 +24,8 @@
 #' @details
 #' Designed and tested on Genepop v4.8.3. If the LD (".DIS) file contains tests for only 1 populations, the tibble will not contain an "Overall" column.
 #' P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with 1 / (n_Batches x n_Iterations per batch).
+#'
+#' This function can is called on by [GCLr::test_LD()], but it can also be used standalone to summarize a "*.DIS" files produced by running the LD tests using the GENEPOP GUI or [genepop::test_LD()] in R.
 #' 
 #' @seealso 
 #' [genepop::genepop-package()]
@@ -32,19 +34,19 @@
 #' 
 #' @examples
 #' \dontrun{
-#' genepop_ld <- GCLr::read_genepop_dis(file = "~/R/test.txt.DIS", loci = loci, sillyvec = sillyvec)
-#' genepop_ld %>%
-#'   tidyr::pivot_longer(cols = -(1:2),
-#'                       names_to = "pop",
-#'                       values_to = "pval") %>%
-#'   dplyr::filter(pop != "Overall") %>%
-#'   dplyr::group_by(Locus1, Locus2) %>%
-#'   dplyr::summarize(n_pops = sum(pval < 0.05), .groups = "drop") %>%
-#'   dplyr::arrange(dplyr::desc(n_pops)) %>%
-#'   dplyr::right_join(y = genepop_ld, by = c("Locus1", "Locus2")) %>%
-#'   dplyr::relocate(n_pops, .after = dplyr::last_col())
+#' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
+#' 
+#' loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33, 97, 98)]
+#' 
+#' dir.create(path = "~/GENEPOP")
+#' 
+#' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = path.expand("~/GENEPOP/my_genepop.txt"), VialNums = TRUE, usat = FALSE,
+#'                   ncores = parallel::detectCores(), npops = NULL, LocusCtl = GCLr::ex_LocusControl)
+#' 
+#' genepop::test_LD(inputFile = path.expand("~/GENEPOP/my_genepop.txt"), outputFile = "my_genepop.dis", settingsFile = "", dememorization = 100, batches = 2, iterations = 1, verbose = interactive())
+#' 
+#' GCLr::read_genepop_dis(file = "my_genepop.dis")
 #' }
-#'  
 #' @export
 read_genepop_dis <- function(file,
                              loci = NULL,
