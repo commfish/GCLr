@@ -20,6 +20,24 @@ This function returns a named pairwise Fst matrix. If \code{!is.null(outfile)} t
 This function reads in the pairwise FST half matrix from a GENEPOP "*.MIG" file and produces a full matrix with dimnames. The matrix from this function can be used to create a pairwise FST tree using \code{\link[ape:nj]{ape::nj()}}
 }
 \examples{
-GCLr::read_genepop_pwfst(file = system.file("genepop", "ex_genepop.txt.MIG", package = "GCLr"), popnames = paste0("Pop", seq(14)))
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
+loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33, 97, 98)]
+
+dir.create(path = "~/GENEPOP")
+
+GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = path.expand("~/GENEPOP/my_genepop.txt"), VialNums = TRUE, usat = FALSE,
+                  ncores = parallel::detectCores(), npops = NULL, LocusCtl = GCLr::ex_LocusControl)
+
+genepop::Fst(inputFile = path.expand("~/GENEPOP/my_genepop.txt"), pairs = TRUE, outputFile = path.expand("~/GENEPOP/my_genepop.txt"))
+
+GCLr::read_genepop_pwfst(file = path.expand("~/GENEPOP/my_genepop.txt.MIG"), popnames = paste0("Pop", seq(14)))
+
+}
+\seealso{
+\link[genepop:Fst]{genepop::Fst}
+
+\code{\link[genepop:Fst]{genepop::Fst()}}
+
+\code{\link[=gcl2genepop]{gcl2genepop()}}:
 }
