@@ -15,13 +15,25 @@ save_sillys(sillyvec, path, rds = FALSE)
 default is FALSE for backwards compatibility.}
 }
 \value{
-All sillyvec are saved as "sillyvec.txt" or "sillyvec.rds", the .gcl is removed
+All sillyvec are saved as "sillyvec.txt" or "sillyvec.rds", the .gcl is removed.
 }
 \description{
-This function saves sillys as R objects with \code{dput}, it is a wrapper for \code{dput}.
+This function saves sillys as R objects with \code{\link[base:dput]{base::dput()}} or \code{\link[base:readRDS]{base::saveRDS()}}.
 }
 \examples{
-iris <- iris  # bringing into pos = 1
-save_sillys(sillyvec = "SGILL15D15", path = "Raw genotypes")
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
+dir.create(path.expand("~/Raw genotypes"))
+
+save_sillys(sillyvec = sillyvec, path = path.expand("~/Raw genotypes"), rds = FALSE)
+
+save_sillys(sillyvec = sillyvec, path = path.expand("~/Raw genotypes"), rds = TRUE)
+
+}
+\seealso{
+\code{\link[=save_objects]{save_objects()}}
+
+\code{\link[base:dput]{base::dput()}}
+
+\code{\link[base:readRDS]{base::saveRDS()}}
 }
