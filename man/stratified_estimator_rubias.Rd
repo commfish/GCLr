@@ -97,15 +97,16 @@ columns with '_backcalc' are the stock props back-calculated using simulated har
 stock props are cut off at 1
 }
 \examples{
-# data can be found at V:\Analysis\1_SEAK\Sockeye\Mixture\D101to103 Seine
-stratified_estimator_rubias(path = "rubias/output_PB",
+path <- "V:/Analysis/1_SEAK/Sockeye/Mixture/D101to103 Seine/output_PB"
+
+GCLr::stratified_estimator_rubias(path = path,
                             mixvec = c("D101__28293031", "D101__323334", "D101__3536"),
                             group_names = c("Alaska", "Nass", "Skeena", "Other", "McDonald", "Hugh Smith", "Klawock"),
                             catchvec = c(34860, 38169, 21562),
                             newname = "D101_21_stratified_NBDomestic",
                             group_names_new = c("Alaska", "Nass", "Skeena", "Other", "McDonald", "Hugh Smith"),
                             groupvec_new = c(1, 2, 3, 4, 5, 6, 1),
-                            alpha = 0.1, 
+                            alpha = 0.1,
                             burn_in = 5000,
                             bias_corr = TRUE,
                             cv = c(0.2, 0.5, 0.4))

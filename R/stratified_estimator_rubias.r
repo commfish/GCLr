@@ -57,93 +57,134 @@
 #'   - `95%_backcalc`: `95%_harv`/sum(mean_harv); upper bound of credibility interval.
 #'
 #' @examples
-#' # data can be found at V:\Analysis\1_SEAK\Sockeye\Mixture\D101to103 Seine
-#' stratified_estimator_rubias(path = "rubias/output_PB",
+#' path <- "V:/Analysis/1_SEAK/Sockeye/Mixture/D101to103 Seine/output_PB"
+#' 
+#' GCLr::stratified_estimator_rubias(path = path,
 #'                             mixvec = c("D101__28293031", "D101__323334", "D101__3536"),
 #'                             group_names = c("Alaska", "Nass", "Skeena", "Other", "McDonald", "Hugh Smith", "Klawock"),
 #'                             catchvec = c(34860, 38169, 21562),
 #'                             newname = "D101_21_stratified_NBDomestic",
 #'                             group_names_new = c("Alaska", "Nass", "Skeena", "Other", "McDonald", "Hugh Smith"),
 #'                             groupvec_new = c(1, 2, 3, 4, 5, 6, 1),
-#'                             alpha = 0.1, 
+#'                             alpha = 0.1,
 #'                             burn_in = 5000,
 #'                             bias_corr = TRUE,
 #'                             cv = c(0.2, 0.5, 0.4))
-#'
+#' 
 #' @export
 stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, group_names = NULL,  catchvec, newname = NULL, group_names_new = NULL, groupvec = NULL, groupvec_new = NULL, path = "rubias/output", alpha = 0.1, burn_in = 5000, bias_corr = FALSE, threshold = 5e-7, cv = NULL) {
   
-    if(!require("BiocManager")) install.packages("BiocManager")
-    pacman::p_load(tidyverse, HDInterval) # load required packages
-    
-  #~~~~~~~~~~~~~~~~
   ## Error catching
-  if(is.null(rubias_output) & !dir.exists(path)) {
-    stop("`path` does not exist in your working directory, hoser!!!\nEither specify `rubias_output` or provide a valid `path` with rubias output .csv files for `mixvec`.")
-  }
-  if(is.null(rubias_output) & is.null(mixvec)) {
-    stop("Need to provide either `rubias_output` tibble to summarize or `mixvec` and `path` so that rubias output can be read, hoser!!!")
-  }
-  if(!is.null(mixvec) & is.null(rubias_output) & !all(sapply(mixvec, function(mixture) {any(grepl(pattern = mixture, x = list.files(path = path, pattern = ".csv")))} ))) {
-    stop("Not all mixtures in `mixvec` have .csv output in `path`, hoser!!!")
-  }
-  if(!is.null(groupvec) & bias_corr) {
-    stop("Can not perform bias correction if you are changing the groupvec (pop to group) from what was originally run.\n  Unfortunately since `rubias` only outputs bias corrected means for each `repunit`, we can't compute\n  bias corrected summary statistics on a new `groupvec`.")
-  }
-  if(!is.null(groupvec_new) & is.null(group_names_new)) {
-    stop("Need to provide `group_names_new` if introducing `groupvec_new`, hoser!!!")
-  }
-  if(!is.null(groupvec_new)) {
-    if(length(groupvec_new) != length(group_names) | max(groupvec_new) != length(group_names_new))
-      stop("If specifying `groupvec_new`, you must be rolling up from fine-scale groups to broad-scale groups (i.e. length(groupvec_new) = length(group_names), and max(groupvec_new) == length(group_names_new))")
-  }
-  if(!is.null(groupvec) & is.null(group_names)) {
-    stop("Need to provide `group_names` if introducing a new `groupvec`, hoser!!!")
-  }
-  if(is.null(newname)) {
-    stop("Need to provide a `newname` for this stratified estiamte, hoser!!!")
-  }
+  if(is.null(rubias_output) & !dir.exists(path)){
     
-  #~~~~~~~~~~~~~~~~
+    stop("`path` does not exist in your working directory!!!\nEither specify `rubias_output` or provide a valid `path` with rubias output .csv files for `mixvec`.")
+    
+  }
+  
+  if(is.null(rubias_output) & is.null(mixvec)) {
+    
+    stop("Need to provide either `rubias_output` tibble to summarize or `mixvec` and `path` so that rubias output can be read!!!")
+    
+  }
+  
+  if(!is.null(mixvec) & is.null(rubias_output) & !all(sapply(mixvec, function(mixture) {any(grepl(pattern = mixture, x = list.files(path = path, pattern = ".csv")))} ))) {
+    
+    stop("Not all mixtures in `mixvec` have .csv output in `path`!!!")
+    
+  }
+  
+  if(!is.null(groupvec) & bias_corr) {
+    
+    stop("Can not perform bias correction if you are changing the groupvec (pop to group) from what was originally run.\n  Unfortunately since `rubias` only outputs bias corrected means for each `repunit`, we can't compute\n  bias corrected summary statistics on a new `groupvec`.")
+    
+  }
+  
+  if(!is.null(groupvec_new) & is.null(group_names_new)) {
+    
+    stop("Need to provide `group_names_new` if introducing `groupvec_new`!!!")
+    
+  }
+  
+  if(!is.null(groupvec_new)) {
+    
+    if(length(groupvec_new) != length(group_names) | max(groupvec_new) != length(group_names_new))
+      
+      stop("If specifying `groupvec_new`, you must be rolling up from fine-scale groups to broad-scale groups (i.e. length(groupvec_new) = length(group_names), and max(groupvec_new) == length(group_names_new))")
+    
+  }
+  
+  if(!is.null(groupvec) & is.null(group_names)) {
+    
+    stop("Need to provide `group_names` if introducing a new `groupvec`")
+    
+  }
+  
+  if(is.null(newname)) {
+    
+    stop("Need to provide a `newname` for this stratified estimate!!!")
+    
+  }
+  
   ## If no rubias_output, make from .csv files
   if(is.null(rubias_output)) {
+    
     message("Summarizing results from rubias output .csv files.")
     
     # Build repunit_trace from "repunit_trace.csv" if `groupvec` is NULL
     if(is.null(groupvec)) {
+      
       if(!all(file.exists(paste0(path, "/", mixvec, "_repunit_trace.csv")))) {
-        stop("Not all mixtures in `mixvec` have a `repunit_trace.csv` file in `path`, hoser!!!")
+        
+        stop("Not all mixtures in `mixvec` have a `repunit_trace.csv` file in `path`!!!")
+        
       }  # make sure output files exist
+      
       message("    Building trace output from `repunit_trace.csv` files.")
+      
       repunit_trace <- dplyr::bind_rows(lapply(mixvec, function(mixture) {
+        
         repunit_trace_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_repunit_trace.csv")))
+        
         repunit_trace_mix <- repunit_trace_mix %>% 
-          tidyr::gather(repunit, rho, -sweep) %>%  # wide to tall
+          tidyr::pivot_longer(-sweep, names_to = "repunit", values_to = "rho") %>% 
           dplyr::mutate(mixture_collection = mixture) %>%  # add mixture_collection
           dplyr::arrange(mixture_collection, sweep, repunit) %>%  # sort by mixture_collection, sweep, repunit
           dplyr::select(mixture_collection, sweep, repunit, rho)  # reorder columns
+        
       } ))  # build output from "repunit_trace.csv"
+      
       if(is.null(group_names)) {
+        
         group_names <- colnames(suppressMessages(readr::read_csv(file = paste0(path, "/", mixvec[1], "_repunit_trace.csv"))))[-1]
+        
       }  # assign `group_names` from "repunit_trace.csv", if NULL
+      
       repunit_trace <- repunit_trace %>% 
         dplyr::mutate(repunit = factor(x = repunit, levels = group_names))  # order repunit
       
     } else {  # groupvec
       
       if(!all(file.exists(paste0(path, "/", mixvec, "_collection_trace.csv")))) {
-        stop("Not all mixtures in `mixvec` have a `collection_trace.csv` file in `path`, hoser!!!")
+        
+        stop("Not all mixtures in `mixvec` have a `collection_trace.csv` file in `path`!!!")
+        
       }  # make sure output files exist
+      
       message("    Building trace output from `collection_trace.csv` files, `groupvec`, and `group_names`.")
+      
       collection_trace <- dplyr::bind_rows(lapply(mixvec, function(mixture) {
+        
         collection_trace_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_collection_trace.csv")))
         collection_trace_mix <- collection_trace_mix %>% 
-          tidyr::gather(collection, pi, -sweep) %>% 
+          tidyr::pivot_longer(-sweep, names_to = "collection", values_to = "pi") %>% 
           dplyr::mutate(mixture_collection = mixture)
-      } ))  # build output from "collection_trace.csv"
+        
+      }))  # build output from "collection_trace.csv"
+      
       base_collections <- unique(collection_trace$collection)  # baseline collections are the same order as in rubias output
-      repunit_new.df <- tibble::tibble(collection = base_collections,
-                                       repunit_new = group_names[groupvec])  # tibble of new repunit from groupvec
+      
+      repunit_new.df <- tibble::tibble(collection = base_collections, repunit_new = group_names[groupvec])  # tibble of new repunit from groupvec
+      
       repunit_trace <- collection_trace %>% 
         dplyr::left_join(repunit_new.df, by = "collection") %>%  # join with new repunit
         dplyr::rename(repunit = repunit_new) %>%  # rename new repunit
@@ -154,16 +195,24 @@ stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, gro
     
     # Build `bootstrapped_proportions` if `bias_corr = TRUE`
     if(bias_corr) {
+      
       if(!all(file.exists(paste0(path, "/", mixvec, "_bias_corr.csv")))) {
-        stop("Not all mixtures in `mixvec` have a `bias_corr.csv` file in `path`, hoser!!!")
+        
+        stop("Not all mixtures in `mixvec` have a `bias_corr.csv` file in `path`!!!")
+        
       }  # make sure output files exist
+      
       message("    Building bias correction output from `bias_corr.csv` files.")
+      
       bootstrapped_proportions <- dplyr::bind_rows(lapply(mixvec, function(mixture) {
+        
         bias_corr_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_bias_corr.csv")))
         bias_corr_mix <- bias_corr_mix %>% 
           dplyr::mutate(mixture_collection = mixture) %>% 
           dplyr::mutate(repunit = factor(x = repunit, levels = group_names))  # order repunit
+        
       } ))  # build bootstrapped_proportions from "bias_corr.csv" files
+      
     }  # bias_corr
     
   }  # build rubias_output from .csv files, ignore "indiv_posteriors"
@@ -171,10 +220,13 @@ stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, gro
   #~~~~~~~~~~~~~~~~
   ## If rubias_output, create `repunit_trace` and `bootstrapped_proportions`
   if(!is.null(rubias_output)) {
+    
     message("Summarizing results from `rubias output`.")
     
     if(is.null(mixvec)) {
+      
       mixvec <- unique(rubias_output$mix_prop_traces$mixture_collection)
+      
     }  # used to order mixtures as factor
     
     # Build repunit_trace from `rubias_output` if `groupvec` is NULL
@@ -189,8 +241,9 @@ stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, gro
     } else {
       
       base_collections <- unique(rubias_output$mix_prop_traces$collection)  # baseline collections are the same order as in rubias output
-      repunit_new.df <- tibble::tibble(collection = base_collections,
-                                       repunit_new = group_names[groupvec])  # tibble of new repunit from groupvec
+      
+      repunit_new.df <- tibble::tibble(collection = base_collections, repunit_new = group_names[groupvec])  # tibble of new repunit from groupvec
+      
       repunit_trace <- rubias_output$mix_prop_traces %>% 
         dplyr::left_join(repunit_new.df, by = "collection") %>%  # join with new repunit
         dplyr::select(-repunit) %>%  # drop old repunit
@@ -202,8 +255,11 @@ stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, gro
     
     # Build `bootstrapped_proportions` if `bias_corr = TRUE`
     if(bias_corr) {
+      
       message("    Building bias correction output from `rubias_output`.")
+      
       bootstrapped_proportions <- rubias_output$bootstrapped_proportions
+      
     }  # bias_corr
     
   }  # rubias_output
@@ -211,13 +267,16 @@ stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, gro
   #~~~~~~~~~~~~~~~~
   ## Verify that catchvec specifies all mixtures
   if(length(mixvec) != length(catchvec)) {
-    stop("`mixvec` and `catchvec` are not the same length, hoser!!!")
+    
+    stop("`mixvec` and `catchvec` are not the same length!!!")
+    
   }
   
   #~~~~~~~~~~~~~~~~
   ## Calculate `d_rho` for bias correction if specified
   if(bias_corr) {
-    if(nrow(bootstrapped_proportions) == 0) {stop("There is no bias corrected output, hoser!!!")}
+    
+    if(nrow(bootstrapped_proportions) == 0) {stop("There is no bias corrected output!!!")}
     
     mixing_proportions_rho <- repunit_trace %>% 
       dplyr::filter(sweep >= burn_in) %>%   # remove burn_in
@@ -228,28 +287,36 @@ stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, gro
       dplyr::left_join(bootstrapped_proportions, by = c("mixture_collection", "repunit")) %>%  # join with `bootstrapped_proportions`
       dplyr::mutate(d_rho = rho - bs_corrected_repunit_ppn) %>%  # calculate d_rho
       dplyr::select(mixture_collection, repunit, d_rho)  # drop other variables
+    
   }
   
   #~~~~~~~~~~~~~~~~
   ## Apply bias correction if `d_rho` exists
   if(exists("d_rho")) {
+    
     repunit_trace <- repunit_trace %>% 
       dplyr::left_join(d_rho, by = c("mixture_collection", "repunit")) %>%  # join trace with d_rho
       dplyr::mutate(rho = rho - d_rho) %>%  # subtract d_rho
       dplyr::select(-d_rho)
+    
   }
   
   #~~~~~~~~~~~~~~~~
   ## Roll up to broad-scale groups if `groupvec_new` specified
   if(!is.null(groupvec_new)) {
+    
     level_key <- sapply(group_names, function(grp) {
+      
       i = which(group_names == grp)
       group_names_new[groupvec_new[i]]
+      
     }, simplify = FALSE )  # set up level_key to use with recode to roll up groups
+    
     repunit_trace <- repunit_trace %>% 
       dplyr::mutate(repunit = recode(repunit, !!!level_key)) %>% 
       dplyr::group_by(mixture_collection, sweep, repunit) %>% 
       dplyr::summarise(rho = sum(rho), .groups = "drop") 
+    
   }  
   
   #~~~~~~~~~~~~~~~~
@@ -310,13 +377,13 @@ stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, gro
       dplyr::filter(sweep >= burn_in) %>%  # remove burn_in
       dplyr::full_join(harvest, by = "mixture_collection") %>%
       dplyr::mutate(lnvar = log(cv^2 + 1), lnmean = log(harvest)-log(cv^2 + 1)/2) %>%
-      tidyr::spread(key = repunit, value = rho) %>%
+      tidyr::pivot_wider(names_from = repunit, values_from = rho) %>%
       dplyr::group_by(mixture_collection) %>%
       dplyr::mutate(h0 = rlnorm(length(unique(sweep)), lnmean, sqrt(lnvar))) %>%
       dplyr::ungroup() %>% 
       dplyr::mutate_at(.var = grp_names, .funs = ~.*h0) %>% 
       dplyr::select(-cv, -lnvar, -lnmean) %>% 
-      tidyr::gather(key = repunit, value = r_h0, -mixture_collection, -sweep, -harvest, -h0) %>% 
+      tidyr::pivot_longer(cols = -dplyr::all_of(c("mixture_collection", "sweep", "harvest", "h0")), names_to = "repunit", values_to = "r_h0") %>% 
       dplyr::mutate(repunit = factor(x = repunit, levels = grp_names)) %>% 
       dplyr::group_by(sweep, repunit) %>% 
       dplyr::summarise(rho = sum(r_h0),
@@ -361,4 +428,4 @@ stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, gro
   
   return(out_sum)
   
-  }  # end function
+}  # end function
