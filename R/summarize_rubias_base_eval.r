@@ -70,7 +70,17 @@
 #' 
 #' @examples
 #' \dontrun{
-#' base_eval_out <- GCLr::summarize_rubias_base_eval()
+#'  
+#' path <- "V:/Analysis/5_Coastwide/Sockeye/IYS_2022_MSA/rubias/Evaluating IYS sockeye baseline groups/rubias/output"
+#' 
+#' sample_sizes <- readRDS("V:/Analysis/5_Coastwide/Sockeye/IYS_2022_MSA/rubias/Evaluating IYS sockeye baseline groups/output/sample_sizes.rds")
+#' 
+#' mixvec <- suppressWarnings(tibble::tibble(files = list.files(path, pattern = "_repunit_trace.csv")) %>% 
+#'                              tidyr::separate(files, into = c("mixture", NA), sep = "_repunit_trace.csv") %>% 
+#'                              dplyr::pull(mixture))
+#' 
+#' GCLr::summarize_rubias_base_eval(mixvec = mixvec, path = path, sample_sizes = sample_sizes, ncores = parallel::detectCores())
+#' 
 #' }
 #' 
 #' @export

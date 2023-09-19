@@ -23,21 +23,39 @@ temporal_collections(sillyvec, region = NULL, min.samps = 50, sep = ".")
 a tibble with the following variables:
 \itemize{
 \item \code{silly}: non-pooled silly codes,
-\item \code{spop}: numbers indicating the population affiliation for each collection,
-\item \code{sregion}: numbers indicating the regional affiliation for each collection
+\item \code{pop}: numbers indicating the population affiliation for each collection,
+\item \code{region}: numbers indicating the regional affiliation for each collection (Only included in output if \code{region} is supplied)
 }
 }
 \description{
 This function retrieves temporal collections from a vector of pooled sillys for hierarchical ANOVA.
 }
+\details{
+After pooling collections (sillys) from the same location and similar dates collected in different years (temporal collections) during baseline analysis, it's a good idea to see if allele frequencies are stable among sample years.
+But, first baseline analyzer must determine which temporal collections have sufficient sample size for accurate allele frequency estimates.
+With very large baselines, this can be a time consuming process. This function quickly gives you a table that can be used to create a \code{hierfstat} object in \code{\link[=create_hierfstat_data]{create_hierfstat_data()}} to run a temporal Analysis of Variance in \code{\link[=hierfstat_global_stats]{hierfstat_global_stats()}} (see examples below).
+
+The optional region argument allows you to look at variance among regions, pops, and subpops.
+}
 \note{
+This function is intended for use while working within a baseline analysis workspace.
+Both pooled and unpooled sillys must be in your global environment or it will not work.
 Single-silly pops and sillys with sample sizes < \code{min.samps} will not be included in the output.
 }
 \examples{
-load("V:/Analysis/2_Central/Coho/Cook Inlet/2019/2019_Cook_Inlet_coho_baseline/2019_Cook_Inlet_coho_baseline_new.Rdata")
-source(paste0(path.expand("~/R/"), "Functions.R"))#GCL functions
-sillyvec <- Final_Pops$collection
-region <- Final_Pops \%>\% select(pop = order, region = region)
-temporal_collections(sillyvec = sillyvec, region = region, min.samps = 50, sep = ".")
+sillyvec_pool <- GCLr::base2gcl(GCLr::ex_baseline, unpool = FALSE)
+
+sillyvec <- GCLr::base2gcl(GCLr::ex_baseline, unpool = TRUE)
+
+region <- tibble::tibble(pop_no = seq(sillyvec_pool), region = c(1,1,1,1,1,1,2,3,3,3,3,1,1,1))
+
+(temp_col <- GCLr::temporal_collections(sillyvec = sillyvec_pool, region = region, min.samps = 10, sep = ".")) #setting min.samps at 10 for this example, but really should be set at 50 or higher.
+
+my.dat <- GCLr::create_hierfstat_data(sillyvec = temp_col$silly, pop = temp_col$pop, region = temp_col$region, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], LocusCtl = ex_LocusControl) \%>\%
+  dplyr::mutate(region = factor(region), pop = factor(pop), spop = factor(spop))
+
+GCLr::hierfstat_global_stats(levels = my.dat \%>\% dplyr::select(region, pop, spop), genotypes = my.dat \%>\% dplyr::select(-region, -pop, -spop), LocusCtl = ex_LocusControl)#Calculate variance components among regions, pops (pooled collections) within regions, sub pops (unpooled collections) within pops, and individuals within subpops.
+
+GCLr::hierfstat_global_stats(levels = my.dat \%>\% dplyr::select(pop, spop), genotypes = my.dat \%>\% dplyr::select(-region, -pop, -spop), LocusCtl = ex_LocusControl)#Calculate variance components among pops (pooled collections), sub pops (unpooled collections) within pops, and individuals within subpops.
 
 }
