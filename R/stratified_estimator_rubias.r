@@ -313,7 +313,7 @@ stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, gro
     }, simplify = FALSE )  # set up level_key to use with recode to roll up groups
     
     repunit_trace <- repunit_trace %>% 
-      dplyr::mutate(repunit = recode(repunit, !!!level_key)) %>% 
+      dplyr::mutate(repunit = dplyr::recode(repunit, !!!level_key)) %>% 
       dplyr::group_by(mixture_collection, sweep, repunit) %>% 
       dplyr::summarise(rho = sum(rho), .groups = "drop") 
     
@@ -360,7 +360,7 @@ stratified_estimator_rubias <- function(rubias_output = NULL, mixvec = NULL, gro
   } else {
     
     harvest <- harvest %>% 
-      mutate(cv = cv)
+      dplyr::mutate(cv = cv)
     
     if(length(mixvec) != length(cv)) {
       stop("`mixvec` and `cv` are not the same length, hoser!!!")
