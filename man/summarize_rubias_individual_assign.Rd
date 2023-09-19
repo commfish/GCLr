@@ -11,11 +11,11 @@ summarize_rubias_individual_assign(
 )
 }
 \arguments{
-\item{rubias_output}{Output list object from \code{\link{run_rubias_mix}} or \code{\link{infer_mixture}}.}
+\item{rubias_output}{Output list object from \code{\link[=run_rubias_mix]{run_rubias_mix()}} or \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}.}
 
 \item{mixnames}{A character vector of mixture names to include in the individual assignment summary.}
 
-\item{path}{Character vector of where to find output from each mixture as a .csv (created by \code{\link{run_rubias_mix}}).}
+\item{path}{Character vector of where to find output from each mixture as a .csv (created by \code{\link[=run_rubias_mix]{run_rubias_mix()}}).}
 }
 \value{
 A tibble with the following variables:
@@ -29,12 +29,8 @@ A tibble with the following variables:
 This function will summarize \code{rubias} individual assignments.
 }
 \examples{
-\dontrun{
-path <- "C:/Users/awbarclay/Documents/Analysis/Sockeye/UCI_sockeye_2020_postseason/rubias/output"
-rubias_output <- readRDS(file = "C:/Users/awbarclay/Documents/Analysis/Sockeye/UCI_sockeye_2020_postseason/output/rubias_output.rds")
+path <- "V:/Analysis/2_Central/Sockeye/Cook Inlet/2012 Baseline/Mixture/UCI_sockeye_2020_postseason/rubias/output"
 mixnames <- c("DriftDW_20", "DriftCorr_20", "UpperSub_20", "Kasilof600ft_20", "WestKalgin_20", "Eastern_20", "General_North_20", "General_South_20")
-summarize_rubias_individual_assign(rubias_output = rubias_output, mixnames = mixnames)
-summarize_rubias_individual_assign(rubias_output = NULL, mixnames = mixnames, path = path)
-}
+GCLr::summarize_rubias_individual_assign(rubias_output = NULL, mixnames = mixnames, path = path)
 
 }
