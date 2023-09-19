@@ -12,7 +12,7 @@
 #' 
 #' @returns A list with 2 components:
 #'     \itemize{
-#'       \item \code{DataByPop}: a data.frame with 7 columns containing the full HWE output:
+#'       \item \code{DataByPop}: a tibble with 7 columns containing the full HWE output:
 #'         \itemize{
 #'           \item \code{Pop}: silly code
 #'           \item \code{Locus}: locus name
@@ -22,7 +22,7 @@
 #'           \item \code{RH Fis}: Robertson and Hill Fis estimate
 #'           \item \code{Steps}: number of genotypic matrices considered (exact) or number of switches (MCMC)
 #'           }
-#'       \item \code{SummaryPValues}: a matrix containing p-values for each locus (row) and pop (column) including the 
+#'       \item \code{SummaryPValues}: a tibble containing p-values for each locus (row) and pop (column) including the 
 #'       overall p-value across pops and loci (Fisher's method)
 #'       }
 #'
@@ -191,7 +191,7 @@ read_genepop_hwe <-
     
   }
     
-  lst <- list("DataByPop" = HWdata, "SummaryPValues" = smmry)
+  lst <- list("DataByPop" = tibble::as_tibble(HWdata), "SummaryPValues" = tibble::as_tibble(smmry, rownames = "Locus"))
   
   print(cat("All p-values are pulled directly from the Genepop *.P file if calculated via Exact test.\nIf calculated via MCMC then over all loci/pops are derived in this function, correcting p = 0 for the number of batches * iterations!\nNA in 'smmry' dataframe means that locus in either 1) monomorphic (or very low MAF) or 2) not diploid (haploid mtSNP).\nHaploid loci are not included in the 'HWdata' data.frame."))
   

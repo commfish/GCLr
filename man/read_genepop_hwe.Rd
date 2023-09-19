@@ -19,7 +19,7 @@ should be coerced into numeric (default = \code{TRUE}).}
 \value{
 A list with 2 components:
 \itemize{
-\item \code{DataByPop}: a data.frame with 7 columns containing the full HWE output:
+\item \code{DataByPop}: a tibble with 7 columns containing the full HWE output:
 \itemize{
 \item \code{Pop}: silly code
 \item \code{Locus}: locus name
@@ -29,7 +29,7 @@ A list with 2 components:
 \item \code{RH Fis}: Robertson and Hill Fis estimate
 \item \code{Steps}: number of genotypic matrices considered (exact) or number of switches (MCMC)
 }
-\item \code{SummaryPValues}: a matrix containing p-values for each locus (row) and pop (column) including the
+\item \code{SummaryPValues}: a tibble containing p-values for each locus (row) and pop (column) including the
 overall p-value across pops and loci (Fisher's method)
 }
 }
