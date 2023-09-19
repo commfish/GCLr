@@ -47,6 +47,8 @@ sillyvec_pool <- GCLr::base2gcl(GCLr::ex_baseline, unpool = FALSE)
 
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline, unpool = TRUE)
 
+region <- tibble::tibble(pop_no = seq(sillyvec_pool), region = c(1,1,1,1,1,1,2,3,3,3,3,1,1,1))
+
 (temp_col <- GCLr::temporal_collections(sillyvec = sillyvec_pool, region = region, min.samps = 10, sep = ".")) #setting min.samps at 10 for this example, but really should be set at 50 or higher.
 
 my.dat <- GCLr::create_hierfstat_data(sillyvec = temp_col$silly, pop = temp_col$pop, region = temp_col$region, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], LocusCtl = ex_LocusControl) \%>\%
