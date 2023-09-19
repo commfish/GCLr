@@ -51,6 +51,6 @@ loci <- GCLr::baseline[,-c(1:5)] \%>\%
 fstat.dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = region, pop = pop, loci = loci, ncores = 4, LocusControl = GCLr::ex_LocusControl) \%>\% 
   dplyr::mutate(region = factor(region), pop = factor(pop), spop = factor(spop))
 
-hierfstat_global_stats(levels = fstat.dat[ ,1:3], genotypes = fstat.dat[ ,-c(1:3)])
+GCLr::hierfstat_global_stats(levels = fstat.dat[ , 1:3], genotypes = fstat.dat[ ,-c(1:3)])
 
 }
