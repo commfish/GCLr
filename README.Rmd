@@ -16,11 +16,6 @@ options(tibble.print_min = 5, tibble.print_max = 5)
 
 # GCLr <img src="man/figures/logo.png" align="right" height="100"/></a>
 
-<!-- badges: start -->
-
-[![R-CMD-check](https://github.com/commfish/GCLr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/commfish/GCLr/actions/workflows/R-CMD-check.yaml)
-
-<!-- badges: end -->
 
 ## Overview
 
