@@ -4,11 +4,11 @@
 \name{GCLr-package}
 \alias{GCLr}
 \alias{GCLr-package}
-\title{GCLr: Genetic Analysis Tools for Baseline Developement and Genetic Stock Identification}
+\title{GCLr: Genetic Analysis Tools}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Genetic analysis tools for baseline developement and genetic stock identification.
+Genetic analysis tools to streamline genetic data analyses performed by Gene Conservation Lab (GCL) staff.
 }
 \seealso{
 Useful links:
