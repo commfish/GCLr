@@ -1,10 +1,9 @@
 Package: GCLr
-Title: Genetic Analysis Tools for Baseline Developement and Genetic Stock Identification
-Version: 0.0.0.9000
+Title: Genetic Analysis Tools
+Version: 0.1.0
 Authors@R: 
     person("Andy", "Barclay", , "andy.barclay@alaska.gov", role = c("aut", "cre"))
-Description: Genetic analysis tools for baseline developement and genetic stock identification.
-Imports: 
+Description: Genetic analysis tools to streamline genetic data analyses performed by Gene Conservation Lab (GCL) staff
     tidyverse,
     ape,
     parallel,
