@@ -135,7 +135,7 @@ You can install the package from GitHub using pak.
 
 install.packages("pak")
 
-pak::pak("commfish/GCL")
+pak::pak("commfish/GCLr")
 ```
 
 ## Reporting issues and requests
