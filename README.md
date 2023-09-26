@@ -37,6 +37,11 @@ Here are some examples of things that this package can be used for:
 
     - `get_gtseq_sample_sheet()` creates a GTseq project sample sheet
 
+  - break up Loki import files
+
+    - `split_gtscore_loki_import()` splits a GTscore import file into
+      multiple files
+
 - **Laboratory quality control (QC)**
 
   - `qc_template` a template .RMD to compare the original (project) and

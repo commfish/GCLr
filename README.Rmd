@@ -16,7 +16,6 @@ options(tibble.print_min = 5, tibble.print_max = 5)
 
 # GCLr <img src="man/figures/logo.png" align="right" height="100"/></a>
 
-
 ## Overview
 
 GCLr is an R package designed to streamline genetic data analyses performed by Gene Conservation Lab (GCL) staff. Many of the functions in this package require data pulled directly from the GCL Oracle database Loki. Because of this, only Alaska Department of Fish and Game staff with credentials for accessing Loki will be able to use this package to its full extent. However, the package does allow for users without Loki credentials to read in genetic data contained in `GENEPOP` and `rubias` formatted files and convert the data into the objects used that can be used by GCLr (see `GCLr::genepop2gcl()` and `GCLr::base2gcl`).
@@ -42,6 +41,10 @@ Here are some examples of things that this package can be used for:
     -   create lab project sample sheets
 
         -   `get_gtseq_sample_sheet()` creates a GTseq project sample sheet
+
+    -   break up Loki import files
+
+        -   `split_gtscore_loki_import()` splits a GTscore import file into multiple files
 
 -   **Laboratory quality control (QC)**
 
