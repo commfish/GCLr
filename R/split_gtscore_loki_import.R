@@ -26,7 +26,7 @@ split_gtscore_loki_import <- function(file, nlines = 3e+05){
   
   last.line <- dim(my.file)[1]
   
-  nfiles <- round(last.line/nlines, digits = 0)
+  nfiles <- ceiling(last.line/nlines)
   
   start <- 1
   
