@@ -304,10 +304,12 @@ if (any(original_qc_percent_by_locus %>%
 
 Now let's check out a quick plot. This plot is interactive, so you can easily see what's going on - it allows you to zoom, hover over points for info, move around the plot, etc.
 
-```{r plot_sucessrate}
+```{r plot_successrate}
+plot.dat <- original_qc_percent_by_locus %>%
+  tidyr::pivot_longer(values_to = "percent", names_to = "silly", -loci)
+
 plotly::ggplotly(
-original_qc_percent_by_locus %>%
-  tidyr::pivot_longer(values_to = "percent", names_to = "silly", -loci) %>%
+  plot.dat %>%
   ggplot2::ggplot(ggplot2::aes(x = silly, y = loci)) +
   ggplot2::geom_tile(ggplot2::aes(fill = percent), color = "white") +
   ggplot2::scale_fill_gradient(
@@ -318,7 +320,12 @@ original_qc_percent_by_locus %>%
     breaks = seq(0,1, 0.25),
     guide = ggplot2::guide_colorbar(nbin = 100)  # Show a gradient colorbar legend
   ) +
-  ggplot2::geom_tile(data = . %>% dplyr::filter(percent < 0.8), fill = "red" ,height = 1) +
+   (if(min(plot.dat$percent)<0.8){
+     
+     ggplot2::geom_tile(data = . %>% dplyr::filter(percent < 0.8), fill = "red" , height = 1) 
+     
+   })
+  +
     ggplot2::ggtitle("Percent genotyped by silly/locus\nNote:red bars indicate loci with genotype sucess less than 80%") +
     ggplot2::labs(fill = "Percent\ngenotyped") +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
@@ -507,12 +514,17 @@ The last step in the process is to perform a duplicate check on any individuals 
 conflicts <- combined_conflicts %>%
   dplyr::filter(concordance_type %in% c("Het-Het", "Het-Homo", "Homo-Het", "Homo-Homo")) %>%
   dplyr::count(SillySource) %>%
-  dplyr::mutate(p = n / length(loci))
+  dplyr::mutate(p = n / length(loci)) %>% 
+  janitor::tabyl(p)
 
 # Plot a histogram of conflict rate
-conflicts %>%
-  ggplot2::ggplot(ggplot2::aes(x = p)) +
-  ggplot2::geom_bar() +
+if(nrow(conflicts)>0){
+  
+  plot <- conflicts %>%
+  dplyr::bind_rows(tibble::tibble(p = NA, n = 2, percent = NA)) %>% 
+  ggplot2::ggplot(ggplot2::aes(y = n, x = p)) +
+  ggplot2::scale_y_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))+
+  ggplot2::geom_bar(position = ggplot2::position_dodge2(preserve = "single"), width = .01, stat = "identity") + 
   ggplot2::xlim(0, 1) +
   ggplot2::geom_vline(xintercept = conflict_rate,
                       colour = "red",
@@ -520,6 +532,11 @@ conflicts %>%
   ggplot2::xlab("Conflict Rate") +
   ggplot2::ylab("Frequency") +
   ggplot2::ggtitle(paste0("QC Individual Conflict Rate\n Note the red line is set to: ", conflict_rate))
+  
+}else{plot <- "There were no conflicts."}
+
+
+suppressWarnings(print(plot)) 
 ```
 
 
