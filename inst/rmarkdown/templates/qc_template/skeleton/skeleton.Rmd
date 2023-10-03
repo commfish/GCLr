@@ -23,10 +23,10 @@ The previous QC script consisted of an R script with Excel and other outputs, th
 
 # Additional Script Notes
     
-    1) Run this script in order, or some functions will not provide accurate results. This is by design, as this script only hits LOKI once to save time.
-    2) Save the file (i.e., name at top is not `Untitled`). 
-    3) Add a title and your name to the top of the scrip.
-    4) Add your review notes directly below this!
+    1) Add a title and your name to the top of the scrip.
+    2) Save this using the naming convention: "project_QC.Rmd". Example: S200_QC.Rmd
+    3) Run this script in order, or some functions will not provide accurate results. This is by design, as this script only hits LOKI once to save time.
+    4) Add your review notes to the top of the file (in the Lab or P/L review section), prior to finalizing (i.e., saving or knitting)!
 
 
 # Lab Review
