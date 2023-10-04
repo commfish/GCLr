@@ -192,19 +192,19 @@ dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, 
     scores1 <- paste0(loci, ".1")
     
     Keymissing <- my.key %>% 
-      dplyr::select(Keysillyvial = SillySource, all_of(scores1)) %>% 
-      dplyr::mutate(dplyr::across(all_of(scores1), is.na)) %>% 
+      dplyr::select(Keysillyvial = SillySource, dplyr::all_of(scores1)) %>% 
+      dplyr::mutate(dplyr::across(dplyr::all_of(scores1), is.na)) %>% 
       dplyr::group_by(Keysillyvial) %>% 
-      dplyr::mutate(Keymissing = sum(!!!syms(scores1))) %>% 
+      dplyr::mutate(Keymissing = sum(!!!dplyr::syms(scores1))) %>% 
       dplyr::select(Keysillyvial, Keymissing)
     
     Betweenmissing <- my.between %>% 
       dplyr::bind_rows() %>% 
       dplyr::filter(SillySource %in% dupcheck0$Betweensillyvial) %>% 
       dplyr::select(Betweensillyvial = SillySource, tidyselect::all_of(scores1)) %>% 
-      dplyr::mutate(dplyr::across(all_of(scores1), is.na)) %>%  
+      dplyr::mutate(dplyr::across(dplyr::all_of(scores1), is.na)) %>%  
       dplyr::group_by(Betweensillyvial) %>% 
-      dplyr::mutate(Betweenmissing = sum(!!!syms(scores1))) %>% 
+      dplyr::mutate(Betweenmissing = sum(!!!dplyr::syms(scores1))) %>% 
       dplyr::select(Betweensillyvial, Betweenmissing)
     
     duplicate_summary <- dupcheck %>% 
