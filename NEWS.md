@@ -1,3 +1,13 @@
+# GCLr 0.2.3
+
+## Bug fixes
+
+Issues with two functions used in the `qc_template` markdown have been fixed:
+
+1.  The `read_qc_geno()` now adds 'qc' to the end of the silly code in the SILLY_CODE and SillySource variables of the '.gcl' objects it produces. Not having the 'qc' in the silly code was causing an error with `rubias::close_matching_samples()` because there were individuals with the same sample ID being checked(aka SillySource). 
+
+2. `dupcheck_among_sillys()` was missing some namespaces for functions, those have been added.
+
 # GCLr 0.2.2
 
 ## Bug fixes
