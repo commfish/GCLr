@@ -113,7 +113,21 @@ dupcheck_among_sillys <- function(KeySillys, KeySillyIDs = NULL, BetweenSillys, 
   
   dupcheck0 <- foreach::foreach(silly = BetweenSillys, .export = c("loci"), .packages = c("tidyverse","rubias")) %dopar% {
     
-    new.gcl <- my.between[[silly]] %>%
+    mb <- my.between # Assign my.between to temp object
+    
+    # Remove key silly ids from mb before dup check to avoid an error with rubias::close_matching_samples
+    if(sum(names(my.between)==silly)==1){
+      
+      rm.ids <- my.key %>% 
+        dplyr::filter(SILLY_CODE == silly) %>% 
+        dplyr::pull(FK_FISH_ID)
+     
+     mb[[silly]] <- my.between[[silly]] %>% 
+        dplyr::filter(!FK_FISH_ID %in% rm.ids)
+      
+    }
+    
+    new.gcl <- mb[[silly]] %>%
       dplyr::bind_rows(my.key) %>% 
       dplyr::mutate(
         sample_type = "reference",
