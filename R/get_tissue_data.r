@@ -163,9 +163,13 @@ get_tissue_data <- function(sillyvec = NULL, unit = NULL, shelf.rack = NULL, use
     
   }
   
-  dataAll <- RJDBC::dbGetQuery(con, qry)  #Pulling data from LOKI using the connection and tissue data query
+  dataAll0 <- RJDBC::dbGetQuery(con, qry)  #Pulling data from LOKI using the connection and tissue data query
   
   discon <- RJDBC::dbDisconnect(con) # Disconnect from Loki
+  
+  #Replace 0 with NA for variables that have a check box in Loki. If zeros are present in the import they get treated the same as 1's
+  dataAll <- dataAll0 %>% 
+    dplyr::mutate(dplyr::across(IS_MISSING_PAIRED_DATA_EXISTS:IS_PRESENT_BUT_NOT_IN_DS, ~gsub(pattern = 0, replacement = NA, x = .)))
   
   if (import.vars == TRUE) {
     
