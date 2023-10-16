@@ -108,6 +108,8 @@ loo_roc_rate_calc <- function(data, thres_levels, group_names, ncores = parallel
     dplyr::bind_rows(.id = "repunit") %>% 
     dplyr::mutate(threshold = paste0(level*100, "%"))
   
+  parallel::stopCluster(cl)# Stop cluster
+  
   return(output)
   
 }
