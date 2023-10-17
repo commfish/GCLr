@@ -12,12 +12,12 @@
 #' if you have a file named "S254 03_04 Combined Chip Run.csv" with 18,432 (192 samps X 24 loci X 4 chips) lines (not including the header lines) and you want to break it up into files with 9,216 lines each (96 samps X 96 loci), the function will produce
 #' 2 files, and name them "S254 03_04 Combined Chip Run_a.csv" and "S254 03_04 Combined Chip Run_b.csv"
 #' 
-#' 
 #' @examples
-#' #' \dontrun{
+#' \dontrun{
+#' 
 #' files <- list.files(path = "C:/Users/awbarclay/Documents/biomark split tests", pattern = "*Combined Chip Run*", full.names = TRUE)
 #' 
-#' split_combchip_loki_import(files = files, nlines = 9216)
+#' GCLr::split_combchip_loki_import(files = files, nlines = 9216)
 #' 
 #' }
 #' 
