@@ -6,7 +6,7 @@
 #' @param data the unmodified output from [rubias::self_assign()]
 #' @param thres_levels the assignment thresholds levels that you want to plot
 #' @param group_names the reporting group names
-#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop. 
+#' @param ncores A numeric value for the number of cores to use. 
 #' 
 #' @seealso [rubias::self_assign()]
 #' 

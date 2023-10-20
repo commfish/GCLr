@@ -18,7 +18,7 @@ loo_roc_rate_calc(
 
 \item{group_names}{the reporting group names}
 
-\item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop.}
+\item{ncores}{A numeric value for the number of cores to use.}
 }
 \value{
 This function produces a tibble 10 variables:
