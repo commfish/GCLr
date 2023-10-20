@@ -32,7 +32,7 @@ Check with lab staff if you aren't sure what to put here.}
 This function produces a tibble containing the following fields:
 \itemize{
 \item \strong{Project}: project name
-\item \strong{SILLY_FISH_ID}: silly code and fish number
+\item \strong{SILLY_FISHID}: silly code and fish number
 \item \strong{Plate_ID}: extraction plate ID number
 \item \strong{i7name}: i7 barcode name for each plate
 \item \strong{i7sequence}: i7 barcode sequence
@@ -63,7 +63,7 @@ as of 9/12/23 the lab is only using i7 barcodes '001'-'075'.
 \examples{
 \dontrun{
 
- get_gtseq_sample_sheet (project = "P015", i7_NAME_start = "001", i7_NAME_max = 75, dir = path.expand("~"), username = "awbarclay", password = scan(path.expand("~/R/usr.pw"), what = "")[2])
+ get_gtseq_sample_sheet (project = "P015", i7_NAME_start = "001", i7_NAME_max = 75, dir = path.expand("~"), username = "awbarclay", password = "password")
 
 }
            

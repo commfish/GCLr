@@ -1,14 +1,15 @@
 #' Get Genotypes
 #'
-#' This function pulls a genotypes report from LOKI and writes the data to a UTF-8 coded .csv file.
+#' This function pulls a genotypes report from LOKI and writes the data to an Excel file.
 #'
 #' @param project_name A character vector of GCL project names to pull from LOKI (default = NULL).
 #' @param sillyvec A character vector of silly codes without the ".gcl" extension (default = NULL).
 #' @param loci A character vector of locus names as spelled in LOKI (default = NULL).
-#' @param file The full file path with .csv extension for writing output genotypes file; with "\\" or "/" separator between folder.
+#' @param file The full file path with .xlsx extension for writing output genotypes file; with "\\" or "/" separator between folder.
 #' @param username Your user name for accessing LOKI.
 #' @param password Your password for accessing LOKI.
 #' @param open.file Logical, if set to TRUE, the .csv file will open after it has been written (default = FALSE).
+#' @param proj.stats whether you want a formatted Excel workbook with project genotype statistics (TRUE) or an unformatted Excel file without statistics (FALSE) (default = FALSE)
 #' 
 #' @returns A slim, tibble and a UTF-8 coded .csv file with single column genotypes in a wide format (1 column per locus):
 #'     \itemize{
@@ -23,20 +24,36 @@
 #' 
 #' @details This function requires the R package "RJDBC" for connecting to LOKI.
 #' It connects to LOKI using the provided \code{username} and \code{password}, and retrieves genotypes and and slim attributes.
-#' The genotypes report will only contain DNA plate IDs if project_name is supplied.
+#' The genotypes report will only contain DNA plate IDs if project_name is supplied. When `project_name` is supplied and `proj.stats = TRUE`, the function calls on `GCLr::proj_geno_stats()` to produce a formatted Excel workbook with genotype statistics.
+#' 
+#' @seealso [GCLr::proj_geno_stats()]
 #'
 #' @examples
 #' \dontrun{
-#' Geno_locisilly <- GCLr::get_geno(sillyvec = sillyvec, loci = loci, file = path.expand("~/TestGenotypesReport_sillyloci.csv"), username = "awbarclay", password = password, project_name = NULL)
-#' Geno_silly <- GCLr::get_geno(sillyvec = sillyvec, loci = NULL, file = path.expand("~/TestGenotypesReport_silly.csv"), username = "awbarclay", password = password, project_name = NULL)
-#' Geno_proj <- GCLr::get_geno(project_name = "K205", file = path.expand("~/TestGenotypesReport_proj.csv"), username = "awbarclay", password = password, open.file = TRUE)
+#' Geno_locisilly <- GCLr::get_geno(sillyvec = sillyvec, loci = loci, file = path.expand("~/TestGenotypesReport_sillyloci.xlsx"), username = "awbarclay", password = password, project_name = NULL)
+#' Geno_silly <- GCLr::get_geno(sillyvec = sillyvec, loci = NULL, file = path.expand("~/TestGenotypesReport_silly.xlsx"), username = "awbarclay", password = password, project_name = NULL)
+#' Geno_proj <- GCLr::get_geno(project_name = "K205", file = path.expand("~/TestGenotypesReport_proj.xlsx"), username = "awbarclay", password = password, open.file = TRUE)
 #' }
 #' 
 #' @export
-get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, file, username, password, open.file = FALSE){  
+get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, file, username, password, open.file = FALSE, proj.stats = FALSE){  
 
   # Recording function start time
   start.time <- Sys.time()
+  
+  #Make sure a project name is supplied if proj.stats = TRUE
+  if(proj.stats == TRUE & is.null(project_name)){
+    
+    stop("A project name must be supplied when proj.stats = TRUE")
+    
+  }
+  
+  # Checking to make sure a file path is supplied
+  if(!exists("file") | !length(grep("*.xlsx", file, value = FALSE)) == 1){
+    
+    stop("The user must supply a file path with xlsx extension for writing out genotypes table.")
+    
+  }
   
   # Checking to make sure the correct combination of arguments is being use. If wrong, the function will stop and print an error message to the console.
   if(is.null(sillyvec) & is.null(loci) & is.null(project_name)|
@@ -50,12 +67,6 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, file, us
     
     }
   
-  # Checking to make sure a file path is supplied
-  if(!exists("file") | !length(grep("*.csv", file, value = FALSE)) == 1){
-    
-    stop("The user must supply a file path with csv extension for writing out genotypes table.")
-    
-    }
   
   # Setting default java.parameters
   options(java.parameters = "-Xmx10g")
@@ -147,11 +158,19 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, file, us
    
      }
     
-  # Write data to an excel csv file
+  if(proj.stats == TRUE){
+    
+    GCLr::proj_geno_stats(report = dataAll, file = file)
+    
+  }else{
+    
+    # Write data to an excel file
     dataAll %>% 
-      readr::write_excel_csv(file = file)
-  
-  # Open CSV file in excel if open.file is set to TRUE
+      writexl::write_xlsx(path = file)
+    
+  }
+    
+  # Open file in excel if open.file is set to TRUE
   if(open.file == TRUE){
     
     shell(file, wait = FALSE)
@@ -161,7 +180,7 @@ get_geno <- function(project_name = NULL, sillyvec = NULL, loci = NULL, file, us
   # Calculate the time it took the function to pull and write data and print time to console
   stop.time <- Sys.time() 
   
-  message(paste0("CSV file writen to:", tools::file_path_as_absolute(file)))
+  message(paste0("Excel file writen to:", tools::file_path_as_absolute(file)))
   print(stop.time-start.time)
   
   # Return data to assign to an object

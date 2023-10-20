@@ -95,6 +95,15 @@ library(magrittr) #get tidy pipe from this
 This is a function for making the tables look nice. Do not change.
 ```{r formatfun}
 qc_table <- function(x, page.length = NULL){ 
+  
+  cols <- names(x)
+  
+  dbl <- x %>% 
+    type.convert(as.is = TRUE) %>% 
+    dplyr::summarize(dplyr::across(all_of(cols), is.double)) %>% 
+    unlist()
+
+  
   DT::datatable(data = x,
     rownames = FALSE,
     filter = "top",
@@ -108,13 +117,12 @@ qc_table <- function(x, page.length = NULL){
                        list(
                          extend = 'collection',
                          buttons = c('csv', 'excel'),
-                         text = 'Download'
-                       )
-                     ))
-)}
+                         text = 'Download')))
+  ) %>% 
+    DT::formatRound(columns = dbl, digits = 3)
+    
+  }
 ```
-
-
 
 
 # Read Project Genotypes
@@ -514,13 +522,13 @@ The last step in the process is to perform a duplicate check on any individuals 
 conflicts <- combined_conflicts %>%
   dplyr::filter(concordance_type %in% c("Het-Het", "Het-Homo", "Homo-Het", "Homo-Homo")) %>%
   dplyr::count(SillySource) %>%
-  dplyr::mutate(p = n / length(loci)) %>% 
-  janitor::tabyl(p)
+  dplyr::mutate(p = n / length(loci)) 
 
 # Plot a histogram of conflict rate
 if(nrow(conflicts)>0){
   
   plot <- conflicts %>%
+  janitor::tabyl(p) %>% 
   dplyr::bind_rows(tibble::tibble(p = NA, n = 2, percent = NA)) %>% 
   ggplot2::ggplot(ggplot2::aes(y = n, x = p)) +
   ggplot2::scale_y_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))+
@@ -534,7 +542,6 @@ if(nrow(conflicts)>0){
   ggplot2::ggtitle(paste0("QC Individual Conflict Rate\n Note the red line is set to: ", conflict_rate))
   
 }else{plot <- "There were no conflicts."}
-
 
 suppressWarnings(print(plot)) 
 ```
@@ -566,12 +573,15 @@ Now that we've ensured the project and qc data match, after accounting for unrel
 Here is a table that shows an overall summary, by silly, for the project.
                                          
 ```{r summ_by_silly}
+qc_sillys_n <- qc_sillys_n %>% 
+  dplyr::mutate(silly = gsub(pattern = "*qc", replacement = "", x = silly))
+  
 summary_by_silly <-
   project_sillys_n %>%
   dplyr::left_join(failure_rate$silly_failure_rate, by = "silly") %>%
-  dplyr::rename("Failure Rate" = fail) %>%
-  dplyr::mutate("Total qc Fish" = qc_sillys_n %>% 
-                  dplyr::pull(n))
+  dplyr::rename(`Failure Rate` = fail) %>%
+  dplyr::left_join(qc_sillys_n, by = "silly") %>% 
+  dplyr::rename(`Total qc Fish` = n)
 
 summary_by_silly %>% 
   qc_table()

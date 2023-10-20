@@ -1,3 +1,24 @@
+# GCLr 0.3.0
+
+## Bug fixes
+
+The output from `get_tissue_data()` previously contained zeros instead of NA's in the follow variables: IS_MISSING_PAIRED_DATA_EXISTS, WELL_HAS_MORE_THAN_ONE_SAMPLE, IS_PRESENT_IN_DATASHEET, IS_PRESENT_BUT_NOT_IN_DS This was messing up the Loki tissue importer because it imports any non NA values, including zeros, as being TRUE. In the case of IS_MISSING_PAIRED_DATA_EXISTS, importing a column of zero's and 1's wuold make Loki mark all tissues as missing. Now there are only 1's (missing tissues) and NA's (not missing) in the output.
+
+`get_tissue_locations` - this function was not exported previously and the example had the wrong function names. Now the function documentation is correct and the function has been exported so it can be used in the package.
+
+`get_gtseq_sample_sheet` - the output from this function had the columns in the wrong order for the GTseq pipeline, they are now in the correct order.
+
+## New additions
+
+`split_combchip_loki_import()` This function takes a combined Biomark import file and splits it up into multiple files so genotypes can be imported into Loki in smaller batches.
+
+`loo_roc_rate_calc()` takes the leave-one-out output from `rubias::self_assign()` and calculates true positive, false negative, false positive, and true negative assignment error rates for each reporting group. The output from this function can then be used to create a Receiver Operator Characteristic curve plot for determining an appropriate individual assignment threshold and whether a reporting group is sufficiently identifiable for producing individual assignment estimates. A ROC curve plotting function will be added to a future version of GCLr.
+
+`proj_geno_stats()` takes the genotypes report object from `get_geno()`, calculates genotypes statistics, and write them to a formatted Excel workbook.
+
+## Enhancements
+`get_geno()` has a new argument `proj.stats`. When `project_name` is supplied and `proj.stats = TRUE`, the function calls on `proj_geno_stats()`, which calculates genotypes statistics and writes them to a formatted Excel workbook. 
+
 # GCLr 0.2.3
 
 ## Bug fixes
@@ -26,7 +47,7 @@ The `qc_conflict_rate` code chunk in the `qc_template` now prints a message belo
 
 ## Bug fix
 
-Fixed rounding issue with `split_gtscore_loki_import()`where it wouldn't produce the last file if the number of lines remaining was less than half of the `nlines` argument.
+Fixed rounding issue with `split_gtscore_loki_import()` where it wouldn't produce the last file if the number of lines remaining was less than half of the `nlines` argument.
 
 # GCLr 0.2.0
 

@@ -25,8 +25,11 @@
 #' \dontrun{
 #'  unit <- c("A", "B", "C", "D", "E", "F") # We want these units in B7
 #'  
-#'  TissueLocations_2R.GCL(unit = unit, username = "awbarclay", password = password, bad_locations = TRUE, all_data = TRUE)
+#'  get_tissue_locations(unit = unit, username = "awbarclay", password = password, bad_locations = TRUE, all_data = TRUE)
+#' 
 #' }
+#' 
+#' @export
 get_tissue_locations <- function(unit, username, password, bad_locations = TRUE, all_tissues = TRUE) {
   
   start.time <- Sys.time()
