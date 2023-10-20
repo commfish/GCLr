@@ -25,7 +25,7 @@
 #' @returns This function produces a tibble containing the following fields:
 #'    \itemize{
 #'                \item \strong{Project}: project name
-#'                \item \strong{SILLY_FISH_ID}: silly code and fish number
+#'                \item \strong{SILLY_FISHID}: silly code and fish number
 #'                \item \strong{Plate_ID}: extraction plate ID number
 #'                \item \strong{i7name}: i7 barcode name for each plate
 #'                \item \strong{i7sequence}: i7 barcode sequence
@@ -40,7 +40,7 @@
 #' @examples
 #' \dontrun{
 #' 
-#'  get_gtseq_sample_sheet (project = "P015", i7_NAME_start = "001", i7_NAME_max = 75, dir = path.expand("~"), username = "awbarclay", password = scan(path.expand("~/R/usr.pw"), what = "")[2])
+#'  get_gtseq_sample_sheet (project = "P015", i7_NAME_start = "001", i7_NAME_max = 75, dir = path.expand("~"), username = "awbarclay", password = "password")
 #' 
 #' }
 #'            
@@ -61,13 +61,9 @@ get_gtseq_sample_sheet <- function(project, i7_NAME_start, i7_NAME_max = 75, dir
   
   procedure <- paste0("BEGIN AKFINADM.POPULATE_TEMP_GTSEQ_SAMPLE_SHEET_CSV('", project, "', '", i7_NAME_start, "', ", as.numeric(i7_NAME_max), ", '", username, "'); END;") #Sample sheet procedure
   
-  #procedure <- paste0("BEGIN AKFINADM.POPULATE_TEMP_GTSEQ_SAMPLE_SHEET_CSV('", project, "', '", i7_NAME_start, "', ", as.numeric(i7_NAME_max), ", 'blah'); END;") #Sample sheet procedure
-  
   RJDBC::dbSendUpdate(con, procedure)  #Pulling data from LOKI using the connection and genotype query
   
   my.table <- RJDBC::dbGetQuery(con, paste0("SELECT * FROM AKFINADM.TEMP_GTSEQ_SAMPLE_SHEET_CSV_", username, " ORDER BY PLATE_ID, I5_NAME"))
-  
-  #my.table <- RJDBC::dbGetQuery(con, paste0("SELECT * FROM AKFINADM.TEMP_GTSEQ_SAMPLE_SHEET_CSV_blah ORDER BY PLATE_ID, I5_NAME"))
   
   discon <- RJDBC::dbDisconnect(con)
   
@@ -76,10 +72,21 @@ get_gtseq_sample_sheet <- function(project, i7_NAME_start, i7_NAME_max = 75, dir
     stop("No inforation exists for project ", project, ". Check to make sure the spelling is correct and that the project iformation has been entered in iStrategy.")
 
   }
+  
+  output <- my.table %>% 
+    dplyr::select(Project = LAB_PROJECT_NAME, 
+                  SILLY_FISHID, 
+                  PlateID = PLATE_ID, 
+                  i7name = I7_NAME, 
+                  i7sequence = I7_SEQ_INDEX, 
+                  WellID = WELL_NO, 
+                  i5name = I5_NAME, 
+                  i5sequence = I5_SEQ_INDEX, 
+                  Panel = PANEL)
 
   file <- paste0(dir, "/GTSeq_SampleSheet_FlowcellID_", project, ".csv")
   
-  readr::write_csv(my.table, file = file)
+  readr::write_csv(output, file = file)
   
   return(my.table)
   
