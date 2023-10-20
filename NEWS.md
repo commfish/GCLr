@@ -14,6 +14,11 @@ The output from `get_tissue_data()` previously contained zeros instead of NA's i
 
 `loo_roc_rate_calc()` takes the leave-one-out output from `rubias::self_assign()` and calculates true positive, false negative, false positive, and true negative assignment error rates for each reporting group. The output from this function can then be used to create a Receiver Operator Characteristic curve plot for determining an appropriate individual assignment threshold and whether a reporting group is sufficiently identifiable for producing individual assignment estimates. A ROC curve plotting function will be added to a future version of GCLr.
 
+`proj_geno_stats()` takes the genotypes report object from `get_geno()`, calculates genotypes statistics, and write them to a formatted Excel workbook.
+
+## Enhancements
+`get_geno()` has a new argument `proj.stats`. When `project_name` is supplied and `proj.stats = TRUE`, the function calls on `proj_geno_stats()`, which calculates genotypes statistics and writes them to a formatted Excel workbook. 
+
 # GCLr 0.2.3
 
 ## Bug fixes
