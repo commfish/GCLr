@@ -18,7 +18,7 @@ loo_roc_rate_calc(
 
 \item{group_names}{the reporting group names}
 
-\item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop.}
+\item{ncores}{A numeric value for the number of cores to use.}
 }
 \value{
 This function produces a tibble 10 variables:
@@ -33,9 +33,7 @@ This function produces a tibble 10 variables:
 \item \code{acc} (double): accuracy rate
 \item \code{level} (double): the assignment threshold level (proportion)
 \item \code{threshold} (character): the assignment threshold level (percent) for ROC curve plots.
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{       \}
-}\if{html}{\out{</div>}}
+}
 }
 \description{
 This function takes the leave-one-out output from \code{\link[rubias:self_assign]{rubias::self_assign()}} and calculates true positive, false negative, false positive, and true negative assignment error rates for each reporting group.

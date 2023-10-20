@@ -6,7 +6,7 @@
 #' @param data the unmodified output from [rubias::self_assign()]
 #' @param thres_levels the assignment thresholds levels that you want to plot
 #' @param group_names the reporting group names
-#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop. 
+#' @param ncores A numeric value for the number of cores to use. 
 #' 
 #' @seealso [rubias::self_assign()]
 #' 
@@ -14,7 +14,7 @@
 #' If you want to be able to work on your computer while the function is running make sure to set `ncores` below the total number of cores on your machine.
 #' 
 #' @returns This function produces a tibble 10 variables:
-#' \itemize{
+#'      \itemize{
 #'                \item \code{repunit} (character): reporting group
 #'                \item \code{fn} (integer): number of false negative assignments
 #'                \item \code{tn} (integer): number of true negative assignments
@@ -25,8 +25,7 @@
 #'                \item \code{acc} (double): accuracy rate
 #'                \item \code{level} (double): the assignment threshold level (proportion)
 #'                \item \code{threshold} (character): the assignment threshold level (percent) for ROC curve plots.
-#'          
-#'            }
+#'          }
 #' 
 #' @examples
 #'
