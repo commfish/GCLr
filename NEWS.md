@@ -1,7 +1,5 @@
 # GCLr 0.3.0
 
-# GCLr 0.3.3
-
 ## Bug fixes
 
 The output from `get_tissue_data()` previously contained zeros instead of NA's in the follow variables: IS_MISSING_PAIRED_DATA_EXISTS, WELL_HAS_MORE_THAN_ONE_SAMPLE, IS_PRESENT_IN_DATASHEET, IS_PRESENT_BUT_NOT_IN_DS This was messing up the Loki tissue importer because it imports any non NA values, including zeros, as being TRUE. In the case of IS_MISSING_PAIRED_DATA_EXISTS, importing a column of zero's and 1's wuold make Loki mark all tissues as missing. Now there are only 1's (missing tissues) and NA's (not missing) in the output.
