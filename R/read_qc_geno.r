@@ -3,20 +3,20 @@
 #' @description This function reads QC data from Biomark CSV files. It's called on by [GCLr::qc()].
 #'
 #' @param qc_csv_filepaths character vector specifying the file paths of the QC CSV files.
-#' @param skip number of lines to skip while reading the CSV files when type = "Biomark". (default = 15).
+#' @param skip number of lines to skip while reading the CSV files when type = "TaqMan". (default = 15).
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = LocusControl)  
-#' @param type the type of project ("Biomark", "uSat", or "GT-seq"), (default = "Biomark") 
+#' @param type the type of project ("TaqMan", "uSat", or "GT-seq"), (default = "TaqMan") 
 #'
 #' @returns Returns a few silly objects to the global environment 
 #'   - `qc.gcl` tibble objects
 #'   - `qc_sillys`; a character vector of qc sillys
 #'
 #' @export
-read_qc_geno <- function(qc_csv_filepaths, skip = 15, LocusCtl = LocusControl, type = c("Biomark", "uSat", "GT-seq")[1]) {
+read_qc_geno <- function(qc_csv_filepaths, skip = 15, LocusCtl = LocusControl, type = c("TaqMan", "uSat", "GT-seq")[1]) {
   
   sillyvec <- as.vector(sapply(objects(pattern = "*\\.gcl", pos = 1), function(gclname){strsplit(gclname, split = "\\.gcl")[[1]][1]}))
   
-  if(type == "Biomark"){
+  if(type == "TaqMan"){
     
     Genotypesqc <- lapply(qc_csv_filepaths, function(pth){
       
