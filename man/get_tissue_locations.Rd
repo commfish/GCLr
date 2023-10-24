@@ -43,6 +43,8 @@ If you set \code{all_tissues = TRUE} the resulting output will be very large!
 \dontrun{
  unit <- c("A", "B", "C", "D", "E", "F") # We want these units in B7
  
- TissueLocations_2R.GCL(unit = unit, username = "awbarclay", password = password, bad_locations = TRUE, all_data = TRUE)
+ get_tissue_locations(unit = unit, username = "awbarclay", password = password, bad_locations = TRUE, all_data = TRUE)
+
 }
+
 }

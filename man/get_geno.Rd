@@ -11,7 +11,8 @@ get_geno(
   file,
   username,
   password,
-  open.file = FALSE
+  open.file = FALSE,
+  proj.stats = FALSE
 )
 }
 \arguments{
@@ -21,13 +22,15 @@ get_geno(
 
 \item{loci}{A character vector of locus names as spelled in LOKI (default = NULL).}
 
-\item{file}{The full file path with .csv extension for writing output genotypes file; with "\\" or "/" separator between folder.}
+\item{file}{The full file path with .xlsx extension for writing output genotypes file; with "\\" or "/" separator between folder.}
 
 \item{username}{Your user name for accessing LOKI.}
 
 \item{password}{Your password for accessing LOKI.}
 
 \item{open.file}{Logical, if set to TRUE, the .csv file will open after it has been written (default = FALSE).}
+
+\item{proj.stats}{whether you want a formatted Excel workbook with project genotype statistics (TRUE) or an unformatted Excel file without statistics (FALSE) (default = FALSE)}
 }
 \value{
 A slim, tibble and a UTF-8 coded .csv file with single column genotypes in a wide format (1 column per locus):
@@ -42,18 +45,21 @@ A slim, tibble and a UTF-8 coded .csv file with single column genotypes in a wid
 }
 }
 \description{
-This function pulls a genotypes report from LOKI and writes the data to a UTF-8 coded .csv file.
+This function pulls a genotypes report from LOKI and writes the data to an Excel file.
 }
 \details{
 This function requires the R package "RJDBC" for connecting to LOKI.
 It connects to LOKI using the provided \code{username} and \code{password}, and retrieves genotypes and and slim attributes.
-The genotypes report will only contain DNA plate IDs if project_name is supplied.
+The genotypes report will only contain DNA plate IDs if project_name is supplied. When \code{project_name} is supplied and \code{proj.stats = TRUE}, the function calls on \code{GCLr::proj_geno_stats()} to produce a formatted Excel workbook with genotype statistics.
 }
 \examples{
 \dontrun{
-Geno_locisilly <- GCLr::get_geno(sillyvec = sillyvec, loci = loci, file = path.expand("~/TestGenotypesReport_sillyloci.csv"), username = "awbarclay", password = password, project_name = NULL)
-Geno_silly <- GCLr::get_geno(sillyvec = sillyvec, loci = NULL, file = path.expand("~/TestGenotypesReport_silly.csv"), username = "awbarclay", password = password, project_name = NULL)
-Geno_proj <- GCLr::get_geno(project_name = "K205", file = path.expand("~/TestGenotypesReport_proj.csv"), username = "awbarclay", password = password, open.file = TRUE)
+Geno_locisilly <- GCLr::get_geno(sillyvec = sillyvec, loci = loci, file = path.expand("~/TestGenotypesReport_sillyloci.xlsx"), username = "awbarclay", password = password, project_name = NULL)
+Geno_silly <- GCLr::get_geno(sillyvec = sillyvec, loci = NULL, file = path.expand("~/TestGenotypesReport_silly.xlsx"), username = "awbarclay", password = password, project_name = NULL)
+Geno_proj <- GCLr::get_geno(project_name = "K205", file = path.expand("~/TestGenotypesReport_proj.xlsx"), username = "awbarclay", password = password, open.file = TRUE)
 }
 
+}
+\seealso{
+\code{\link[=proj_geno_stats]{proj_geno_stats()}}
 }
