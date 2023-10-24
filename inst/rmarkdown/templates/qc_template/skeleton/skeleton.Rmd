@@ -3,19 +3,34 @@ title: " "
 author: " "
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_notebook:
     toc: true
     toc_float: true
     code_folding: hide
-packages:
-  -GCLr
-  -tidyverse
-  -plotly
-  -DT
+# packages:
+#   -GCLr
+#   -tidyverse
+#   -plotly
+#   -DT
 ---
 
+# Session Information
+Here is a summary of your R instance, package version, etc. This is simply a record of which version of the package was used for QC. 
+```{r}
+`%>%` <- magrittr::`%>%` #grab tidy pipe
+
+info <- sessioninfo::session_info(info = "auto")
+
+info$platform
+
+info$packages %>% dplyr::filter(package == "GCLr")
+```
+
 # Intro
-This is an R markdown template for a QC. Once loaded, you simply save the file in the qc directory, fill in a few inputs at the top, then run the code and it will generate a QC summary html.
+
+This is an R markdown template for a QC. **xxxThe notebook contains two sections. The first is for project data analysis and is meant to be run as a quick check of the project. The second section is the full QC analysis and occurs after completion of a project but prior to importing data.xxx**
+
+Once loaded, you simply save the file in the QC directory, fill in a few inputs at the top, then run the code and it will generate a QC summary html.
 
 # Background
 The previous QC script consisted of an R script with Excel and other outputs, this exports everything in a single interactive html notebook. The purpose is to keep the QC analysis and results together, in a more reproducible format, while allowing for exporting to Excel, if necessary.
@@ -29,24 +44,24 @@ The previous QC script consisted of an R script with Excel and other outputs, th
     4) Add your review notes to the top of the file (in the Lab or P/L review section), prior to finalizing (i.e., saving or knitting)!
 
 
-# Lab Review
-*Here is a section for laboratory staff to take notes, and give a summary of the QC*
+# Lab Project Review
+*Here is a section for notes and a summary of the preliminary project QC*
 
     Author:
     Date:
     Notes:
 
+**XXX this is a quick summary, but each section (QC and project) will get a summary at the end of their respective sections**
 
 
 
-
-# Project Leader Review
-*Here is a section for project leaders to take notes, and give a summary of the QC*
+# Final QC Review
+*Here is a section for notes and a summary of the final project QC*
 
     Author:  
     Date:
     Notes:
-
+**XXX this is a quick summary, but each section (QC and project) will get a summary at the end of their respective sections**
 
 
 
@@ -56,22 +71,21 @@ The previous QC script consisted of an R script with Excel and other outputs, th
 Now we can move onto required user inputs.
 *This is the only spot where you need to enter information!*
 ```{r inputs}
-username <- "" # LOKI username 
-
-.password <- "" # LOKI password
-
 dirqc <- "" # The directory where the QC files are located.
 
-species <- "" # The species for the project (e.g., "pink").
+species <- "" # The species for the project (e.g., "pink"). Note that this is lower case.
 
 project <- "" # The project name (e.g., "P014").
 
-project_type <- "" # The type of project ("Biomark", "uSat", or "GT-seq").
+project_type <- "" # The type of project ("TaqMan", "uSat", or "GT-seq").
 ```
 
 # Optional inputs
 Here are a few more inputs, but are optional and should probably remain the defaults (i.e., do not change unless you know what you are doing.)
 ```{r optional_input}
+username <- readLines(con = "//DFGANCRDC01.dfg.alaska.local/Genetics/Anchorage/Analysis/R files/usr.pw")[1] # LOKI username 
+.password <- readLines(con = "//DFGANCRDC01.dfg.alaska.local/Genetics/Anchorage/Analysis/R files/usr.pw")[2] # LOKI password
+
 qc_summary_file <- paste("Project", project,"QC Summary R Script.xlsx") # The file path for the QC summary file; This is automatically generated using `project` (i.e., don't change unless you know what you're doing).
 
 conflict_rate <- 0.10 # The conflict rate threshold at which dupcheck between sillys occurs (default is 0.10).
@@ -88,8 +102,6 @@ knitr::opts_chunk$set(
   fig.pos = '!h',    # Place figures here and don't float
   fig.width = 12     # Set figure width
 )
-
-library(magrittr) #get tidy pipe from this
 ```
 
 This is a function for making the tables look nice. Do not change.
@@ -116,8 +128,9 @@ qc_table <- function(x, page.length = NULL){
 
 
 
+# Project Data Analysis
 
-# Read Project Genotypes
+## Read Project Genotypes
 The next step is to read in the project genotypes from LOKI.
 
 ```{r project_genos}
@@ -128,13 +141,13 @@ rm(.password) #ditch password since no longer needed
 loci <- LocusControl$locusnames # grab list of loci for use later
 ```
 
-## Calculate Failure Rate
+### Calculate Failure Rate
 Now we can calculate the failure rate of the project.
 ```{r fail_rate}
 failure_rate <- GCLr::failure_rate(sillyvec = project_sillys)  
 ```
 
-### Failure Rate by Silly
+#### Failure Rate by Silly
 This is a table showing the failure rate by silly for the project.
 ```{r fail_rate_silly_table}
 failure_rate$silly_failure_rate %>% 
@@ -148,7 +161,7 @@ failure_rate$plot_silly_failure_rate
 ```
 
 
-### Failure Rate by Locus
+#### Failure Rate by Locus
 This is the failure rate by locus for the project.
 ```{r fail_rate_locus}
 failure_rate$locus_failure_rate %>% 
@@ -157,7 +170,7 @@ failure_rate$locus_failure_rate %>%
   DT::formatStyle('fail', backgroundColor = DT::styleInterval(0.04, c('white', 'yellow')))
 ```
 
-### Failure Rate by Plate
+#### Failure Rate by Plate
 This is a table showing the failure rate by plate for the project.
 ```{r fail_rate_plate_table}
 failure_rate$plate_failure_rate %>% 
@@ -170,7 +183,7 @@ And here is a plot showing those data.
 ```{r fail_rate_plate_plot}
 failure_rate$plot_plate_failure_rate
 ```
-### Overall Failure Rate
+#### Overall Failure Rate
 This is the overall failure rate for the project.
 ```{r fail_rate_overall}
 failure_rate$overall_failure_rate %>% 
@@ -178,17 +191,200 @@ failure_rate$overall_failure_rate %>%
 ```
 
 
-# Read in QC Genotypes
+## Project QA checks
+The next step is to conduct QA of the project. This ensures that we don't have any hidden, or otherwise lurking, bad data. 
+
+### n genotyped
+First calculate the number of fish that were genotyped
+```{r samp_size}
+project_sillys_n <- tibble::tibble(silly = project_sillys) %>% 
+   dplyr::mutate(genotyped = GCLr::silly_n(sillyvec = project_sillys) %>% dplyr::pull(n))
+
+project_sillys_n  %>% 
+  qc_table()# view sample size table
+```
+
+### Alternate Species
+Now, we'll check for alternate species. Note that this is only done for chum and sockeye and if there are certain markers in the markersuite. Otherwise, NA is added to the sample size table. 
+
+The purpose of this plot is to show a summary a few markers that are indicative of an incorrect species. Specifically, there are informative "failure" and "alternate" markers that can be used to determine if a "sockeye" is actually chum or a "chum" is a sockeye. The failure markers are informative because they fail for one of the species. Similarly, alternate markers can be informative because they exhibit a different (i.e., alternate) genotype. The plot shows a summary of the proportions of these failure and alternate markers identified for each fish. For example, a sockeye that is actually a chum may show up as 5/5 (proportion = 1) alternate markers and it may fail for 6/6 (proportion = 1) failure markers. Or it could have alternate genotype in 4/5 cases (proportion = 0.8) and failure in 5/6 (proportion = 0.83333) cases, which would still be a strong indicator that it is not sockeye. 
+
+*Note, we're not removing these fish as you would during a normal project (i.e., GCLr::remove_alt_species), as they may be helpful in resolving conflicts. It's also important to note that the sample size is calculated based on assumed defaults, please read the sample size calculation commentary below for details.* 
+
+
+**XXX - In the plot below, are the two fish in the upper right hand corner of the plot potential alternates? Maybe highlight circles that are likely alternates?**
+
+```{r alt_spp}
+# only run if spp = chum or sockeye and the loci are in the list, otherwise nothing to check
+if (any(species %in% c("chum", "sockeye")) &
+    any(loci %in% c("Oke_U1018-50", "Oke_U2032-74", "Oke_Cr386", "Oke_AhR1-78", "Oke_CKS1-94", "Oke_e2ig5-50", "Oke_U1002-262", "Oke_U1025-135",
+        "Oke_u200-385", "Oke_U2025-86", "Oke_U502-241", "One_ctgf-301", "One_KCT1-453", "One_taf12-248", "One_U1013-108", "One_U1214-107", "One_Hsp47", "One_STC-410", "One_U1010-81", "One_MHC2_190", "One_cin-177", "One_vatf-214"))
+    ) {
+  
+  # run alternate species checks
+  alternate_spp <-
+    suppressMessages(GCLr::find_alt_species(sillyvec = project_sillys, species = species))
+  
+  # since we're not removing these fish, we must manually calculate the number of alternates. Important to note that we're using a 0.5 cutoff for alternate and failure, as this is the default for GCLr::remove_alt_species(). Any desired changes to the defaults need to be reflected here!
+  
+  alt_indivs <- alternate_spp %>% 
+                    dplyr::mutate(alternate = dplyr::case_when(failure > 0.5 & alternate > 0.5 ~ TRUE,
+                                                        TRUE ~ FALSE))
+  
+  n_alts <- alt_indivs %>%
+                    tidyr::separate(silly_fish, into = c("silly", "fishID")) %>% 
+                    dplyr::group_by(silly) %>% 
+                    dplyr::summarize(wrong_spp = sum(alternate))
+  
+  project_sillys_n <- project_sillys_n %>%
+    dplyr::left_join(n_alts, by = "silly")
+                     
+} else {
+  # update sample size table with NA if does not meet species or loci criteria
+  project_sillys_n <- project_sillys_n %>%
+    dplyr::mutate(wrong_spp = NA_integer_)
+}
+
+```
+
+ Check out sample size table:
+
+```{r samp_size_alts}
+project_sillys_n  %>% 
+  qc_table()# view sample size table
+```
+
+Here we can view the table containing failed and alternate markers for each fish. This table shows the proportion of 'failure' and 'alternate' indicator markers that were found for each fish. These data are what's used to determine whether a chum or sockeye was incorrectly identified. 
+
+```{r alt_spp_table}
+if (!species %in% c("sockeye", "chum")) {
+  message("Only applicable for chum and sockeye")
+}else{
+  alternate_spp %>% 
+    dplyr::arrange(desc(failure)) %>% 
+    dplyr::arrange(desc(alternate)) %>% 
+    qc_table()
+}
+
+```
+
+
+### Missing (80% rule)
+Check for individuals missing \>=20% of genotypes (i.e. the 80% rule). 
+
+*Note that we are removing fish here, since they have poor quality data and are not useful in resolving conflicts.*
+```{r miss_loci}
+MissLoci <- GCLr::remove_ind_miss_loci(sillyvec = project_sillys, proportion = 0.8, loci = loci)
+
+project_sillys_n <- project_sillys_n %>%
+    dplyr::mutate(missing =  genotyped - GCLr::silly_n(sillyvec = project_sillys) %>% dplyr::pull(n))
+```
+
+Check out the sample size table, after removing the fish with poor quality data
+```{r samp_size_miss}
+project_sillys_n %>% 
+  qc_table() # view sample size table
+```
+
+
+### Duplicate check.
+
+Remove duplicate individuals within the same collection. Typically we specify duplicates as a pair of individuals that share \>=95% of genotypes. 
+
+*Note that for QC purposes we are not removing any fish, just noting how many per silly. We need to retain all fish, as they may be helpful in resolving conflicts later.*
+
+```{r dupcheck}
+# Run dup check within silly
+dup_check_95_minproportion <-
+  GCLr::dupcheck_within_silly(
+    sillyvec = project_sillys,
+    loci = loci,
+    quantile = NULL,
+    minproportion = 0.95,
+    minnonmissing = 0.6,
+    ncores = 4,
+    LocusCtl = LocusControl
+  )
+
+# View dups
+dup_check_95_minproportion
+
+#calculate the number of duplicates. First check if the dup check object is 0, and stop there, otherwise, continue and calculate the number of duplicates as the number of unique ID's found in the duplicate check function above. 
+
+if (nrow(dup_check_95_minproportion) == 0) {
+
+  n_dups <- tibble::tibble(silly = project_sillys, duplicate = 0) #no duplicates if this object is empty
+
+} else{
+
+  n_dups <- dup_check_95_minproportion %>%
+        dplyr::mutate(
+          remove = dplyr::case_when(
+            Missing1 > Missing2 ~ ID1,
+            Missing2 > Missing1 ~ ID2,
+            Missing1 == Missing2 ~ ID1
+          )
+        ) %>%
+        dplyr::distinct(silly, remove) %>% 
+        dplyr::group_by(silly) %>% 
+        dplyr::summarise(duplicate = length(remove))
+
+ 
+
+}
+
+project_sillys_n <- project_sillys_n %>%
+  dplyr::left_join(n_dups, by = "silly") %>% 
+  tidyr::replace_na(replace = list(duplicate = 0))
+  
+  
+```
+
+Check out the sample size table, after checking for duplicates
+```{r samp_size_dups}
+project_sillys_n %>% 
+  qc_table() # view sample size table
+```
+
+### Final Sample Size
+This table shows the final sample size for each silly:
+```{r samp_size_final}
+project_sillys_n <- project_sillys_n %>%
+    dplyr::mutate(final = genotyped - wrong_spp - missing - duplicate)
+
+
+# view sample size table
+qc_table(project_sillys_n)
+
+```
+
+This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the project extractions! 
+
+
+**XXX ANDY - select individuals for QC function. Take into account missing, wrong spp, dups, etc. Have a user choice "want to select QC fish, Yes, No"**
+```{r}
+
+```
+
+
+
+**XXX Project summary section goes here**
+
+
+
+
+# QC Analysis
+## Read in QC Genotypes
 Move onto the QC genotypes now. 
     
 ```{r qc_genos}
 qc_files <-
   list.files(path = "Genotype Data Files", pattern = ".csv", full.names = TRUE, recursive = FALSE)
 
-if (project_type %in% c("Biomark", "uSat","GT-seq")) {
+if (project_type %in% c("TaqMan", "uSat","GT-seq")) {
   GCLr::read_qc_geno(qc_csv_filepaths = qc_files, type = project_type)
 } else {
-  message("project_type must be either 'Biomark', 'uSat', or' GT-seq' to read in qc genotypes")
+  message("project_type must be either 'TaqMan', 'uSat', or' GT-seq' to read in qc genotypes")
 }
 
 qc_sillys_n <- GCLr::silly_n(sillyvec = qc_sillys)
@@ -333,175 +529,9 @@ plotly::ggplotly(
 ```
 
 
-# QA checks
-The next step is to conduct QA of the project and qc genotypes. This ensures that we don't have any hidden, or otherwise lurking, bad data. 
+# QC QA checks
+The next step is to conduct QA of the QC extractions. We're not calculating the full sample sizes, etc., as shown above, simply dealing with missing loci (looking for no more than 20% loss). This ensures that we don't have any hidden, or otherwise lurking, bad data. 
 
-## Project Genotypes
-Here we'll do QA for the project:
-
-### n genotyped
-First calculate the number of fish that were genotyped
-```{r samp_size}
-project_sillys_n <- tibble::tibble(silly = project_sillys) %>% 
-   dplyr::mutate(genotyped = GCLr::silly_n(sillyvec = project_sillys) %>% dplyr::pull(n))
-
-project_sillys_n  %>% 
-  qc_table()# view sample size table
-```
-
-### Alternate Species
-Now, we'll check for alternate species. Note that this is only done for chum and sockeye and if there are certain markers in the markersuite. Otherwise, NA is added to the sample size table. 
-
-The purpose of this plot is to show a summary a few markers that are indicative of an incorrect species. Specifically, there are informative "failure" and "alternate" markers that can be used to determine if a "sockeye" is actually chum or a "chum" is a sockeye. The failure markers are informative because they fail for one of the species. Similarly, alternate markers can be informative because they exhibit a different (i.e., alternate) genotype. The plot shows a summary of the proportions of these failure and alternate markers identified for each fish. For example, a sockeye that is actually a chum may show up as 5/5 (proportion = 1) alternate markers and it may fail for 6/6 (proportion = 1) failure markers. Or it could have alternate genotype in 4/5 cases (proportion = 0.8) and failure in 5/6 (proportion = 0.83333) cases, which would still be a strong indicator that it is not sockeye. 
-
-*Note, we're not removing these fish as you would during a normal project (i.e., GCLr::remove_alt_species), as they may be helpful in resolving conflicts. It's also important to note that the sample size is calculated based on assumed defaults, please read the sample size calculation commentary below for details.* 
-
-
-**XXX - In the plot below, are the two fish in the upper right hand corner of the plot potential alternates? Maybe highlight circles that are likely alternates?**
-
-```{r alt_spp}
-# only run if spp = chum or sockeye and the loci are in the list, otherwise nothing to check
-if (any(species %in% c("chum", "sockeye")) &
-    any(loci %in% c("Oke_U1018-50", "Oke_U2032-74", "Oke_Cr386", "Oke_AhR1-78", "Oke_CKS1-94", "Oke_e2ig5-50", "Oke_U1002-262", "Oke_U1025-135",
-        "Oke_u200-385", "Oke_U2025-86", "Oke_U502-241", "One_ctgf-301", "One_KCT1-453", "One_taf12-248", "One_U1013-108", "One_U1214-107", "One_Hsp47", "One_STC-410", "One_U1010-81", "One_MHC2_190", "One_cin-177", "One_vatf-214"))
-    ) {
-  
-  # run alternate species checks
-  alternate_spp <-
-    suppressMessages(GCLr::find_alt_species(sillyvec = project_sillys, species = species))
-  
-  # since we're not removing these fish, we must manually calculate the number of alternates. Important to note that we're using a 0.5 cutoff for alternate and failure, as this is the default for GCLr::remove_alt_species(). Any desired changes to the defaults need to be reflected here!
-  
-  n_alts <- alternate_spp %>% 
-                    dplyr::mutate(alternate = dplyr::case_when(failure > 0.5 & alternate > 0.5 ~ TRUE,
-                                                        TRUE~FALSE)) %>%
-                    tidyr::separate(silly_fish, into = c("silly", "fishID")) %>% 
-                    dplyr::group_by(silly) %>% 
-                    dplyr::summarize(wrong_spp = sum(alternate))
-  
-  project_sillys_n <- project_sillys_n %>%
-    dplyr::left_join(n_alts, by = "silly")
-                     
-} else {
-  # update sample size table with NA if does not meet species or loci criteria
-  project_sillys_n <- project_sillys_n %>%
-    dplyr::mutate(wrong_spp = NA_integer_)
-}
-
-```
-
- Check out sample size table:
-
-```{r samp_size_alts}
-project_sillys_n  %>% 
-  qc_table()# view sample size table
-```
-
-Here we can view the table containing failed and alternate markers for each fish. This table shows the proportion of 'failure' and 'alternate' indicator markers that were found for each fish. These data are what's used to determine whether a chum or sockeye was incorrectly identified. 
-
-```{r alt_spp_table}
-if (!species %in% c("sockeye", "chum")) {
-  message("Only applicable for chum and sockeye")
-}else{
-  alternate_spp %>% 
-    dplyr::arrange(desc(failure)) %>% 
-    dplyr::arrange(desc(alternate)) %>% 
-    qc_table()
-}
-
-```
-### Missing (80% rule)
-Check for individuals missing \>=20% of genotypes (i.e. the 80% rule). 
-
-*Note that we are removing fish here, since they have poor quality data and are not useful in resolving conflicts.*
-```{r miss_loci}
-MissLoci <- GCLr::remove_ind_miss_loci(sillyvec = project_sillys, proportion = 0.8, loci = loci)
-
-project_sillys_n <- project_sillys_n %>%
-    dplyr::mutate(missing =  genotyped - GCLr::silly_n(sillyvec = project_sillys) %>% dplyr::pull(n))
-```
-
-Check out the sample size table, after removing the fish with poor quality data
-```{r samp_size_miss}
-project_sillys_n %>% 
-  qc_table() # view sample size table
-```
-
-
-### Duplicate check.
-
-Remove duplicate individuals within the same collection. Typically we specify duplicates as a pair of individuals that share \>=95% of genotypes. 
-
-*Note that for QC purposes we are not removing any fish, just noting how many per silly. We need to retain all fish, as they may be helpful in resolving conflicts later.*
-
-```{r dupcheck}
-# Run dup check within silly
-dup_check_95_minproportion <-
-  GCLr::dupcheck_within_silly(
-    sillyvec = project_sillys,
-    loci = loci,
-    quantile = NULL,
-    minproportion = 0.95,
-    minnonmissing = 0.6,
-    ncores = 4,
-    LocusCtl = LocusControl
-  )
-
-# View dups
-dup_check_95_minproportion
-
-#calculate the number of duplicates. First check if the dup check object is 0, and stop there, otherwise, continue and calculate the number of duplicates as the number of unique ID's found in the duplicate check function above. 
-
-if (nrow(dup_check_95_minproportion) == 0) {
-
-  n_dups <- tibble::tibble(silly = project_sillys, duplicate = 0) #no duplicates if this object is empty
-
-} else{
-
-  n_dups <- dup_check_95_minproportion %>%
-        dplyr::mutate(
-          remove = dplyr::case_when(
-            Missing1 > Missing2 ~ ID1,
-            Missing2 > Missing1 ~ ID2,
-            Missing1 == Missing2 ~ ID1
-          )
-        ) %>%
-        dplyr::distinct(silly, remove) %>% 
-        dplyr::group_by(silly) %>% 
-        dplyr::summarise(duplicate = length(remove))
-
- 
-
-}
-
-project_sillys_n <- project_sillys_n %>%
-  dplyr::left_join(n_dups, by = "silly") %>% 
-  tidyr::replace_na(replace = list(duplicate = 0))
-  
-  
-```
-
-Check out the sample size table, after checking for duplicates
-```{r samp_size_dups}
-project_sillys_n %>% 
-  qc_table() # view sample size table
-```
-
-### Final Sample Size
-This table shows the final sample size for each silly:
-```{r samp_size_final}
-project_sillys_n <- project_sillys_n %>%
-    dplyr::mutate(final = genotyped - wrong_spp - missing - duplicate)
-
-
-# view sample size table
-qc_table(project_sillys_n)
-
-```
-
-
-## QC Genotypes
-Here we'll do QA for the QC extractions. We're not calculating the full sample sizes, etc., as shown above, simply dealing with missing loci (looking for no more than 20% loss).
 
 ```{r qc_rm_miss}
 miss_loci_qc <- GCLr::remove_ind_miss_loci(sillyvec = qc_sillys, proportion = 0.8)
@@ -554,7 +584,7 @@ dup_check_results %>%
 ```
 
 
-This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the project or QC extractions! 
+This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the QC extractions! 
 
 
 
@@ -674,26 +704,26 @@ Option 1 -
     3) Rename the .html to something informative e.g., "project#_QC_final.html"
     
 
-Option 2 - 
-An alternate option is to run the code below, which will rerun everything and make your notebook. This is also handy if you just wanted to run the entire qc...use at your own risk.
+<!-- Option 2 -  -->
+<!-- An alternate option is to run the code below, which will rerun everything and make your notebook. This is also handy if you just wanted to run the entire qc...use at your own risk. -->
 
-```{r eval=FALSE, include=FALSE}
-rm(list = setdiff(ls(), c("project","dirqc"))) # remove everything except for project and dirqc
-# executing this in another R session as you may run into issues otherwise.
-callr::r(
-  function(project, dirqc) {
-    rmarkdown::render(
-      envir = globalenv(),
-      input = paste0(project, "_QC.Rmd"),
-      output_file = paste0(project, "_QC_final.html"),
-      output_dir = dirqc,
-      output_format = rmarkdown::html_document(
-        toc = TRUE,
-        toc_float = TRUE,
-        code_folding = "hide"
-      )
-    )
-  },
-  args = list(project = project, dirqc = dirqc)
-)# save html document to the qc directory
-```
+<!-- ```{r eval=FALSE, include=FALSE} -->
+<!-- rm(list = setdiff(ls(), c("project","dirqc"))) # remove everything except for project and dirqc -->
+<!-- # executing this in another R session as you may run into issues otherwise. -->
+<!-- callr::r( -->
+<!--   function(project, dirqc) { -->
+<!--     rmarkdown::render( -->
+<!--       envir = globalenv(), -->
+<!--       input = paste0(project, "_QC.Rmd"), -->
+<!--       output_file = paste0(project, "_QC_final.html"), -->
+<!--       output_dir = dirqc, -->
+<!--       output_format = rmarkdown::html_document( -->
+<!--         toc = TRUE, -->
+<!--         toc_float = TRUE, -->
+<!--         code_folding = "hide" -->
+<!--       ) -->
+<!--     ) -->
+<!--   }, -->
+<!--   args = list(project = project, dirqc = dirqc) -->
+<!-- )# save html document to the qc directory -->
+<!-- ``` -->
