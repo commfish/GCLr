@@ -169,7 +169,7 @@ get_tissue_data <- function(sillyvec = NULL, unit = NULL, shelf.rack = NULL, use
   
   #Replace 0 with NA for variables that have a check box in Loki. If zeros are present in the import they get treated the same as 1's
   dataAll <- dataAll0 %>% 
-    dplyr::mutate(dplyr::across(IS_MISSING_PAIRED_DATA_EXISTS:IS_PRESENT_BUT_NOT_IN_DS, ~gsub(pattern = 0, replacement = NA, x = .)))
+    dplyr::mutate(dplyr::across(dplyr::all_of(c("IS_MISSING_PAIRED_DATA_EXISTS", "IS_PRESENT_IN_DATASHEET", "WELL_HAS_MORE_THAN_ONE_SAMPLE", "IS_PRESENT_BUT_NOT_IN_DS")) , ~gsub(pattern = 0, replacement = NA, x = .)))
   
   if (import.vars == TRUE) {
     
