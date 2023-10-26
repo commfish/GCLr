@@ -21,7 +21,7 @@
 #' 
 #' @examples
 #' \dontrun{
-#' read_proj_geno(project_name = c("P014", "P015", "P016"), sillyvec = c("SCIMA18", "SCIMA17"), 
+#' loki2r_proj(project_name = c("P014", "P015", "P016"), sillyvec = c("SCIMA18", "SCIMA17"), 
 #'                loci = c("One_E2", "One_MHC2_251", "One_Cytb_17"), username = "awbarclay", password = "password")
 #' }
 #'
@@ -107,8 +107,8 @@ loki2r_proj <- function(project_name = NULL, sillyvec = NULL, loci = NULL, usern
     tidyr::unite(SillySource, SILLY_CODE, FK_FISH_ID, sep = "_", remove = FALSE) %>% 
     dplyr::select(-ALLELE_1, -ALLELE_2) %>%
     dplyr::rename(ALLELE_1 = ALLELE_1_FIXED, ALLELE_2 = ALLELE_2_FIXED) %>% 
-    dplyr::mutate(ALLELE_1 = gsub(pattern = "0", replacement = NA_character_, x = ALLELE_1),
-                  ALLELE_2 = gsub(pattern = "0", replacement = NA_character_, x = ALLELE_2)) %>% 
+    dplyr::mutate(ALLELE_1 = gsub(pattern = "^0$", replacement = NA_character_, x = ALLELE_1),
+                  ALLELE_2 = gsub(pattern = "^0$", replacement = NA_character_, x = ALLELE_2)) %>% 
     tidyr::pivot_wider(id_cols = SillySource, names_from = LOCUS, values_from = c(ALLELE_1, ALLELE_2), names_glue = "{LOCUS}_{.value}", values_fill = NULL)  %>% #note values_fill to keep na as na
     dplyr::rename_with(~ gsub("_ALLELE_1", "", .), ends_with("_ALLELE_1")) %>% #fix names locus
     dplyr::rename_with(~ gsub("_ALLELE_2", ".1", .), ends_with("_ALLELE_2")) %>% #fix names locus.1
