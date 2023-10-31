@@ -8,17 +8,17 @@ read_qc_geno(
   qc_csv_filepaths,
   skip = 15,
   LocusCtl = LocusControl,
-  type = c("Biomark", "uSat", "GT-seq")[1]
+  type = c("TaqMan", "uSat", "GT-seq")[1]
 )
 }
 \arguments{
 \item{qc_csv_filepaths}{character vector specifying the file paths of the QC CSV files.}
 
-\item{skip}{number of lines to skip while reading the CSV files when type = "Biomark". (default = 15).}
+\item{skip}{number of lines to skip while reading the CSV files when type = "TaqMan". (default = 15).}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 
-\item{type}{the type of project ("Biomark", "uSat", or "GT-seq"), (default = "Biomark")}
+\item{type}{the type of project ("TaqMan", "uSat", or "GT-seq"), (default = "TaqMan")}
 }
 \value{
 Returns a few silly objects to the global environment

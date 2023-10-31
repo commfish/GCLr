@@ -3,75 +3,60 @@ title: " "
 author: " "
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_notebook:
     toc: true
     toc_float: true
     code_folding: hide
-packages:
-  -GCLr
-  -tidyverse
-  -plotly
-  -DT
 ---
+Here is a summary of your R instance, package version, etc. This is simply a record of which version of the GCLr package/R was used for QC. 
+```{r}
+`%>%` <- magrittr::`%>%` #grab tidy pipe
+
+info <- sessioninfo::session_info(info = "auto")
+
+info$platform
+
+info$packages %>% dplyr::filter(package == "GCLr")
+```
 
 # Intro
-This is an R markdown template for a QC. Once loaded, you simply save the file in the qc directory, fill in a few inputs at the top, then run the code and it will generate a QC summary html.
+
+This is an R markdown template for QC. The template is split into two parts, 1) Project Data Analysis and 2) QC Analysis. 
+
+The first section is a spot where lab staff can examine project data and make sure it looks good prior QC. The second section is the full QC analysis and occurs after completion of a project but prior to importing data.
+
+Once loaded, you simply save the file in the QC directory, fill in a few inputs at the start, then run the code and it will generate a QC summary html.
 
 # Background
-The previous QC script consisted of an R script with Excel and other outputs, this exports everything in a single interactive html notebook. The purpose is to keep the QC analysis and results together, in a more reproducible format, while allowing for exporting to Excel, if necessary.
+The previous QC consisted of an R script with Excel and other outputs, this exports everything in a single interactive html notebook. The purpose is to keep the QC analysis and results together, in a more reproducible format, while allowing for exporting to Excel, if necessary.
 
 
-# Additional Script Notes
+# Script Directions/Notes
     
-    1) Add a title and your name to the top of the scrip.
-    2) Save this using the naming convention: "project_QC.Rmd". Example: S200_QC.Rmd
-    3) Run this script in order, or some functions will not provide accurate results. This is by design, as this script only hits LOKI once to save time.
-    4) Add your review notes to the top of the file (in the Lab or P/L review section), prior to finalizing (i.e., saving or knitting)!
-
-
-# Lab Review
-*Here is a section for laboratory staff to take notes, and give a summary of the QC*
-
-    Author:
-    Date:
-    Notes:
-
-
-
-
-
-# Project Leader Review
-*Here is a section for project leaders to take notes, and give a summary of the QC*
-
-    Author:  
-    Date:
-    Notes:
-
-
-
-
-
+    1) Add a title and your name to the top of the script.
+    2) Save this to the QC directory. Recommended naming convention: "project#_QC.Rmd". Example: S200_QC.Rmd
+    3) Run this script in order, one code chunk at a time, or some functions will not provide accurate results. This is by design, as this script only hits LOKI once to save time.
+    4) Add your review notes to the file (in the relevant project or QC review section), prior to finalizing (i.e., saving)!
 
 # Inputs
 Now we can move onto required user inputs.
 *This is the only spot where you need to enter information!*
 ```{r inputs}
-username <- "" # LOKI username 
+dirqc <- "" # # The full file path to where the QC directory is located.
 
-.password <- "" # LOKI password
-
-dirqc <- "" # The directory where the QC files are located.
-
-species <- "" # The species for the project (e.g., "pink").
+species <- "" # The species for the project (e.g., "pink"). Note this is lower case.
 
 project <- "" # The project name (e.g., "P014").
 
-project_type <- "" # The type of project ("Biomark", "uSat", or "GT-seq").
+project_type <- "" # The type of project ("TaqMan", "uSat", or "GT-seq").
 ```
 
 # Optional inputs
 Here are a few more inputs, but are optional and should probably remain the defaults (i.e., do not change unless you know what you are doing.)
 ```{r optional_input}
+username <- readLines(con = "//DFGANCRDC01.dfg.alaska.local/Genetics/Anchorage/Analysis/R files/usr.pw")[1] # LOKI username 
+.password <- readLines(con = "//DFGANCRDC01.dfg.alaska.local/Genetics/Anchorage/Analysis/R files/usr.pw")[2] # LOKI password
+
 qc_summary_file <- paste("Project", project,"QC Summary R Script.xlsx") # The file path for the QC summary file; This is automatically generated using `project` (i.e., don't change unless you know what you're doing).
 
 conflict_rate <- 0.10 # The conflict rate threshold at which dupcheck between sillys occurs (default is 0.10).
@@ -88,8 +73,6 @@ knitr::opts_chunk$set(
   fig.pos = '!h',    # Place figures here and don't float
   fig.width = 12     # Set figure width
 )
-
-library(magrittr) #get tidy pipe from this
 ```
 
 This is a function for making the tables look nice. Do not change.
@@ -125,8 +108,13 @@ qc_table <- function(x, page.length = NULL){
 ```
 
 
-# Read Project Genotypes
-The next step is to read in the project genotypes from LOKI.
+
+
+# Project Data Analysis
+This is the start of the project data QC. Here, you'll examine project fish and determine if the project was a success! By the end of this section, you should have a good handle on whether there were issues with the project. From there you can stop and fix issues, select QC fish to run, or carry on with the QC if you already have those data. 
+
+## Read Project Genotypes
+The first step is to read in the project genotypes from LOKI.
 
 ```{r project_genos}
 GCLr::loki2r_proj(project_name = project, username = username, password = .password)
@@ -178,6 +166,7 @@ And here is a plot showing those data.
 ```{r fail_rate_plate_plot}
 failure_rate$plot_plate_failure_rate
 ```
+
 ### Overall Failure Rate
 This is the overall failure rate for the project.
 ```{r fail_rate_overall}
@@ -185,167 +174,20 @@ failure_rate$overall_failure_rate %>%
   qc_table()
 ```
 
+## Sample Sizes by Locus
+We'll calculate the sample sizes, by locus, for project genotypes.
 
-# Read in QC Genotypes
-Move onto the QC genotypes now. 
-    
-```{r qc_genos}
-qc_files <-
-  list.files(path = "Genotype Data Files", pattern = ".csv", full.names = TRUE, recursive = FALSE)
-
-if (project_type %in% c("Biomark", "uSat","GT-seq")) {
-  GCLr::read_qc_geno(qc_csv_filepaths = qc_files, type = project_type)
-} else {
-  message("project_type must be either 'Biomark', 'uSat', or' GT-seq' to read in qc genotypes")
-}
-
-qc_sillys_n <- GCLr::silly_n(sillyvec = qc_sillys)
-
-qc_sillys_n
-```
-    
-# Read in Conflict Report
-Now read in the conflict report. 
-*Note - old conflict reports have "0" for mitochondrial conflicts while the new has " " for mitochondrial conflicts, we will refer to them as "Homo-Homo".*
-```{r concordance_files}
-qc_concordance_report_file <- list.files(path = "Conflict Reports", pattern = "ConcordanceReport", full.names = TRUE)
-
-qc_concordance_report_file #verify it found the file(s)! If this is empty, it will not work.
-
-GCLr::combine_conflicts(files = qc_concordance_report_file)
-```
-
-## Conflict Summaries
-The next step is to summarize the conflicts. This will be done a few ways - by plate, by silly, and by loci - which should cover all types of issues you may encounter. 
-
-### By plate
-First, we'll take a look at the number of conflicts by plate:
-```{r conflict_plate}
-conflicts_by_plate <- combined_conflicts %>% 
-  dplyr::group_by(plate_id, concordance_type) %>%
-  dplyr::summarise(n = dplyr::n(), .groups = "keep" ) %>%
-  tidyr::pivot_wider(names_from = "concordance_type", values_from = "n",values_fill = 0, names_expand = TRUE) %>% 
-  dplyr::mutate(Conflict = sum(`Het-Het`, `Het-Homo`, `Homo-Het`, `Homo-Homo`)) %>%
-  dplyr::ungroup()
-
-conflicts_by_plate %>%
-  qc_table() %>% 
-  DT::formatStyle('Homo-Homo', backgroundColor = DT::styleInterval(0.00, c('white', 'yellow')))
-```
-
-### By SILLY
-Next, we'll look at the number of conflicts by silly code.
-```{r conflict_silly}
-conflicts_by_silly <- combined_conflicts %>% 
-  dplyr::group_by(silly, concordance_type) %>%
-  dplyr::summarise(n = dplyr::n(), .groups = "keep" ) %>%
-  tidyr::pivot_wider(names_from = "concordance_type",values_from = "n", values_fill = 0, names_expand = TRUE) %>%
-  dplyr::mutate(Conflict = sum(`Het-Het`, `Het-Homo`, `Homo-Het`, `Homo-Homo`)) %>%
-  dplyr::ungroup()
-
-conflicts_by_silly %>% 
-  qc_table() %>% 
-  DT::formatStyle('Homo-Homo', backgroundColor = DT::styleInterval(0.00, c('white', 'yellow')))
-```
-
-### By locus
-Finally, we can look at the number of conflicts by locus.
-```{r conflict_locus}
-conflicts_by_locus <- combined_conflicts %>%
-  dplyr::group_by(locus, concordance_type) %>%
-  dplyr::summarise(n = dplyr::n(), .groups = "keep" ) %>%
-  tidyr::pivot_wider(names_from = "concordance_type",values_from = "n", values_fill = 0, names_expand = TRUE) %>%
-  dplyr::mutate(Conflict = sum(`Het-Het`, `Het-Homo`, `Homo-Het`, `Homo-Homo`)) %>%
-  dplyr::ungroup()
-
-conflicts_by_locus %>% 
-  qc_table() %>% 
-  DT::formatStyle('Homo-Homo', backgroundColor = DT::styleInterval(0.00, c('white', 'yellow')))
-```
-# Sample Sizes by Locus
-We'll calculate the sample sizes, by locus, for project and qc genotypes.
-
-## Project Genotypes
 ```{r samp_size_locus}
 original_proj_n_by_locus <- GCLr::sampn_by_locus(sillyvec = project_sillys, loci = loci)
 
 original_proj_n_by_locus %>% 
-  tidyr::pivot_longer(names_to = "locus", values_to = "n",-silly) %>% 
+  tidyr::pivot_longer(names_to = "locus", values_to = "n", -silly) %>% 
   qc_table()
 ```
 
-## QC Genotypes
 
-*Note - you will not get output from this section unless something fails (i.e., below 0.8). If there are failures, you'll see a list of loci, by silly*
-```{r qc_reruns}
-original_qc_n_by_locus <-
-  GCLr::sampn_by_locus(sillyvec = qc_sillys, loci = loci)
-
-# tibble showing percentage for each locus
-original_qc_percent_by_locus <- original_qc_n_by_locus %>%
-  dplyr::rowwise() %>%
-  dplyr::mutate(across(all_of(loci), ~ . / max(dplyr::c_across(dplyr::all_of(loci)), na.rm = TRUE))) %>%
-  tidyr::pivot_longer(cols = -silly, names_to = "loci", values_to = "percent") %>%
-  tidyr::pivot_wider(names_from = silly, values_from = percent)
-
-# Are any of these below 80% (i.e., need to be re-run)?
-rerunsqc <- which(apply(original_qc_percent_by_locus, 2, min) < 0.8)
-
-# only show results if any of them are below 0.8  i.e., need to be rerun
-if (any(original_qc_percent_by_locus %>%
-        dplyr::summarize(dplyr::across(dplyr::everything(), ~ any(. < 0.8))))) {
-  print(
-    dplyr::select(
-      original_qc_percent_by_locus,
-      "loci",
-      tidyselect::where(~ any(.x < 0.8))
-    ) %>%
-      dplyr::filter(dplyr::if_any(
-        tidyselect::starts_with(qc_sillys), ~ . < 0.8
-      ))
-  )
-  
-}
-
-```
-
-
-Now let's check out a quick plot. This plot is interactive, so you can easily see what's going on - it allows you to zoom, hover over points for info, move around the plot, etc.
-
-```{r plot_successrate}
-plot.dat <- original_qc_percent_by_locus %>%
-  tidyr::pivot_longer(values_to = "percent", names_to = "silly", -loci)
-
-plotly::ggplotly(
-  plot.dat %>%
-  ggplot2::ggplot(ggplot2::aes(x = silly, y = loci)) +
-  ggplot2::geom_tile(ggplot2::aes(fill = percent), color = "white") +
-  ggplot2::scale_fill_gradient(
-    low = "black",
-    high = "white",
-    aesthetics = "fill",
-    limits = c(0,1),
-    breaks = seq(0,1, 0.25),
-    guide = ggplot2::guide_colorbar(nbin = 100)  # Show a gradient colorbar legend
-  ) +
-   (if(min(plot.dat$percent)<0.8){
-     
-     ggplot2::geom_tile(data = . %>% dplyr::filter(percent < 0.8), fill = "red" , height = 1) 
-     
-   })
-  +
-    ggplot2::ggtitle("Percent genotyped by silly/locus\nNote:red bars indicate loci with genotype sucess less than 80%") +
-    ggplot2::labs(fill = "Percent\ngenotyped") +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
-)
-```
-
-
-# QA checks
-The next step is to conduct QA of the project and qc genotypes. This ensures that we don't have any hidden, or otherwise lurking, bad data. 
-
-## Project Genotypes
-Here we'll do QA for the project:
+## Project QA checks
+The next step is to conduct QA of the project. This ensures that we don't have any hidden, or otherwise lurking, bad data. 
 
 ### n genotyped
 First calculate the number of fish that were genotyped
@@ -365,7 +207,7 @@ The purpose of this plot is to show a summary a few markers that are indicative 
 *Note, we're not removing these fish as you would during a normal project (i.e., GCLr::remove_alt_species), as they may be helpful in resolving conflicts. It's also important to note that the sample size is calculated based on assumed defaults, please read the sample size calculation commentary below for details.* 
 
 
-**XXX - In the plot below, are the two fish in the upper right hand corner of the plot potential alternates? Maybe highlight circles that are likely alternates?**
+**XXX -Maybe highlight circles that are likely alternates? could do this using the cutoff values**
 
 ```{r alt_spp}
 # only run if spp = chum or sockeye and the loci are in the list, otherwise nothing to check
@@ -380,9 +222,11 @@ if (any(species %in% c("chum", "sockeye")) &
   
   # since we're not removing these fish, we must manually calculate the number of alternates. Important to note that we're using a 0.5 cutoff for alternate and failure, as this is the default for GCLr::remove_alt_species(). Any desired changes to the defaults need to be reflected here!
   
-  n_alts <- alternate_spp %>% 
+  alt_indivs <- alternate_spp %>% 
                     dplyr::mutate(alternate = dplyr::case_when(failure > 0.5 & alternate > 0.5 ~ TRUE,
-                                                        TRUE~FALSE)) %>%
+                                                        TRUE ~ FALSE))
+  
+  n_alts <- alt_indivs %>%
                     tidyr::separate(silly_fish, into = c("silly", "fishID")) %>% 
                     dplyr::group_by(silly) %>% 
                     dplyr::summarize(wrong_spp = sum(alternate))
@@ -418,6 +262,8 @@ if (!species %in% c("sockeye", "chum")) {
 }
 
 ```
+
+
 ### Missing (80% rule)
 Check for individuals missing \>=20% of genotypes (i.e. the 80% rule). 
 
@@ -507,15 +353,194 @@ qc_table(project_sillys_n)
 
 ```
 
+This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the project extractions! 
 
-## QC Genotypes
-Here we'll do QA for the QC extractions. We're not calculating the full sample sizes, etc., as shown above, simply dealing with missing loci (looking for no more than 20% loss).
+# Select QC Fish
+Now that a project has been vetted and you're happy with it, you can select high-quality fish for QC analysis. The function below ignores any duplicates, low quality, or wrong species, leaving a subset of high-quality fish. Using high quality fish ensures that there will be power during the QC. 
+*XXX Andy's new function should replace "sample" here.*
+```{r}
+if (select.list( choices = c("Yes", "No"), preselect = "No", multiple = FALSE, title = "Select QC fish now?", graphics = TRUE) == "Yes") {
+  print("Selecting the highest quality fish that you've ever seen... ")
+  qc_fish <- sample(100)
+} else{
+  print("Not selecting QC fish at this time.")
+  qc_fish <- NA_integer_
+}
 
+qc_fish
+```
+
+
+# Project Data Analysis Summary
+This is a good spot to interpret the results above and provide a summary of the project data. Specifically, how did it look, did you notice anything odd, are you continuing with QC, did you select QC fish, etc.
+
+    Name:
+    Date:
+    Comments:
+
+
+
+**At this point, you can simply save the file and exit or continue onto the QC data analysis section.**
+
+# QC Data Analysis
+This is the start of the QC data analysis. Here, you'll examine QC fish and compare those with project fish. By the end of this section, you should have a good handle on whether there were issues with the project. Note that you need to run the `Project Data Analysis` section above to generate some of the required objects. 
+
+Pro-tip: click here, wait no here (I kid, anywhere around here works...), and press `control + alt + shift + p` on your keyboard to "run all chunks above". This will automatically run all of the code above your cursor. *This should only be done if you've already gone through the project section.*
+
+## Read in QC Genotypes
+Move onto the QC genotypes now. 
+    
+```{r qc_genos}
+qc_files <-
+  list.files(path = "Genotype Data Files", pattern = ".csv", full.names = TRUE, recursive = FALSE)
+
+if (project_type %in% c("TaqMan", "uSat","GT-seq")) {
+  GCLr::read_qc_geno(qc_csv_filepaths = qc_files, type = project_type)
+} else {
+  message("project_type must be either 'TaqMan', 'uSat', or' GT-seq' to read in qc genotypes")
+}
+
+qc_sillys_n <- GCLr::silly_n(sillyvec = qc_sillys)
+
+qc_sillys_n
+```
+    
+## Read in Conflict Report
+Now read in the conflict report. 
+*Note - old conflict reports have "0" for mitochondrial conflicts while the new has " " for mitochondrial conflicts, we will refer to them as "Homo-Homo".*
+```{r concordance_files}
+qc_concordance_report_file <- list.files(path = "Conflict Reports", pattern = "ConcordanceReport", full.names = TRUE)
+
+qc_concordance_report_file #verify it found the file(s)! If this is empty, it will not work.
+
+GCLr::combine_conflicts(files = qc_concordance_report_file)
+```
+
+### Conflict Summaries
+The next step is to summarize the conflicts. This will be done a few ways - by plate, by silly, and by loci - which should cover all types of issues you may encounter. 
+
+#### By plate
+First, we'll take a look at the number of conflicts by plate:
+```{r conflict_plate}
+conflicts_by_plate <- combined_conflicts %>% 
+  dplyr::group_by(plate_id, concordance_type) %>%
+  dplyr::summarise(n = dplyr::n(), .groups = "keep" ) %>%
+  tidyr::pivot_wider(names_from = "concordance_type", values_from = "n",values_fill = 0, names_expand = TRUE) %>% 
+  dplyr::mutate(Conflict = sum(`Het-Het`, `Het-Homo`, `Homo-Het`, `Homo-Homo`)) %>%
+  dplyr::ungroup()
+
+conflicts_by_plate %>%
+  qc_table() %>% 
+  DT::formatStyle('Homo-Homo', backgroundColor = DT::styleInterval(0.00, c('white', 'yellow')))
+```
+
+#### By SILLY
+Next, we'll look at the number of conflicts by silly code.
+```{r conflict_silly}
+conflicts_by_silly <- combined_conflicts %>% 
+  dplyr::group_by(silly, concordance_type) %>%
+  dplyr::summarise(n = dplyr::n(), .groups = "keep" ) %>%
+  tidyr::pivot_wider(names_from = "concordance_type",values_from = "n", values_fill = 0, names_expand = TRUE) %>%
+  dplyr::mutate(Conflict = sum(`Het-Het`, `Het-Homo`, `Homo-Het`, `Homo-Homo`)) %>%
+  dplyr::ungroup()
+
+conflicts_by_silly %>% 
+  qc_table() %>% 
+  DT::formatStyle('Homo-Homo', backgroundColor = DT::styleInterval(0.00, c('white', 'yellow')))
+```
+
+#### By locus
+Finally, we can look at the number of conflicts by locus.
+```{r conflict_locus}
+conflicts_by_locus <- combined_conflicts %>%
+  dplyr::group_by(locus, concordance_type) %>%
+  dplyr::summarise(n = dplyr::n(), .groups = "keep" ) %>%
+  tidyr::pivot_wider(names_from = "concordance_type",values_from = "n", values_fill = 0, names_expand = TRUE) %>%
+  dplyr::mutate(Conflict = sum(`Het-Het`, `Het-Homo`, `Homo-Het`, `Homo-Homo`)) %>%
+  dplyr::ungroup()
+
+conflicts_by_locus %>% 
+  qc_table() %>% 
+  DT::formatStyle('Homo-Homo', backgroundColor = DT::styleInterval(0.00, c('white', 'yellow')))
+```
+
+## Sample Sizes by Locus
+We'll calculate the sample sizes, by locus, for qc genotypes.
+*Note - you will not get output from this section unless something fails (i.e., below 0.8). If there are failures, you'll see a list of loci, by silly*
+
+```{r qc_reruns}
+original_qc_n_by_locus <-
+  GCLr::sampn_by_locus(sillyvec = qc_sillys, loci = loci)
+
+# tibble showing percentage for each locus
+original_qc_percent_by_locus <- original_qc_n_by_locus %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(across(all_of(loci), ~ . / max(dplyr::c_across(dplyr::all_of(loci)), na.rm = TRUE))) %>%
+  tidyr::pivot_longer(cols = -silly, names_to = "loci", values_to = "percent") %>%
+  tidyr::pivot_wider(names_from = silly, values_from = percent)
+
+# Are any of these below 80% (i.e., need to be re-run)?
+rerunsqc <- which(apply(original_qc_percent_by_locus, 2, min) < 0.8)
+
+# only show results if any of them are below 0.8  i.e., need to be rerun
+if (any(original_qc_percent_by_locus %>%
+        dplyr::summarize(dplyr::across(dplyr::everything(), ~ any(. < 0.8))))) {
+  print(
+    dplyr::select(
+      original_qc_percent_by_locus,
+      "loci",
+      tidyselect::where(~ any(.x < 0.8))
+    ) %>%
+      dplyr::filter(dplyr::if_any(
+        tidyselect::starts_with(qc_sillys), ~ . < 0.8
+      ))
+  )
+  
+}
+
+```
+
+
+Now let's check out a quick plot. This plot is interactive, so you can easily see what's going on - it allows you to zoom, hover over points for info, move around the plot, etc.
+
+```{r plot_successrate}
+plot.dat <- original_qc_percent_by_locus %>%
+  tidyr::pivot_longer(values_to = "percent", names_to = "silly", -loci)
+
+plotly::ggplotly(
+  plot.dat %>%
+  ggplot2::ggplot(ggplot2::aes(x = silly, y = loci)) +
+  ggplot2::geom_tile(ggplot2::aes(fill = percent), color = "white") +
+  ggplot2::scale_fill_gradient(
+    low = "black",
+    high = "white",
+    aesthetics = "fill",
+    limits = c(0,1),
+    breaks = seq(0,1, 0.25),
+    guide = ggplot2::guide_colorbar(nbin = 100)  # Show a gradient colorbar legend
+  ) +
+   (if(min(plot.dat$percent)<0.8){
+     
+     ggplot2::geom_tile(data = . %>% dplyr::filter(percent < 0.8), fill = "red" , height = 1) 
+     
+   })
+  +
+    ggplot2::ggtitle("Percent genotyped by silly/locus\nNote:red bars indicate loci with genotype sucess less than 80%") +
+    ggplot2::labs(fill = "Percent\ngenotyped") +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
+)
+```
+
+
+## QC QA checks
+The next step is to conduct QA of the QC extractions. We're not calculating the full sample sizes, etc., as shown above, simply dealing with missing loci (looking for no more than 20% loss). This ensures that we don't have any hidden, or otherwise lurking, bad data. 
+
+### Missing (80% rule)
 ```{r qc_rm_miss}
 miss_loci_qc <- GCLr::remove_ind_miss_loci(sillyvec = qc_sillys, proportion = 0.8)
 ```
   
-# Perform Duplicate Check on High Conflict Individuals
+### Duplicate check on high conflict individuals
 The last step in the process is to perform a duplicate check on any individuals which show a high degree of conflicts.
 ```{r qc_conflict_rate}
 # Filter for conflicts, determine conflict rate
@@ -561,7 +586,7 @@ dup_check_results %>%
 ```
 
 
-This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the project or QC extractions! 
+This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the QC extractions! 
 
 
 
@@ -586,6 +611,7 @@ summary_by_silly <-
 summary_by_silly %>% 
   qc_table()
 ```
+
 ## Conflicts by Silly
 Here is a table that shows the conflicts, by silly, for the project.
 ```{r conf_by_silly}
@@ -664,6 +690,16 @@ conflicts_by_locus_qc %>%
   qc_table()
 ```
 
+# QC Data Analysis Summary
+This is a good spot to interpret the results above and provide a summary of the QC. Specifically, how did it look, did you notice anything odd, etc.
+
+    Name:
+    Date:
+    Comments:
+
+
+
+
 # Save Workspace
 This concludes the QC script. Let's save the RData.
 ```{r savedata}
@@ -672,38 +708,9 @@ save.image(file = paste0(dirqc, project,"_QC.RData"))
 
 # Save Document
 
-Once you've run through this script and have added comments to the top, you can save the document. This will also render an html file that you'll want to rename for. 
-
-*There are a few ways to do this and you only need to pick one*
-
-Option 1 - 
+Once you've run through this script and have added comments to the top, and after each section (project and QC data analysis), you can save the document. 
 
     1) File > Save (or Control + S or the little "Save" icon on the top bar)
-    3) Click the "Knit" button and let it go
     2) Navigate to the QC directory in Windows Explorer
-    3) Rename the .html to something informative e.g., "project#_QC_final.html"
+    3) Rename the .nb.html to something informative e.g., "project#_QC_final.nb.html"
     
-
-Option 2 - 
-An alternate option is to run the code below, which will rerun everything and make your notebook. This is also handy if you just wanted to run the entire qc...use at your own risk.
-
-```{r eval=FALSE, include=FALSE}
-rm(list = setdiff(ls(), c("project","dirqc"))) # remove everything except for project and dirqc
-# executing this in another R session as you may run into issues otherwise.
-callr::r(
-  function(project, dirqc) {
-    rmarkdown::render(
-      envir = globalenv(),
-      input = paste0(project, "_QC.Rmd"),
-      output_file = paste0(project, "_QC_final.html"),
-      output_dir = dirqc,
-      output_format = rmarkdown::html_document(
-        toc = TRUE,
-        toc_float = TRUE,
-        code_folding = "hide"
-      )
-    )
-  },
-  args = list(project = project, dirqc = dirqc)
-)# save html document to the qc directory
-```

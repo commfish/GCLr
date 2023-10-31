@@ -167,8 +167,8 @@ loki2r <- function(sillyvec, username, password, test_type = c("SNP", "GTSNP", "
   
   # replace no calls (0's) with NA
   dataAll <- dataAll %>% 
-    dplyr::mutate(ALLELE_1 = dplyr::na_if(ALLELE_1, "0"),
-                  ALLELE_2 = dplyr::na_if(ALLELE_2, "0"))
+    dplyr::mutate(ALLELE_1 = dplyr::na_if(ALLELE_1, "^0$"),
+                  ALLELE_2 = dplyr::na_if(ALLELE_2, "^0$"))
   
   # filter out individuals missing loci, 
   dataAll_no_missing <- dataAll %>% 
