@@ -38,34 +38,11 @@ The previous QC consisted of an R script with Excel and other outputs, this expo
     3) Run this script in order, one code chunk at a time, or some functions will not provide accurate results. This is by design, as this script only hits LOKI once to save time.
     4) Add your review notes to the file (in the relevant project or QC review section), prior to finalizing (i.e., saving)!
 
-
-# Lab Project Quick Review
-*Here is a section for notes and a summary of the preliminary project QC*
-
-    Author:
-    Date:
-    Notes:
-
-
-
-
-# Final QC Quick Review
-*Here is a section for notes and a summary of the final project QC*
-
-    Author:  
-    Date:
-    Notes:
-
-
-
-
-
-
 # Inputs
 Now we can move onto required user inputs.
 *This is the only spot where you need to enter information!*
 ```{r inputs}
-dirqc <- "" # The directory where the QC files are located.
+dirqc <- "" # # The full file path to where the QC directory is located.
 
 species <- "" # The species for the project (e.g., "pink"). Note this is lower case.
 
@@ -204,7 +181,7 @@ We'll calculate the sample sizes, by locus, for project genotypes.
 original_proj_n_by_locus <- GCLr::sampn_by_locus(sillyvec = project_sillys, loci = loci)
 
 original_proj_n_by_locus %>% 
-  tidyr::pivot_longer(names_to = "locus", values_to = "n",-silly) %>% 
+  tidyr::pivot_longer(names_to = "locus", values_to = "n", -silly) %>% 
   qc_table()
 ```
 
