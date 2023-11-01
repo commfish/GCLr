@@ -2,6 +2,12 @@
 `loki2r()`, `loki2r_gaps()`, and `loki2r_proj()` - the code in these functions to replace "0" allele calls with NA's did not take into account microsatellite alleles that contain zeros (e.g. "105", "109"), and any allele containing a zero became an NA. This issue has beeen corrected so only "0" alleles are converted to NA's.
 `get_tissue_data()` - this function was removing workbench IDs that contain 0.  This has been fixed.
 
+## Enhancements
+Split qc_template into project data and QC data analysis sections. Added function to select high-quality samples for the QC.
+
+## New additions
+`select_qc_samps()` This function pulls project genotypes from Loki and removes samples with genotypes at less than 80% of loci, then selects QC samples by plate.
+
 # GCLr 0.3.0
 
 ## Bug fixes
