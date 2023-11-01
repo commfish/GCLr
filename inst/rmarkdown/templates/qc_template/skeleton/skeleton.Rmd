@@ -579,7 +579,7 @@ suppressWarnings(print(plot))
 Now identify anything to investigate by running a duplicate check on anything with high degree of conflicts
 ```{r qc_dupcheck}
 
-(dup_check_results <- GCLr:::dupcheck_qc_conflicts(conflicts = conflicts, conflict_rate = conflict_rate, project_sillys = project_sillys))
+dup_check_results <- GCLr:::dupcheck_qc_conflicts(conflicts = conflicts, conflict_rate = conflict_rate, project_sillys = project_sillys)
 
 ```
 
