@@ -263,7 +263,7 @@ custom_comb_rubias_output <-
       group_names_new[groupvec_new[i]]
     }, simplify = FALSE )  # set up level_key to use with recode to roll up groups
     repunit_trace <- repunit_trace %>% 
-      dplyr::mutate(repunit = recode(repunit, !!!level_key)) %>% 
+      dplyr::mutate(repunit = dplyr::recode(repunit, !!!level_key)) %>% 
       dplyr::group_by(mixture_collection, sweep, repunit) %>% 
       dplyr::summarise(rho = sum(rho), .groups = "drop_last") 
     grp_names <- group_names_new  # for factoring repunit
