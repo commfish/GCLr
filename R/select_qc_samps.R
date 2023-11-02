@@ -19,8 +19,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' 
-#'  select_qc_samps(project = "K215", username = "awbarclay", password = "mypassword", ncores = parallel::detectCores())
+#'
+#' select_qc_samps(project = "K215", username = "awbarclay", password = "mypassword", ncores = parallel::detectCores())
 #'  
 #' }
 #'
@@ -82,22 +82,30 @@ select_qc_samps <- function(project, username, password, ncores = 4){
   
   extraction_info <- GCLr::get_extraction_info(plate_ids = plates, username = username, password = password) # Getting extraction info for well numbers.
   
-  Well_pos_key <- tibble::tibble(Well_Code = sapply(LETTERS[1:8], function(letter){paste0(letter, 1:6)}) %>% 
+  # So far, I only have well position key for WGC48, WGC40, and WGC10
+  Well_pos_key <- dplyr::bind_rows(
+    tibble::tibble(Container_Type = "WGC48", Well_Code = sapply(LETTERS[1:8], function(letter){paste0(letter, 1:6)}) %>% 
     t() %>% 
-    as.vector(), Well_Position = 1:48)
+    as.vector(), Well_Position = 1:48),
+    tibble::tibble(Container_Type = "WGC10", Well_Code = sapply(LETTERS[1:10], function(letter){paste0(letter, 1)}) %>% 
+                   t() %>% 
+                   as.vector(), Well_Position = 1:10),
+    tibble::tibble(Container_Type = "WGC40", Well_Code = sapply(LETTERS[1:8], function(letter){paste0(letter, 1:6)}) %>% 
+                     t() %>% 
+                     as.vector(), Well_Position = 1:48) %>% dplyr::filter(Well_Position <= 40))
   
   good_samps <- dplyr::left_join(good_samps0 %>% dplyr::select(FK_FISH_ID, COLLECTION_ID, SILLY_CODE, PLATE_ID, PK_TISSUE_TYPE, SillySource), extraction_info, by = c("SILLY_CODE", "FK_FISH_ID" = "FISH_NO", "PLATE_ID" = "FK_PLATE_ID")) %>% 
     dplyr::left_join(tissue_info, by = c("SILLY_CODE", "FK_FISH_ID", "SillySource")) %>% 
     dplyr::select(Extraction_Well_Pos = WELL_NO, PLATE_ID, Container_Type = CONTAINER_ARRAY_TYPE_ID, WBID = DNA_TRAY_WORKBENCH_ID, Barcode = DNA_TRAY_CODE, Well_Code = DNA_TRAY_WELL_POS,  SILLY = SILLY_CODE, Fish_ID = FK_FISH_ID, Tissue = TISSUETYPE, SILLY_Fish_ID = SillySource) %>% 
-    dplyr::left_join(Well_pos_key, by = "Well_Code") %>% 
     dplyr::left_join((tibble::as_tibble(container_key) %>% dplyr::select(LU_CONTAINER_ARRAY_TYPE_ID, CONTAINER_ARRAY_TYPE)), by = c("Container_Type" = "LU_CONTAINER_ARRAY_TYPE_ID")) %>% 
-    dplyr::arrange(Fish_ID)
+    dplyr::left_join(Well_pos_key, by = c("CONTAINER_ARRAY_TYPE"="Container_Type", "Well_Code")) %>% 
+     dplyr::arrange(Fish_ID)
     
   proj_samps <- dplyr::left_join(proj_samps0 %>% dplyr::select(FK_FISH_ID, COLLECTION_ID, SILLY_CODE, PLATE_ID, PK_TISSUE_TYPE, SillySource), extraction_info, by = c("SILLY_CODE", "FK_FISH_ID" = "FISH_NO", "PLATE_ID" = "FK_PLATE_ID")) %>% 
     dplyr::right_join(tissue_info, by = c("SILLY_CODE", "FK_FISH_ID", "TISSUETYPE" = "PK_TISSUE_TYPE", "SillySource")) %>% 
     dplyr::select(Extraction_Well_Pos = WELL_NO, PLATE_ID, Container_Type = CONTAINER_ARRAY_TYPE_ID, WBID = DNA_TRAY_WORKBENCH_ID, Barcode = DNA_TRAY_CODE, Well_Code = DNA_TRAY_WELL_POS,  SILLY = SILLY_CODE, Fish_ID = FK_FISH_ID, Tissue = TISSUETYPE, SILLY_Fish_ID = SillySource) %>% 
-    dplyr::left_join(Well_pos_key, by = "Well_Code") %>% 
     dplyr::left_join((tibble::as_tibble(container_key) %>% dplyr::select(LU_CONTAINER_ARRAY_TYPE_ID, CONTAINER_ARRAY_TYPE)), by = c("Container_Type" = "LU_CONTAINER_ARRAY_TYPE_ID")) %>% 
+    dplyr::left_join(Well_pos_key, by = c("CONTAINER_ARRAY_TYPE"="Container_Type", "Well_Code")) %>% 
     dplyr::arrange(Fish_ID)
   
   #Select samples

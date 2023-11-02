@@ -29,7 +29,7 @@ If any of those samples were removed for missing genotypes, the function selects
 \examples{
 \dontrun{
 
- select_qc_samps(project = "K215", username = "awbarclay", password = "mypassword", ncores = parallel::detectCores())
+select_qc_samps(project = "K215", username = "awbarclay", password = "mypassword", ncores = parallel::detectCores())
  
 }
 
