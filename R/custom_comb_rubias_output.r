@@ -277,13 +277,13 @@ custom_comb_rubias_output <-
     trace_plot <- repunit_trace %>% 
       dplyr::mutate(mixture_collection = factor(x = mixture_collection, levels = mixvec)) %>%  # order mixture_collection
       dplyr::mutate(repunit = factor(x = repunit, levels = grp_names)) %>%  # order repunit
-      ggplot2::ggplot(aes(x = sweep, y = rho, colour = repunit)) +
+      ggplot2::ggplot(ggplot2::aes(x = sweep, y = rho, colour = repunit)) +
       ggplot2::geom_line() +
       ggplot2::ylim(0, 1) +
       ggplot2::geom_vline(xintercept = burn_in) +
       # ggplot2::annotate(geom = "text", x = burn_in / 2, y = 0.9, label = "Burn-in") +
       ggplot2::theme(legend.position = "none",
-                     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+                     axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)) +
       ggplot2::facet_grid(repunit ~ mixture_collection)
   }
 
