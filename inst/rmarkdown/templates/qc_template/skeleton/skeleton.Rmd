@@ -118,7 +118,16 @@ The first step is to read in the project genotypes from LOKI.
 
 ```{r project_genos}
 GCLr::loki2r_proj(project_name = project, username = username, password = .password)
+
+# Loop through each silly and save a "raw" copy
+for (silly in paste0(project_sillys,".gcl")) {
+  # Create a new object name by removing ".gcl" and appending "_raw.gcl"
+  new_silly_name <- paste0(stringr::str_remove(silly, ".gcl"), "_raw.gcl")
   
+  # Assign the value of each silly.gcl to silly_raw.gcl
+  assign(new_silly_name, get(silly))
+}
+
 rm(.password) #ditch password since no longer needed
 
 loci <- LocusControl$locusnames # grab list of loci for use later
@@ -260,7 +269,6 @@ if (!species %in% c("sockeye", "chum")) {
     dplyr::arrange(desc(alternate)) %>% 
     qc_table()
 }
-
 ```
 
 
@@ -331,8 +339,6 @@ if (nrow(dup_check_95_minproportion) == 0) {
 project_sillys_n <- project_sillys_n %>%
   dplyr::left_join(n_dups, by = "silly") %>% 
   tidyr::replace_na(replace = list(duplicate = 0))
-  
-  
 ```
 
 Check out the sample size table, after checking for duplicates
@@ -350,7 +356,6 @@ project_sillys_n <- project_sillys_n %>%
 
 # view sample size table
 qc_table(project_sillys_n)
-
 ```
 
 This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the project extractions! 
@@ -497,7 +502,6 @@ if (any(original_qc_percent_by_locus %>%
   )
   
 }
-
 ```
 
 
@@ -519,7 +523,7 @@ plotly::ggplotly(
     breaks = seq(0,1, 0.25),
     guide = ggplot2::guide_colorbar(nbin = 100)  # Show a gradient colorbar legend
   ) +
-   (if(min(plot.dat$percent)<0.8){
+   (if (min(plot.dat$percent) < 0.8) {
      
      ggplot2::geom_tile(data = . %>% dplyr::filter(percent < 0.8), fill = "red" , height = 1) 
      
@@ -550,13 +554,13 @@ conflicts <- combined_conflicts %>%
   dplyr::mutate(p = n / length(loci)) 
 
 # Plot a histogram of conflict rate
-if(nrow(conflicts)>0){
+if (nrow(conflicts) > 0) {
   
   plot <- conflicts %>%
   janitor::tabyl(p) %>% 
   dplyr::bind_rows(tibble::tibble(p = NA, n = 2, percent = NA)) %>% 
   ggplot2::ggplot(ggplot2::aes(y = n, x = p)) +
-  ggplot2::scale_y_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))+
+  ggplot2::scale_y_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1))))) +
   ggplot2::geom_bar(position = ggplot2::position_dodge2(preserve = "single"), width = .01, stat = "identity") + 
   ggplot2::xlim(0, 1) +
   ggplot2::geom_vline(xintercept = conflict_rate,
@@ -575,7 +579,7 @@ suppressWarnings(print(plot))
 Now identify anything to investigate by running a duplicate check on anything with high degree of conflicts
 ```{r qc_dupcheck}
 
-(dup_check_results <- GCLr:::dupcheck_qc_conflicts(conflicts = conflicts, conflict_rate = conflict_rate, project_sillys = project_sillys))
+dup_check_results <- GCLr:::dupcheck_qc_conflicts(conflicts = conflicts, conflict_rate = conflict_rate, project_sillys = project_sillys)
 
 ```
 

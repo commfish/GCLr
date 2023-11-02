@@ -44,7 +44,7 @@ combine_conflicts <- function(files) {
   types <- c("DB Zero", "File Zero", "Het-Het", "Het-Homo", "Homo-Het", "Homo-Homo")  # order with levels
   
   # Pool all collections in to one master silly
-  GCLr::pool_collections(collections = project_sillys, loci = loci, newname = "master")
+  GCLr::pool_collections(collections = paste0(project_sillys,"_raw"), loci = loci, newname = "master")
   
   # Tibble of reduced attributes table
   master.tbl <- master.gcl %>% 
