@@ -45,7 +45,7 @@ remove_alt_species <- function(AlternateSpeciesReport, AlternateCutOff = 0.5, Fa
   }) %>%
     dplyr::bind_rows()
   
-  if (is_empty(output)) {
+  if (!purrr::is_empty(output)) {
     
     warning("No fish were identified as the wrong species.")
     
