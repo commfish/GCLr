@@ -1,3 +1,9 @@
+# GCLr 0.4.1
+
+## Bug fixes
+
+`loki2r()` and `loki2r_gaps()` - the regular expression used to correct the NA issue in version 0.4.0 did not work with na_if() in two of the loki2r functions. After switching to gsub, the issue is fixed.
+
 # GCLr 0.4.0
 
 ## Bug fixes
