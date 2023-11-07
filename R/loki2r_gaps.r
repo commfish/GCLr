@@ -168,7 +168,7 @@ loki2r_gaps <- function(sillyvec, username, password){
   # replace no calls (0's) with NA
   dataAll <- dataAll %>% 
     dplyr::mutate(ALLELE_1 = gsub(pattern = "^0$", replacement = NA_character_, x = ALLELE_1),
-                  ALLELE_2 = gsub(pattern = "^0$", replacement = NA_character_, x = ALLELE_1))
+                  ALLELE_2 = gsub(pattern = "^0$", replacement = NA_character_, x = ALLELE_2))
   
   # filter out individuals missing loci, 
   dataAll_no_missing <- dataAll %>% 
