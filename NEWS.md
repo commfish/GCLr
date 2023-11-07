@@ -1,3 +1,5 @@
+# GCLr 0.4.2
+
 ## Bug fixes
 
 `loki2r()` and `loki2r_gaps()` - the regular expression used to correct the NA issue in version 0.4.1 had a typo in `gsub` such that values for ALLELE_1 overwrote both ALLELE_1 and ALLELE_2.
