@@ -21,6 +21,7 @@
 #' @param pi_prior_sum A numeric value specifying the sum constraint for the Dirichlet prior on mixture proportions. Default is 1.
 #' @param file A character string representing the file path to save output. Default is "rubias/output".
 #' @param seed An integer specifying the random seed for reproducibility. Default is 56.
+#' @param nchains Run multiple chains for `rubias`. Default = 1 for running single `rubias`.
 #'
 #' @return A list containing the results of the `rubias` mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
 #'

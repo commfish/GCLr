@@ -22,7 +22,8 @@ run_rubias_mix(
   sample_theta = TRUE,
   pi_prior_sum = 1,
   file = "rubias/output",
-  seed = 56
+  seed = 56,
+  nchains = 1
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ run_rubias_mix(
 \item{file}{A character string representing the file path to save output. Default is "rubias/output".}
 
 \item{seed}{An integer specifying the random seed for reproducibility. Default is 56.}
+
+\item{nchains}{Run multiple chains for \code{rubias}. Default = 1 for running single \code{rubias}.}
 }
 \value{
 A list containing the results of the \code{rubias} mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
