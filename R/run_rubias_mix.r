@@ -1,6 +1,6 @@
 #' Run rubias Mixture Analysis
 #'
-#' This function is a wrapper for [rubias::infer_mixture()]. It performs the `rubias` mixture analysis using the provided reference and mixture data frames. 
+#' This function is a wrapper for [rubias::infer_mixture()]. It performs the \pkg{rubias} mixture analysis using the provided reference and mixture data frames. 
 #' The function estimates population proportions and allele frequencies for the mixture samples given the reference samples.
 #'
 #' @param reference A data frame containing the reference samples (i.e., baseline object).
@@ -21,11 +21,11 @@
 #' @param pi_prior_sum A numeric value specifying the sum constraint for the Dirichlet prior on mixture proportions. Default is 1.
 #' @param file A character string representing the file path to save output. Default is "rubias/output".
 #' @param seed An integer specifying the random seed for reproducibility. Default is 56.
-#' @param nchains Run multiple chains for `rubias`. Default = 1 for running single `rubias`.
+#' @param nchains Run multiple chains for \pkg{rubias}. Default = 1 for running single `rubias`.
 #'
-#' @return A list containing the results of the `rubias` mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
+#' @return A list containing the results of the \pkg{rubias} mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
 #'
-#' @details This function performs the `rubias` mixture analysis by estimating the proportions of each reference group in the mixture samples 
+#' @details This function performs the \pkg{rubias} mixture analysis by estimating the proportions of each reference group in the mixture samples 
 #' and the allele frequencies of each reference group. It uses the provided method for estimation, such as Markov Chain Monte Carlo (MCMC) 
 #' or parametric bootstrap (PB) for uncertainty quantification. The output is saved as .csv files for further analysis and visualization.
 #'

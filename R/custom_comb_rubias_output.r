@@ -1,29 +1,30 @@
-#' Custom Combine `rubias` Output
+#' Custom Combine \pkg{rubias} Output
 #'
-#' This function computes summary statistics from `rubias` output, similar to `CustomCombineBAYESOutput`.
+#' This function computes summary statistics from \pkg{rubias} output, similar to `CustomCombineBAYESOutput`.
 #' However, output is a tibble with `mixture_collection` as a column, instead of each mixture as its own list.
-#' It can take either the `rubias_output` list object from `run_rubias_mix` or `infer_mixture`,
-#' OR it can read in the .csv files created by `run_rubias_mix`.
+#' It can take either the `rubias_output` list object from `run_rubias_mix()` or [rubias::infer_mixture()],
+#' OR it can read in the .csv files created by `run_rubias_mix()`.
 #'
 #' NOTE: Currently this function only allows bias correction for the reporting groups run in the mixture.
-#' It cannot do bias correction for different baseline groupvecs because the current `rubias` output only
+#' It cannot do bias correction for different baseline groupvecs because the current \pkg{rubias} output only
 #' gives the bias-corrected means for each `mixture_collection` and `repunit` (i.e., `rho`, not `pi`).
 #'
 #' UPDATE: This function CAN do bias correction if you are rolling up groups from fine-scale to broad-scale.
 #' To use this functionality, specify `group_names` as the original, fine-scale groups, `groupvec_new` as 
 #' the groupvec to go from fine-scale to broad-scale groups, and `group_names_new` as the broad-scale groups
 #' (i.e., length(groupvec_new) = length(group_names), and max(groupvec_new) == length(group_names_new))
+#' Compatible with multichain output.
 #'
-#' @param rubias_output Output list object from `run_rubias_mix` or `infer_mixture`.
+#' @param rubias_output Output list object from `run_rubias_mix()` or [rubias::infer_mixture()].
 #' @param mixvec Character vector of mixture sillys, used to read in output .csv files if `rubias_output = NULL`.
 #' @param group_names Character vector of group_names, used to sort repunit as a factor, can get from .csv.
 #' @param group_names_new Character vector of new group_names, used to roll up groups from fine-scale to broad-scale for bias correction
 #'                       if specified, `groupvec_new` must be = length(group_names_new).
 #' @param groupvec Numeric vector indicating the group affiliation of each pop in sillyvec, used if resummarizing to new groups.
 #' @param groupvec_new A numeric vector indicating the new group affiliation of each group, used if resummarizing fine-scale groups to broad-scale groups with bias correction.
-#' @param path Character vector of where to find output from each mixture as a .csv (created by `run_rubias_mix`).
+#' @param path Character vector of where to find output from each mixture as a .csv (created by `run_rubias_mix()`).
 #' @param alpha Numeric constant specifying credibility intervals, default is 0.1, which gives 90% CIs (i.e., 5% and 95%).
-#' @param burn_in Numeric constant specifying how many sweeps were used for burn_in in `run_rubias_mix` or `infer_mixture`.
+#' @param burn_in Numeric constant specifying how many sweeps were used for burn_in in `run_rubias_mix()` or [rubias::infer_mixture()].
 #' @param bias_corr Logical switch indicating whether you want bias-corrected values from `method = "PB"` or not, 
 #'                 currently can NOT do bias correction if not using the same repunits that were run in the mixture.
 #' @param threshold Numeric constant specifying how low stock comp is before assuming 0, used for `P=0` calculation, default is from BAYES.
@@ -64,7 +65,7 @@ custom_comb_rubias_output <-
            plot_trace = TRUE,
            ncores = 4) {
 
-  ## Error catching
+  # Error catching ----
   if(ncores > parallel::detectCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
@@ -95,8 +96,10 @@ custom_comb_rubias_output <-
   
   `%dopar%` <- foreach::`%dopar%`
   
+  # Summaries ----
   #~~~~~~~~~~~~~~~~
-  ## If no rubias_output, make from .csv files
+  ## If no rubias_output, ----
+  # make from .csv files
   if(is.null(rubias_output)) {
     message("Summarizing results from rubias output .csv files.")
     
@@ -111,21 +114,31 @@ custom_comb_rubias_output <-
       
       doParallel::registerDoParallel(cl, cores = ncores)  
       
-      repunit_trace <- foreach::foreach(mixture = mixvec, .packages = c("tidyverse")) %dopar% {
+      repunit_trace <-
+        foreach::foreach(mixture = mixvec, .packages = c("tidyverse")) %dopar% {
           
-        repunit_trace_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_repunit_trace.csv")))
+        repunit_trace_mix <-
+          suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_repunit_trace.csv")))
+        
+        if (!"chain" %in% names(repunit_trace_mix)) {
+          dplyr::mutate(repunit_trace_mix, chain = 1L)
+        } # in case older files without multichain
+        
         repunit_trace_mix <- repunit_trace_mix %>% 
-          tidyr::gather(repunit, rho, -sweep) %>%  # wide to tall
-          dplyr::mutate(mixture_collection = mixture) %>%  # add mixture_collection
-          dplyr::arrange(mixture_collection, sweep, repunit) %>%  # sort by mixture_collection, sweep, repunit
-          dplyr::select(mixture_collection, sweep, repunit, rho)  # reorder columns
+          tidyr::pivot_longer(-c(sweep, chain), names_to = "repunit", values_to = "rho") %>%  # wide to tall
+          dplyr::mutate(mixture_collection = mixture) %>%
+          dplyr::arrange(mixture_collection, chain, sweep, repunit) %>%
+          dplyr::select(mixture_collection, chain, sweep, repunit, rho)  # reorder columns
         
       } %>% dplyr::bind_rows()  # build output from "repunit_trace.csv"
       
       parallel::stopCluster(cl)
       
       if(is.null(group_names)) {
-        group_names <- colnames(suppressMessages(readr::read_csv(file = paste0(path, "/", mixvec[1], "_repunit_trace.csv"))))[-1]
+        group_names <-
+          suppressMessages(readr::read_csv(file = paste0(path, "/", mixvec[1], "_repunit_trace.csv"))) %>%
+          colnames() %>%
+          {.[which(!. %in% c("sweep", "chain"))]}
       }  # assign `group_names` from "repunit_trace.csv", if NULL
       
     } else {  # groupvec
@@ -139,11 +152,17 @@ custom_comb_rubias_output <-
       
       doParallel::registerDoParallel(cl, cores = ncores)  
       
-      collection_trace <- foreach::foreach(mixture = mixvec, .packages = c("tidyverse")) %dopar% {
+      collection_trace <-
+        foreach::foreach(mixture = mixvec, .packages = c("tidyverse")) %dopar% {
         
         collection_trace_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_collection_trace.csv")))
+        
+        if (!"chain" %in% names(collection_trace_mix)) {
+          dplyr::mutate(collection_trace_mix, chain = 1L)
+        } # in case older files without multichain
+        
         collection_trace_mix <- collection_trace_mix %>% 
-          tidyr::gather(collection, pi, -sweep) %>% 
+          tidyr::pivot_longer(-c(sweep, chain), names_to = "collection", values_to = "pi") %>%
           dplyr::mutate(mixture_collection = mixture)
         
       } %>% dplyr::bind_rows()  # build output from "collection_trace.csv"
@@ -156,7 +175,7 @@ custom_comb_rubias_output <-
       repunit_trace <- collection_trace %>% 
         dplyr::left_join(repunit_new.df, by = "collection") %>%  # join with new repunit
         dplyr::rename(repunit = repunit_new) %>%  # rename new repunit
-        dplyr::group_by(mixture_collection, sweep, repunit) %>%  # group and order
+        dplyr::group_by(mixture_collection, chain, sweep, repunit) %>%  # group and order
         dplyr::summarise(rho = sum(pi), .groups = "drop_last")   # summarise pi (collection) to rho (repunit)
         
     }  # build repunit_trace from "collection_trace.csv", `groupvec`, and `group_names`
@@ -187,7 +206,9 @@ custom_comb_rubias_output <-
   }  # build rubias_output from .csv files, ignore "indiv_posteriors"
   
   #~~~~~~~~~~~~~~~~
-  ## If rubias_output, create `repunit_trace` and `bootstrapped_proportions`
+  ## If rubias_output, ----
+  # create `repunit_trace` and `bootstrapped_proportions`
+  # only for single chain
   if(!is.null(rubias_output)) {
     
     message("Summarizing results from `rubias output`.")
@@ -201,23 +222,26 @@ custom_comb_rubias_output <-
     # Build repunit_trace from `rubias_output` if `groupvec` is NULL
     if(is.null(groupvec)) {
       
-      repunit_trace <- rubias_output$mix_prop_traces %>% 
-        dplyr::group_by(mixture_collection, sweep, repunit) %>%  # group to summarize across collections
+      repunit_trace <-
+        rubias_output$mix_prop_traces %>%
+        dplyr::mutate(chain = 1L) %>% 
+        dplyr::group_by(mixture_collection, chain, sweep, repunit) %>%  # group to summarize across collections
         dplyr::summarise(rho = sum(pi), .groups = "drop_last" ) # summarize collections to repunits
         
-      
-      if(is.null(group_names)) {group_names <- unique(repunit_trace$repunit) }  # assign `group_names` from `rubias_output`, if NULL, order may be wrong
+      if(is.null(group_names)) {group_names <- unique(repunit_trace$repunit)}  # assign `group_names` from `rubias_output`, if NULL, order may be wrong
       
     } else {
       
       base_collections <- unique(rubias_output$mix_prop_traces$collection)  # baseline collections are the same order as in rubias output
       repunit_new.df <- tibble::tibble(collection = base_collections,
                                        repunit_new = group_names[groupvec])  # tibble of new repunit from groupvec
-      repunit_trace <- rubias_output$mix_prop_traces %>% 
+      repunit_trace <-
+        rubias_output$mix_prop_traces %>% 
+        dplyr::mutate(chain = 1L) %>% 
         dplyr::left_join(repunit_new.df, by = "collection") %>%  # join with new repunit
         dplyr::select(-repunit) %>%  # drop old repunit
         dplyr::rename(repunit = repunit_new) %>%  # rename new repunit
-        dplyr::group_by(mixture_collection, sweep, repunit) %>%  # group and order
+        dplyr::group_by(mixture_collection, chain, sweep, repunit) %>%  # group and order
         dplyr::summarise(rho = sum(pi), .groups = "drop_last")   # summarise pi (collection) to rho (repunit)
         
     }  # build repunit_trace from `rubias_output`, `groupvec`, and `group_names`
@@ -231,7 +255,7 @@ custom_comb_rubias_output <-
   }  # rubias_output
   
   #~~~~~~~~~~~~~~~~
-  ## Calculate `d_rho` for bias correction if specified
+  ## Calculate `d_rho` for bias correction if specified ----
   if(bias_corr) {
     if(nrow(bootstrapped_proportions) == 0) {stop("There is no bias corrected output, hoser!!!")}
     
@@ -246,8 +270,7 @@ custom_comb_rubias_output <-
       dplyr::select(mixture_collection, repunit, d_rho)  # drop other variables
   }
   
-  #~~~~~~~~~~~~~~~~
-  ## Apply bias correction if `d_rho` exists
+  ## Apply bias correction if `d_rho` exists ----
   if(exists("d_rho")) {
     repunit_trace <- repunit_trace %>% 
       dplyr::left_join(d_rho, by = c("mixture_collection", "repunit")) %>%  # join trace with d_rho
@@ -256,7 +279,7 @@ custom_comb_rubias_output <-
   }
   
   #~~~~~~~~~~~~~~~~
-  ## Roll up to broad-scale groups if `groupvec_new` specified
+  ## Roll up to broad-scale groups if `groupvec_new` specified ----
   if(!is.null(groupvec_new)) {
     level_key <- sapply(group_names, function(grp) {
       i = which(group_names == grp)
@@ -264,7 +287,7 @@ custom_comb_rubias_output <-
     }, simplify = FALSE )  # set up level_key to use with recode to roll up groups
     repunit_trace <- repunit_trace %>% 
       dplyr::mutate(repunit = dplyr::recode(repunit, !!!level_key)) %>% 
-      dplyr::group_by(mixture_collection, sweep, repunit) %>% 
+      dplyr::group_by(mixture_collection, chain, sweep, repunit) %>% 
       dplyr::summarise(rho = sum(rho), .groups = "drop_last") 
     grp_names <- group_names_new  # for factoring repunit
   } else {
@@ -272,37 +295,84 @@ custom_comb_rubias_output <-
   } 
   
   #~~~~~~~~~~~~~~~~
-  ## Plot repunit trace
-  if(plot_trace) {
-    trace_plot <- repunit_trace %>% 
-      dplyr::mutate(mixture_collection = factor(x = mixture_collection, levels = mixvec)) %>%  # order mixture_collection
-      dplyr::mutate(repunit = factor(x = repunit, levels = grp_names)) %>%  # order repunit
-      ggplot2::ggplot(ggplot2::aes(x = sweep, y = rho, colour = repunit)) +
-      ggplot2::geom_line() +
-      ggplot2::ylim(0, 1) +
-      ggplot2::geom_vline(xintercept = burn_in) +
-      # ggplot2::annotate(geom = "text", x = burn_in / 2, y = 0.9, label = "Burn-in") +
-      ggplot2::theme(legend.position = "none",
-                     axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-      ggplot2::facet_grid(repunit ~ mixture_collection)
-  }
+  ## Plot repunit trace ----
+  if (plot_trace == TRUE) {
+    if (max(repunit_trace$chain) == 1) {
+      trace_plot <- repunit_trace %>% 
+        dplyr::mutate(
+          mixture_collection = factor(x = mixture_collection, levels = mixvec),
+          repunit = factor(x = repunit, levels = grp_names)) %>%  # order mixture_collection, repunit
+        ggplot2::ggplot(ggplot2::aes(x = sweep, y = rho, colour = repunit)) +
+        ggplot2::geom_line() +
+        ggplot2::ylim(0, 1) +
+        ggplot2::geom_vline(xintercept = burn_in) +
+        # ggplot2::annotate(geom = "text", x = burn_in / 2, y = 0.9, label = "Burn-in") +
+        ggplot2::theme(legend.position = "none",
+                       axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+        ggplot2::facet_grid(repunit ~ mixture_collection)
+      
+    } else if (max(repunit_trace$chain) > 1) {
+      trace_plot <- repunit_trace %>% 
+        dplyr::mutate(
+          mixture_collection = factor(x = mixture_collection, levels = mixvec),
+          repunit = factor(x = repunit, levels = grp_names),
+          chain = as.factor(chain)
+          ) %>%  # order mixture_collection, repunit
+        ggplot2::ggplot(ggplot2::aes(x = sweep, y = rho, colour = chain)) +
+        ggplot2::geom_line() +
+        # ggplot2::ylim(0, 1) +
+        ggplot2::geom_vline(xintercept = burn_in) +
+        # ggplot2::annotate(geom = "text", x = burn_in / 2, y = 0.9, label = "Burn-in") +
+        ggplot2::theme(legend.position = "none",
+                       axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+        ggplot2::facet_grid(repunit ~ mixture_collection)
+    } # multi chain
+  } # trace plot
 
   #~~~~~~~~~~~~~~~~
-  ## Summary statistics
+  ## Summary statistics ----
   loCI = alpha / 2
   hiCI = 1 - (alpha / 2)
+  nchains <- max(repunit_trace$chain)
+  
+  if (nchains > 1) {
+    mcmc_tr_mc <- lapply(unique(repunit_trace$repunit), function(grp) {
+      sapply(unique(repunit_trace$chain), function(ch) {
+        dplyr::filter(repunit_trace,
+                      repunit == grp, chain == ch, sweep >= burn_in) %>%
+          dplyr::select(rho) %>%
+          dplyr::mutate(rho = coda::mcmc(rho))
+      }) %>% coda::as.mcmc.list(.)
+    })
+  }
   
   out_sum <- repunit_trace %>% 
     dplyr::filter(sweep >= burn_in) %>%  # remove burn_in
-    dplyr::mutate(mixture_collection = factor(x = mixture_collection, levels = mixvec)) %>%  # order mixture_collection
-    dplyr::mutate(repunit = factor(x = repunit, levels = grp_names)) %>%  # order repunit
-    dplyr::group_by(mixture_collection, repunit) %>%  # group by mixture and repunit across sweeps
+    dplyr::mutate(
+      mixture_collection = factor(x = mixture_collection, levels = mixvec),
+      repunit = factor(x = repunit, levels = grp_names)
+      ) %>%  # order mixture_collection, repunit
+    dplyr::group_by(mixture_collection, repunit) %>%
     dplyr::summarise(mean = mean(rho),
                      sd = sd(rho),
                      median = median(rho),
                      loCI = quantile(rho, probs = loCI),
                      hiCI = quantile(rho, probs = hiCI),
-                     `P=0` = sum(rho < threshold) / length(rho), .groups = "drop_last") %>%    # summary statistics to return
+                     `P=0` = sum(rho < threshold) / length(rho),
+                     .groups = "drop_last") %>%    # summary statistics to return
+    dplyr::mutate(
+      GR = {if (nchains > 1) {
+        sapply(seq(length(grp_names)), function(i) {
+          coda::gelman.diag(mcmc_tr_mc[[i]],
+                            transform = TRUE,
+                            autoburnin = FALSE,
+                            multivariate = FALSE)$psrf[,"Point est."]
+        })
+      } else {NA}},
+      n_eff = sapply(seq(length(grp_names)), function(i) {
+        coda::effectiveSize(mcmc_tr_mc[[i]])
+        })
+    ) %>%
     dplyr::mutate(loCI = replace(loCI, which(loCI < 0), 0),
                   hiCI = replace(hiCI, which(hiCI < 0), 0),
                   median = replace(median, which(median < 0), 0),
@@ -312,8 +382,11 @@ custom_comb_rubias_output <-
                   median = replace(median, which(median > 1), 1),
                   mean = replace(mean, which(mean > 1), 1)) %>% 
     magrittr::set_colnames(c("mixture_collection", "repunit", "mean", "sd", "median", 
-                             paste0(loCI * 100, "%"), paste0(hiCI * 100, "%"), "P=0"))
+                             paste0(loCI * 100, "%"), paste0(hiCI * 100, "%"), "P=0",
+                             "GR", "n_eff"))
   
   if(exists("trace_plot")) {suppressWarnings(print(trace_plot))}  # plot the trace for each mixture, repunit
+  
   return(out_sum)
-}  # end function
+  }
+
