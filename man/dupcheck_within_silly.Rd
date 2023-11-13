@@ -41,6 +41,9 @@ This function checks for duplicate individuals within each silly in the provided
 When quantile is set to NULL, this function utilizes \code{\link[rubias:close_matching_samples]{rubias::close_matching_samples()}} to perform the duplicate check, and it is much faster than when you set a quantile.
 Set quantile if you know that your collection contains individuals from a population or populations very little variation (similar genotypes) to avoid identifying too many duplicate samples.
 }
+\note{
+If not operating on original \code{.gcl} objects or those created by \code{pool_collections} (i.e., if you have created a new \code{.gcl} object manually), you will need to make sure that \verb{$SILLY_CODE} matches the name of this new \code{.gcl} object in order for \code{dupcheck_within_silly} to work properly.
+}
 \examples{
 \dontrun{
 
