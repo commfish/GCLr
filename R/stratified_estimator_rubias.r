@@ -186,7 +186,7 @@ stratified_estimator_rubias <-
       if(is.null(group_names)) {
         
         group_names <-
-          colnames(suppressMessages(readr::read_csv(file = paste0(path, "/", mixvec[1], "_repunit_trace.csv")))) %>%
+          suppressMessages(readr::read_csv(file = paste0(path, "/", mixvec[1], "_repunit_trace.csv"))) %>%
           colnames() %>%
           {.[which(!. %in% c("sweep", "chain"))]}
         

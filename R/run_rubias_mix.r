@@ -83,7 +83,6 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   
   if (method == "PB" & nchains > 1) {
     nchains <- 1L
-    message("Run method = 'PB' with defualt nchains = 1. It is the way.")
   }
   
   # Run infer mixture ----
@@ -98,7 +97,7 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
         method = method,
         alle_freq_prior = alle_freq_prior,
         pi_prior = pi_prior,
-        pi_init = pi_init,
+        pi_init = NULL,
         reps = reps,
         burn_in = burn_in,
         pb_iter = pb_iter,
@@ -253,6 +252,7 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
     })
     message("   time: ", sprintf("%.2f", time_bias["elapsed"]), 
             " seconds")
+    message("Run method = 'PB' with defualt nchains = 1. It is the way.")
   }  # PB
   
   return(rubias_out)

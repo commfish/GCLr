@@ -83,15 +83,13 @@ custom_comb_rubias_output <-
   if(!is.null(groupvec) & bias_corr) {
     stop("Can not perform bias correction if you are changing the groupvec (pop to group) from what was originally run.\n  Unfortunately since `rubias` only outputs bias corrected means for each `repunit`, we can't compute\n  bias corrected summary statistics on a new `groupvec`.")
   }
-  if(!is.null(groupvec_new) & is.null(group_names_new)) {
-    stop("Need to provide `group_names_new` if introducing `groupvec_new`, hoser!!!")
-  }
+
   if(!is.null(groupvec_new)) {
+    if(is.null(group_names)) {
+      stop("Need to provide `group_names` if introducing a new `groupvec`, hoser!!!")
+    }
     if(length(groupvec_new) != length(group_names) | max(groupvec_new) != length(group_names_new))
-      stop("If specifying `groupvec_new`, you must be rolling up from fine-scale groups to broad-scale groups (i.e. length(groupvec_new) = length(group_names), and max(groupvec_new) == length(group_names_new))")
-  }
-  if(!is.null(groupvec) & is.null(group_names)) {
-    stop("Need to provide `group_names` if introducing a new `groupvec`, hoser!!!")
+      stop("If specifying `groupvec_new`, you must be rolling up from fine-scale groups to broad-scale groups (i.e. length(groupvec_new) == length(group_names), and max(groupvec_new) == length(group_names_new))")
   }
   
   `%dopar%` <- foreach::`%dopar%`
@@ -176,7 +174,7 @@ custom_comb_rubias_output <-
         dplyr::left_join(repunit_new.df, by = "collection") %>%  # join with new repunit
         dplyr::rename(repunit = repunit_new) %>%  # rename new repunit
         dplyr::group_by(mixture_collection, chain, sweep, repunit) %>%  # group and order
-        dplyr::summarise(rho = sum(pi), .groups = "drop_last")   # summarise pi (collection) to rho (repunit)
+        dplyr::summarise(rho = sum(pi), .groups = "drop")   # summarise pi (collection) to rho (repunit)
         
     }  # build repunit_trace from "collection_trace.csv", `groupvec`, and `group_names`
     
@@ -224,9 +222,13 @@ custom_comb_rubias_output <-
       
       repunit_trace <-
         rubias_output$mix_prop_traces %>%
-        dplyr::mutate(chain = 1L) %>% 
+        dplyr::mutate(
+          chain = if ("chain" %in% names(rubias_output$mix_prop_traces)) {
+            chain
+            } else {1L}
+          ) %>% 
         dplyr::group_by(mixture_collection, chain, sweep, repunit) %>%  # group to summarize across collections
-        dplyr::summarise(rho = sum(pi), .groups = "drop_last" ) # summarize collections to repunits
+        dplyr::summarise(rho = sum(pi), .groups = "drop" ) # summarize collections to repunits
         
       if(is.null(group_names)) {group_names <- unique(repunit_trace$repunit)}  # assign `group_names` from `rubias_output`, if NULL, order may be wrong
       
@@ -237,12 +239,16 @@ custom_comb_rubias_output <-
                                        repunit_new = group_names[groupvec])  # tibble of new repunit from groupvec
       repunit_trace <-
         rubias_output$mix_prop_traces %>% 
-        dplyr::mutate(chain = 1L) %>% 
+        dplyr::mutate(
+          chain = if ("chain" %in% names(rubias_output$mix_prop_traces)) {
+            chain
+          } else {1L}
+        ) %>% 
         dplyr::left_join(repunit_new.df, by = "collection") %>%  # join with new repunit
         dplyr::select(-repunit) %>%  # drop old repunit
         dplyr::rename(repunit = repunit_new) %>%  # rename new repunit
         dplyr::group_by(mixture_collection, chain, sweep, repunit) %>%  # group and order
-        dplyr::summarise(rho = sum(pi), .groups = "drop_last")   # summarise pi (collection) to rho (repunit)
+        dplyr::summarise(rho = sum(pi), .groups = "drop")   # summarise pi (collection) to rho (repunit)
         
     }  # build repunit_trace from `rubias_output`, `groupvec`, and `group_names`
     
@@ -262,7 +268,7 @@ custom_comb_rubias_output <-
     mixing_proportions_rho <- repunit_trace %>% 
       dplyr::filter(sweep >= burn_in) %>%   # remove burn_in
       dplyr::group_by(mixture_collection, repunit) %>%  # group by mixture and repunit across sweeps
-      dplyr::summarise(rho = mean(rho), .groups = "drop_last") 
+      dplyr::summarise(rho = mean(rho), .groups = "drop") 
     
     d_rho <- mixing_proportions_rho %>% 
       dplyr::left_join(bootstrapped_proportions, by = c("mixture_collection", "repunit")) %>%  # join with `bootstrapped_proportions`
@@ -288,7 +294,7 @@ custom_comb_rubias_output <-
     repunit_trace <- repunit_trace %>% 
       dplyr::mutate(repunit = dplyr::recode(repunit, !!!level_key)) %>% 
       dplyr::group_by(mixture_collection, chain, sweep, repunit) %>% 
-      dplyr::summarise(rho = sum(rho), .groups = "drop_last") 
+      dplyr::summarise(rho = sum(rho), .groups = "drop") 
     grp_names <- group_names_new  # for factoring repunit
   } else {
     grp_names <- group_names  # for factoring repunit
@@ -335,16 +341,18 @@ custom_comb_rubias_output <-
   hiCI = 1 - (alpha / 2)
   nchains <- max(repunit_trace$chain)
   
-  if (nchains > 1) {
-    mcmc_tr_mc <- lapply(unique(repunit_trace$repunit), function(grp) {
-      sapply(unique(repunit_trace$chain), function(ch) {
-        dplyr::filter(repunit_trace,
-                      repunit == grp, chain == ch, sweep >= burn_in) %>%
-          dplyr::select(rho) %>%
-          dplyr::mutate(rho = coda::mcmc(rho))
-      }) %>% coda::as.mcmc.list(.)
+  mcmc_tr_mc <-
+    lapply(unique(repunit_trace$mixture_collection), function(mix) {
+      lapply(unique(repunit_trace$repunit), function(grp) {
+        sapply(unique(repunit_trace$chain), function(ch) {
+          dplyr::filter(repunit_trace,
+                        mixture_collection == mix, repunit == grp,
+                        chain == ch, sweep >= burn_in) %>%
+            dplyr::select(rho) %>%
+            dplyr::mutate(rho = coda::mcmc(rho))
+        }) %>% coda::as.mcmc.list(.)
+      })
     })
-  }
   
   out_sum <- repunit_trace %>% 
     dplyr::filter(sweep >= burn_in) %>%  # remove burn_in
@@ -359,19 +367,24 @@ custom_comb_rubias_output <-
                      loCI = quantile(rho, probs = loCI),
                      hiCI = quantile(rho, probs = hiCI),
                      `P=0` = sum(rho < threshold) / length(rho),
-                     .groups = "drop_last") %>%    # summary statistics to return
+                     .groups = "drop") %>%    # summary statistics to return
     dplyr::mutate(
       GR = {if (nchains > 1) {
-        sapply(seq(length(grp_names)), function(i) {
-          coda::gelman.diag(mcmc_tr_mc[[i]],
-                            transform = TRUE,
-                            autoburnin = FALSE,
-                            multivariate = FALSE)$psrf[,"Point est."]
-        })
+        lapply(seq(length(mixvec)), function(m) {
+          lapply(seq(length(grp_names)), function(g) {
+            coda::gelman.diag(mcmc_tr_mc[[m]][[g]],
+                              transform = TRUE,
+                              autoburnin = FALSE,
+                              multivariate = FALSE)$psrf[,"Point est."]
+          }) %>% dplyr::bind_rows()
+        }) %>% dplyr::bind_rows() %>% unlist()
       } else {NA}},
-      n_eff = sapply(seq(length(grp_names)), function(i) {
-        coda::effectiveSize(mcmc_tr_mc[[i]])
-        })
+      n_eff =
+        lapply(seq(length(mixvec)), function(m) {
+          lapply(seq(length(grp_names)), function(g) {
+            coda::effectiveSize(mcmc_tr_mc[[m]][[g]])
+            }) %>% dplyr::bind_rows()
+        }) %>% dplyr::bind_rows() %>% unlist()
     ) %>%
     dplyr::mutate(loCI = replace(loCI, which(loCI < 0), 0),
                   hiCI = replace(hiCI, which(hiCI < 0), 0),
