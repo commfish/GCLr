@@ -334,7 +334,7 @@ custom_comb_rubias_output <-
         ggplot2::facet_grid(repunit ~ mixture_collection)
     } # multi chain
   } # trace plot
-
+  
   #~~~~~~~~~~~~~~~~
   ## Summary statistics ----
   loCI = alpha / 2
@@ -342,9 +342,9 @@ custom_comb_rubias_output <-
   nchains <- max(repunit_trace$chain)
   
   mcmc_tr_mc <-
-    lapply(unique(repunit_trace$mixture_collection), function(mix) {
-      lapply(unique(repunit_trace$repunit), function(grp) {
-        sapply(unique(repunit_trace$chain), function(ch) {
+    lapply(mixvec, function(mix) {
+      lapply(grp_names, function(grp) {
+        sapply(seq.int(nchains), function(ch) {
           dplyr::filter(repunit_trace,
                         mixture_collection == mix, repunit == grp,
                         chain == ch, sweep >= burn_in) %>%
