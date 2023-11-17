@@ -1,5 +1,10 @@
 # GCLr 0.4.3
 
+## Bug fixes
+`loki2r_gaps()` - when the function updated the LocusControl `alleles` variable, it made it a list of vectors instead of a list of tibbles. This was causing functions that access the alleles variable to throw and error. 
+
+`gcl2nexus()` - the function gave an error if you only gad one haplotype locus. 
+
 # GCLr 0.4.2
 
 ## Bug fixes
