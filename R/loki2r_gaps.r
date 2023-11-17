@@ -98,12 +98,16 @@ loki2r_gaps <- function(sillyvec, username, password){
   ConTable$VALUE_ADFG <- as.numeric(ConTable$VALUE_ADFG)  # this is crucial for allele sorting so that "99" is at the front, not the back of the allele list
   
   ConTable$VALUE_CTC <- as.numeric(ConTable$VALUE_CTC)  # this is crucial for allele sorting so that "99" is at the front, not the back of the allele list
-  
-  alleles <- sapply(locusnames, function(loc) {
+ 
+  alleles <- lapply(locusnames, function(loc) {
     
-    as.character(sort(unique(as.vector(ConTable[ConTable[, "LOCUS_NAME"] == loc, "VALUE_CTC"]))))
+    my.loc = as.character(sort(unique(as.vector(ConTable[ConTable[, "LOCUS_NAME"] == loc, "VALUE_CTC"]))))
     
-    })
+    nalleles = length(my.loc)
+    
+    tibble::tibble(allele = seq(nalleles), call = my.loc)
+    
+    }) %>% purrr::set_names(locusnames)
   
   nalleles <- sapply(alleles, function(allele) {length(allele)} )
   
