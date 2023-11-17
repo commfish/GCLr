@@ -26,6 +26,9 @@
 #' When quantile is set to NULL, this function utilizes [rubias::close_matching_samples()] to perform the duplicate check, and it is much faster than when you set a quantile.
 #' Set quantile if you know that your collection contains individuals from a population or populations very little variation (similar genotypes) to avoid identifying too many duplicate samples. 
 #' 
+#' @note
+#' If not operating on original `.gcl` objects or those created by `pool_collections` (i.e., if you have created a new `.gcl` object manually), you will need to make sure that `$SILLY_CODE` matches the name of this new `.gcl` object in order for `dupcheck_within_silly` to work properly.
+#' 
 #' @export
 dupcheck_within_silly <- function(sillyvec, loci = LocusControl$locusnames, quantile = NULL, minnonmissing = 0.6, minproportion = 0.95, ncores = 4, LocusCtl = LocusControl) {
   

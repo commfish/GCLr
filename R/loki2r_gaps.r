@@ -68,7 +68,7 @@ loki2r_gaps <- function(sillyvec, username, password){
   
   options(java.parameters = "-Xmx10g")
   
-  url <- GCLr:::loki_url() #This is a function that gets the correct URL to access the database on the oracle cloud
+  url <- GCLr:::loki_url()  # This is a function that gets the correct URL to access the database on the oracle cloud
   
   drvpath <- system.file("java", "ojdbc8.jar", package = "GCLr")
   
@@ -95,27 +95,31 @@ loki2r_gaps <- function(sillyvec, username, password){
   
   ConTable <- RJDBC::dbGetQuery(con, "SELECT * FROM AKFINADM.GAPS_ALLELE_CONVERSION")
   
-  ConTable$VALUE_ADFG <- as.numeric(ConTable$VALUE_ADFG)  # this is crucial for allele sorting so that "99" is at the front, not the back of the allele list
+  ConTable$VALUE_ADFG <- as.numeric(ConTable$VALUE_ADFG)  # This is crucial for allele sorting so that "99" is at the front, not the back of the allele list
   
   ConTable$VALUE_CTC <- as.numeric(ConTable$VALUE_CTC)  # this is crucial for allele sorting so that "99" is at the front, not the back of the allele list
-  
-  alleles <- sapply(locusnames, function(loc) {
+ 
+  alleles <- lapply(locusnames, function(loc) {
     
-    as.character(sort(unique(as.vector(ConTable[ConTable[, "LOCUS_NAME"] == loc, "VALUE_CTC"]))))
+    my.loc = as.character(sort(unique(as.vector(ConTable[ConTable[, "LOCUS_NAME"] == loc, "VALUE_CTC"]))))
     
-    })
-  
-  nalleles <- sapply(alleles, function(allele) {length(allele)} )
+    nalleles = length(my.loc)
+    
+    tibble::tibble(allele = seq(nalleles), call = my.loc)
+    
+    }) %>% purrr::set_names(locusnames)
+
+  nalleles <- sapply(alleles, dim)[1,]
   
   LocusCtl <- tibble::tibble(MarkerSuite = markersuite, locusnames = locusnames, Publishedlocusnames = Publishedlocusnames, nalleles = nalleles, ploidy = ploidy, alleles = alleles)
   
-  assign("LocusControl", LocusCtl, pos = 1, envir = .GlobalEnv) #Assign elements to LocusControl list.	
+  assign("LocusControl", LocusCtl, pos = 1, envir = .GlobalEnv)  # Assign elements to LocusControl list.	
   
   loci <- LocusCtl$locusnames
   
   nloci <- length(loci)
   
-  gnoqry.norm <- paste("SELECT * FROM AKFINADM.V_GNOQRY WHERE LOCUS IN (", paste0("'", loci, "'", collapse = ","), ") AND SILLY_CODE IN (", paste0("'", sillyvec, "'", collapse = ","), ")", sep = "") #Gentoype query
+  gnoqry.norm <- paste("SELECT * FROM AKFINADM.V_GNOQRY WHERE LOCUS IN (", paste0("'", loci, "'", collapse = ","), ") AND SILLY_CODE IN (", paste0("'", sillyvec, "'", collapse = ","), ")", sep = "")  # Gentoype query
   
   dataAll.norm <- RJDBC::dbGetQuery(con, gnoqry.norm) %>% 
     tibble::as_tibble() 
@@ -126,7 +130,7 @@ loki2r_gaps <- function(sillyvec, username, password){
     tibble::as_tibble() %>% 
     dplyr::select(LOCUS, FK_COLLECTION_ID, FK_FISH_ID, ALLELE1_CONV, ALLELE2_CONV)
   
-  dataAll0 <- dplyr::inner_join(dataAll.norm, dataAll.gaps, by = c("COLLECTION_ID" = "FK_COLLECTION_ID", "LOCUS", "FISH_ID"="FK_FISH_ID")) %>% 
+  dataAll0 <- dplyr::left_join(dataAll.norm, dataAll.gaps, by = c("COLLECTION_ID" = "FK_COLLECTION_ID", "LOCUS", "FISH_ID"="FK_FISH_ID")) %>%  # Switched from inner_join to left_join to get "0"s & non-CTC alleles as NA
     dplyr::mutate(ALLELE_1 = ALLELE1_CONV, ALLELE_2 = ALLELE2_CONV) %>% 
     dplyr::select(-ALLELE1_CONV, -ALLELE2_CONV)
   
@@ -144,14 +148,14 @@ loki2r_gaps <- function(sillyvec, username, password){
   
   discon <- RJDBC::dbDisconnect(con)
   
-  missing_sillys <- setdiff(sillyvec, dataAll$SILLY_CODE %>% unique()) #Find which sillys had no data for any loci in LocusControl
+  missing_sillys <- setdiff(sillyvec, dataAll$SILLY_CODE %>% unique())  # Find which sillys had no data for any loci in LocusControl
   
-  # what indvs are missing loci from LocusControl (i.e. no genotyping attempted)?
+  # What indvs are missing loci from LocusControl (i.e. no genotyping attempted)?
   missing_indvs <- dataAll %>% 
     dplyr::count(SILLY_CODE, FISH_ID) %>% 
     dplyr::filter(n < nloci)
   
-  # what loci are these indvs missing?
+  # What loci are these indvs missing?
   missing_indvs_loci <- dataAll %>% 
     dplyr::distinct(SILLY_CODE, FISH_ID) %>% 
     tidyr::unite(col = "SillySource", c("SILLY_CODE", "FISH_ID"), sep = "_", remove = FALSE) %>% 
@@ -165,16 +169,16 @@ loki2r_gaps <- function(sillyvec, username, password){
   
   names(missing_indvs_loci$missing_loci) <- missing_indvs_loci$SillySource
   
-  # replace no calls (0's) with NA
+  # Replace no calls (0's) with NA
   dataAll <- dataAll %>% 
     dplyr::mutate(ALLELE_1 = gsub(pattern = "^0$", replacement = NA_character_, x = ALLELE_1),
                   ALLELE_2 = gsub(pattern = "^0$", replacement = NA_character_, x = ALLELE_2))
   
-  # filter out individuals missing loci, 
+  # Filter out individuals missing loci, 
   dataAll_no_missing <- dataAll %>% 
     dplyr::anti_join(dplyr::select(.data = missing_indvs, SILLY_CODE, FISH_ID), by = c("SILLY_CODE", "FISH_ID")) 
   
-  # what sillys have complete data?
+  # What sillys have complete data?
   complete_sillys <- dataAll_no_missing$SILLY_CODE %>% 
     unique() %>% 
     sort()
@@ -186,7 +190,7 @@ loki2r_gaps <- function(sillyvec, username, password){
     unique() %>% 
     sort()
   
-  # did all indvs from a silly get dropped?
+  # Did all indvs from a silly get dropped?
   missing_sillys_indv <- setdiff(setdiff(sillyvec, missing_sillys), dataAll_sillys)
   
   lapply(dataAll_sillys, function(silly){ 

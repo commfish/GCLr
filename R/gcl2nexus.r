@@ -96,7 +96,7 @@ gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, nc
     
     hapset0 <- grep("1", ploidy)
     
-    if(length(hapset0)>1){hapset <- paste(range(hapset0), collapse="-")}
+    if(length(hapset0)>1){hapset <- paste(range(hapset0), collapse="-")}else{hapset = hapset0}
     
     file <- rbind(file, paste0("hapset ", hapset, ";"))
     
@@ -179,10 +179,8 @@ gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, nc
       
       scores %>%
         dplyr::select(tidyselect::all_of(variables)) %>% 
-        dplyr::mutate_all(factor, levels = my.alleles) %>% 
-        dplyr::mutate_all(as.numeric) %>%
         replace(is.na(.), "?") %>%
-        tidyr::unite(col = loc, all_of(variables), sep = "/  ")
+        tidyr::unite(col = loc, all_of(variables), sep = "/")
       
     }) %>% 
       dplyr::bind_cols() %>% 
