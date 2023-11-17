@@ -13,15 +13,15 @@ create_prior(
 )
 }
 \arguments{
-\item{groupvec}{Numeric vector indicating the group affiliation of each population in \code{sillyvec}.}
+\item{groupvec}{Numeric vector indicating the group affiliation of each baseline population in \code{sillyvec}.}
 
 \item{groupweights}{The weights for each group in \code{groupvec}. For example, to give the same weight to all groups, use \code{groupweights = rep(1/max(groupvec), max(groupvec))}.}
 
-\item{minval}{the minimum value of the weight given to each population (default = 0.01).}
+\item{minval}{The minimum value of the weight given to each group (default = 0.01).}
 
 \item{type}{Whether you want a prior object for "BAYES" or \pkg{rubias}. Default is "BAYES".}
 
-\item{sillyvec}{A vector of silly codes without the ".gcl" extension. This argument is needed when \code{type = "rubias"}.}
+\item{sillyvec}{A vector of baseline silly codes without the ".gcl" extension in the reference rubias object (reference$collection). This argument is needed when \code{type = "rubias"}.}
 }
 \value{
 For \code{type = "BAYES"}, the function outputs a vector with names = \code{groupvec}.

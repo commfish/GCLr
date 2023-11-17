@@ -2,11 +2,11 @@
 #'
 #' This function creates a prior object for BAYES or rubias.
 #'
-#' @param groupvec Numeric vector indicating the group affiliation of each population in `sillyvec`.
+#' @param groupvec Numeric vector indicating the group affiliation of each baseline population in `sillyvec`.
 #' @param groupweights The weights for each group in `groupvec`. For example, to give the same weight to all groups, use \code{groupweights = rep(1/max(groupvec), max(groupvec))}.
-#' @param minval the minimum value of the weight given to each population (default = 0.01).
+#' @param minval The minimum value of the weight given to each group (default = 0.01).
 #' @param type Whether you want a prior object for "BAYES" or \pkg{rubias}. Default is "BAYES".
-#' @param sillyvec A vector of silly codes without the ".gcl" extension. This argument is needed when \code{type = "rubias"}.
+#' @param sillyvec A vector of baseline silly codes without the ".gcl" extension in the reference rubias object (reference$collection). This argument is needed when \code{type = "rubias"}.
 #'
 #' @returns  For \code{type = "BAYES"}, the function outputs a vector with names = \code{groupvec}.
 #'   For \code{type = "rubias"}, the function outputs a tibble with "collection" and "pi_param" variables.
