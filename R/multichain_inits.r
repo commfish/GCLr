@@ -95,7 +95,7 @@ multichain_inits <- function(npops, nchains, prop = 0.9, type = c("BAYES", "rubi
     
     initmat <- lapply(1:nchains, function(chain){
       
-     tibble::tibble(collection = sillyvec, pi_init = GCLr::create_prior(sillyvec = sillyvec, groupvec = groupvec, groupweights = GroupWeights[, chain], minval = 0, type = type) %>% as.numeric())
+     tibble::tibble(collection = sillyvec, pi_init = GCLr::create_prior(sillyvec = sillyvec, groupvec = groupvec, groupweights = GroupWeights[, chain], minval = 0, type = type) %>% dplyr::pull(pi_param))
         
     }) %>% purrr::set_names(paste0("Chain", 1:nchains))
     
