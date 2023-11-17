@@ -16,14 +16,14 @@
 #' @return Writes out a NEXUS file to the specified path.
 #' 
 #' @examples
-# sillys <- GCLr::base2gcl(GCLr::ex_baseline)
-# 
-# loci <- GCLr::ex_baseline[,-c(1:5)] %>%
-#   names() %>%
-#   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
-#   unique()
-# 
-# gcl2nexus(sillyvec = sillys, loci = loci, path = path.expand("~/nexusfile.nex"), VialNums = TRUE, PopNames = NULL, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
+#' sillys <- GCLr::base2gcl(GCLr::ex_baseline)
+#' 
+#' loci <- GCLr::ex_baseline[,-c(1:5)] %>%
+#'   names() %>%
+#'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
+#'   unique()
+#' 
+#' gcl2nexus(sillyvec = sillys, loci = loci, path = path.expand("~/nexusfile.nex"), VialNums = TRUE, PopNames = NULL, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
 #' 
 #' @export
 gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, ncores = 4, LocusCtl = LocusControl){
