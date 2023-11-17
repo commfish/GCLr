@@ -1,9 +1,16 @@
 # GCLr 0.4.3
 
 ## Bug fixes
-`loki2r_gaps()` - when the function updated the LocusControl `alleles` variable, it made it a list of vectors instead of a list of tibbles. This was causing functions that access the alleles variable to throw and error. 
 
-`gcl2nexus()` - the function gave an error if you only gad one haplotype locus. 
+`loki2r_gaps()` - when the function updated the `LocusControl$alleles` variable, it made it a list of vectors instead of a list of tibbles. This was causing functions that access the alleles variable to throw and error.
+
+`gcl2nexus()` - the function gave an error if you only had one haplotype locus.
+
+`qc_template()` - fixed QA table so it calculates `final` sample sizes when `wrong_spp` is `NA`.
+
+`create_prior()` - update documentation to clarify `minval` and `sillyvec` arguments.
+
+`dupcheck_within_silly()` - add a **Note** to the documentation clarifying that `$SILLY_CODE` needs to match the name of the `.gcl` object. This can cause issues if you modify `.gcl` objects outside of `pool_collections()`.
 
 # GCLr 0.4.2
 
@@ -23,9 +30,9 @@
 
 `loki2r()`, `loki2r_gaps()`, and `loki2r_proj()` - the code in these functions to replace "0" allele calls with NA's did not take into account microsatellite alleles that contain zeros (e.g. "105", "109"), and any allele containing a zero became an NA. This issue has beeen corrected so only "0" alleles are converted to NA's.
 
-`get_tissue_data()` - this function was removing workbench IDs that contain 0.  This has been fixed.
+`get_tissue_data()` - this function was removing workbench IDs that contain 0. This has been fixed.
 
-`skeleton.Rmd` - splitting the QC template into project and qc data analysis sections led to issues with removing fish prior to calculating conflict rates. After reading sillys from LOKI, each silly object is now duplicated using the name "SILLY_raw.gcl". The raw (i.e., unedited) SILLYS are used to calculate conflict rates in `combine_conflicts()`. 
+`skeleton.Rmd` - splitting the QC template into project and qc data analysis sections led to issues with removing fish prior to calculating conflict rates. After reading sillys from LOKI, each silly object is now duplicated using the name "SILLY_raw.gcl". The raw (i.e., unedited) SILLYS are used to calculate conflict rates in `combine_conflicts()`.
 
 `combine_conflicts()` - This now calls on the raw silly objects when running `pool_collections()`.
 
@@ -56,7 +63,8 @@ The output from `get_tissue_data()` previously contained zeros instead of NA's i
 `proj_geno_stats()` takes the genotypes report object from `get_geno()`, calculates genotypes statistics, and write them to a formatted Excel workbook.
 
 ## Enhancements
-`get_geno()` has a new argument `proj.stats`. When `project_name` is supplied and `proj.stats = TRUE`, the function calls on `proj_geno_stats()`, which calculates genotypes statistics and writes them to a formatted Excel workbook. 
+
+`get_geno()` has a new argument `proj.stats`. When `project_name` is supplied and `proj.stats = TRUE`, the function calls on `proj_geno_stats()`, which calculates genotypes statistics and writes them to a formatted Excel workbook.
 
 # GCLr 0.2.3
 
@@ -64,9 +72,9 @@ The output from `get_tissue_data()` previously contained zeros instead of NA's i
 
 Issues with two functions used in the `qc_template` markdown have been fixed:
 
-1.  The `read_qc_geno()` now adds 'qc' to the end of the silly code in the SILLY_CODE and SillySource variables of the '.gcl' objects it produces. Not having the 'qc' in the silly code was causing an error with `rubias::close_matching_samples()` because there were individuals with the same sample ID being checked(aka SillySource). 
+1.  The `read_qc_geno()` now adds 'qc' to the end of the silly code in the SILLY_CODE and SillySource variables of the '.gcl' objects it produces. Not having the 'qc' in the silly code was causing an error with `rubias::close_matching_samples()` because there were individuals with the same sample ID being checked(aka SillySource).
 
-2. `dupcheck_among_sillys()` was missing some namespaces for functions, those have been added.
+2.  `dupcheck_among_sillys()` was missing some namespaces for functions, those have been added.
 
 # GCLr 0.2.2
 
