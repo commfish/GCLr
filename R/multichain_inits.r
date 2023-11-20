@@ -4,17 +4,17 @@
 #' Bayesian data analysis or rubias modeling. The matrix specifies the initial
 #' values for each chain to facilitate the convergence of the chains to the
 #' posterior distribution.
-#'
-#' @param npops Integer. The total number of populations to consider.
+#' 
+#' @param sillyvec Numeric vector (optional). Required only when `type` is set
+#'   to rubias". The user must supply a vector containing silly values for each
+#'   chain. Default is NULL.
+#' @param groupvec Numeric vector indicating the group affiliation of each population.
 #' @param nchains Integer. The number of chains to be used. Must be greater than 1.
 #' @param prop Numeric (optional). The proportion of the prior distribution to
 #'   allocate to each group in the chain initialization matrix. Default is 0.9.
 #' @param type Character (optional). The type of initialization to be performed.
 #'   Possible values are "BAYES" for [BAYES] or "rubias" for [rubias]
 #'   modeling. Default is "BAYES".
-#' @param sillyvec Numeric vector (optional). Required only when `type` is set
-#'   to rubias". The user must supply a vector containing silly values for each
-#'   chain. Default is NULL.
 #'
 #' @return A matrix or a list of tibbles, depending on the chosen `type`, where
 #'   rows represent different populations and columns represent different chains.
@@ -49,7 +49,7 @@
 #'                                      sillyvec = paste0("Pop", 1:10))
 #'
 #' @export
-multichain_inits <- function(npops, nchains, prop = 0.9, type = c("BAYES", "rubias")[1], sillyvec = NULL){    
+multichain_inits <- function(sillyvec = NULL, groupvec, nchains, prop = 0.9, type = c("BAYES", "rubias")[1]){    
   
   if(!type%in%c("BAYES", "rubias")){
     
@@ -68,12 +68,6 @@ multichain_inits <- function(npops, nchains, prop = 0.9, type = c("BAYES", "rubi
     stop("The user must supply a sillyvec when type = 'rubias'")
     
   }
-
-  r <- npops%%nchains
-
-  avgpop <- floor(npops/nchains)
-
-  groupvec <- c(rep(1:(nchains), each = avgpop), rep(nchains, r)) 
 
   GroupWeights <- array((1-prop)/(nchains-1), c(nchains, nchains))
 
