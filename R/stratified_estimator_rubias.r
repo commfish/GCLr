@@ -170,7 +170,7 @@ stratified_estimator_rubias <-
             suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_repunit_trace.csv")))
           
           if (!"chain" %in% names(repunit_trace_mix)) {
-            dplyr::mutate(repunit_trace_mix, chain = 1L)
+            repunit_trace_mix <- dplyr::mutate(repunit_trace_mix, chain = 1L)
           } # in case older files without multichain
           
           repunit_trace_mix <- repunit_trace_mix %>% 
@@ -214,7 +214,7 @@ stratified_estimator_rubias <-
           collection_trace_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_collection_trace.csv")))
           
           if (!"chain" %in% names(collection_trace_mix)) {
-            dplyr::mutate(collection_trace_mix, chain = 1L)
+            collection_trace_mix <- dplyr::mutate(collection_trace_mix, chain = 1L)
           } # in case older files without multichain
           
           collection_trace_mix <- collection_trace_mix %>% 
