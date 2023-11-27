@@ -1,3 +1,9 @@
+## Bug fixes
+
+`dupcheck_qc_conflicts` - update to properly remove conflict fish that were lost in project or QC due to `remove_ind_miss_loci`.
+
+`qc_template()` - update directions to restart RStudio.
+
 # GCLr 0.4.3
 
 ## Bug fixes
