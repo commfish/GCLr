@@ -20,9 +20,10 @@
 #'                \item \code{tn} (integer): number of true negative assignments
 #'                \item \code{tp} (integer): number of true positive assignments
 #'                \item \code{fp} (integer): number of false positive assignments
-#'                \item \code{tpr} (double): the true positive assignment rate
-#'                \item \code{fpt} (double): the false positive assignment rate
-#'                \item \code{acc} (double): accuracy rate
+#'                \item \code{tpr} (double): the true positive assignment rate - tp / (tp + fn)
+#'                \item \code{fpt} (double): the false positive assignment rate - fp / (fp + tn)
+#'                \item \code{acc} (double): accuracy rate - (tp + tn) / (tp + tn + fp + fn)
+#'                \item \code{pre} (double): precision rate - tp / (tp + fp)
 #'                \item \code{level} (double): the assignment threshold level (proportion)
 #'                \item \code{threshold} (character): the assignment threshold level (percent) for ROC curve plots.
 #'          }
@@ -94,9 +95,10 @@ loo_roc_rate_calc <- function(data, thres_levels, group_names, ncores = parallel
         
         counts %>%
           mutate(
-            tpr = tp / (tp + fn), # true positive rate (power)
+            tpr = tp / (tp + fn), # true positive rate (power; sensitivity)
             fpr = fp / (tn + fp), # false positive rate (type 1 error)
             acc = (tp + tn) / (tp + tn + fp + fn), # accuracy rate
+            pre = tp / (tp + fp), # precision rate (positive predictive value)
             level = ts
           ) # threshold level
         
