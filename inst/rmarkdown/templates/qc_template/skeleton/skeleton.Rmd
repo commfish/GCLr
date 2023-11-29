@@ -35,7 +35,7 @@ The previous QC consisted of an R script with Excel and other outputs, this expo
 # Script Directions/Notes
     
     1) Add a title and your name to the top of the script.
-    2) Save this to the QC directory. Recommended naming convention: "project#_QC.Rmd". Example: S200_QC.Rmd
+    2) Save this to the QC directory and restart RStudio to set your working directory. Recommended naming convention: "project#_QC.Rmd". Example: S200_QC.Rmd
     3) Run this script in order, one code chunk at a time, or some functions will not provide accurate results. This is by design, as this script only hits LOKI once to save time.
     4) Add your review notes to the file (in the relevant project or QC review section), prior to finalizing (i.e., saving)!
 

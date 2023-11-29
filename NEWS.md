@@ -1,3 +1,15 @@
+# GCLr 0.4.4
+
+## Bug fixes
+
+`dupcheck_qc_conflicts` - update to properly remove conflict fish that were lost in project or QC due to `remove_ind_miss_loci`.
+
+`qc_template()` - update directions to restart RStudio.
+
+## Enhancements
+
+`loo_roc_rate_calc` - update to include *precision* - TP / (TP + FP) in the output.
+
 # GCLr 0.4.3
 
 ## Bug fixes

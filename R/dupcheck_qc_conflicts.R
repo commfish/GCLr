@@ -57,22 +57,22 @@ dupcheck_qc_conflicts <- function(conflicts, conflict_rate, project_sillys, Locu
       ind <- stringr::str_split(string = silly_ind, pattern = "_", simplify = TRUE)[, 2]
       
       # qc fish lost in QA?
-      if(ind %in% miss_loci_qc[[paste0(silly, "qc")]]){
+      if(ind %in% miss_loci_qc$IDs_Removed[[paste0(silly, "qc")]]){
         
         message(paste0("\n", silly, "qc_", ind," does not have at least 80% loci genotyped, not running DupCheck for this individual."))
         
       }  # print if any qc fish were removed due to missing genotypes
       
       # Project fish lost in QA
-      if(ind %in% MissLoci[[silly]]){
+      if(ind %in% MissLoci$IDs_Removed[[silly]]){
         
         message(paste0("\n", silly, "_", ind, " does not have at least 80% loci genotyped, not running DupCheck for this individual."))
         
       }  # print if any project fish were removed due to missing genotypes
       
-      paste(silly, ind, sep = "_")[!(ind %in% miss_loci_qc[[paste0(silly, "qc")]] | ind %in% MissLoci[[silly]])]  # Confirm qc fish and Project fish were not removed
+      paste(silly, ind, sep = "_")[!(ind %in% miss_loci_qc$IDs_Removed[[paste0(silly, "qc")]] | ind %in% MissLoci$IDs_Removed[[silly]])]  # Confirm qc fish and Project fish were not removed
       
-    })  # silly_ind
+    }) %>% unlist()  # silly_ind
     
     # If no more, stop
     
