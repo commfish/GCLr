@@ -224,11 +224,14 @@ The purpose of this plot is to show a summary a few markers that are indicative 
 
 **XXX -Maybe highlight circles that are likely alternates? could do this using the cutoff values**
 ```{r alt_spp}
-# only run if spp = chum or sockeye and the loci are in the list, otherwise nothing to check
-if (any(species %in% c("chum", "sockeye")) &
-    any(loci %in% c("Oke_U1018-50", "Oke_U2032-74", "Oke_Cr386", "Oke_AhR1-78", "Oke_CKS1-94", "Oke_e2ig5-50", "Oke_U1002-262", "Oke_U1025-135",
-        "Oke_u200-385", "Oke_U2025-86", "Oke_U502-241", "One_ctgf-301", "One_KCT1-453", "One_taf12-248", "One_U1013-108", "One_U1214-107", "One_Hsp47", "One_STC-410", "One_U1010-81", "One_MHC2_190", "One_cin-177", "One_vatf-214"))
-    ) {
+# only run if spp = chum or sockeye and at least one alternate and one failed locus are in the list, otherwise nothing to check
+
+alt_markers <- c("Oke_U1018-50", "Oke_U2032-74", "Oke_Cr386", "One_ctgf-301", "One_KCT1-453", "One_taf12-248", "One_U1013-108", "One_U1214-107")
+
+failed_markers <- c("Oke_AhR1-78", "Oke_CKS1-94", "Oke_e2ig5-50", "Oke_U1002-262", "Oke_U1025-135",
+        "Oke_u200-385", "Oke_U2025-86", "Oke_U502-241", "One_Hsp47", "One_STC-410", "One_U1010-81", "One_MHC2_190", "One_cin-177", "One_vatf-214")  
+
+if (any(species %in% c("chum", "sockeye")) & any(loci %in% alt_markers) & any(loci %in% failed_markers)) {
   
   # run alternate species checks
   alternate_spp <-
