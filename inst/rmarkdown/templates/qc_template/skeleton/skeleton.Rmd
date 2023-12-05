@@ -365,7 +365,7 @@ This concludes the QA section. At this point, you should have all the informatio
 
 Now that a project has been vetted and you're happy with it, you can select high-quality fish for QC analysis. The function below ignores any duplicates, low quality, or wrong species, leaving a subset of high-quality fish. Using high quality fish ensures that there will be power during the QC. 
 *XXX Andy's new function should replace "sample" here.*
-```{r}
+```{r select_qc_fish}
 if (select.list( choices = c("Yes", "No"), preselect = "No", multiple = FALSE, title = "Select QC fish now?", graphics = TRUE) == "Yes") {
   print("Selecting the highest quality fish that you've ever seen... ")
   qc_fish <- sample(100)
