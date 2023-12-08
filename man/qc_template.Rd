@@ -17,7 +17,7 @@ If you are just running the project data analysis, walk through steps 1-14 in th
 \itemize{
 \item \strong{Option 1:} From the menu bar, select: \verb{File -> New File -> R Markdown} and then select “From Template” on the left menu; “qc_template” should be highlighted. Hit “OK” \cr
 \figure{NewRMDWindow_small.PNG}
-\item \strong{Option 2:} Simply run \code{qc_template()} in your console (see tab marked "Console" in RStudio) and the file will open (i.e., paste \code{qc_template()} in your console and hit return)
+\item \strong{Option 2:} Simply run \code{GCLr::qc_template()} in your console (see tab marked "Console" in RStudio) and the file will open (i.e., paste \code{GCLr::qc_template()} in your console and hit return)
 }
 \item At the top of the script, fill in the following:
 \itemize{
@@ -32,7 +32,7 @@ If you are just running the project data analysis, walk through steps 1-14 in th
 \item \verb{dirqc <- “paste the project directory for the QC folder”} the directory path must have 2 backslashes (\verb{\\\\}) or 1 forward slash (\code{/}) between folders or it won't work. A simple way to get this is to run \code{getwd()} in the console, then copy and paste the directory path from the console into the script.
 \item \verb{species <- “species”} it must be lowercase.
 \item \verb{project <- “Project number”}
-\item \verb{project_type <- “Just copy paste one of the platforms”}
+\item \verb{project_type <- “Just copy paste one of the platforms listed”}
 }
 \item Click \figure{RunChunkGreenArrow.png} in the \code{inputs} code chunk.
 \item Click \figure{RunChunkGreenArrow.png} in \code{optional_inputs} code chunk.
@@ -60,16 +60,16 @@ Here are the remaining code chunks and a brief description of what they do:
 \item \code{samp_size_dups} - check out the sample size table, after checking for duplicates
 \item \code{samp_size_final} - this table shows the final sample size for each silly
 \item \code{select_qc_fish} - select high-quality fish for the QC analysis. A popup window will ask you if you want to select QC fish yes/no \strong{Note: there will be a function to do this in the future, but it's not ready for prime time, so disreguard this code chunk.}
-\itemize{
-\item \emph{This ends the project data analysis portion of the script.}
-}
+\strong{This ends the project data analysis portion of the script.}
 }
 \item Manually enter a project data analysis summary:
-- \verb{Name:} Your name
-- \verb{Date:} Enter the date
-- \verb{Comments:} Anything you noted from project review.
+\itemize{
+\item \verb{Name:} Your name
+\item \verb{Date:} Enter the date
+\item \verb{Comments:} Anything you noted from project review.
 
 \strong{At this point, you can simply save the file and exit or continue onto the QC data analysis section.}
+}
 \item If you aren't continuing with the QC analysis, click save then close. When closing, a popup window will ask you if you want to save, click "Don't Save".
 \strong{If you are moving on to the QC data analysis follow steps below.}
 \item Run each code chunk (click \figure{RunChunkGreenArrow.png}) in the *QC Data Analysis section:
@@ -90,11 +90,13 @@ Here are the remaining code chunks and a brief description of what they do:
 \item \code{conf_by_locus} - table conflicts by locus for the project
 }
 \item Manually enter a QC data analysis summary:
-- \verb{Name:} Your name
-- \verb{Date:} Enter the date
-- \verb{Comments:} Anything you noted from project review.
+\itemize{
+\item \verb{Name:} Your name
+\item \verb{Date:} Enter the date
+\item \verb{Comments:} Anything you noted from project review.
+}
 \item Run \code{savedata} code chunk to save workspace image
-\item Save file: \code{File -> Save}. Save the file in the QC directory and rename the notebook html file to something informative (e.g.,  \emph{project#}_QC_final.nb.html)
+\item Save file: \code{File -> Save}.\cr Save the file in the QC directory and rename the notebook html file to something informative (e.g.,  \emph{project#}_QC_final.nb.html)
 }
 }
 \note{

@@ -7,7 +7,7 @@
 #' 1) Open R Studio (If you are reading this, you probably RStudio open already `r emo::ji("silly")`) 
 #' 2) - **Option 1:** From the menu bar, select: `File -> New File -> R Markdown` and then select “From Template” on the left menu; “qc_template” should be highlighted. Hit “OK” \cr 
 #'           \figure{NewRMDWindow_small.PNG}
-#'    - **Option 2:** Simply run `qc_template()` in your console (see tab marked "Console" in RStudio) and the file will open (i.e., paste `qc_template()` in your console and hit return)
+#'    - **Option 2:** Simply run `GCLr::qc_template()` in your console (see tab marked "Console" in RStudio) and the file will open (i.e., paste `GCLr::qc_template()` in your console and hit return)
 #' 3) At the top of the script, fill in the following: 
 #'    - `title:` “Project number”
 #'    - `author:` “Your name”
@@ -18,7 +18,7 @@
 #'    - `dirqc <- “paste the project directory for the QC folder”` the directory path must have 2 backslashes (`\\`) or 1 forward slash (`/`) between folders or it won't work. A simple way to get this is to run `getwd()` in the console, then copy and paste the directory path from the console into the script.
 #'    - `species <- “species”` it must be lowercase.
 #'    - `project <- “Project number”`
-#'    - `project_type <- “Just copy paste one of the platforms”`
+#'    - `project_type <- “Just copy paste one of the platforms listed”`
 #' 7) Click \figure{RunChunkGreenArrow.png} in the `inputs` code chunk.
 #' 8) Click \figure{RunChunkGreenArrow.png} in `optional_inputs` code chunk.
 #' 9) In the Notebook prep section, click \figure{RunChunkGreenArrow.png} in the `knitprep` code chunk, then
@@ -44,11 +44,11 @@
 #'      - `samp_size_dups` - check out the sample size table, after checking for duplicates
 #'      - `samp_size_final` - this table shows the final sample size for each silly 
 #'      - `select_qc_fish` - select high-quality fish for the QC analysis. A popup window will ask you if you want to select QC fish yes/no **Note: there will be a function to do this in the future, but it's not ready for prime time, so disreguard this code chunk.** 
-#'        - *This ends the project data analysis portion of the script.*
+#'        **This ends the project data analysis portion of the script.**
 #'  13) Manually enter a project data analysis summary:
-#'             - `Name:` Your name
-#'             - `Date:` Enter the date
-#'             - `Comments:` Anything you noted from project review.
+#'      - `Name:` Your name
+#'      - `Date:` Enter the date
+#'      - `Comments:` Anything you noted from project review.
 #'             
 #'        **At this point, you can simply save the file and exit or continue onto the QC data analysis section.**
 #' 
@@ -72,13 +72,13 @@
 #'      - `conf_by_locus` - table conflicts by locus for the project
 #'      
 #'  16) Manually enter a QC data analysis summary:
-#'             - `Name:` Your name
-#'             - `Date:` Enter the date
-#'             - `Comments:` Anything you noted from project review.
+#'      - `Name:` Your name
+#'      - `Date:` Enter the date
+#'      - `Comments:` Anything you noted from project review.
 #'      
 #'      
 #'  17) Run `savedata` code chunk to save workspace image
-#'  18) Save file: `File -> Save`. Save the file in the QC directory and rename the notebook html file to something informative (e.g.,  *project#*_QC_final.nb.html)
+#'  18) Save file: `File -> Save`.\cr Save the file in the QC directory and rename the notebook html file to something informative (e.g.,  *project#*_QC_final.nb.html)
 #'      
 #' @note Keep track of what tables and figures you find informative and note the ones that do not bring you joy so we can remove/hide them in the next package version.
 #' 
