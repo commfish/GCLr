@@ -89,7 +89,7 @@ qc_template <- function(){
   
   file.copy(from = template, to = path.expand("~/qc_template.Rmd"))
   
-  shell(path.expand("~/qc_template.Rmd"))
+  shell(path.expand("~/qc_template.Rmd"), wait = TRUE)
   
   file.remove(path.expand("~/qc_template.Rmd"))
  
