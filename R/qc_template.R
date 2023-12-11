@@ -85,10 +85,12 @@
 #' @export
 qc_template <- function(){
   
-  template <- system.file("rmarkdown/templates/qc_template/skeleton", "skeleton.rmd", package = "GCLr") 
+  template <- system.file("rmarkdown/templates/qc_template/skeleton", "skeleton.Rmd", package = "GCLr") 
   
-  file.copy(from = template, to = path.expand("~/qc_template.rmd"))
+  file.copy(from = template, to = path.expand("~/qc_template.Rmd"))
   
-  shell(path.expand("~/qc_template.rmd"))
+  shell(path.expand("~/qc_template.Rmd"))
+  
+  file.remove(path.expand("~/qc_template.Rmd"))
  
 }
