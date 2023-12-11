@@ -16,7 +16,7 @@ If you are just running the project data analysis, walk through steps 1-14 in th
 \item 
 \itemize{
 \item \strong{Option 1:} From the menu bar, select: \verb{File -> New File -> R Markdown} and then select “From Template” on the left menu; “qc_template” should be highlighted. Hit “OK” \cr
-\figure{NewRMDWindow_small.PNG}
+\figure{NewRMDWindow.png}
 \item \strong{Option 2:} Simply run \code{GCLr::qc_template()} in your console (see tab marked "Console" in RStudio) and the file will open (i.e., paste \code{GCLr::qc_template()} in your console and hit return)
 }
 \item At the top of the script, fill in the following:

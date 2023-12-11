@@ -6,7 +6,7 @@
 #' 
 #' 1) Open R Studio (If you are reading this, you probably RStudio open already `r emo::ji("silly")`) 
 #' 2) - **Option 1:** From the menu bar, select: `File -> New File -> R Markdown` and then select “From Template” on the left menu; “qc_template” should be highlighted. Hit “OK” \cr 
-#'           \figure{NewRMDWindow_small.PNG}
+#'           \figure{NewRMDWindow.png}
 #'    - **Option 2:** Simply run `GCLr::qc_template()` in your console (see tab marked "Console" in RStudio) and the file will open (i.e., paste `GCLr::qc_template()` in your console and hit return)
 #' 3) At the top of the script, fill in the following: 
 #'    - `title:` “Project number”
