@@ -132,7 +132,7 @@ get_fish_inventory <- function(years, dir, username, password){
  
  plot3 <-  plot3_dat %>% 
    dplyr::mutate(month = factor(month, levels = month.name[12:1]), year = factor(year, levels = unique(year))) %>% 
-   ggplot2::ggplot(aes(y = month, x = year, fill = N)) +
+   ggplot2::ggplot(ggplot2::aes(y = month, x = year, fill = N)) +
    ggplot2::geom_tile()+
    ggplot2::scale_fill_gradient(low = "green", high = "red", name = "Number of Samples")+
    ggplot2::geom_text(ggplot2::aes(y = month, x = year, label = round(N, digits = 0)), size = 2.5)+
