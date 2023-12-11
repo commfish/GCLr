@@ -91,6 +91,8 @@ qc_template <- function(){
   
   shell(path.expand("~/qc_template.Rmd"), wait = TRUE)
   
+  system('sleep 2')
+  
   file.remove(path.expand("~/qc_template.Rmd"))
  
 }
