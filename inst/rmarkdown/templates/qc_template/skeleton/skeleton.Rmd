@@ -266,8 +266,10 @@ project_sillys_n  %>%
 
 Here we can view the table containing failed and alternate markers for each fish. This table shows the proportion of 'failure' and 'alternate' indicator markers that were found for each fish. These data are what's used to determine whether a chum or sockeye was incorrectly identified. 
 ```{r alt_spp_table}
-if (!species %in% c("sockeye", "chum")) {
-  message("Only applicable for chum and sockeye")
+if (!exists("alternate_spp")) {
+  
+  message("No table to view here. Either the species was not chum or sockeye or you did not have enough of the alternate species markers to run the check.")
+  
 } else {
   alternate_spp %>% 
     dplyr::arrange(desc(failure)) %>% 
