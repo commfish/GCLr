@@ -36,4 +36,5 @@ This function creates three plots:
 get_fish_inventory(years = 2018:2023, username = "myusername", password = "mypassword")
 
 }
+
 }

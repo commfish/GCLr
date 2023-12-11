@@ -28,6 +28,8 @@
 #' get_fish_inventory(years = 2018:2023, username = "myusername", password = "mypassword")
 #' 
 #' }
+#' 
+#' @export
 get_fish_inventory <- function(years, dir, username, password){
   
   if(min(years) < 2017){
