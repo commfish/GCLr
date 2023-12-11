@@ -126,19 +126,19 @@ get_fish_inventory <- function(years, dir, username, password){
      dplyr::summarize(N = mean(N)) %>% 
      dplyr::mutate(year = "Average")
    
-   plot3_dat <- bind_rows(plot3_dat, average)
+   plot3_dat <- dplyr::bind_rows(plot3_dat, average)
    
  }
  
  plot3 <-  plot3_dat %>% 
    dplyr::mutate(month = factor(month, levels = month.name[12:1]), year = factor(year, levels = unique(year))) %>% 
-   ggplot2::ggplot(aes(y = month, x = year, fill = N)) +
+   ggplot2::ggplot(ggplot2::aes(y = month, x = year, fill = N)) +
    ggplot2::geom_tile()+
    ggplot2::scale_fill_gradient(low = "green", high = "red", name = "Number of Samples")+
    ggplot2::geom_text(ggplot2::aes(y = month, x = year, label = round(N, digits = 0)), size = 2.5)+
    ggplot2::ylab("Month")+
    ggplot2::xlab("Year")+
-   ggtitle(label = "Number of Samples Built in Loki by Month and Year") +
+   ggplot2::ggtitle(label = "Number of Samples Built in Loki by Month and Year") +
    ggplot2::theme(axis.title = ggplot2::element_text(size = 14), axis.text = ggplot2::element_text(size = 12), axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5)) 
  
   ggplot2::ggsave(plot3, filename = paste0(dir, "/Number samples by month for ", year_range, ".png"), device = "png", height = 5, width = width)
