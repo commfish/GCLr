@@ -1,3 +1,13 @@
+## Bug fixes
+
+`qc_template.Rmd` - alternate species check was giving an eror if you did not have at least 1 alternate and 1 failure marker, now the function checks to make sure you have at least one of each.
+
+## New additions
+
+`qc_template()` - this function opens qc_template.Rmd and the documentation contains step by step instructions for running the QC script.
+
+`get_fish_inventory` - this function pulls a fish inventory from Loki and produces three summary plots: 1) a barplot of the number of samples in Loki by species and year, 2) a barplot of the overall number of fish in Loki by species for the years supplied, 3) a heatmap of the number of fish by month and year, with the overall average by month for the years supplied
+
 # GCLr 0.4.4
 
 ## Bug fixes
