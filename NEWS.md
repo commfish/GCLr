@@ -1,3 +1,5 @@
+# GCLr 0.5.0
+
 ## Bug fixes
 
 `qc_template.Rmd` - alternate species check was giving an eror if you did not have at least 1 alternate and 1 failure marker, now the function checks to make sure you have at least one of each.
