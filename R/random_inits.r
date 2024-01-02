@@ -81,7 +81,9 @@ random_inits <- function(groupvec, groupweights = rep(1/max(groupvec), max(group
         
       })
      
-     tibble::tibble(collection = sillyvec, pi_init = x/sum(x))
+     x[x == 0] <- .Machine$double.xmin # prevent 0's
+     
+     tibble::tibble(collection = sillyvec, pi_init = x) # rubias will standardize it
      
     }) %>% purrr::set_names(paste0("Chain", seq(nchains)))
  

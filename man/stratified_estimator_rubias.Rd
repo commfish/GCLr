@@ -18,11 +18,12 @@ stratified_estimator_rubias(
   burn_in = 5000,
   bias_corr = FALSE,
   threshold = 5e-07,
-  cv = NULL
+  cv = NULL,
+  ncores = 4
 )
 }
 \arguments{
-\item{rubias_output}{Output list object from \code{run_rubias_mix} or \code{infer_mixture}.}
+\item{rubias_output}{Output list object from \code{run_rubias_mix()} or \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}.}
 
 \item{mixvec}{Character vector of mixture sillies, used to read in output .csv files if \code{rubias_output = NULL}.}
 
@@ -38,11 +39,11 @@ stratified_estimator_rubias(
 
 \item{groupvec_new}{A numeric vector indicating the new group affiliation of each group, used if resuming fine-scale groups to broad-scale groups with bias correction.}
 
-\item{path}{Character vector of where to find output from each mixture as a .csv (created by \code{run_rubias_mix}).}
+\item{path}{Character vector of where to find output from each mixture as a .csv (created by \code{run_rubias_mix()}).}
 
 \item{alpha}{Numeric constant specifying credibility intervals, default is 0.1, which gives 90\% CIs (i.e., 5\% and 95\%).}
 
-\item{burn_in}{Numeric constant specifying how many sweeps were used for burn_in in \code{run_rubias_mix} or \code{infer_mixture}.}
+\item{burn_in}{Numeric constant specifying how many sweeps were used for burn_in in \code{run_rubias_mix()} or \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}.}
 
 \item{bias_corr}{Logical switch indicating whether you want bias-corrected values from \code{method = "PB"} or not,
 currently can NOT do bias correction if not using the same repunits that were run in the mixture.}
@@ -77,24 +78,21 @@ Returns a tibble with 13 fields (18 if with CVs) for each repunit (reporting gro
 }
 }
 \description{
-This function computes summary statistics from a stratified estimate of \code{rubias} output,
-similar to \code{StratifiedEstimateor}. However, output is a tibble with \code{stratified_mixture}
+This function computes summary statistics from a stratified estimate of \pkg{rubias} output,
 as a column, instead of a single matrix. It can take either the \code{rubias_output} list object
-from \code{run_rubias_mix} or \code{infer_mixture}, OR it can read in the .csv files created by \code{run_rubias_mix}.
+from \code{run_rubias_mix()} or \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}, OR it can read in the .csv files created by \code{run_rubias_mix()}.
 }
 \details{
 NOTE: Currently this function only allows bias correction for the reporting groups run in the mixture.
-It cannot do bias correction for different baseline groupvecs, because current \code{rubias} output only
+It cannot do bias correction for different baseline groupvecs, because current \pkg{rubias} output only
 gives the bias-corrected means for each \code{mixture_collection} and \code{repunit} (i.e., \code{rho}, not \code{pi}).
 
-UPDATE: This function CAN do bias correction if you are rolling up groups from fine-scale to broad-scale.
-To use this functionality, specify \code{group_names} as the original, fine-scale groups, \code{groupvec_new} as
-the groupvec to go from fine-scale to broad-scale groups, and \code{group_names_new} as the broad-scale groups
-(i.e., length(groupvec_new) = length(group_names), and max(groupvec_new) == length(group_names_new)).
-3/18/2022 corrected some errors in calculations (only when catch numbers had cv's)
-new output format now includes both catch numbers and stock props
-columns with '_backcalc' are the stock props back-calculated using simulated harvest
-stock props are cut off at 1
+UPDATE:
+\itemize{
+\item This function CAN do bias correction if you are rolling up groups from fine-scale to broad-scale. To use this functionality, specify \code{group_names} as the original, fine-scale groups, \code{groupvec_new} as the groupvec to go from fine-scale to broad-scale groups, and \code{group_names_new} as the broad-scale groups (i.e., length(groupvec_new) = length(group_names), and max(groupvec_new) == length(group_names_new)).
+\item 3/18/2022 corrected some errors in calculations (only when catch numbers had cv's). New output format now includes both catch numbers and stock props columns with '_backcalc' are the stock props back-calculated using simulated harvest stock props are cut off at 1.
+\item Multi-chain compatible
+}
 }
 \examples{
 path <- "V:/Analysis/1_SEAK/Sockeye/Mixture/D101to103 Seine/output_PB"

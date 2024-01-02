@@ -2,7 +2,7 @@
 % Please edit documentation in R/custom_comb_rubias_output.r
 \name{custom_comb_rubias_output}
 \alias{custom_comb_rubias_output}
-\title{Custom Combine \code{rubias} Output}
+\title{Custom Combine \pkg{rubias} Output}
 \usage{
 custom_comb_rubias_output(
   rubias_output = NULL,
@@ -21,7 +21,7 @@ custom_comb_rubias_output(
 )
 }
 \arguments{
-\item{rubias_output}{Output list object from \code{run_rubias_mix} or \code{infer_mixture}.}
+\item{rubias_output}{Output list object from \code{run_rubias_mix()} or \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}.}
 
 \item{mixvec}{Character vector of mixture sillys, used to read in output .csv files if \code{rubias_output = NULL}.}
 
@@ -34,11 +34,11 @@ if specified, \code{groupvec_new} must be = length(group_names_new).}
 
 \item{groupvec_new}{A numeric vector indicating the new group affiliation of each group, used if resummarizing fine-scale groups to broad-scale groups with bias correction.}
 
-\item{path}{Character vector of where to find output from each mixture as a .csv (created by \code{run_rubias_mix}).}
+\item{path}{Character vector of where to find output from each mixture as a .csv (created by \code{run_rubias_mix()}).}
 
 \item{alpha}{Numeric constant specifying credibility intervals, default is 0.1, which gives 90\% CIs (i.e., 5\% and 95\%).}
 
-\item{burn_in}{Numeric constant specifying how many sweeps were used for burn_in in \code{run_rubias_mix} or \code{infer_mixture}.}
+\item{burn_in}{Numeric constant specifying how many sweeps were used for burn_in in \code{run_rubias_mix()} or \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}.}
 
 \item{bias_corr}{Logical switch indicating whether you want bias-corrected values from \code{method = "PB"} or not,
 currently can NOT do bias correction if not using the same repunits that were run in the mixture.}
@@ -63,20 +63,21 @@ A tibble with 8 fields for each mixture and repunit (reporting group).
 }
 }
 \description{
-This function computes summary statistics from \code{rubias} output, similar to \code{CustomCombineBAYESOutput}.
+This function computes summary statistics from \pkg{rubias} output, similar to \code{CustomCombineBAYESOutput}.
 However, output is a tibble with \code{mixture_collection} as a column, instead of each mixture as its own list.
-It can take either the \code{rubias_output} list object from \code{run_rubias_mix} or \code{infer_mixture},
-OR it can read in the .csv files created by \code{run_rubias_mix}.
+It can take either the \code{rubias_output} list object from \code{run_rubias_mix()} or \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}},
+OR it can read in the .csv files created by \code{run_rubias_mix()}.
 }
 \details{
 NOTE: Currently this function only allows bias correction for the reporting groups run in the mixture.
-It cannot do bias correction for different baseline groupvecs because the current \code{rubias} output only
+It cannot do bias correction for different baseline groupvecs because the current \pkg{rubias} output only
 gives the bias-corrected means for each \code{mixture_collection} and \code{repunit} (i.e., \code{rho}, not \code{pi}).
 
 UPDATE: This function CAN do bias correction if you are rolling up groups from fine-scale to broad-scale.
 To use this functionality, specify \code{group_names} as the original, fine-scale groups, \code{groupvec_new} as
 the groupvec to go from fine-scale to broad-scale groups, and \code{group_names_new} as the broad-scale groups
 (i.e., length(groupvec_new) = length(group_names), and max(groupvec_new) == length(group_names_new))
+Compatible with multichain output.
 }
 \examples{
 \dontrun{

@@ -5,15 +5,19 @@
 \title{Generate Initialization Matrix for Multiple Chains}
 \usage{
 multichain_inits(
-  npops,
+  sillyvec = NULL,
+  groupvec,
   nchains,
   prop = 0.9,
-  type = c("BAYES", "rubias")[1],
-  sillyvec = NULL
+  type = c("BAYES", "rubias")[1]
 )
 }
 \arguments{
-\item{npops}{Integer. The total number of populations to consider.}
+\item{sillyvec}{Numeric vector (optional). Required only when \code{type} is set
+to rubias". The user must supply a vector containing silly values for each
+chain. Default is NULL.}
+
+\item{groupvec}{Numeric vector indicating the group affiliation of each population.}
 
 \item{nchains}{Integer. The number of chains to be used. Must be greater than 1.}
 
@@ -23,10 +27,6 @@ allocate to each group in the chain initialization matrix. Default is 0.9.}
 \item{type}{Character (optional). The type of initialization to be performed.
 Possible values are "BAYES" for \link{BAYES} or "rubias" for \link{rubias}
 modeling. Default is "BAYES".}
-
-\item{sillyvec}{Numeric vector (optional). Required only when \code{type} is set
-to rubias". The user must supply a vector containing silly values for each
-chain. Default is NULL.}
 }
 \value{
 A matrix or a list of tibbles, depending on the chosen \code{type}, where
