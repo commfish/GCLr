@@ -33,7 +33,7 @@ This function creates three plots:
 \examples{
 \dontrun{
 
-get_fish_inventory(years = 2018:2023, username = "myusername", password = "mypassword")
+get_fish_inventory(years = 2018:2023, dir = "C:/Users/awbarclay/Documents", username = "myusername", password = "mypassword")
 
 }
 
