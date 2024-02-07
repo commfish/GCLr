@@ -15,17 +15,15 @@
 #'                  \item \eqn{Precision = TP / (TP + FP)}
 #'            }
 #'            
-#'            Details about the leave-one-out analysis can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
+#'          - Details about the leave-one-out analysis can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
 #'            in Moran and Anderson (2018).
 #'             
-#'            citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock 
+#'          - citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock 
 #'                      identification model. Canadian Journal of Fisheries and Aquatic Sciences, 76(4): 551–560. 
 #'                      
 #' @returns This function returns an interactive plot of True positive rate (y-axis) and Precision (x-axis) faceted by reporting group. 
 #'          Dashed red lines indicate the cutoffs for precision (>= 0.95) and true positive rate (>= 0.80). 
-#'          The red point on the line indicates where the assignment threshold = 50%.
-#'          
-#'          If a file name is supplied, the function will save the plot to an .html file.
+#'          The red point on the line indicates where the assignment threshold = 50%. If a file name is supplied, the function will save the plot to an .html file.
 #'                      
 #' @examples
 #' group_names <- GCLr::ex_baseline$repunit %>% unique()

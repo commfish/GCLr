@@ -14,10 +14,7 @@ plot_loo_tpr_prec(input, file = NULL)
 \value{
 This function returns an interactive plot of True positive rate (y-axis) and Precision (x-axis) faceted by reporting group.
 Dashed red lines indicate the cutoffs for precision (>= 0.95) and true positive rate (>= 0.80).
-The red point on the line indicates where the assignment threshold = 50\%.
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{     If a file name is supplied, the function will save the plot to an .html file.
-}\if{html}{\out{</div>}}
+The red point on the line indicates where the assignment threshold = 50\%. If a file name is supplied, the function will save the plot to an .html file.
 }
 \description{
 This function takes the unmodified output from \code{GCLr::loo_roc_rate_calc()},
@@ -33,10 +30,10 @@ individual assignment analyses.
 \item \eqn{Precision = TP / (TP + FP)}
 }
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   Details about the leave-one-out analysis can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
+\if{html}{\out{<div class="sourceCode">}}\preformatted{ - Details about the leave-one-out analysis can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
    in Moran and Anderson (2018).
     
-   citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock 
+ - citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock 
              identification model. Canadian Journal of Fisheries and Aquatic Sciences, 76(4): 551–560. 
 }\if{html}{\out{</div>}}
 }
