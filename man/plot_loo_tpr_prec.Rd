@@ -24,17 +24,17 @@ individual assignment analyses.
 }
 \details{
 \itemize{
-\item TP = number of true positives, FN = number of false negatives, FP = number of false positives from the leave-one-out analysis.
-\itemize{
-\item \eqn{TPR = TP / (TP + FN)}
-\item \eqn{Precision = TP / (TP + FP)}
-}
+\item Details about the leave-one-out analysis can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
+in Moran and Anderson (2018).
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{ - Details about the leave-one-out analysis can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
-   in Moran and Anderson (2018).
-    
- - citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock 
-             identification model. Canadian Journal of Fisheries and Aquatic Sciences, 76(4): 551–560. 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   - citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock 
+               identification model. Canadian Journal of Fisheries and Aquatic Sciences, 76(4): 551–560. 
+               
+   - TP = number of true positives, FN = number of false negatives, FP = number of false positives from the leave-one-out analysis.
+     \\itemize\{
+           \\item \eqn{TPR = TP / (TP + FN)}
+           \\item \eqn{Precision = TP / (TP + FP)}
+     \}
 }\if{html}{\out{</div>}}
 }
 }
