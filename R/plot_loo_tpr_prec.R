@@ -9,17 +9,13 @@
 #' 
 #' @param file the file name with .html extension for saving the plots.
 #' 
-#' @details - Details about the leave-one-out analysis can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
-#'            in Moran and Anderson (2018).
-#'             
-#'          - citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock 
-#'                      identification model. Canadian Journal of Fisheries and Aquatic Sciences, 76(4): 551–560. 
-#'                      
-#'          - TP = number of true positives, FN = number of false negatives, FP = number of false positives from the leave-one-out analysis.
-#'            \itemize{
-#'                  \item \eqn{TPR = TP / (TP + FN)}
-#'                  \item \eqn{Precision = TP / (TP + FP)}
-#'            }
+#' @details Details about the leave-one-out analysis can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
+#'          in Moran and Anderson (2018). Citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock 
+#'          identification model. Canadian Journal of Fisheries and Aquatic Sciences, 76(4): 551–560.
+#'          TP = number of true positives, FN = number of false negatives, FP = number of false positives from the leave-one-out analysis.\itemize{ 
+#'          \item \eqn{TPR = TP / (TP + FN)}
+#'          \item \eqn{Precision = TP / (TP + FP)}
+#'          }
 #'            
 #' @returns This function returns an interactive plot of True positive rate (y-axis) and Precision (x-axis) faceted by reporting group. 
 #'          Dashed red lines indicate the cutoffs for precision (>= 0.95) and true positive rate (>= 0.80). 
