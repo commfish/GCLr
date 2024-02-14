@@ -94,7 +94,7 @@ loo_roc_rate_calc <- function(data, thres_levels, group_names, ncores = parallel
         }
         
         counts %>%
-          mutate(
+          dplyr::mutate(
             tpr = tp / (tp + fn), # true positive rate (power; sensitivity)
             fpr = fp / (tn + fp), # false positive rate (type 1 error)
             acc = (tp + tn) / (tp + tn + fp + fn), # accuracy rate
