@@ -4,23 +4,58 @@
 \alias{plot_loo_tpr_prec}
 \title{Plot True Positive Rate Vs Precision from Leave-One-Out Analysis}
 \usage{
-plot_loo_tpr_prec(input, file = NULL)
+plot_loo_tpr_prec(
+  sa_input,
+  rates = NULL,
+  group_colors,
+  by_group = TRUE,
+  min_tpr = 0.8,
+  min_pre = 0.95,
+  min_thres = 0.5,
+  thres_levels = seq(0.01, 0.99, by = 0.01),
+  plots = c("facet", "paired", "both")[3],
+  ncores = parallel::detectCores()
+)
 }
 \arguments{
-\item{input}{the unmodified output object from \code{GCLr::loo_roc_rate_calc()}}
+\item{sa_input}{the unmodified output object from \link[rubias:self_assign]{rubias::self_assign}}
 
-\item{file}{the file name with .html extension for saving the plots.}
+\item{rates}{optional; the unmodified output object from \link{loo_roc_rate_calc} created using the supplied sa_input. If left NULL, the rates will be calculated from sa_input. Supplying a rates object will make this function run a lot faster.}
+
+\item{group_colors}{a vector of colors the same length as the number of groups in the input file (i.e., \code{input$repunit \%>\% unique()}).}
+
+\item{by_group}{logical; whether you want the boxplot by reporting group (TRUE) or population (FALSE); default = TRUE}
+
+\item{min_tpr}{the true positive rate cutoff for adding a horizontal dashed line to the precision plot; default = 0.80}
+
+\item{min_pre}{the precision cutoff for adding a vertical dashed line to the precision plot; default = 0.95}
+
+\item{min_thres}{minimum assignment likelihood threshold for adding a horizontal line at on the boxplot; default = 0.50}
+
+\item{thres_levels}{a vector of assignment thresholds to include on precision plot (only used when \code{rates = NULL}).}
+
+\item{plots}{the plots do you want the function to produce. There are three choices:
+\itemize{
+\item{\emph{facet}: }{An iteractive plot of TPR vs Precision with all reporting groups (i.e., faceted plot}
+\item{\emph{paired}: }{Interative plots for each reporting group containing a box plot of assignement likelihoods on the left hand side and a plot of TPR vs Precision on the right hand side.}
+\item{\emph{both}: }{Facet plot first, then paired plots.}
+}}
+
+\item{ncores}{the number of cores to use. Default is to use all available cores.}
 }
 \value{
-This function returns an interactive plot of True positive rate (y-axis) and Precision (x-axis) faceted by reporting group.
-Dashed red lines indicate the cutoffs for precision (>= 0.95) and true positive rate (>= 0.80).
-The red point on the line indicates where the assignment threshold = 50\%. If a file name is supplied, the function will save the plot to an .html file.
+When \code{plot = "facet"}, the function returns an interactive line plot of True positive rate (y-axis) and Precision (x-axis) faceted by reporting group (aka repunit), with dashed red lines indicating the cutoffs for precision (>= 0.95) and true positive rate (>= 0.80).
+The red point on the line indicates where the assignment threshold = 50\%.
+When \code{plot = "paired"}, the function returns a list of interactive plots for each reporting group in the leave-on-out analysis.
+The left hand side is a box plot of the scaled likelihood of each baseline sample assigning to the reporting group, with a dashed red line indicating the 50\% assignment threshold.
+The right hand side is a line plot of True positive rate (y-axis) and Precision (x-axis), with dashed red lines indicating the cutoffs for precision (>= 0.95) and true positive rate (>= 0.80).
+The red point on the line indicates where the assignment threshold = 50\%.
+When \code{plot = "both"}, the function returns a list of plots with the faceted TPR vs Precision plot as the first element and the paired plots for each reporting group for remaining elements.
+When no rates are supplied, an object named 'rates' is assigned to your global environment.
 }
 \description{
-This function takes the unmodified output from \code{GCLr::loo_roc_rate_calc()},
-calculates precision, and plots the true positive rate (y-axis) by precision (x-axis)
-in an interactive plot that can be used to determine assignment thresholds for
-individual assignment analyses.
+This function takes the unmodified output from \link[rubias:self_assign]{rubias::self_assign}, plots the scaled likelihood for each baseline sample (y-axis) by reporting group or population in a box plot, and plots the true positive rate (y-axis) by precision (x-axis)
+in an interactive plot that can be used to assess reporting groups and assignment thresholds for individual assignment analyses.
 }
 \details{
 Details about the leave-one-out analysis can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
@@ -31,13 +66,15 @@ TP = number of true positives, FN = number of false negatives, FP = number of fa
 \item \eqn{Precision = TP / (TP + FP)}
 }
 }
+\note{
+The plots produced by this function are not intended for publications; however, the code within this function can be copied and modified to produce plots tailored for publications.
+}
 \examples{
-group_names <- GCLr::ex_baseline$repunit \%>\% unique()
+sa_input <- rubias::self_assign(reference = GCLr::ex_baseline, gen_start_col = 5)
 
-self_assign <- rubias::self_assign(reference = GCLr::ex_baseline, gen_start_col = 5)
-
-input <- GCLr::loo_roc_rate_calc(data = self_assign, thres_levels = seq(0.01, .99, by = 0.005), group_names = group_names) # Note: make sure to include 0.50 in your threshold levels for 
-
-plot_loo_tpr_prec(input, file = "~/example_plot.html") #Saves example plot to your documents folder
+plot_loo_tpr_prec(sa_input, group_colors = c("red", "green", "blue"), by_group = FALSE)
      
+}
+\seealso{
+\link{loo_roc_rate_calc}
 }
