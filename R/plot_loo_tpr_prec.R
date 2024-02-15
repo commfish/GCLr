@@ -52,7 +52,10 @@
 #' @examples
 #' sa_input <- rubias::self_assign(reference = GCLr::ex_baseline, gen_start_col = 5)
 #' 
-#' plot_loo_tpr_prec(sa_input, group_colors = c("red", "green", "blue"), by_group = FALSE)
+#' # Plots are returned as a list when more than one plot is produced 
+#' plots <- plot_loo_tpr_prec(sa_input, group_colors = c("red", "green", "blue"), by_group = FALSE, min_tpr = 0.80, min_pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01), plots = c("facet", "paired", "both")[3], ncores = parallel::detectCores())
+#' 
+#' plots[[1]] # This is how you would look at the first plot in the list
 #'      
 #' @export
 plot_loo_tpr_prec <- function(sa_input, rates = NULL, group_colors, by_group = TRUE, min_tpr = 0.80, min_pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01), plots = c("facet", "paired", "both")[3], ncores = parallel::detectCores()){
@@ -202,15 +205,15 @@ plot_loo_tpr_prec <- function(sa_input, rates = NULL, group_colors, by_group = T
   }
 
   if(plots == "facet"){
-      print(plot1)
+      return(plot1)
   }
   
   if(plots == "paired"){
-      print(plot2)
+      return(plot2)
   }
  
   if(plots == "both"){
-     print(list(plot1, plot2))
+     return(list(plot1, plot2))
   }
   
 }
