@@ -1,3 +1,9 @@
+# GCLr 0.5.1
+
+## Bug fixes
+
+`qc_template.Rmd` - update so Concordance files are correctly found for both chip and GT-seq projects.
+
 # GCLr 0.5.0
 
 ## Bug fixes
