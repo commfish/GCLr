@@ -421,7 +421,7 @@ qc_sillys_n
 Now read in the conflict report. 
 *Note - old conflict reports have "0" for mitochondrial conflicts while the new has " " for mitochondrial conflicts, we will refer to them as "Homo-Homo".*
 ```{r concordance_files}
-qc_concordance_report_file <- list.files(path = "Conflict Reports", pattern = "ConcordanceReport", full.names = TRUE)
+qc_concordance_report_file <- list.files(path = "Conflict Reports", pattern = "Concordance", full.names = TRUE)
 
 qc_concordance_report_file #verify it found the file(s)! If this is empty, it will not work.
 
