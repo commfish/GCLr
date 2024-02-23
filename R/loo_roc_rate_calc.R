@@ -38,7 +38,7 @@
 #'  
 #' @aliases loo_roc_rate_calc
 #' 
-#' @export loo_roc_rate_calc loo_rate_calc
+#' @export 
 loo_rate_calc <- function(data, thres_levels, group_names, ncores = parallel::detectCores()) {
   
   rubias_loo_vars <- c("indiv", "collection", "repunit", "inferred_collection", "inferred_repunit", 
@@ -116,3 +116,5 @@ loo_rate_calc <- function(data, thres_levels, group_names, ncores = parallel::de
   return(output)
   
 }
+#' @export
+loo_roc_rate_calc <- loo_rate_calc
