@@ -3,7 +3,7 @@
 \name{loo_rate_calc}
 \alias{loo_rate_calc}
 \alias{loo_roc_rate_calc}
-\title{Calculate Error Rates for Receiver Operator Characteristic (ROC) Curve Plots}
+\title{Calculate calculate assignment rates from leave-one-out analysis}
 \usage{
 loo_rate_calc(
   data,
@@ -34,12 +34,12 @@ This function produces a tibble 10 variables:
 \item \code{acc} (double): accuracy rate - (tp + tn) / (tp + tn + fp + fn)
 \item \code{pre} (double): precision rate - tp / (tp + fp)
 \item \code{level} (double): the assignment threshold level (proportion)
-\item \code{threshold} (character): the assignment threshold level (percent) for ROC curve plots.
+\item \code{threshold} (character): the assignment threshold level (percent) for precision-recall curve plots.
 }
 }
 \description{
 This function takes the leave-one-out output from \code{\link[rubias:self_assign]{rubias::self_assign()}} and calculates true positive, false negative, false positive, and true negative assignment error rates for each reporting group.
-The output from this function can then be used to create a Receiver Operator Characteristic curve plot for determining an appropriate individual assignment threshold and whether a reporting group is sufficiently identifiable for producing individual assignment estimates.
+The output from this function can then be used to create a precision-recall curve plot for determining an appropriate individual assignment threshold and whether a reporting group is sufficiently identifiable for producing individual assignment estimates.
 }
 \note{
 Depending on how large your baseline data set is, this function can take a long time to run.
@@ -56,4 +56,6 @@ If you want to be able to work on your computer while the function is running ma
 }
 \seealso{
 \code{\link[rubias:self_assign]{rubias::self_assign()}}
+
+\code{\link[=plot_loo_prec_rec]{plot_loo_prec_rec()}}
 }
