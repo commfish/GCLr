@@ -39,6 +39,8 @@
 #'  
 #' @aliases loo_roc_rate_calc
 #' 
+#' @rdname loo_rate_calc
+#' 
 #' @export 
 loo_rate_calc <- function(data, thres_levels, group_names, ncores = parallel::detectCores()) {
   
