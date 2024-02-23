@@ -34,10 +34,12 @@
 #' 
 #'  groups <- GCLr::ex_baseline$repunit %>% unique()
 #' 
-#'  loo_roc_rate_calc(data = Self_Assign, thres_levels = seq(0.5, .99, by = 0.01), group_names = groups, ncores = 3)
+#'  loo_rate_calc(data = Self_Assign, thres_levels = seq(0.5, .99, by = 0.01), group_names = groups, ncores = 3)
 #'  
-#' @export
-loo_roc_rate_calc <- function(data, thres_levels, group_names, ncores = parallel::detectCores()) {
+#' @aliases loo_roc_rate_calc
+#' 
+#' @export loo_roc_rate_calc loo_rate_calc
+loo_rate_calc <- function(data, thres_levels, group_names, ncores = parallel::detectCores()) {
   
   rubias_loo_vars <- c("indiv", "collection", "repunit", "inferred_collection", "inferred_repunit", 
                        "scaled_likelihood", "log_likelihood", "z_score", "n_non_miss_loci", 
