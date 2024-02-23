@@ -5,30 +5,33 @@
 \title{Get assignment threshold by reporting group}
 \usage{
 IA_thresholds(
-  input,
-  tpr_cutoff = 0.8,
-  pre_cutoff = 0.95,
+  sa_input,
+  rates = NULL,
+  min_rec = 0.8,
+  min_pre = 0.95,
   min_thres = 0.5,
   thres_levels = seq(0.01, 0.99, by = 0.01)
 )
 }
 \arguments{
-\item{input}{the unmodified output object from \code{rubias::self_assign}}
+\item{sa_input}{the unmodified output object from  \link[rubias:self_assign]{rubias::self_assign}}
 
-\item{tpr_cutoff}{the true positive rate cutoff; default = 0.80}
+\item{rates}{optional; the unmodified output object from \link{loo_roc_rate_calc} created using the supplied \code{sa_input}. If left \code{NULL}, the rates will be calculated from \code{sa_input}. Supplying a rates object will make this function run a lot faster.}
 
-\item{pre_cutoff}{the precision cutoff; default = 0.95}
+\item{min_rec}{the recall cutoff; default = 0.80}
+
+\item{min_pre}{the precision cutoff; default = 0.95}
 
 \item{min_thres}{minimum assignment threshold to include in the output; default = 0.50}
 
 \item{thres_levels}{a vector of assignment thresholds; \code{default = seq(0.01, 0.99, by = 0.01)}}
 }
 \value{
-a tibble with the re
+a tibble with the minimum and maximum threshold for each repunit (aka reporting group)
 }
 \description{
-This function takes the unmodified output from \code{rubias::self_assign()},
-calculates true positive rate and precision, and returns a tibble of minimum
+This function takes the unmodified output from \link[rubias:self_assign]{rubias::self_assign},
+calculates recall (aka true positive rate) and precision, and returns a tibble of minimum
 and maximum assignment thresholds for filtering top individual assignment results
 in order to meet the desired true positive rate and precision.
 }
@@ -37,17 +40,19 @@ In an individual assignment analysis, each mixture samples is given a likelihood
 The assignments for each sampled are filtered for the reporting group with the highest assignment (top assignment). An assignment threshold
 is then used to filter out samples with lower top assignments to reduce the number of incorrect assignments. This function takes the leave-one-out
 results from \code{rubias::self_assign()}and summarizes the number of true positives (TP), false negatives (FN), false positives (FP) at different assignment thresholds,
-and calculates the true positive rate (TPR) and Precision at each threshold and returns a tibble of minimum and maximum assignment thresholds for
-each reporting group where \code{TPR >= tpr_cutoff}, \code{Precision >= pre_cutoff}, and the \verb{assignment threshold >= min_thres}.
-
-\itemize{
-\item \eqn{TPR = TP / (TP + FN)}
+and calculates the recall and precision at each threshold and returns a tibble of minimum and maximum assignment thresholds for
+each reporting group where \code{Recall >= min_rec}, \code{Precision >= min_pre}, and the \verb{assignment threshold >= min_thres}.
+TPR and precision are are calculated from the loo results with \link{loo_roc_rate_calc} and defined as follows:\itemize{
+\item \eqn{Recall = TP / (TP + FN)} Recall is also know at the true positive rate.
 \item \eqn{Precision = TP / (TP + FP)}
+\item {Where, \emph{TP} = number of true positive top assignments,
+\emph{FN} = number of false negative top assignments,
+\emph{FP} = number of false positive top assignments from the leave-one-out analysis}
 }
 }
 \examples{
-input <- rubias::self_assign(reference = GCLr::ex_baseline, gen_start_col = 5)
+sa_input <- rubias::self_assign(reference = GCLr::ex_baseline, gen_start_col = 5)
 
-assignment_thresholds(input = input, tpr = 0.80, pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01))
+assignment_thresholds(input = input, rates = NULL, min_rec = 0.80, min_pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01))
 
 }
