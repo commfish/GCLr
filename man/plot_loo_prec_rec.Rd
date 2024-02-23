@@ -58,17 +58,15 @@ This function takes the unmodified output from \link[rubias:self_assign]{rubias:
 in an interactive plot that can be used to assess reporting groups and assignment thresholds for individual assignment analyses.
 }
 \details{
-Details about the leave-one-out analysis can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
+Details about the leave-one-out analysis (loo) can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
 in Moran and Anderson (2018). Citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock
 identification model. Canadian Journal of Fisheries and Aquatic Sciences, 76(4): 551–560.
-Recall and precision are defined as follows:
-TP = number of true positives, FN = number of false negatives, and FP = number of false positives from the leave-one-out analysis.\itemize{
+Recall and precision are are calculated from the loo results with \link{loo_roc_rate_calc} and defined as follows:\itemize{
 \item \eqn{Recall = TP / (TP + FN)} Recall is also know at the true positive rate.
 \item \eqn{Precision = TP / (TP + FP)}
-\item Where
-\item \eqn{TP = number of true positives}
-\item \eqn{FN = number of false negatives}
-\item \eqn{FP = number of false positives}
+\item {Where, \emph{TP} = number of true positive top assignments,
+\emph{FN} = number of false negative top assignments,
+\emph{FP} = number of false positive top assignments from the leave-one-out analysis}
 }
 }
 \note{
@@ -78,7 +76,7 @@ The plots produced by this function are not intended for publications; however, 
 sa_input <- rubias::self_assign(reference = GCLr::ex_baseline, gen_start_col = 5)
 
 # Plots are returned as a list when more than one plot is produced 
-plots <- plot_loo_tpr_prec(sa_input, group_colors = c("red", "green", "blue"), by_group = FALSE, min_rec = 0.80, min_pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01), plots = c("facet", "paired", "both")[3], ncores = parallel::detectCores())
+plots <- GCLr::plot_loo_prec_rec(sa_input, group_colors = c("red", "green", "blue"), by_group = FALSE, min_rec = 0.80, min_pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01), plots = c("facet", "paired", "both")[3], ncores = parallel::detectCores())
 
 plots[[1]] # This is how you would look at the first plot in the list
      
