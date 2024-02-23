@@ -141,7 +141,7 @@ plot_loo_prec_rec <- function(sa_input, rates = NULL, group_colors, by_group = T
       ggplot2::xlab("Recall")+
       ggplot2::geom_hline(yintercept = min_pre, color = "red", linetype = 2)+
       ggplot2::geom_vline(xintercept = min_rec, color = "red", linetype = 2)+
-      ggplot2::facet_wrap(~repunit, nrow = ceiling(length(repunits)/3), ncol = 3)) %>% 
+      ggplot2::facet_wrap(~repunit)) %>% 
       plotly::layout(showlegend = FALSE)
     
   } 
