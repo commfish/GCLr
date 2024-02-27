@@ -72,7 +72,7 @@ plot_loo_prec_rec <- function(sa_input, rates = NULL, group_colors, by_group = T
     
   }
   
-  purrr::set_names(group_colors, repunits) # Add group names to color vector
+  group_colors <- purrr::set_names(group_colors, repunits) # Add group names to color vector
   
   #Get pop info and arrange by repunit so all pops from a repunit are side by side. 
   #Pop numbers will be preserved by the order in which they appeared in sa_input.
@@ -113,6 +113,8 @@ plot_loo_prec_rec <- function(sa_input, rates = NULL, group_colors, by_group = T
   pre_dat0 <- dplyr::mutate(rates, repunit = factor(repunit, levels = repunits))
 
   fiftypct <- pre_dat0 %>% #filter for the closest threshold to min_thres
+    dplyr::mutate(level = as.character(level)) %>% 
+    dplyr::mutate(level = as.numeric(level)) %>% # For some reason filter wasn't working for certain min_thres values. Converting to character and then back to numeric solves the issue. WTF?!
     dplyr::filter(level >= min_thres) %>% 
     dplyr::filter(level == min(level)) %>% 
     dplyr::pull(threshold) %>% 
