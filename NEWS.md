@@ -1,3 +1,9 @@
+# GCLr 0.5.2
+
+## Bug fixes
+
+`plot_genepop_hwe()` - update to match tibble output from `read_genepop_hwe()`.
+
 # GCLr 0.5.1
 
 ## Bug fixes
@@ -14,19 +20,19 @@
 
 `qc_template()` - this function opens qc_template.Rmd and the documentation contains step by step instructions for running the QC script.
 
-`get_fish_inventory` - this function pulls a fish inventory from Loki and produces three summary plots: 1) a barplot of the number of samples in Loki by species and year, 2) a barplot of the overall number of fish in Loki by species for the years supplied, 3) a heatmap of the number of fish by month and year, with the overall average by month for the years supplied
+`get_fish_inventory()` - this function pulls a fish inventory from Loki and produces three summary plots: 1) a barplot of the number of samples in Loki by species and year, 2) a barplot of the overall number of fish in Loki by species for the years supplied, 3) a heatmap of the number of fish by month and year, with the overall average by month for the years supplied
 
 # GCLr 0.4.4
 
 ## Bug fixes
 
-`dupcheck_qc_conflicts` - update to properly remove conflict fish that were lost in project or QC due to `remove_ind_miss_loci`.
+`dupcheck_qc_conflicts()` - update to properly remove conflict fish that were lost in project or QC due to `remove_ind_miss_loci()`.
 
 `qc_template()` - update directions to restart RStudio.
 
 ## Enhancements
 
-`loo_roc_rate_calc` - update to include *precision* - TP / (TP + FP) in the output.
+`loo_roc_rate_calc()` - update to include *precision* - TP / (TP + FP) in the output.
 
 # GCLr 0.4.3
 
