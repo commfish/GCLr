@@ -1,3 +1,5 @@
+# GCLr 0.5.2
+
 ## Bug fixes
 
 `plot_genepop_hwe()` - update to match tibble output from `read_genepop_hwe()`.
