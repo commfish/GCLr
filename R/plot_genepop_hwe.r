@@ -41,7 +41,7 @@ plot_genepop_hwe <-
            sillyvec = NULL,
            plot_type = c("silly", "locus")[1]) {
     
-  summary_sillys <- setdiff(dimnames(GenepopHWE_report$SummaryPValues)[[2]], "Overall Pops")
+  summary_sillys <- setdiff(dimnames(GenepopHWE_report$SummaryPValues)[[2]], c("Locus", "Overall Pops"))
   
   # Sillyvec is optional in read_genepop_hwe.
   # Check to make sure all sillys have results if sillyvec is supplied.
@@ -70,7 +70,7 @@ plot_genepop_hwe <-
     
     # First convert the Genepop HWE report into a usable table and filter for sillyvec.
     HWEpval <- GenepopHWE_report$SummaryPValues %>%
-      dplyr::as_tibble(rownames = "locus") %>%
+      dplyr::rename(locus = Locus) %>%
       tidyr::pivot_longer(-locus, names_to = "silly", values_to = "pval")  %>%
       dplyr::filter(silly %in% sillyvec)
     
@@ -101,7 +101,7 @@ plot_genepop_hwe <-
     # First convert the Genepop HWE report into a usable table and filter for loci.
     HWEpval <- 
       GenepopHWE_report$SummaryPValues %>%
-      dplyr::as_tibble(rownames = "locus") %>%
+      dplyr::rename(locus = Locus) %>%
       tidyr::pivot_longer(-locus, names_to = "silly", values_to = "pval")
     
     low_loci <-
