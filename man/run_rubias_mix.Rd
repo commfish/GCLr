@@ -22,7 +22,8 @@ run_rubias_mix(
   sample_theta = TRUE,
   pi_prior_sum = 1,
   file = "rubias/output",
-  seed = 56
+  seed = 56,
+  nchains = 1
 )
 }
 \arguments{
@@ -61,16 +62,18 @@ run_rubias_mix(
 \item{file}{A character string representing the file path to save output. Default is "rubias/output".}
 
 \item{seed}{An integer specifying the random seed for reproducibility. Default is 56.}
+
+\item{nchains}{Run multiple chains for \pkg{rubias}. Default = 1 for running single \code{rubias}.}
 }
 \value{
-A list containing the results of the \code{rubias} mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
+A list containing the results of the \pkg{rubias} mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
 }
 \description{
-This function is a wrapper for \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}. It performs the \code{rubias} mixture analysis using the provided reference and mixture data frames.
+This function is a wrapper for \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}. It performs the \pkg{rubias} mixture analysis using the provided reference and mixture data frames.
 The function estimates population proportions and allele frequencies for the mixture samples given the reference samples.
 }
 \details{
-This function performs the \code{rubias} mixture analysis by estimating the proportions of each reference group in the mixture samples
+This function performs the \pkg{rubias} mixture analysis by estimating the proportions of each reference group in the mixture samples
 and the allele frequencies of each reference group. It uses the provided method for estimation, such as Markov Chain Monte Carlo (MCMC)
 or parametric bootstrap (PB) for uncertainty quantification. The output is saved as .csv files for further analysis and visualization.
 

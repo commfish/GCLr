@@ -37,7 +37,7 @@
 #' @examples
 #' sa_input <- rubias::self_assign(reference = GCLr::ex_baseline, gen_start_col = 5)
 #' 
-#' IA_thresholds(input = sa_input, rates = NULL, min_rec = 0.80, min_pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01))
+#' IA_thresholds(sa_input = sa_input, rates = NULL, min_rec = 0.80, min_pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01))
 #' 
 #' @export
 IA_thresholds <- function(sa_input, rates = NULL, min_rec = 0.80, min_pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01)){

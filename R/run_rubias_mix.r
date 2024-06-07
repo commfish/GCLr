@@ -1,6 +1,6 @@
 #' Run rubias Mixture Analysis
 #'
-#' This function is a wrapper for [rubias::infer_mixture()]. It performs the `rubias` mixture analysis using the provided reference and mixture data frames. 
+#' This function is a wrapper for [rubias::infer_mixture()]. It performs the \pkg{rubias} mixture analysis using the provided reference and mixture data frames. 
 #' The function estimates population proportions and allele frequencies for the mixture samples given the reference samples.
 #'
 #' @param reference A data frame containing the reference samples (i.e., baseline object).
@@ -21,10 +21,11 @@
 #' @param pi_prior_sum A numeric value specifying the sum constraint for the Dirichlet prior on mixture proportions. Default is 1.
 #' @param file A character string representing the file path to save output. Default is "rubias/output".
 #' @param seed An integer specifying the random seed for reproducibility. Default is 56.
+#' @param nchains Run multiple chains for \pkg{rubias}. Default = 1 for running single `rubias`.
 #'
-#' @return A list containing the results of the `rubias` mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
+#' @return A list containing the results of the \pkg{rubias} mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
 #'
-#' @details This function performs the `rubias` mixture analysis by estimating the proportions of each reference group in the mixture samples 
+#' @details This function performs the \pkg{rubias} mixture analysis by estimating the proportions of each reference group in the mixture samples 
 #' and the allele frequencies of each reference group. It uses the provided method for estimation, such as Markov Chain Monte Carlo (MCMC) 
 #' or parametric bootstrap (PB) for uncertainty quantification. The output is saved as .csv files for further analysis and visualization.
 #'
@@ -47,12 +48,12 @@
 #' run_rubias_mix(reference = GCLr::ex_baseline, mixture = GCLr::ex_mixtures, group_names = group_names, gen_start_col = 5, file = path.expand("~/rubias/output"))
 #' 
 #' @export
-run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, method = "MCMC", 
-                               alle_freq_prior = list(const_scaled = 1), pi_prior = NA, 
-                               pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100, 
-                               prelim_reps = NULL, prelim_burn_in = NULL,
-                               sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1, 
-                               file = "rubias/output", seed = 56) {
+run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, method = "MCMC",
+                           alle_freq_prior = list(const_scaled = 1), pi_prior = NA, 
+                           pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100,
+                           prelim_reps = NULL, prelim_burn_in = NULL,
+                           sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1,
+                           file = "rubias/output", seed = 56, nchains = 1) {
   
   if(!dir.exists(file)) {stop("the file path to save output does not exist!")}
   
@@ -80,35 +81,101 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
     
   }
   
-  ### Run infer mixture
-  set.seed(seed = seed)
+  if (method == "PB" & nchains > 1) {
+    nchains <- 1L
+  }
   
-  rubias_out <-
-    rubias::infer_mixture(
-      reference = reference,
-      mixture = mixture,
-      gen_start_col = gen_start_col,
-      method = method,
-      alle_freq_prior = alle_freq_prior,
-      pi_prior = pi_prior,
-      pi_init = pi_init,
-      reps = reps,
-      burn_in = burn_in,
-      pb_iter = pb_iter,
-      prelim_reps = prelim_reps,
-      prelim_burn_in = prelim_burn_in,
-      sample_int_Pi = sample_int_Pi,
-      sample_theta = sample_theta,
-      pi_prior_sum = pi_prior_sum
-    )
+  # Run infer mixture ----
+  if (nchains == 1) {
+    set.seed(seed = seed)
+    
+    rubias_out <-
+      rubias::infer_mixture(
+        reference = reference,
+        mixture = mixture,
+        gen_start_col = gen_start_col,
+        method = method,
+        alle_freq_prior = alle_freq_prior,
+        pi_prior = pi_prior,
+        pi_init = NULL,
+        reps = reps,
+        burn_in = burn_in,
+        pb_iter = pb_iter,
+        prelim_reps = prelim_reps,
+        prelim_burn_in = prelim_burn_in,
+        sample_int_Pi = sample_int_Pi,
+        sample_theta = sample_theta,
+        pi_prior_sum = pi_prior_sum
+      )
+    
+    rubias_out$mix_prop_traces <-
+      rubias_out$mix_prop_traces %>%
+      dplyr::mutate(chain = 1)
+    
+    rubias_out$indiv_posteriors <-
+      rubias_out$indiv_posteriors %>% 
+      dplyr::select(-missing_loci)  # remove this unnecessary list object
+    
+  } else {
+    chains <- seq(nchains)
+    cl <- parallel::makePSOCKcluster(nchains)
+    doParallel::registerDoParallel(cl, cores = nchains)
+    doRNG::registerDoRNG(seed, once = TRUE)
+    `%dorng%` <- doRNG::`%dorng%`
+    
+    rubias_out00 <- foreach::foreach(
+      ch = chains, .packages = c("rubias")
+    ) %dorng% {
+      rubias::infer_mixture(
+        reference = reference,
+        mixture = mixture,
+        gen_start_col = gen_start_col,
+        method = method,
+        alle_freq_prior = alle_freq_prior,
+        pi_prior = pi_prior,
+        pi_init = pi_init[[ch]],
+        reps = reps,
+        burn_in = burn_in,
+        # pb_iter = pb_iter,
+        prelim_reps = prelim_reps,
+        prelim_burn_in = prelim_burn_in,
+        sample_int_Pi = sample_int_Pi,
+        sample_theta = sample_theta,
+        pi_prior_sum = pi_prior_sum)
+      } # dorng
+    
+    parallel::stopCluster(cl)
+    
+    rubias_out <- list()
+    
+    rubias_out$mix_prop_traces <-
+      lapply(1:nchains, function(i) {
+        dplyr::mutate(rubias_out00[[i]]$mix_prop_traces, chain = i)
+      }) %>%
+      dplyr::bind_rows()
+    
+    # indiv_posteriors are the mean of posterior means
+    # (prob not the best way to do this)
+    # the rest of values are the same for all chains
+
+    rubias_out$indiv_posteriors <- 
+      lapply(1:nchains, function(i) {
+        rubias_out00[[i]]$indiv_posteriors
+      }) %>%
+      dplyr::bind_rows() %>%
+      dplyr::group_by(mixture_collection, indiv, repunit, collection,
+                      log_likelihood, z_score, n_non_miss_loci, n_miss_loci) %>%
+      dplyr::summarise(PofZ = mean(PofZ), .groups = "drop")
+    
+  } # else
   
-  ### Save output
+  # Save output ----
   message("Saving output as .csv files")
   mix_sillys <- unique(mixture$collection)
   baseline_pops <- unique(reference$collection)  # correctly ordered
   
-  ## Save mix_prop_traces
-  # Save at collection level
+  ## Save mix_prop_traces ----
+  ### Save at collection level ----
   message("  saving collection traces.", appendLF = FALSE)
   
   time_coll_trace <- system.time({
@@ -117,10 +184,10 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
       mix_prop_trace_wide_pi <- rubias_out$mix_prop_traces %>%
         dplyr::filter(mixture_collection == mixture) %>%  # filter to mixture
         dplyr::mutate(collection = factor(x = collection, levels = baseline_pops)) %>%  # use factor to order collections same as baseline
-        dplyr::select(sweep, collection, pi) %>%  # select only sweep, collection, pi
-        tidyr::spread(collection, pi)  # make wide
+        dplyr::select(sweep, chain, collection, pi) %>%
+        tidyr::pivot_wider(names_from = collection, values_from = pi)  # make wide
       
-      readr:: write_csv(x = mix_prop_trace_wide_pi, file = paste0(file, "/", mixture, "_collection_trace.csv"))
+      readr::write_csv(x = mix_prop_trace_wide_pi, file = paste0(file, "/", mixture, "_collection_trace.csv"))
       
     }))
     
@@ -128,7 +195,7 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   message("   time: ", sprintf("%.2f", time_coll_trace["elapsed"]), 
           " seconds")
   
-  # Save at repuinit level
+  ### Save at repuinit level ----
   message("  saving repunit traces.", appendLF = FALSE)
   
   time_repunit_trace <- system.time({
@@ -137,12 +204,12 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
       mix_prop_trace_wide_rho <- rubias_out$mix_prop_traces %>%
         dplyr::filter(mixture_collection == mixture) %>%  # filter to mixture
         dplyr::mutate(repunit = factor(x = repunit, levels = group_names)) %>%  # use factor to order repunit same as group_names
-        dplyr::group_by(sweep, repunit) %>% 
+        dplyr::group_by(sweep, chain, repunit) %>% 
         dplyr:: summarise(rho = sum(pi), .groups = "drop") %>% 
-        dplyr::select(sweep, repunit, rho) %>%  # select only sweep, collection, pi
-        tidyr::spread(repunit, rho)  # make wide
+        dplyr::select(sweep, chain, repunit, rho) %>%
+        tidyr::pivot_wider(names_from = repunit, values_from = rho)  # make wide
       
-      readr:: write_csv(x = mix_prop_trace_wide_rho, file = paste0(file, "/", mixture, "_repunit_trace.csv"))
+      readr::write_csv(x = mix_prop_trace_wide_rho, file = paste0(file, "/", mixture, "_repunit_trace.csv"))
       
     }))
     
@@ -151,17 +218,16 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   message("   time: ", sprintf("%.2f", time_repunit_trace["elapsed"]), 
           " seconds")
   
-  ## Save indiv_posteriors
+  ## Save indiv_posteriors ----
   message("  saving individual posteriors.", appendLF = FALSE)
   
   time_indiv_posteriors <- system.time({
     invisible(sapply(mix_sillys, function(mixture){
       
       indiv_posteriors <- rubias_out$indiv_posteriors %>%
-        dplyr::filter(mixture_collection == mixture) %>% 
-        dplyr::select(-missing_loci)  # remove this unnecessary list object
+        dplyr::filter(mixture_collection == mixture)
       
-      readr:: write_csv(x = indiv_posteriors, file = paste0(file, "/", mixture, "_indiv_posteriors.csv"))
+      readr::write_csv(x = indiv_posteriors, file = paste0(file, "/", mixture, "_indiv_posteriors.csv"))
     }))
     
   })
@@ -169,7 +235,7 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   message("   time: ", sprintf("%.2f", time_indiv_posteriors["elapsed"]), 
           " seconds")
   
-  ## Save bootstrapped_proportions
+  ## Save bootstrapped_proportions ----
   if(method == "PB") {
     
     message("  saving parametric bootstrap bias corrections.", appendLF = FALSE)
@@ -180,12 +246,13 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
         bias_corr <- rubias_out$bootstrapped_proportions %>%
           dplyr::filter(mixture_collection == mixture)
         
-        readr:: write_csv(x = bias_corr, file = paste0(file, "/", mixture, "_bias_corr.csv"))
+        readr::write_csv(x = bias_corr, file = paste0(file, "/", mixture, "_bias_corr.csv"))
         
       } ))
     })
     message("   time: ", sprintf("%.2f", time_bias["elapsed"]), 
             " seconds")
+    message("Run method = 'PB' with defualt nchains = 1. It is the way.")
   }  # PB
   
   return(rubias_out)

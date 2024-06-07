@@ -29,7 +29,7 @@
 #'   - loCI: Lower bound of credibility interval.
 #'   - hiCI: Upper bound of credibility interval.
 #'   - P=0: The proportion of the stock comp distribution that was below `threshold` (i.e., posterior probability that stock comp = 0).
-#'   - gr: The Gelman-Ruban shrink factor for checking among-chain convergence.
+#'   - GR: Gelman-Rubin diagnostic used to assess convergence among MCMC chains, GCL standard is < 1.2.
 #' 
 #' Also returns a trace plot for each mixture and repunit if `plot_trace = TRUE`.
 #'
@@ -158,7 +158,7 @@ custom_comb_bayes_output <- function(groupvec, group_names, maindir, mixvec, ext
            loCI = apply(posterior, 2, quantile, probs = alpha/2), 
            hiCI = apply(posterior, 2, quantile, probs = 1-alpha/2), 
            `P=0`= apply(posterior, 2, function(clm){sum(clm<threshhold)/length(clm)}), 
-           gr = GR),
+           GR = GR),
          trace = trace_out)
     
     } %>% purrr::set_names(mixvec)#End mixvec loop
