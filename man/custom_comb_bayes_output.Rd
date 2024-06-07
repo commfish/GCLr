@@ -58,7 +58,7 @@ Returns a tibble with 8 fields for each mixture and repunit (reporting group):
 \item loCI: Lower bound of credibility interval.
 \item hiCI: Upper bound of credibility interval.
 \item P=0: The proportion of the stock comp distribution that was below \code{threshold} (i.e., posterior probability that stock comp = 0).
-\item gr: The Gelman-Ruban shrink factor for checking among-chain convergence.
+\item GR: Gelman-Rubin diagnostic used to assess convergence among MCMC chains, GCL standard is < 1.2.
 }
 
 Also returns a trace plot for each mixture and repunit if \code{plot_trace = TRUE}.
