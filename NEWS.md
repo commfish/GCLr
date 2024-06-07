@@ -1,3 +1,5 @@
+# GCLr 0.6.0
+
 # GCLr 0.5.2
 
 ## Bug fixes
