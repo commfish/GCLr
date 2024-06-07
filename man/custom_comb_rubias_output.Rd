@@ -50,7 +50,7 @@ currently can NOT do bias correction if not using the same repunits that were ru
 \item{ncores}{A numeric vector of length one indicating the number of cores to use (ncores is only used when is.null(rubias_output) == TRUE).}
 }
 \value{
-A tibble with 8 fields for each mixture and repunit (reporting group).
+A tibble with 10 fields for each mixture and repunit (reporting group).
 \itemize{
 \item \code{mixture_collection}: Factor of mixtures (only a factor for ordering, plotting purposes).
 \item \code{repunit}: Factor of reporting groups (only a factor for ordering, plotting purposes).
@@ -60,6 +60,8 @@ A tibble with 8 fields for each mixture and repunit (reporting group).
 \item \code{loCI}: Lower bound of credibility interval.
 \item \code{hiCI}: Upper bound of credibility interval.
 \item \code{P=0}: The proportion of the stock comp distribution that was below \code{threshold} (i.e., posterior probability that stock comp = 0).
+\item \code{GR}: Gelman-Rubin diagnostic used to assess convergence among MCMC chains, GCL standard is < 1.2.
+\item \code{n_eff}: Effective sample size is an estimate of independent sample size of the posterior sample and is used to assess MCMC convergence. No official "threshold", but generally larger is better.
 }
 }
 \description{

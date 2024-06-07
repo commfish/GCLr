@@ -31,7 +31,7 @@
 #' @param plot_trace Logical switch, when on will create a trace plot for each mixture and repunit (reporting group).
 #' @param ncores A numeric vector of length one indicating the number of cores to use (ncores is only used when is.null(rubias_output) == TRUE).
 #'
-#' @return A tibble with 8 fields for each mixture and repunit (reporting group).
+#' @return A tibble with 10 fields for each mixture and repunit (reporting group).
 #'   - \code{mixture_collection}: Factor of mixtures (only a factor for ordering, plotting purposes).
 #'   - \code{repunit}: Factor of reporting groups (only a factor for ordering, plotting purposes).
 #'   - \code{mean}: Mean stock composition.
@@ -40,6 +40,8 @@
 #'   - \code{loCI}: Lower bound of credibility interval.
 #'   - \code{hiCI}: Upper bound of credibility interval.
 #'   - \code{P=0}: The proportion of the stock comp distribution that was below `threshold` (i.e., posterior probability that stock comp = 0).
+#'   - \code{GR}: Gelman-Rubin diagnostic used to assess convergence among MCMC chains, GCL standard is < 1.2.
+#'   - \code{n_eff}: Effective sample size is an estimate of independent sample size of the posterior sample and is used to assess MCMC convergence. No official "threshold", but generally larger is better.
 #'
 #' @seealso custom_comb_bayes_output()
 #'
