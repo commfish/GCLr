@@ -8,7 +8,7 @@ stratified_estimator_rubias(
   rubias_output = NULL,
   mixvec = NULL,
   group_names = NULL,
-  catchvec,
+  catchvec = NULL,
   newname = NULL,
   group_names_new = NULL,
   groupvec = NULL,

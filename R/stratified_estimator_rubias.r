@@ -71,7 +71,8 @@ stratified_estimator_rubias <-
   function(rubias_output = NULL,
            mixvec = NULL,
            group_names = NULL,
-           catchvec, newname = NULL,
+           catchvec = NULL, 
+           newname = NULL,
            group_names_new = NULL,
            groupvec = NULL,
            groupvec_new = NULL,
@@ -256,7 +257,8 @@ stratified_estimator_rubias <-
         
         bias_corr_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_bias_corr.csv")))
         bias_corr_mix <- bias_corr_mix %>% 
-          dplyr::mutate(mixture_collection = mixture)
+          dplyr::mutate(mixture_collection = mixture) %>% 
+          dplyr::mutate(repunit = factor(x = repunit, levels = group_names))  # order repunit
         
       } %>%  dplyr::bind_rows()  # build bootstrapped_proportions from "bias_corr.csv" files
       
