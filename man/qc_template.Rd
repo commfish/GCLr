@@ -12,7 +12,7 @@ This function opens the \code{qc_template.rmd} file. The details section of this
 \details{
 If you are just running the project data analysis, walk through steps 1-14 in this guide.\cr If you are also running the QC data analysis, walk though steps 1-18 in the guide.
 \enumerate{
-\item Open R Studio (If you are reading this, you probably RStudio open already 😜)
+\item Open R Studio (If you are reading this, you probably RStudio open already)
 \item 
 \itemize{
 \item \strong{Option 1:} From the menu bar, select: \verb{File -> New File -> R Markdown} and then select “From Template” on the left menu; “qc_template” should be highlighted. Hit “OK” \cr

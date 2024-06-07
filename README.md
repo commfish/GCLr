@@ -100,6 +100,17 @@ Here are some examples of things that this package can be used for:
     - `plot_baseline_eval()` plots the results of the baseline
       evaluation tests
 
+  - Individual assignment (IA) evaluation
+
+    - `loo_rate_calc()` calculates leave-one-out (LOO) error rates for
+      each reporting group
+
+    - `plot_loo_prec_rec()` plots LOO results as a precision-recall
+      curve
+
+    - `IA_thresholds()` calculates IA probablity thresholds based on
+      precision-recall standards
+
 - **Genetic mixed stock analysis (MSA)**
 
   - `create_rubias_base()` creates a `rubias` reference (aka “baseline”)
@@ -150,3 +161,118 @@ file an issue on [GitHub](https://github.com/commfish/GCLr/issues).
 
 Issues can also be filed if you want to request enhancements to
 functions or additional functions to be added to the package.
+
+## Package maintenance
+
+This package generally follows the
+[git-flow](https://nvie.com/posts/a-successful-git-branching-model/)
+branching model, using semantic versioning to document releases. Below
+is a quick summary of the different branches.
+
+- `main`
+
+  - stable version of the package, commits/merges to `main` trigger a
+    new version number
+
+- `develop`
+
+  - ongoing, general improvements to the package including minor bug
+    fixes
+
+- `feature-branches`
+
+  - specific improvements to the package (i.e. creating functions for
+    individual assignment)
+
+- `hotfix`
+
+  - for fixing a serious bug found on `main` in the latest version of
+    the package
+
+  - references an [issue](https://github.com/commfish/GCLr/issues)
+
+  - merge back into `main` **and** `develop`, triggers a new version
+    number
+
+### Update version of GCLr package
+
+Below is a generalized protocol for updating the package version by
+merging changes from the `develop` branch into the `main` branch. If
+working from a `feature-branch`, follow this same workflow for
+`feature-branch` –\> `develop`, then `develop` –\> `main`.
+
+1.  commit changes on `develop` branch
+
+2.  update `NEWS.md`, but without the version header \#1, commit
+
+3.  update the package version with `usethis::use_version()`, choose
+    major, minor, or patch, have it commit for you
+
+4.  push to `develop`
+
+5.  create a [pull request](https://github.com/commfish/GCLr/pulls)
+    (base: `main` compare: `develop`) with meaningful title (i.e.,
+    merging to version 1.X.X) and brief description
+
+6.  pull requests to `main` require review so we can keep `main` stable!
+
+7.  merge after folks approve, confirm the merge, do not delete
+    `develop` branch
+
+8.  e-mail all GCL staff to notify everyone about the update
+
+### Hotfix protocol
+
+1.  pull from `main` to make sure you have the latest and greatest
+    version
+
+2.  if your serious bug still exists, create an
+    [issue](https://github.com/commfish/GCLr/issues)
+
+3.  create `hotfix_issue_XX` branch (referencing the
+    [issue](https://github.com/commfish/GCLr/issues) \#) from `main`
+
+4.  working on the `hotfix_issue_XX` branch, commit necessary changes to
+    resolve the issue, note that you can include
+    [keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue)
+    in your commit that will auto-magically close the issue once the
+    `hotfix_issue_XX` branch is merged back into `main`
+
+5.  update `NEWS.md`, but without the version header \#1, commit
+
+6.  update the package version with `usethis::use_version()`, choose
+    patch, have it commit for you
+
+7.  push to `hotfix_issue_XX`
+
+8.  create a [pull request](https://github.com/commfish/GCLr/pulls)
+    (base: `main` compare: `hotfix_issue_XX`) with meaningful title
+    (i.e., Hotfix issue \#) and brief description
+
+9.  pull requests to `main` require review so we can keep `main` stable!
+
+10. merge after folks approve, confirm the merge, do not delete
+    `hotfix_issue_XX` branch yet
+
+11. create another [pull request](#0) (base: `develop` compare:
+    `hotfix_issue_XX`) with meaningful title (i.e., Hotfix issue \#
+    merging to develop) and brief description
+
+12. merge, confirm the merge, now you can delete the `hotfix_issue_XX`
+    branch
+
+13. e-mail all GCL staff to notify everyone about the update
+
+## Other helpful resources
+
+ADF&G Division of Sport Fisheries [Introduction to
+Git](https://adfg-dsf.github.io/Git_book/) provides a good overview of
+Git, however, note that generally assumes that you will be working off
+of the shared network drive, rather than cloning to your local C:/
+drive.
+
+ADF&G’s Reproducible Research [R Best
+Practices](https://adfg-dsf.github.io/Best_practice_R/Best_practice_R.html)
+
+[GitKraken](https://www.gitkraken.com/) is a nice GUI alternative to
+GitHub for visualizing the commit/branch network

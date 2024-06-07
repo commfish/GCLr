@@ -4,7 +4,7 @@
 #' 
 #' @details If you are just running the project data analysis, walk through steps 1-14 in this guide.\cr If you are also running the QC data analysis, walk though steps 1-18 in the guide.
 #' 
-#' 1) Open R Studio (If you are reading this, you probably RStudio open already `r emo::ji("silly")`) 
+#' 1) Open R Studio (If you are reading this, you probably RStudio open already) 
 #' 2) - **Option 1:** From the menu bar, select: `File -> New File -> R Markdown` and then select “From Template” on the left menu; “qc_template” should be highlighted. Hit “OK” \cr 
 #'           \figure{NewRMDWindow.png}
 #'    - **Option 2:** Simply run `GCLr::qc_template()` in your console (see tab marked "Console" in RStudio) and the file will open (i.e., paste `GCLr::qc_template()` in your console and hit return)

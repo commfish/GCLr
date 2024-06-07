@@ -1,3 +1,23 @@
+# GCLr 0.6.0
+
+## Enhancements
+
+`run_rubias_mix()` - This function is now able to run multiple MCMC chains in rubias.	To run multiple chains, set nchains = (pick a number). For single chain, nchain = 1 (default). The output from the function is saved as .csv files that have a new column "chain".	
+
+`custom_comb_rubias_output()` - updated to summarize multiple chains. Outputs created previously can still be summarized (backwards compatible)
+
+`stratified_estimator_rubias()` - updated to summarize multiple chains. Outputs created previously can still be summarized (backwards compatible)
+
+## New additions
+
+Three functions have been added to the package for testing reporting groups for individual assignment (IA) and determining assignment threshold cut-offs:
+
+`loo_rate_calc()` - takes the leave-one-out output from `rubias::self_assign()` and calculates true positive, false negative, false positive, and true negative assignment error rates for each reporting group. The output from this function can then be used to create a precision-recall curve plot for determining an appropriate individual assignment threshold and whether a reporting group is sufficiently identifiable for producing individual assignment estimates.
+
+`plot_loo_prec_rec()` - This function takes the unmodified output from `rubias::self_assign()`, calls on `loo_rate_calc()` to produce true positive and precision rates, plots the scaled likelihood for each baseline sample (y-axis) by reporting group or population in a box plot (optional), and plots recall (aka *true positive rate*) (x-axis) by precision (y-axis) in an interactive plot that can be used to assess reporting groups and assignment thresholds for individual assignment analyses.
+
+`IA_thresholds()` - This function takes the unmodified output from `rubias::self_assign()`, calculates recall (aka true positive rate) and precision, and returns a tibble of minimum and maximum assignment thresholds for filtering top individual assignment results in order to meet the desired true positive rate and precision.
+
 # GCLr 0.5.2
 
 ## Bug fixes

@@ -40,7 +40,7 @@
 #'                             file = NULL)
 #' 
 #' colortree$tree$edge.length[colortree$tree$edge.length < 0] <- 0 #Remove negative branch lengths
-#' ape::plot.phylo(x = colortree$tree, edge.color = colortree$color, edge.width = 3, use.edge.length = T, show.tip.label = T, adj = .02, cex = .7, font = 1, label.offset = 0.002)
+#' ape::plot.phylo(x = colortree$tree, edge.color = colortree$color, edge.width = 3, use.edge.length = TRUE, show.tip.label = TRUE, adj = .02, cex = .7, font = 1, label.offset = 0.002)
 #' ape::tiplabels(pch = colortree$pch , offset = .0015, cex = .5)
 #'
 #' @export
