@@ -1,3 +1,5 @@
+# GCLr 0.6.1
+
 ## Bug fixes
 
 `stratified_estimator_rubias()` - make `repunit` a factor when `bias_corr = TRUE` and rubias output created from files.
