@@ -92,15 +92,12 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
         # Warehouse - acceptable locations are: W[1-33]_[1-10]
         UNIT %in% unit[stringr::str_detect(unit, "^(W[A-Z])$")] &
           !stringr::str_detect(string = shelf_id, pattern = "^([1-9]|1[0-9]|2[0-9]|3[0-3])_([1-9]|10)$") ~ "wrong",
-        # Freezer 7 or 8 - acceptable locations are: UppercaseLetter[A-E]_[1-6]
-        UNIT %in% unit[stringr::str_detect(unit, "^([7-8])$")] &
+        # Freezer 101,102,103 - acceptable locations are: UppercaseLetter[A-E]_[1-6]
+        UNIT %in% unit[stringr::str_detect(unit, "101|102|103")] &
           !stringr::str_detect(string = shelf_id, pattern = "^([A-E])_([1-6])$") ~ "wrong",
         # B7 - acceptable locations are:  [1-10]_UppercaseLetter
         UNIT %in% unit[stringr::str_detect(unit, "^([A-W])$")] &
           !stringr::str_detect(string = shelf_id, pattern = "^([1-9]|10)_([A-Z])$") ~ "wrong",
-        # Freezer 1 - acceptable locations are: UppercaseLetter[A-E]_[1-6]
-        UNIT %in% unit[stringr::str_detect(unit, "1")] &
-          !stringr::str_detect(string = shelf_id, pattern = "^([A-E]_[1-6])$") ~ "wrong",
         TRUE ~ "correct"
       )
     ) %>%
@@ -111,7 +108,7 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
   if (bad_locations == TRUE) {
     
     # export CSV of incorrect tissues
-    readr::write_csv(x = bad_location, file = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/bad_tissue_locations_", format(Sys.Date(), format = "%Y%m%d"), ".csv")) 
+    readr::write_csv(x = bad_location, file = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/bad_tissue_locations_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")) 
     
     assign(
       x = "bad_location",
@@ -120,7 +117,7 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
       envir = .GlobalEnv
     )
     message(paste(
-      "All tissues with incorrect locations stored in object `bad_location` and a CSV was output"))
+      "All tissues with incorrect locations stored in object `bad_location` and a CSV was output to V:/Lab/Archive Storage/Archive Sample Maps from R/"))
   }
   
   # Create final map
@@ -178,10 +175,10 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
     tidyr::separate(tissue_id,
                     into = c("silly", "tissue", "barcode"),
                     sep = "_") %>% # we have to split these to insert fish range
-    tidyr::unite(map_id, silly, tissue, range, barcode, sep = " ") %>% # now making the final map entries
+    tidyr::unite(map_id, barcode, silly, tissue, range,  sep = " ") %>% # now making the final map entries
     dplyr::distinct() %>% # we just want unique entries
     dplyr::select(-c(shelf_id)) %>% # drop extra column
-    dplyr::arrange(UNIT, SHELF_RACK, SLOT) %>% # sorting by shelf_rack, then slot
+    dplyr::arrange(UNIT, SHELF_RACK, SLOT, map_id) %>% # sorting by shelf_rack, then slot
     dplyr::group_by(UNIT, SHELF_RACK, SLOT) %>%
     dplyr::group_modify( ~ {
       .x %>%
@@ -205,7 +202,7 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
   )
   
   ## write a csv of the tissue map to the folder:
-  readr::write_csv(x = tissuemap, path = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/tissuemap_", format(Sys.Date(), format = "%Y%m%d"), ".csv"))
+  readr::write_csv(x = tissuemap, file = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/tissuemap_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv"))
   
  # Wrap up function 
   stop.time <- Sys.time()
@@ -213,13 +210,13 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
   fulltime <- stop.time - start.time
   
   print(fulltime)
-  message(paste0("Map of tissue locations stored in object 'tissuemap' and a CSV was output"))
+  message(paste0("Map of tissue locations stored in object 'tissuemap' and a CSV was output to V:/Lab/Archive Storage/Archive Sample Maps from R/"))
   
   ## If, you said TRUE in setup, then assign the all_data object to your environment. From here you can export or do whatever you want with it.
   if (all_tissues == TRUE) {
     
     # export CSV of ALL tissues
-    readr::write_csv(x = dataAll, path = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/all_tissues_", format(Sys.Date(), format = "%Y%m%d"), ".csv"))
+    readr::write_csv(x = dataAll, file = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/all_tissues_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv"))
     
     assign(
       x = "all_tissues",
@@ -228,7 +225,7 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
       envir = .GlobalEnv
     )
     
-    message(paste("All fish (raw) from database stored in object `all_data` and a CSV was output"))
+    message(paste("All fish (raw) from database stored in object `all_data` and a CSV was output to V:/Lab/Archive Storage/Archive Sample Maps from R/"))
   
     }
 }
