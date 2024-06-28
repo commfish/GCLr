@@ -1,5 +1,9 @@
 # GCLr 0.6.2
 
+## Bug fixes
+
+`get_tissue_location()` - added new freezers and removed old; specified location of output files; added timestamp to output.
+
 # GCLr 0.6.1
 
 ## Bug fixes
