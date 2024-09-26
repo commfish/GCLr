@@ -16,13 +16,13 @@
 #' @seealso [GCLr::get_geno()]
 #' @seealso [GCLr::combine_conflicts()]
 #' 
-#' @returns This function writes an Excel workbook with three sheets: 
+#' @returns This function writes an Excel workbook with five sheets: 
 #' \itemize{
 #'   \item \code{proj_Genotypes_Table}: a formatted genotypes table
 #'   \item \code{Calculations}: number of fish with success rates < 80%, total number of project fish, and Proportion of fish with success rates greater than 80%
-#'   \item \code{Avg success by plate}: a table with `PlateID` and `Average Success Rate` columns
-#'   \item \code{Conflicts by individual}: a table with `SillySource` (aka fish ID), `PlateID`, and `success_rate` columns and associated columns for each type of conflict in the concordance file(s) (e.g., `Homo-Het`, `Het-Homo`, `Homo-Homo`), and a column of `Total_conflicts`
-#'   \item \code{Conflicts by locus}: a table with `locus`, `PlateID`, and `success_rate` columns and associated columns for each type of conflict in the concordance file(s) (e.g., `Homo-Het`, `Het-Homo`, `Homo-Homo`), and a column of `Total_conflicts`
+#'   \item \code{Avg success by plate}: a table with **PlateID** and **Average Success Rate** columns
+#'   \item \code{Conflicts by individual}: a table with **SillySource** (aka fish ID), **PlateID**, and **success_rate** columns and associated columns for each type of conflict in the concordance file(s) (e.g., Homo-Het, Het-Homo, Homo-Homo), and a column of **Total_conflicts`**
+#'   \item \code{Conflicts by locus}: a table with **locus**, **PlateID**, and **success_rate** columns and associated columns for each type of conflict in the concordance file(s) (e.g., Homo-Het, Het-Homo, Homo-Homo), and a column of **Total_conflicts**
 #'   }
 #' 
 #' #' @examples
