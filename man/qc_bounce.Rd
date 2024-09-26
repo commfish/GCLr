@@ -20,9 +20,9 @@ This function writes an Excel workbook with five sheets:
 \itemize{
 \item \code{proj_Genotypes_Table}: a formatted genotypes table
 \item \code{Calculations}: number of fish with success rates < 80\%, total number of project fish, and Proportion of fish with success rates greater than 80\%
-\item \code{Avg success by plate}: a table with \strong{PlateID} and \strong{Average Success Rate} columns
-\item \code{Conflicts by individual}: a table with \strong{SillySource} (aka fish ID), \strong{PlateID}, and \strong{success_rate} columns and associated columns for each type of conflict in the concordance file(s) (e.g., Homo-Het, Het-Homo, Homo-Homo), and a column of \strong{Total_conflicts`}
-\item \code{Conflicts by locus}: a table with \strong{locus}, \strong{PlateID}, and \strong{success_rate} columns and associated columns for each type of conflict in the concordance file(s) (e.g., Homo-Het, Het-Homo, Homo-Homo), and a column of \strong{Total_conflicts}
+\item \code{Avg success by plate}: a table with \emph{PlateID} and \emph{Average Success Rate} columns
+\item \code{Conflicts by individual}: a table with \emph{SillySource} (aka fish ID), \emph{PlateID}, and \emph{success_rate} columns and associated columns for each type of conflict in the concordance file(s) (e.g., Homo-Het, Het-Homo, Homo-Homo), and a column of \emph{Total_conflicts}
+\item \code{Conflicts by locus}: a table with \emph{locus}, \emph{PlateID}, and \emph{success_rate} columns and associated columns for each type of conflict in the concordance file(s) (e.g., Homo-Het, Het-Homo, Homo-Homo), and a column of \emph{Total_conflicts}
 }
 
 #' @examples
