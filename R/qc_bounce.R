@@ -45,7 +45,7 @@ qc_bounce <- function(QC_directory, project, username, password){
   
   GCLr::loki2r_proj(project_name = project, username = username, password = password)
   
-  genotypes <- GCLr::get_geno(project_name = project, sillyvec = NULL, loci = NULL, file = paste(project, "_genotypes_report.xlsx"), username, password, proj.stats = TRUE)
+  genotypes <- GCLr::get_geno(project_name = project, sillyvec = NULL, loci = NULL, file = out.file, username, password, proj.stats = TRUE)
   
   #Get sillyvec
   sillyvec <- genotypes$SILLY_CODE %>% 
