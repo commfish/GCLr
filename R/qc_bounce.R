@@ -120,4 +120,5 @@ qc_bounce <- function(QC_directory, project, username, password){
   xlsx::write.xlsx(x = pivot1 %>% as.data.frame(), file = bouncexlfile, append = TRUE, sheetName = "Conflicts by individual", showNA = FALSE, row.names = FALSE)
   xlsx::write.xlsx(x = pivot2 %>% as.data.frame(), file = bouncexlfile, append = TRUE, sheetName = "Conflicts by locus", showNA = FALSE, row.names = FALSE)
   
+  rm(LocusControl, envir = .GlobalEnv)# Removing LocusControl otherwise the function will give an error message if ran more than once per R session.
 }
