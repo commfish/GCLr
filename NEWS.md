@@ -1,3 +1,15 @@
+# GCLr 0.7.0
+
+## New additions
+
+`inviv_pca` - reads in a GENEPOP file and performs an individual Principal Component Analysis.
+
+`plot_indiv_pca` - takes the raw output from indiv_pca() and plots the coordinates for the first 3 principal components in an interactive 3-dimensional scatter plot. 
+
+ex_genepop.gen - GENEPOP file for examples; this is the same as ex_genepop.txt, but has the .gen extension required by adegenet::read.genepop()
+
+`qc_bounce` - for lab staff; produces an Excel file containing the project genotypes, the proportion of project fish with at least 80% of loci with scores, average success rate by plate, conflicts and success rates for individual samples, and conflicts and success rates by locus.
+
 # GCLr 0.6.2
 
 ## Bug fixes
