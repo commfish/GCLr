@@ -2,9 +2,9 @@
 #'
 #' This function reads in a GENEPOP file and performs an individual Principal Component Analysis. 
 #'
-#' @param file the file path of a GENEPOP file, with .gen extension, containing individual genotypes. Make sure that each individual in the file has a unique identifier (e.g., popA_1, popA_2, popA_3). If using `GCLr::gcl2genepop()` to create the GENEPOP file, set `VialNums = TRUE`.
+#' @param file the file path of a GENEPOP file with .gen extension containing individual genotypes. Make sure that each individual in the file has a unique identifier (e.g., popA_1, popA_2, popA_3). If using [GCLr::gcl2genepop()] to create the GENEPOP file, set `VialNums = TRUE`.
 #' 
-#' @param groupvec A numeric vector indicating the group affiliation of each population in `dist.mat`
+#' @param groupvec A numeric vector indicating the group affiliation of each collection in the GENEPOP file.
 #' 
 #' @param groups A character vector of group names with a length equal to the maximum value in `groupvec`
 #' 
@@ -34,8 +34,6 @@
 #'   dplyr::arrange(collection)
 #' 
 #' file <- system.file("genepop", "ex_genepop.gen", package = "GCLr")
-#' 
-#' file <- "C:/Users/awbarclay/Documents/R/GCLr/inst/genepop/ex_genepop.gen" #DELETE for final version
 #' 
 #' groups <- group_info$group %>% unique()
 #'

@@ -7,9 +7,9 @@
 indiv_pca(file, groupvec, groups, ncomp = 3)
 }
 \arguments{
-\item{file}{the file path of a GENEPOP file, with .gen extension, containing individual genotypes. Make sure that each individual in the file has a unique identifier (e.g., popA_1, popA_2, popA_3). If using \code{GCLr::gcl2genepop()} to create the GENEPOP file, set \code{VialNums = TRUE}.}
+\item{file}{the file path of a GENEPOP file with .gen extension containing individual genotypes. Make sure that each individual in the file has a unique identifier (e.g., popA_1, popA_2, popA_3). If using \code{\link[=gcl2genepop]{gcl2genepop()}} to create the GENEPOP file, set \code{VialNums = TRUE}.}
 
-\item{groupvec}{A numeric vector indicating the group affiliation of each population in \code{dist.mat}}
+\item{groupvec}{A numeric vector indicating the group affiliation of each collection in the GENEPOP file.}
 
 \item{groups}{A character vector of group names with a length equal to the maximum value in \code{groupvec}}
 
@@ -41,8 +41,6 @@ group_info <- GCLr::ex_baseline \%>\%
   dplyr::arrange(collection)
 
 file <- system.file("genepop", "ex_genepop.gen", package = "GCLr")
-
-file <- "C:/Users/awbarclay/Documents/R/GCLr/inst/genepop/ex_genepop.gen" #DELETE for final version
 
 groups <- group_info$group \%>\% unique()
 
