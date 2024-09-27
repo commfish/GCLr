@@ -30,8 +30,6 @@ group_info <- GCLr::ex_baseline \%>\%
 
 file <- system.file("genepop", "ex_genepop.gen", package = "GCLr")
 
-file <- "C:/Users/awbarclay/Documents/R/GCLr/inst/genepop/ex_genepop.gen" #DELETE for final version
-
 groups <- group_info$group \%>\% unique()
 
 groupvec <- group_info$group \%>\%
