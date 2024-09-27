@@ -9,9 +9,12 @@
 #' @param title the title to place at the top of the plot; if NULL (default) no title will be added to the plot
 #' 
 #' @return A 3-dimensional scatter plot of PCs 1-3
+#' 
+#' @seealso [GCLr::indiv_pca()]
 #'
 #' @examples
 #' \dontrun{
+#' # Paste this code into your console to run this example.
 #' group_info <- GCLr::ex_baseline %>%
 #'   dplyr::mutate(collection = factor(collection, levels = unique(collection))) %>% 
 #'   dplyr::group_by(repunit, collection) %>%

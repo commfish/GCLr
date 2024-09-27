@@ -21,6 +21,7 @@ This function takes the raw output from \link{indiv_pca} and plots the coordinat
 }
 \examples{
 \dontrun{
+# Paste this code into your console to run this example.
 group_info <- GCLr::ex_baseline \%>\%
   dplyr::mutate(collection = factor(collection, levels = unique(collection))) \%>\% 
   dplyr::group_by(repunit, collection) \%>\%
@@ -43,4 +44,7 @@ plot_indiv_pca(pca = pca_out, group_color = c("blue", "green", "red"), title = N
 
 }
 
+}
+\seealso{
+\code{\link[=indiv_pca]{indiv_pca()}}
 }
