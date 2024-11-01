@@ -130,7 +130,7 @@ plot_freq_fis_4snps <-
 
     genecounts <- t(apply(genecounts0, 2, tabulate, nbins = 3))
 
-    HWEpval <- suppressWarnings(HardyWeinberg::HWExactMat(genecounts, verbose = FALSE))$pvalvec
+    HWEpval <- suppressWarnings(HardyWeinberg::HWExactStats(genecounts, verbose = FALSE))
 
     FixBOOL <- apply(genecounts, 1, function(gcounts){sum(gcounts==0)>1})
 
@@ -175,9 +175,9 @@ plot_freq_fis_4snps <-
     
   q <- Freq %>% 
     dplyr::filter(allele_no == 1) %>% 
-    dplyr::pull(proportion)
+    dplyr::select(population = silly, locus, q = proportion)
   
-  HWE_df$q <- q
+  HWE_df <- dplyr::left_join(HWE_df, q, by = c("population", "locus"))
   
   if(length(group.pch)==1){
 
@@ -200,7 +200,7 @@ plot_freq_fis_4snps <-
     
     freqplot <- my.dat %>%
       ggplot2::ggplot(ggplot2::aes(y = q, x = pop_no)) +
-      ggplot2::geom_hline(yintercept = c(0, 1), size = 0.5) +
+      ggplot2::geom_hline(yintercept = c(0, 1), linewidth = 0.5) +
       ggplot2::geom_line(color = "black",
                          linetype = "dashed",
                          linewidth = line.width) +
@@ -230,7 +230,7 @@ plot_freq_fis_4snps <-
     fisplot <- my.dat %>%
       dplyr::mutate(labels = !!labels) %>%
       ggplot2::ggplot(ggplot2::aes(y = fis, x = pop_no, label = labels)) +
-      ggplot2::geom_abline(slope = 0, size = 0.5) +
+      ggplot2::geom_abline(slope = 0, linewidth = 0.5) +
       ggplot2::geom_line(color = "black",
                          linetype = "dashed",
                          linewidth = line.width) +
