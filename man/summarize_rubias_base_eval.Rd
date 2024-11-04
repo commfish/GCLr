@@ -16,7 +16,8 @@ summarize_rubias_base_eval(
   alpha = 0.1,
   burn_in = 5000,
   threshold = 5e-07,
-  ncores = 4
+  ncores = 4,
+  file_type = c("fst", "csv")[1]
 )
 }
 \arguments{
@@ -29,20 +30,20 @@ summarize_rubias_base_eval(
 "MCMC" (summarize MCMC output), "PB" (summarize bias corrected output), "both" (summarize both outputs); (default = "MCMC)}
 
 \item{group_names}{An optional character vector of group names, used to sort \code{repunit} as a factor, passes through
-to \code{\link[=custom_comb_rubias_output]{custom_comb_rubias_output()}} (default = \code{NULL}). If \code{NULL}, \code{group_names} comes from \code{repunit_trace.csv} output files.}
+to \code{\link[=custom_comb_rubias_output]{custom_comb_rubias_output()}} (default = \code{NULL}). If \code{NULL}, \code{group_names} comes from \code{repunit_trace} output files.}
 
 \item{group_names_new}{An optional character vector of new \code{group_names}, used to roll up groups from fine-scale \code{repunit} to broad-scale
 \code{repunit} for bias correction, passes through to \code{\link[=custom_comb_rubias_output]{custom_comb_rubias_output()}} (default = \code{NULL}).}
 
 \item{groupvec}{An optional numeric vector indicating the group affiliation of each pop in the baseline \code{sillyvec}, used if
-accessing \code{collection_trace.csv} output files to re-summarize to new groups (default = \code{NULL}). If \code{NULL}, \code{group_names} comes
-from \code{repunit_trace.csv} output files.}
+accessing \code{collection_trace} output files to re-summarize to new groups (default = \code{NULL}). If \code{NULL}, \code{group_names} comes
+from \code{repunit_trace} output files.}
 
 \item{groupvec_new}{An optional numeric vector indicating the new broad-scale group affiliation of each fine-scale group,
-used if accessing \code{repunit_trace.csv} output files to re-summarize fine-scale groups to broad-scale groups with bias correction
-(\code{method = "PB"}; default = \code{NULL}). If \code{NULL}, \code{group_names} comes from \code{repunit_trace.csv} output files.}
+used if accessing \code{repunit_trace} output files to re-summarize fine-scale groups to broad-scale groups with bias correction
+(\code{method = "PB"}; default = \code{NULL}). If \code{NULL}, \code{group_names} comes from \code{repunit_trace} output files.}
 
-\item{path}{A character vector of where to find output from each mixture as a .csv (created by \code{\link[=run_rubias_base_eval]{run_rubias_base_eval()}};
+\item{path}{A character vector of where to find output from each mixture as a .csv or .fst file (created by \code{\link[=run_rubias_base_eval]{run_rubias_base_eval()}};
 default is "rubias/output").}
 
 \item{alpha}{A numeric vector of length 1 specifying credibility intervals (default is 0.1, which gives 90\% CIs (i.e., 5\% and 95\%)).}
@@ -55,6 +56,8 @@ default is "rubias/output").}
 \item{ncores}{An optional numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).
 If the number of cores exceeds the number on your device (\code{\link[parallel:detectCores]{parallel::detectCores()}}), then all cores will be used. Note that \code{ncores} is
 only used if \code{method = "both"}.}
+
+\item{file_type}{the file type of the mixture output files .fst (default and faster) or .csv files.}
 }
 \value{
 A list with the following 2 components:
@@ -91,7 +94,8 @@ evaluation tests after running \code{\link[=run_rubias_base_eval]{run_rubias_bas
 \details{
 Thus function is the final step in baseline evaluations tests using \pkg{rubias}. The normal workflow uses: \code{\link[=base_eval_sample_sizes]{base_eval_sample_sizes()}}
 to determine leave-one-out sample sizes for tests, then \code{\link[=create_rubias_base_eval]{create_rubias_base_eval()}} generates the necessary \pkg{rubias} .csv files, which
-are then analyzed/run in parallel by \code{\link[=run_rubias_base_eval]{run_rubias_base_eval()}} to create output .csv files, and finally summarized by \code{\link[=summarize_rubias_base_eval]{summarize_rubias_base_eval()}}.
+are then analyzed/run in parallel by \code{\link[=run_rubias_base_eval]{run_rubias_base_eval()}} to create output files, and finally summarized by \code{\link[=summarize_rubias_base_eval]{summarize_rubias_base_eval()}}.
+This function has the option of summarizing fst or csv mixture output files. fst files are compressed so they read into R faster, which speeds up the mixture summary process.
 }
 \examples{
 \dontrun{

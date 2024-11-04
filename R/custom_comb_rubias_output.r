@@ -3,7 +3,7 @@
 #' This function computes summary statistics from \pkg{rubias} output, similar to `CustomCombineBAYESOutput`.
 #' However, output is a tibble with `mixture_collection` as a column, instead of each mixture as its own list.
 #' It can take either the `rubias_output` list object from `run_rubias_mix()` or [rubias::infer_mixture()],
-#' OR it can read in the .csv files created by `run_rubias_mix()`.
+#' OR it can read in the .csv or .fst files created by `run_rubias_mix()`.
 #'
 #' NOTE: Currently this function only allows bias correction for the reporting groups run in the mixture.
 #' It cannot do bias correction for different baseline groupvecs because the current \pkg{rubias} output only
@@ -16,13 +16,13 @@
 #' Compatible with multichain output.
 #'
 #' @param rubias_output Output list object from `run_rubias_mix()` or [rubias::infer_mixture()].
-#' @param mixvec Character vector of mixture sillys, used to read in output .csv files if `rubias_output = NULL`.
-#' @param group_names Character vector of group_names, used to sort repunit as a factor, can get from .csv.
+#' @param mixvec Character vector of mixture sillys, used to read in output .csv/,fst files if `rubias_output = NULL`.
+#' @param group_names Character vector of group_names, used to sort repunit as a factor, can get from .csv/.fst.
 #' @param group_names_new Character vector of new group_names, used to roll up groups from fine-scale to broad-scale for bias correction
 #'                       if specified, `groupvec_new` must be = length(group_names_new).
 #' @param groupvec Numeric vector indicating the group affiliation of each pop in sillyvec, used if resummarizing to new groups.
 #' @param groupvec_new A numeric vector indicating the new group affiliation of each group, used if resummarizing fine-scale groups to broad-scale groups with bias correction.
-#' @param path Character vector of where to find output from each mixture as a .csv (created by `run_rubias_mix()`).
+#' @param path Character vector of where to find output from each mixture as a .csv or .fst file (created by `run_rubias_mix()`).
 #' @param alpha Numeric constant specifying credibility intervals, default is 0.1, which gives 90% CIs (i.e., 5% and 95%).
 #' @param burn_in Numeric constant specifying how many sweeps were used for burn_in in `run_rubias_mix()` or [rubias::infer_mixture()].
 #' @param bias_corr Logical switch indicating whether you want bias-corrected values from `method = "PB"` or not, 
@@ -30,7 +30,11 @@
 #' @param threshold Numeric constant specifying how low stock comp is before assuming 0, used for `P=0` calculation, default is from BAYES.
 #' @param plot_trace Logical switch, when on will create a trace plot for each mixture and repunit (reporting group).
 #' @param ncores A numeric vector of length one indicating the number of cores to use (ncores is only used when is.null(rubias_output) == TRUE).
-#'
+#' @param file_type The file type of the mixture input files, either "fst" or "csv" (default: "csv")(see details).
+#' 
+#' @details
+#' This function has the option of summarizing fst or csv mixture output files. fst files are compressed so they read into R faster, which speeds up the mixture summary process.
+#' 
 #' @return A tibble with 10 fields for each mixture and repunit (reporting group).
 #'   - \code{mixture_collection}: Factor of mixtures (only a factor for ordering, plotting purposes).
 #'   - \code{repunit}: Factor of reporting groups (only a factor for ordering, plotting purposes).
@@ -65,7 +69,8 @@ custom_comb_rubias_output <-
            bias_corr = FALSE,
            threshold = 5e-7,
            plot_trace = TRUE,
-           ncores = 4) {
+           ncores = 4,
+           file_type = c("fst", "csv")[2]) {
 
   # Error catching ----
   if(ncores > parallel::detectCores()) {
@@ -74,13 +79,13 @@ custom_comb_rubias_output <-
     
   }
   if(is.null(rubias_output) & !dir.exists(path)) {
-    stop("`path` does not exist in your working directory, hoser!!!\nEither specify `rubias_output` or provide a valid `path` with rubias output .csv files for `mixvec`.")
+    stop(paste("`path` does not exist in your working directory, hoser!!!\nEither specify `rubias_output` or provide a valid `path` with rubias output .", file_type," files for `mixvec`."))
   }
   if(is.null(rubias_output) & is.null(mixvec)) {
     stop("Need to provide either `rubias_output` tibble to summarize or `mixvec` and `path` so that rubias output can be read, hoser!!!")
   }
-  if(!is.null(mixvec) & !all(sapply(mixvec, function(mixture) {any(grepl(pattern = mixture, x = list.files(path = path, pattern = ".csv")))} ))) {
-    stop("Not all mixtures in `mixvec` have .csv output in `path`, hoser!!!")
+  if(!is.null(mixvec) & !all(sapply(mixvec, function(mixture) {any(grepl(pattern = mixture, x = list.files(path = path, pattern = paste0(".", file_type))))} ))) {
+    stop(paste0("Not all mixtures in `mixvec` have .", file_type," output in `path`, hoser!!!"))
   }
   if(!is.null(groupvec) & bias_corr) {
     stop("Can not perform bias correction if you are changing the groupvec (pop to group) from what was originally run.\n  Unfortunately since `rubias` only outputs bias corrected means for each `repunit`, we can't compute\n  bias corrected summary statistics on a new `groupvec`.")
@@ -99,16 +104,16 @@ custom_comb_rubias_output <-
   # Summaries ----
   #~~~~~~~~~~~~~~~~
   ## If no rubias_output, ----
-  # make from .csv files
+  # make from .csv/.fst files
   if(is.null(rubias_output)) {
-    message("Summarizing results from rubias output .csv files.")
+    message(paste0("Summarizing results from rubias output .", file_type, " files."))
     
-    # Build repunit_trace from "repunit_trace.csv" if `groupvec` is NULL
+    # Build repunit_trace from "repunit_trace" files if `groupvec` is NULL
     if(is.null(groupvec)) {
-      if(!all(file.exists(paste0(path, "/", mixvec, "_repunit_trace.csv")))) {
-        stop("Not all mixtures in `mixvec` have a `repunit_trace.csv` file in `path`, hoser!!!")
+      if(!all(file.exists(paste0(path, "/", mixvec, "_repunit_trace.", file_type)))) {
+        stop(paste0("Not all mixtures in `mixvec` have a `repunit_trace.", file_type, "` file in `path`, hoser!!!"))
       }  # make sure output files exist
-      message("    Building trace output from `repunit_trace.csv` files.")
+      message(paste0("    Building trace output from `repunit_trace.", file_type, "` files."))
       
       cl <- parallel::makePSOCKcluster(ncores)
       
@@ -117,8 +122,17 @@ custom_comb_rubias_output <-
       repunit_trace <-
         foreach::foreach(mixture = mixvec, .packages = c("tidyverse")) %dopar% {
           
-        repunit_trace_mix <-
-          suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_repunit_trace.csv")))
+          if(file_type == "csv"){
+            
+            repunit_trace_mix <-
+              suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_repunit_trace.csv")))
+            
+          }else{
+            
+            repunit_trace_mix <-
+              suppressMessages(fst::read_fst(path = paste0(path, "/", mixture, "_repunit_trace.fst")))
+            
+          }
         
         if (!"chain" %in% names(repunit_trace_mix)) {
           repunit_trace_mix <- dplyr::mutate(repunit_trace_mix, chain = 1L)
@@ -130,23 +144,36 @@ custom_comb_rubias_output <-
           dplyr::arrange(mixture_collection, chain, sweep, repunit) %>%
           dplyr::select(mixture_collection, chain, sweep, repunit, rho)  # reorder columns
         
-      } %>% dplyr::bind_rows()  # build output from "repunit_trace.csv"
+      } %>% dplyr::bind_rows()  # build output from "repunit_trace" files
       
       parallel::stopCluster(cl)
       
       if(is.null(group_names)) {
-        group_names <-
-          suppressMessages(readr::read_csv(file = paste0(path, "/", mixvec[1], "_repunit_trace.csv"))) %>%
-          colnames() %>%
-          {.[which(!. %in% c("sweep", "chain"))]}
-      }  # assign `group_names` from "repunit_trace.csv", if NULL
+        
+        if(file_type == csv){
+          
+          group_names <-
+            suppressMessages(readr::read_csv(file = paste0(path, "/", mixvec[1], "_repunit_trace.csv"))) %>%
+            colnames() %>%
+            {.[which(!. %in% c("sweep", "chain"))]}
+          
+        }else{
+          
+          group_names <-
+            suppressMessages(fst::read_fst(path = paste0(path, "/", mixvec[1], "_repunit_trace.fst"))) %>%
+            colnames() %>%
+            {.[which(!. %in% c("sweep", "chain"))]}
+          
+        }
+        
+      }  # assign `group_names` from "repunit_trace", if NULL
       
     } else {  # groupvec
       
-      if(!all(file.exists(paste0(path, "/", mixvec, "_collection_trace.csv")))) {
-        stop("Not all mixtures in `mixvec` have a `collection_trace.csv` file in `path`, hoser!!!")
+      if(!all(file.exists(paste0(path, "/", mixvec, "_collection_trace.", file_type)))) {
+        stop(paste0("Not all mixtures in `mixvec` have a `collection_trace.",file_type,"` file in `path`, hoser!!!"))
       }  # make sure output files exist
-      message("    Building trace output from `collection_trace.csv` files, `groupvec`, and `group_names`.")
+      message(paste0("    Building trace output from `collection_trace.", file_type,"` files, `groupvec`, and `group_names`."))
       
       cl <- parallel::makePSOCKcluster(ncores)
       
@@ -155,7 +182,15 @@ custom_comb_rubias_output <-
       collection_trace <-
         foreach::foreach(mixture = mixvec, .packages = c("tidyverse")) %dopar% {
         
-        collection_trace_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_collection_trace.csv")))
+        if(file_type == "csv"){
+          
+          collection_trace_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_collection_trace.csv")))
+          
+        }else{
+
+          collection_trace_mix <- suppressMessages(fst::read_fst(path = paste0(path, "/", mixture, "_collection_trace.fst")))
+          
+        }
         
         if (!"chain" %in% names(collection_trace_mix)) {
           collection_trace_mix <- dplyr::mutate(collection_trace_mix, chain = 1L)
@@ -165,7 +200,7 @@ custom_comb_rubias_output <-
           tidyr::pivot_longer(-c(sweep, chain), names_to = "collection", values_to = "pi") %>%
           dplyr::mutate(mixture_collection = mixture)
         
-      } %>% dplyr::bind_rows()  # build output from "collection_trace.csv"
+      } %>% dplyr::bind_rows()  # build output from "collection_trace" files
       
       parallel::stopCluster(cl)
       
@@ -178,32 +213,41 @@ custom_comb_rubias_output <-
         dplyr::group_by(mixture_collection, chain, sweep, repunit) %>%  # group and order
         dplyr::summarise(rho = sum(pi), .groups = "drop")   # summarise pi (collection) to rho (repunit)
         
-    }  # build repunit_trace from "collection_trace.csv", `groupvec`, and `group_names`
+    }  # build repunit_trace from "collection_trace" file, `groupvec`, and `group_names`
     
     # Build `bootstrapped_proportions` if `bias_corr = TRUE`
     if(bias_corr) {
-      if(!all(file.exists(paste0(path, "/", mixvec, "_bias_corr.csv")))) {
-        stop("Not all mixtures in `mixvec` have a `bias_corr.csv` file in `path`, hoser!!!")
+      if(!all(file.exists(paste0(path, "/", mixvec, "_bias_corr.", file_type)))) {
+        stop(paste0("Not all mixtures in `mixvec` have a `bias_corr.", file_type, "` file in `path`, hoser!!!"))
       }  # make sure output files exist
-      message("    Building bias correction output from `bias_corr.csv` files.")
+      message(paste0("    Building bias correction output from `bias_corr.", file_type, "` files."))
 
       cl <- parallel::makePSOCKcluster(ncores)
       
       doParallel::registerDoParallel(cl, cores = ncores)  
       
       bootstrapped_proportions <- foreach::foreach(mixture = mixvec, .packages = c("tidyverse")) %dopar% {
+        
+        if(file_type == "csv"){
           
-        bias_corr_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_bias_corr.csv")))
+          bias_corr_mix <- suppressMessages(readr::read_csv(file = paste0(path, "/", mixture, "_bias_corr.csv")))
+          
+        }else{
+ 
+          bias_corr_mix <- suppressMessages(fst::read_fst(path = paste0(path, "/", mixture, "_bias_corr.fst")))
+          
+        }
+        
         bias_corr_mix <- bias_corr_mix %>% 
           dplyr::mutate(mixture_collection = mixture)
         
-      } %>%  dplyr::bind_rows()  # build bootstrapped_proportions from "bias_corr.csv" files
+      } %>%  dplyr::bind_rows()  # build bootstrapped_proportions from "bias_corr" files
       
       parallel::stopCluster(cl)
       
     }  # bias_corr
     
-  }  # build rubias_output from .csv files, ignore "indiv_posteriors"
+  }  # build rubias_output from .csv/.fst files, ignore "indiv_posteriors"
   
   #~~~~~~~~~~~~~~~~
   ## If rubias_output, ----

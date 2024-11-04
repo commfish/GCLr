@@ -10,16 +10,16 @@
 #' @param method A character vector of length 1 indicating the \pkg{rubias} output to summarize: 
 #' "MCMC" (summarize MCMC output), "PB" (summarize bias corrected output), "both" (summarize both outputs); (default = "MCMC)
 #' @param group_names An optional character vector of group names, used to sort `repunit` as a factor, passes through 
-#' to [GCLr::custom_comb_rubias_output()] (default = `NULL`). If `NULL`, `group_names` comes from `repunit_trace.csv` output files.
+#' to [GCLr::custom_comb_rubias_output()] (default = `NULL`). If `NULL`, `group_names` comes from `repunit_trace` output files.
 #' @param group_names_new An optional character vector of new `group_names`, used to roll up groups from fine-scale `repunit` to broad-scale 
 #' `repunit` for bias correction, passes through to [GCLr::custom_comb_rubias_output()] (default = `NULL`).
 #' @param groupvec An optional numeric vector indicating the group affiliation of each pop in the baseline `sillyvec`, used if 
-#' accessing `collection_trace.csv` output files to re-summarize to new groups (default = `NULL`). If `NULL`, `group_names` comes 
-#' from `repunit_trace.csv` output files.
+#' accessing `collection_trace` output files to re-summarize to new groups (default = `NULL`). If `NULL`, `group_names` comes 
+#' from `repunit_trace` output files.
 #' @param groupvec_new An optional numeric vector indicating the new broad-scale group affiliation of each fine-scale group, 
-#' used if accessing `repunit_trace.csv` output files to re-summarize fine-scale groups to broad-scale groups with bias correction 
-#' (`method = "PB"`; default = `NULL`). If `NULL`, `group_names` comes from `repunit_trace.csv` output files.
-#' @param path A character vector of where to find output from each mixture as a .csv (created by [GCLr::run_rubias_base_eval()]; 
+#' used if accessing `repunit_trace` output files to re-summarize fine-scale groups to broad-scale groups with bias correction 
+#' (`method = "PB"`; default = `NULL`). If `NULL`, `group_names` comes from `repunit_trace` output files.
+#' @param path A character vector of where to find output from each mixture as a .csv or .fst file (created by [GCLr::run_rubias_base_eval()]; 
 #' default is "rubias/output").
 #' @param alpha A numeric vector of length 1 specifying credibility intervals (default is 0.1, which gives 90% CIs (i.e., 5% and 95%)).
 #' @param burn_in A numeric vector of length 1 specifying how many sweeps were used for burn_in in [GCLr::run_rubias_base_eval()] 
@@ -28,6 +28,8 @@
 #' @param ncores An optional numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
 #' If the number of cores exceeds the number on your device ([parallel::detectCores()]), then all cores will be used. Note that `ncores` is 
 #' only used if `method = "both"`.
+#' @param file_type the file type of the mixture output files .fst (default and faster) or .csv files.
+
 #'
 #' @returns A list with the following 2 components:
 #'     \itemize{
@@ -59,7 +61,8 @@
 #' @details
 #' Thus function is the final step in baseline evaluations tests using \pkg{rubias}. The normal workflow uses: [GCLr::base_eval_sample_sizes()] 
 #' to determine leave-one-out sample sizes for tests, then [GCLr::create_rubias_base_eval()] generates the necessary \pkg{rubias} .csv files, which 
-#' are then analyzed/run in parallel by [GCLr::run_rubias_base_eval()] to create output .csv files, and finally summarized by [GCLr::summarize_rubias_base_eval()].
+#' are then analyzed/run in parallel by [GCLr::run_rubias_base_eval()] to create output files, and finally summarized by [GCLr::summarize_rubias_base_eval()].
+#' This function has the option of summarizing fst or csv mixture output files. fst files are compressed so they read into R faster, which speeds up the mixture summary process.
 #' 
 #' @seealso 
 #' [GCLr::custom_comb_rubias_output()]
@@ -96,7 +99,8 @@ summarize_rubias_base_eval <-
            alpha = 0.1,
            burn_in = 5000,
            threshold = 5e-7,
-           ncores = 4) {
+           ncores = 4,
+           file_type = c("fst", "csv")[1]) {
 
   start_time <- Sys.time()
 
@@ -117,7 +121,8 @@ summarize_rubias_base_eval <-
         bias_corr = FALSE,
         threshold = threshold,
         plot_trace = FALSE,
-        ncores = ncores
+        ncores = ncores,
+        file_type = file_type
       ) %>%
       dplyr::mutate(method = method)
     
@@ -139,7 +144,8 @@ summarize_rubias_base_eval <-
         bias_corr = TRUE,
         threshold = threshold,
         plot_trace = FALSE,
-        ncores = ncores
+        ncores = ncores,
+        file_type = file_type
       ) %>%
       dplyr::mutate(method = method)
     
@@ -164,7 +170,7 @@ summarize_rubias_base_eval <-
         .packages = "tidyverse",
         .export = "GCLr:custom_comb_rubias_output"
       ) %dopar% {
-        GCLr:custom_comb_rubias_output(
+        GCLr::custom_comb_rubias_output(
           rubias_output = NULL,
           mixvec = mixvec,
           group_names = group_names,
@@ -177,7 +183,8 @@ summarize_rubias_base_eval <-
           bias_corr = bias_corr,
           threshold = threshold,
           plot_trace = FALSE,
-          ncores = ncores
+          ncores = ncores,
+          file_type = file_type
         ) %>%
           dplyr::mutate(method = if (bias_corr) {
             "PB"
