@@ -107,9 +107,9 @@ run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.pa
       
       if(file_type == "csv"){
         
-        mixture <- readr::read_csv(file = paste0(mix.path, "/", scn, ".mix.csv")) 
+        mixture <- readr::read_csv(file = paste0(mix.path, "/", scn, ".mix.csv"), col_types = cols(.default = "c")) 
         
-        baseline <- readr::read_csv(file = paste0(base.path, "/", scn, ".base.csv"))
+        baseline <- readr::read_csv(file = paste0(base.path, "/", scn, ".base.csv"), col_types = cols(.default = "c"))
         
       }
       
