@@ -150,7 +150,7 @@ custom_comb_rubias_output <-
       
       if(is.null(group_names)) {
         
-        if(file_type == csv){
+        if(file_type == "csv"){
           
           group_names <-
             suppressMessages(readr::read_csv(file = paste0(path, "/", mixvec[1], "_repunit_trace.csv"))) %>%
