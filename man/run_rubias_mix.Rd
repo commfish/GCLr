@@ -23,7 +23,8 @@ run_rubias_mix(
   pi_prior_sum = 1,
   file = "rubias/output",
   seed = 56,
-  nchains = 1
+  nchains = 1,
+  out_file_type = c("fst", "csv")[2]
 )
 }
 \arguments{
@@ -64,6 +65,8 @@ run_rubias_mix(
 \item{seed}{An integer specifying the random seed for reproducibility. Default is 56.}
 
 \item{nchains}{Run multiple chains for \pkg{rubias}. Default = 1 for running single \code{rubias}.}
+
+\item{out_file_type}{The file type for the output files, either "fst" or "csv" (default: "csv")(see details).}
 }
 \value{
 A list containing the results of the \pkg{rubias} mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
@@ -75,7 +78,9 @@ The function estimates population proportions and allele frequencies for the mix
 \details{
 This function performs the \pkg{rubias} mixture analysis by estimating the proportions of each reference group in the mixture samples
 and the allele frequencies of each reference group. It uses the provided method for estimation, such as Markov Chain Monte Carlo (MCMC)
-or parametric bootstrap (PB) for uncertainty quantification. The output is saved as .csv files for further analysis and visualization.
+or parametric bootstrap (PB) for uncertainty quantification. The output can be saved as .csv or .fst files for further analysis and visualization.
+Using .fst files will speed up the mixture summary process in \link{custom_comb_rubias_output} because they are compressed so they read and write faster.
+The only down side to using .fst files is that they cannot be visually inspected like you can with .csv files.
 
 The \code{reference} and \code{mixture} data frames should have the same structure with matching variable names. The \code{group_names} should represent the
 names of reference groups, and these names should correspond to the unique values in the \code{repunit} column of the \code{reference} data frame.
@@ -83,7 +88,7 @@ names of reference groups, and these names should correspond to the unique value
 The \code{pi_prior} argument allows users to specify prior information for mixture proportions. It should be a data frame or tibble with two variables,
 'collection' and 'pi_param', representing the collection name and prior parameter for the mixture proportions, respectively.
 
-When the method is set to "PB" (parametric bootstrap), the function also saves parametric bootstrap bias corrections in separate .csv files.
+When the method is set to "PB" (parametric bootstrap), the function also saves parametric bootstrap bias corrections in separate .csv/.fst files.
 }
 \examples{
 
