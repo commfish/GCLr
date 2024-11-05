@@ -31,9 +31,11 @@
 #' @param plot_trace Logical switch, when on will create a trace plot for each mixture and repunit (reporting group).
 #' @param ncores A numeric vector of length one indicating the number of cores to use (ncores is only used when is.null(rubias_output) == TRUE).
 #' @param file_type The file type of the mixture input files, either "fst" or "csv" (default: "csv")(see details).
+#' @param eval_out Logical switch indicating if the output is for baseline evaluation tests when summarizing with `summarize_rubias_base_eval()` (default = FALSE). See details.
 #' 
 #' @details
 #' This function has the option of summarizing fst or csv mixture output files. fst files are compressed so they read into R faster, which speeds up the mixture summary process.
+#' The `eval_out` argument is only intended for use when this function is called on by `summarize_rubias_base_eval()`, and should never to be changed from the default.
 #' 
 #' @return A tibble with 10 fields for each mixture and repunit (reporting group).
 #'   - \code{mixture_collection}: Factor of mixtures (only a factor for ordering, plotting purposes).
@@ -70,7 +72,9 @@ custom_comb_rubias_output <-
            threshold = 5e-7,
            plot_trace = TRUE,
            ncores = 4,
-           file_type = c("fst", "csv")[2]) {
+           file_type = c("fst", "csv")[2],
+           eval_out = FALSE
+           ) {
 
   # Error catching ----
   if(ncores > parallel::detectCores()) {
@@ -322,129 +326,331 @@ custom_comb_rubias_output <-
       dplyr::select(mixture_collection, repunit, d_rho)  # drop other variables
   }
   
-  ## Apply bias correction if `d_rho` exists ----
-  if(exists("d_rho")) {
-    repunit_trace <- repunit_trace %>% 
-      dplyr::left_join(d_rho, by = c("mixture_collection", "repunit")) %>%  # join trace with d_rho
-      dplyr::mutate(rho = rho - d_rho) %>%  # subtract d_rho
-      dplyr::select(-d_rho)
-  }
-  
-  #~~~~~~~~~~~~~~~~
-  ## Roll up to broad-scale groups if `groupvec_new` specified ----
-  if(!is.null(groupvec_new)) {
-    level_key <- sapply(group_names, function(grp) {
-      i = which(group_names == grp)
-      group_names_new[groupvec_new[i]]
-    }, simplify = FALSE )  # set up level_key to use with recode to roll up groups
-    repunit_trace <- repunit_trace %>% 
-      dplyr::mutate(repunit = dplyr::recode(repunit, !!!level_key)) %>% 
-      dplyr::group_by(mixture_collection, chain, sweep, repunit) %>% 
-      dplyr::summarise(rho = sum(rho), .groups = "drop") 
-    grp_names <- group_names_new  # for factoring repunit
-  } else {
-    grp_names <- group_names  # for factoring repunit
-  } 
-  
-  #~~~~~~~~~~~~~~~~
-  ## Plot repunit trace ----
-  if (plot_trace == TRUE) {
-    if (max(repunit_trace$chain) == 1) {
-      trace_plot <- repunit_trace %>% 
-        dplyr::mutate(
-          mixture_collection = factor(x = mixture_collection, levels = mixvec),
-          repunit = factor(x = repunit, levels = grp_names)) %>%  # order mixture_collection, repunit
-        ggplot2::ggplot(ggplot2::aes(x = sweep, y = rho, colour = repunit)) +
-        ggplot2::geom_line() +
-        ggplot2::ylim(0, 1) +
-        ggplot2::geom_vline(xintercept = burn_in) +
-        # ggplot2::annotate(geom = "text", x = burn_in / 2, y = 0.9, label = "Burn-in") +
-        ggplot2::theme(legend.position = "none",
-                       axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-        ggplot2::facet_grid(repunit ~ mixture_collection)
-      
-    } else if (max(repunit_trace$chain) > 1) {
-      trace_plot <- repunit_trace %>% 
-        dplyr::mutate(
-          mixture_collection = factor(x = mixture_collection, levels = mixvec),
-          repunit = factor(x = repunit, levels = grp_names),
-          chain = as.factor(chain)
+  # Output if for normal MSA
+  if(eval_out == FALSE){
+    
+    ## Apply bias correction if `d_rho` exists ----
+    if(exists("d_rho")) {
+      repunit_trace <- repunit_trace %>% 
+        dplyr::left_join(d_rho, by = c("mixture_collection", "repunit")) %>%  # join trace with d_rho
+        dplyr::mutate(rho = rho - d_rho) %>%  # subtract d_rho
+        dplyr::select(-d_rho)
+    }
+    
+    #~~~~~~~~~~~~~~~~
+    ## Roll up to broad-scale groups if `groupvec_new` specified ----
+    if(!is.null(groupvec_new)) {
+      level_key <- sapply(group_names, function(grp) {
+        i = which(group_names == grp)
+        group_names_new[groupvec_new[i]]
+      }, simplify = FALSE )  # set up level_key to use with recode to roll up groups
+      repunit_trace <- repunit_trace %>% 
+        dplyr::mutate(repunit = dplyr::recode(repunit, !!!level_key)) %>% 
+        dplyr::group_by(mixture_collection, chain, sweep, repunit) %>% 
+        dplyr::summarise(rho = sum(rho), .groups = "drop") 
+      grp_names <- group_names_new  # for factoring repunit
+    } else {
+      grp_names <- group_names  # for factoring repunit
+    } 
+    
+    #~~~~~~~~~~~~~~~~
+    ## Plot repunit trace ----
+    if (plot_trace == TRUE) {
+      if (max(repunit_trace$chain) == 1) {
+        trace_plot <- repunit_trace %>% 
+          dplyr::mutate(
+            mixture_collection = factor(x = mixture_collection, levels = mixvec),
+            repunit = factor(x = repunit, levels = grp_names)) %>%  # order mixture_collection, repunit
+          ggplot2::ggplot(ggplot2::aes(x = sweep, y = rho, colour = repunit)) +
+          ggplot2::geom_line() +
+          ggplot2::ylim(0, 1) +
+          ggplot2::geom_vline(xintercept = burn_in) +
+          # ggplot2::annotate(geom = "text", x = burn_in / 2, y = 0.9, label = "Burn-in") +
+          ggplot2::theme(legend.position = "none",
+                         axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+          ggplot2::facet_grid(repunit ~ mixture_collection)
+        
+      } else if (max(repunit_trace$chain) > 1) {
+        trace_plot <- repunit_trace %>% 
+          dplyr::mutate(
+            mixture_collection = factor(x = mixture_collection, levels = mixvec),
+            repunit = factor(x = repunit, levels = grp_names),
+            chain = as.factor(chain)
           ) %>%  # order mixture_collection, repunit
-        ggplot2::ggplot(ggplot2::aes(x = sweep, y = rho, colour = chain)) +
-        ggplot2::geom_line() +
-        # ggplot2::ylim(0, 1) +
-        ggplot2::geom_vline(xintercept = burn_in) +
-        # ggplot2::annotate(geom = "text", x = burn_in / 2, y = 0.9, label = "Burn-in") +
-        ggplot2::theme(legend.position = "none",
-                       axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-        ggplot2::facet_grid(repunit ~ mixture_collection)
-    } # multi chain
-  } # trace plot
-  
-  #~~~~~~~~~~~~~~~~
-  ## Summary statistics ----
-  loCI = alpha / 2
-  hiCI = 1 - (alpha / 2)
-  nchains <- max(repunit_trace$chain)
-  
-  mcmc_tr_mc <-
-    lapply(mixvec, function(mix) {
-      lapply(grp_names, function(grp) {
-        sapply(seq.int(nchains), function(ch) {
-          dplyr::filter(repunit_trace,
-                        mixture_collection == mix, repunit == grp,
-                        chain == ch, sweep >= burn_in) %>%
-            dplyr::select(rho) %>%
-            dplyr::mutate(rho = coda::mcmc(rho))
-        }) %>% coda::as.mcmc.list(.)
+          ggplot2::ggplot(ggplot2::aes(x = sweep, y = rho, colour = chain)) +
+          ggplot2::geom_line() +
+          # ggplot2::ylim(0, 1) +
+          ggplot2::geom_vline(xintercept = burn_in) +
+          # ggplot2::annotate(geom = "text", x = burn_in / 2, y = 0.9, label = "Burn-in") +
+          ggplot2::theme(legend.position = "none",
+                         axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+          ggplot2::facet_grid(repunit ~ mixture_collection)
+      } # multi chain
+    } # trace plot
+    
+    #~~~~~~~~~~~~~~~~
+    ## Summary statistics ----
+    loCI = alpha / 2
+    hiCI = 1 - (alpha / 2)
+    nchains <- max(repunit_trace$chain)
+    
+    mcmc_tr_mc <-
+      lapply(mixvec, function(mix) {
+        lapply(grp_names, function(grp) {
+          sapply(seq.int(nchains), function(ch) {
+            dplyr::filter(repunit_trace,
+                          mixture_collection == mix, repunit == grp,
+                          chain == ch, sweep >= burn_in) %>%
+              dplyr::select(rho) %>%
+              dplyr::mutate(rho = coda::mcmc(rho))
+          }) %>% coda::as.mcmc.list(.)
+        })
       })
-    })
-  
-  out_sum <- repunit_trace %>% 
-    dplyr::filter(sweep >= burn_in) %>%  # remove burn_in
-    dplyr::mutate(
-      mixture_collection = factor(x = mixture_collection, levels = mixvec),
-      repunit = factor(x = repunit, levels = grp_names)
+    
+    out_sum <- repunit_trace %>% 
+      dplyr::filter(sweep >= burn_in) %>%  # remove burn_in
+      dplyr::mutate(
+        mixture_collection = factor(x = mixture_collection, levels = mixvec),
+        repunit = factor(x = repunit, levels = grp_names)
       ) %>%  # order mixture_collection, repunit
-    dplyr::group_by(mixture_collection, repunit) %>%
-    dplyr::summarise(mean = mean(rho),
-                     sd = sd(rho),
-                     median = median(rho),
-                     loCI = quantile(rho, probs = loCI),
-                     hiCI = quantile(rho, probs = hiCI),
-                     `P=0` = sum(rho < threshold) / length(rho),
-                     .groups = "drop") %>%    # summary statistics to return
-    dplyr::mutate(
-      GR = {if (nchains > 1) {
-        lapply(seq(length(mixvec)), function(m) {
-          lapply(seq(length(grp_names)), function(g) {
-            coda::gelman.diag(mcmc_tr_mc[[m]][[g]],
-                              transform = TRUE,
-                              autoburnin = FALSE,
-                              multivariate = FALSE)$psrf[,"Point est."]
-          }) %>% dplyr::bind_rows()
-        }) %>% dplyr::bind_rows() %>% unlist()
-      } else {NA}},
-      n_eff =
-        lapply(seq(length(mixvec)), function(m) {
-          lapply(seq(length(grp_names)), function(g) {
-            coda::effectiveSize(mcmc_tr_mc[[m]][[g]])
+      dplyr::group_by(mixture_collection, repunit) %>%
+      dplyr::summarise(mean = mean(rho),
+                       sd = sd(rho),
+                       median = median(rho),
+                       loCI = quantile(rho, probs = loCI),
+                       hiCI = quantile(rho, probs = hiCI),
+                       `P=0` = sum(rho < threshold) / length(rho),
+                       .groups = "drop") %>%    # summary statistics to return
+      dplyr::mutate(
+        GR = {if (nchains > 1) {
+          lapply(seq(length(mixvec)), function(m) {
+            lapply(seq(length(grp_names)), function(g) {
+              coda::gelman.diag(mcmc_tr_mc[[m]][[g]],
+                                transform = TRUE,
+                                autoburnin = FALSE,
+                                multivariate = FALSE)$psrf[,"Point est."]
             }) %>% dplyr::bind_rows()
-        }) %>% dplyr::bind_rows() %>% unlist()
-    ) %>%
-    dplyr::mutate(loCI = replace(loCI, which(loCI < 0), 0),
-                  hiCI = replace(hiCI, which(hiCI < 0), 0),
-                  median = replace(median, which(median < 0), 0),
-                  mean = replace(mean, which(mean < 0), 0)) %>% 
-    dplyr::mutate(loCI = replace(loCI, which(loCI > 1), 1),
-                  hiCI = replace(hiCI, which(hiCI > 1), 1),
-                  median = replace(median, which(median > 1), 1),
-                  mean = replace(mean, which(mean > 1), 1)) %>% 
-    magrittr::set_colnames(c("mixture_collection", "repunit", "mean", "sd", "median", 
-                             paste0(loCI * 100, "%"), paste0(hiCI * 100, "%"), "P=0",
-                             "GR", "n_eff"))
-  
-  if(exists("trace_plot")) {suppressWarnings(print(trace_plot))}  # plot the trace for each mixture, repunit
+          }) %>% dplyr::bind_rows() %>% unlist()
+        } else {NA}},
+        n_eff =
+          lapply(seq(length(mixvec)), function(m) {
+            lapply(seq(length(grp_names)), function(g) {
+              coda::effectiveSize(mcmc_tr_mc[[m]][[g]])
+            }) %>% dplyr::bind_rows()
+          }) %>% dplyr::bind_rows() %>% unlist()
+      ) %>%
+      dplyr::mutate(loCI = replace(loCI, which(loCI < 0), 0),
+                    hiCI = replace(hiCI, which(hiCI < 0), 0),
+                    median = replace(median, which(median < 0), 0),
+                    mean = replace(mean, which(mean < 0), 0)) %>% 
+      dplyr::mutate(loCI = replace(loCI, which(loCI > 1), 1),
+                    hiCI = replace(hiCI, which(hiCI > 1), 1),
+                    median = replace(median, which(median > 1), 1),
+                    mean = replace(mean, which(mean > 1), 1)) %>% 
+      magrittr::set_colnames(c("mixture_collection", "repunit", "mean", "sd", "median", 
+                               paste0(loCI * 100, "%"), paste0(hiCI * 100, "%"), "P=0",
+                               "GR", "n_eff"))
+    
+    if(exists("trace_plot")) {suppressWarnings(print(trace_plot))}  # plot the trace for each mixture, repunit
+    
+    # End normal MSA output
+    
+  }else{
+    
+    # Baseline evaluation output
+    ## Apply bias correction if `d_rho` exists ----
+    if(exists("d_rho")){
+      repunit_trace <- repunit_trace %>% 
+        dplyr::left_join(d_rho, by = c("mixture_collection", "repunit")) %>%  # join trace with d_rho
+        dplyr::mutate(bc_rho = rho - d_rho) %>%  # subtract d_rho
+        dplyr::select(-d_rho)
+    }
+    
+    #~~~~~~~~~~~~~~~~
+    
+    if(bias_corr == TRUE){
+      
+      ## Roll up to broad-scale groups if `groupvec_new` specified ----
+      if(!is.null(groupvec_new)) {
+        
+        level_key <- sapply(group_names, function(grp) {
+          i = which(group_names == grp)
+          group_names_new[groupvec_new[i]]
+        }, simplify = FALSE )  # set up level_key to use with recode to roll up groups
+        
+        repunit_trace <- repunit_trace %>% 
+          dplyr::mutate(repunit = dplyr::recode(repunit, !!!level_key)) %>% 
+          dplyr::group_by(mixture_collection, chain, sweep, repunit) %>% 
+          dplyr::summarise(rho = sum(rho), bc_rho = sum(bc_rho), .groups = "drop") 
+        grp_names <- group_names_new  # for factoring repunit
+        
+      } else {
+        grp_names <- group_names  # for factoring repunit
+      } 
+      
+      #~~~~~~~~~~~~~~~~
+      ## Summary statistics ----
+      loCI = alpha / 2
+      hiCI = 1 - (alpha / 2)
+      nchains <- max(repunit_trace$chain)
+      
+      out_sum <- lapply(c("MCMC", "PB"), function(method){
+        
+        if(method == "MCMC"){
+          
+          my.repunit_trace <- repunit_trace %>% dplyr::select(-bc_rho)
+          
+          }else{my.repunit_trace <- repunit_trace %>% dplyr::mutate(r_ho = bc_rho) %>% dplyr::select(-bc_rho)}
+        
+        mcmc_tr_mc <-
+          lapply(mixvec, function(mix) {
+            lapply(grp_names, function(grp) {
+              sapply(seq.int(nchains), function(ch) {
+                dplyr::filter(my.repunit_trace,
+                              mixture_collection == mix, repunit == grp,
+                              chain == ch, sweep >= burn_in) %>%
+                  dplyr::select(rho) %>%
+                  dplyr::mutate(rho = coda::mcmc(rho))
+              }) %>% coda::as.mcmc.list(.)
+            })
+          })
+        
+       my.repunit_trace %>% 
+          dplyr::filter(sweep >= burn_in) %>%  # remove burn_in
+          dplyr::mutate(
+            mixture_collection = factor(x = mixture_collection, levels = mixvec),
+            repunit = factor(x = repunit, levels = grp_names)
+          ) %>%  # order mixture_collection, repunit
+          dplyr::group_by(mixture_collection, repunit) %>%
+          dplyr::summarise(mean = mean(rho),
+                           sd = sd(rho),
+                           median = median(rho),
+                           loCI = quantile(rho, probs = loCI),
+                           hiCI = quantile(rho, probs = hiCI),
+                           `P=0` = sum(rho < threshold) / length(rho),
+                           .groups = "drop") %>%    # summary statistics to return
+          dplyr::mutate(
+            GR = {if (nchains > 1) {
+              lapply(seq(length(mixvec)), function(m) {
+                lapply(seq(length(grp_names)), function(g) {
+                  coda::gelman.diag(mcmc_tr_mc[[m]][[g]],
+                                    transform = TRUE,
+                                    autoburnin = FALSE,
+                                    multivariate = FALSE)$psrf[,"Point est."]
+                }) %>% dplyr::bind_rows()
+              }) %>% dplyr::bind_rows() %>% unlist()
+            } else {NA}},
+            n_eff =
+              lapply(seq(length(mixvec)), function(m) {
+                lapply(seq(length(grp_names)), function(g) {
+                  coda::effectiveSize(mcmc_tr_mc[[m]][[g]])
+                }) %>% dplyr::bind_rows()
+              }) %>% dplyr::bind_rows() %>% unlist()
+          ) %>%
+          dplyr::mutate(loCI = replace(loCI, which(loCI < 0), 0),
+                        hiCI = replace(hiCI, which(hiCI < 0), 0),
+                        median = replace(median, which(median < 0), 0),
+                        mean = replace(mean, which(mean < 0), 0)) %>% 
+          dplyr::mutate(loCI = replace(loCI, which(loCI > 1), 1),
+                        hiCI = replace(hiCI, which(hiCI > 1), 1),
+                        median = replace(median, which(median > 1), 1),
+                        mean = replace(mean, which(mean > 1), 1)) %>% 
+          magrittr::set_colnames(c("mixture_collection", "repunit", "mean", "sd", "median", 
+                                   paste0(loCI * 100, "%"), paste0(hiCI * 100, "%"), "P=0",
+                                   "GR", "n_eff")) %>% 
+          dplyr::mutate(method = method) %>% 
+          dplyr::select(method, dplyr::everything())
+        
+      }) %>% dplyr::bind_rows()
+      
+      
+    }else{
+      # No bias correction
+      ## Roll up to broad-scale groups if `groupvec_new` specified ----
+      if(!is.null(groupvec_new)) {
+        
+        level_key <- sapply(group_names, function(grp) {
+          i = which(group_names == grp)
+          group_names_new[groupvec_new[i]]
+        }, simplify = FALSE )  # set up level_key to use with recode to roll up groups
+        
+        repunit_trace <- repunit_trace %>% 
+          dplyr::mutate(repunit = dplyr::recode(repunit, !!!level_key)) %>% 
+          dplyr::group_by(mixture_collection, chain, sweep, repunit) %>% 
+          dplyr::summarise(rho = sum(rho), bc_rho = sum(bc_rho), .groups = "drop") 
+        grp_names <- group_names_new  # for factoring repunit
+        
+      } else {
+        grp_names <- group_names  # for factoring repunit
+      } 
+      
+      #~~~~~~~~~~~~~~~~
+      ## Summary statistics ----
+      loCI = alpha / 2
+      hiCI = 1 - (alpha / 2)
+      nchains <- max(repunit_trace$chain)
+      
+      mcmc_tr_mc <-
+        lapply(mixvec, function(mix) {
+          lapply(grp_names, function(grp) {
+            sapply(seq.int(nchains), function(ch) {
+              dplyr::filter(repunit_trace,
+                            mixture_collection == mix, repunit == grp,
+                            chain == ch, sweep >= burn_in) %>%
+                dplyr::select(rho) %>%
+                dplyr::mutate(rho = coda::mcmc(rho))
+            }) %>% coda::as.mcmc.list(.)
+          })
+        })
+      
+      out_sum <- repunit_trace %>% 
+        dplyr::filter(sweep >= burn_in) %>%  # remove burn_in
+        dplyr::mutate(
+          mixture_collection = factor(x = mixture_collection, levels = mixvec),
+          repunit = factor(x = repunit, levels = grp_names)
+        ) %>%  # order mixture_collection, repunit
+        dplyr::group_by(mixture_collection, repunit) %>%
+        dplyr::summarise(mean = mean(rho),
+                         sd = sd(rho),
+                         median = median(rho),
+                         loCI = quantile(rho, probs = loCI),
+                         hiCI = quantile(rho, probs = hiCI),
+                         `P=0` = sum(rho < threshold) / length(rho),
+                         .groups = "drop") %>%    # summary statistics to return
+        dplyr::mutate(
+          GR = {if (nchains > 1) {
+            lapply(seq(length(mixvec)), function(m) {
+              lapply(seq(length(grp_names)), function(g) {
+                coda::gelman.diag(mcmc_tr_mc[[m]][[g]],
+                                  transform = TRUE,
+                                  autoburnin = FALSE,
+                                  multivariate = FALSE)$psrf[,"Point est."]
+              }) %>% dplyr::bind_rows()
+            }) %>% dplyr::bind_rows() %>% unlist()
+          } else {NA}},
+          n_eff =
+            lapply(seq(length(mixvec)), function(m) {
+              lapply(seq(length(grp_names)), function(g) {
+                coda::effectiveSize(mcmc_tr_mc[[m]][[g]])
+              }) %>% dplyr::bind_rows()
+            }) %>% dplyr::bind_rows() %>% unlist()
+        ) %>%
+        dplyr::mutate(loCI = replace(loCI, which(loCI < 0), 0),
+                      hiCI = replace(hiCI, which(hiCI < 0), 0),
+                      median = replace(median, which(median < 0), 0),
+                      mean = replace(mean, which(mean < 0), 0)) %>% 
+        dplyr::mutate(loCI = replace(loCI, which(loCI > 1), 1),
+                      hiCI = replace(hiCI, which(hiCI > 1), 1),
+                      median = replace(median, which(median > 1), 1),
+                      mean = replace(mean, which(mean > 1), 1)) %>% 
+        magrittr::set_colnames(c("mixture_collection", "repunit", "mean", "sd", "median", 
+                                 paste0(loCI * 100, "%"), paste0(hiCI * 100, "%"), "P=0",
+                                 "GR", "n_eff"))
+      
+    }
+    
+      
+  }
   
   return(out_sum)
   }
