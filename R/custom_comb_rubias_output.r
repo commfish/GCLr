@@ -645,7 +645,9 @@ custom_comb_rubias_output <-
                       mean = replace(mean, which(mean > 1), 1)) %>% 
         magrittr::set_colnames(c("mixture_collection", "repunit", "mean", "sd", "median", 
                                  paste0(loCI * 100, "%"), paste0(hiCI * 100, "%"), "P=0",
-                                 "GR", "n_eff"))
+                                 "GR", "n_eff")) %>% 
+        dplyr::mutate(method = "MCMC") %>% 
+        dplyr::select(method, dplyr::everything())
       
     }
     
