@@ -500,7 +500,7 @@ custom_comb_rubias_output <-
           
           my.repunit_trace <- repunit_trace %>% dplyr::select(-bc_rho)
           
-          }else{my.repunit_trace <- repunit_trace %>% dplyr::mutate(r_ho = bc_rho) %>% dplyr::select(-bc_rho)}
+          }else{my.repunit_trace <- repunit_trace %>% dplyr::mutate(rho = bc_rho) %>% dplyr::select(-bc_rho)}
         
         mcmc_tr_mc <-
           lapply(mixvec, function(mix) {
