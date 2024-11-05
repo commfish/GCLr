@@ -122,9 +122,9 @@ summarize_rubias_base_eval <-
         threshold = threshold,
         plot_trace = FALSE,
         ncores = ncores,
-        file_type = file_type
-      ) %>%
-      dplyr::mutate(method = method)
+        file_type = file_type,
+        eval_out = TRUE
+      ) 
     
   }
   
@@ -145,32 +145,17 @@ summarize_rubias_base_eval <-
         threshold = threshold,
         plot_trace = FALSE,
         ncores = ncores,
-        file_type = file_type
+        file_type = file_type,
+        eval_out = TRUE
       ) %>%
-      dplyr::mutate(method = method)
+      dplyr::filter(method == "PB")
     
   }
   
   ## MCMC & PB
   if (method == "both") {
-    
-    if(ncores > parallel::detectCores()) {ncores = parallel::detectCores()}
-    
-    cl <- parallel::makePSOCKcluster(ncores)
-    
-    doParallel::registerDoParallel(cl, cores = ncores)
-    
-    parallel::clusterExport(cl = cl, varlist = "GCLr::custom_comb_rubias_output") # For some reason custom_comb_rubias_output() couldn't be found within the foreach loop, this solves that issue.
-    
-    `%dopar%` <- foreach::`%dopar%`
-    
-    estimates <-
-      foreach::foreach(
-        bias_corr = c(TRUE, FALSE),
-        .packages = "tidyverse",
-        .export = "GCLr:custom_comb_rubias_output"
-      ) %dopar% {
-        GCLr::custom_comb_rubias_output(
+      
+     estimates <- GCLr::custom_comb_rubias_output(
           rubias_output = NULL,
           mixvec = mixvec,
           group_names = group_names,
@@ -180,21 +165,13 @@ summarize_rubias_base_eval <-
           path = path,
           alpha = alpha,
           burn_in = burn_in,
-          bias_corr = bias_corr,
+          bias_corr = TRUE,
           threshold = threshold,
           plot_trace = FALSE,
           ncores = ncores,
-          file_type = file_type
-        ) %>%
-          dplyr::mutate(method = if (bias_corr) {
-            "PB"
-          } else{
-            "MCMC"
-          })
-        
-      } %>% dplyr::bind_rows()
-    
-    parallel::stopCluster(cl)
+          file_type = file_type,
+          eval_out = TRUE
+        ) 
     
   }
   
