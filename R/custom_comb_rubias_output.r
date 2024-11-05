@@ -120,7 +120,7 @@ custom_comb_rubias_output <-
       
       cl <- parallel::makePSOCKcluster(ncores)
       
-      parallel::clusterExport(cl = cl, varlist = c("file_type", "path", "mixvec"))
+      parallel::clusterExport(cl = cl, varlist = c("file_type", "path", "mixvec"), envir = environment())
       parallel::clusterEvalQ(cl = cl,library(tidyverse))
       
       repunit_trace <- pbapply::pblapply(cl = cl, X = 1:length(mixvec), FUN = function(i){
@@ -182,7 +182,7 @@ custom_comb_rubias_output <-
       
       cl <- parallel::makePSOCKcluster(ncores)
       
-      parallel::clusterExport(cl = cl, varlist = c("file_type", "path", "mixvec"))
+      parallel::clusterExport(cl = cl, varlist = c("file_type", "path", "mixvec"), envir = environment())
       parallel::clusterEvalQ(cl = cl,library(tidyverse))
       
       repunit_trace <- pbapply::pblapply(cl = cl, X = 1:length(mixvec), FUN = function(i){
@@ -231,7 +231,7 @@ custom_comb_rubias_output <-
 
       cl <- parallel::makePSOCKcluster(ncores)
       
-      parallel::clusterExport(cl = cl, varlist = c("file_type", "path", "mixvec"))
+      parallel::clusterExport(cl = cl, varlist = c("file_type", "path", "mixvec"), envir = environment())
       parallel::clusterEvalQ(cl = cl,library(tidyverse))
       
       bootstrapped_proportions <- pbapply::pblapply(cl = cl, X = 1:length(mixvec), FUN = function(i){
