@@ -103,7 +103,6 @@ custom_comb_rubias_output <-
       stop("If specifying `groupvec_new`, you must be rolling up from fine-scale groups to broad-scale groups (i.e. length(groupvec_new) == length(group_names), and max(groupvec_new) == length(group_names_new))")
   }
   
-  `%dopar%` <- foreach::`%dopar%`
   
   # Summaries ----
   #~~~~~~~~~~~~~~~~
@@ -121,10 +120,12 @@ custom_comb_rubias_output <-
       
       cl <- parallel::makePSOCKcluster(ncores)
       
-      doParallel::registerDoParallel(cl, cores = ncores)  
+      parallel::clusterExport(cl = cl, varlist = c("file_type", "path", "mixvec"))
+      parallel::clusterEvalQ(cl = cl,library(tidyverse))
       
-      repunit_trace <-
-        foreach::foreach(mixture = mixvec, .packages = c("tidyverse")) %dopar% {
+      repunit_trace <- pbapply::pblapply(cl = cl, X = 1:length(mixvec), FUN = function(i){
+
+          mixture <- mixvec[i]
           
           if(file_type == "csv"){
             
@@ -148,7 +149,7 @@ custom_comb_rubias_output <-
           dplyr::arrange(mixture_collection, chain, sweep, repunit) %>%
           dplyr::select(mixture_collection, chain, sweep, repunit, rho)  # reorder columns
         
-      } %>% dplyr::bind_rows()  # build output from "repunit_trace" files
+      }) %>% dplyr::bind_rows()  # build output from "repunit_trace" files
       
       parallel::stopCluster(cl)
       
@@ -181,10 +182,12 @@ custom_comb_rubias_output <-
       
       cl <- parallel::makePSOCKcluster(ncores)
       
-      doParallel::registerDoParallel(cl, cores = ncores)  
+      parallel::clusterExport(cl = cl, varlist = c("file_type", "path", "mixvec"))
+      parallel::clusterEvalQ(cl = cl,library(tidyverse))
       
-      collection_trace <-
-        foreach::foreach(mixture = mixvec, .packages = c("tidyverse")) %dopar% {
+      repunit_trace <- pbapply::pblapply(cl = cl, X = 1:length(mixvec), FUN = function(i){
+        
+        mixture <- mixvec[i]
         
         if(file_type == "csv"){
           
@@ -204,7 +207,7 @@ custom_comb_rubias_output <-
           tidyr::pivot_longer(-c(sweep, chain), names_to = "collection", values_to = "pi") %>%
           dplyr::mutate(mixture_collection = mixture)
         
-      } %>% dplyr::bind_rows()  # build output from "collection_trace" files
+      }) %>% dplyr::bind_rows()  # build output from "collection_trace" files
       
       parallel::stopCluster(cl)
       
@@ -228,9 +231,12 @@ custom_comb_rubias_output <-
 
       cl <- parallel::makePSOCKcluster(ncores)
       
-      doParallel::registerDoParallel(cl, cores = ncores)  
+      parallel::clusterExport(cl = cl, varlist = c("file_type", "path", "mixvec"))
+      parallel::clusterEvalQ(cl = cl,library(tidyverse))
       
-      bootstrapped_proportions <- foreach::foreach(mixture = mixvec, .packages = c("tidyverse")) %dopar% {
+      bootstrapped_proportions <- pbapply::pblapply(cl = cl, X = 1:length(mixvec), FUN = function(i){
+        
+        mixture <- mixvec[i]
         
         if(file_type == "csv"){
           
@@ -245,7 +251,7 @@ custom_comb_rubias_output <-
         bias_corr_mix <- bias_corr_mix %>% 
           dplyr::mutate(mixture_collection = mixture)
         
-      } %>%  dplyr::bind_rows()  # build bootstrapped_proportions from "bias_corr" files
+      }) %>%  dplyr::bind_rows()  # build bootstrapped_proportions from "bias_corr" files
       
       parallel::stopCluster(cl)
       
