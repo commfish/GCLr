@@ -75,7 +75,7 @@
 #' }
 #' 
 #' @export
-summarize_rubias_base_eval <- function(rubias_output = NULL,
+summarize_rubias_base_eval <- function(
                                        mixvec,
                                        sample_sizes,
                                        method = c("MCMC", "PB", "both")[1],
@@ -94,20 +94,7 @@ summarize_rubias_base_eval <- function(rubias_output = NULL,
     )
     
   }
-  if (is.null(rubias_output) & !dir.exists(path)) {
-    stop(
-      paste(
-        "`path` does not exist in your working directory, hoser!!!\nEither specify `rubias_output` or provide a valid `path` with rubias output .",
-        file_type,
-        " files for `mixvec`."
-      )
-    )
-  }
-  if (is.null(rubias_output) & is.null(mixvec)) {
-    stop(
-      "Need to provide either `rubias_output` tibble to summarize or `mixvec` and `path` so that rubias output can be read, hoser!!!"
-    )
-  }
+  
   if (!is.null(mixvec) &
       !all(sapply(mixvec, function(mixture) {
         any(grepl(
@@ -127,7 +114,6 @@ summarize_rubias_base_eval <- function(rubias_output = NULL,
       p_objects <-
         c(
           "mixvec",
-          "rubias_output",
           "sample_sizes",
           "method",
           "path",
@@ -180,14 +166,7 @@ summarize_rubias_base_eval <- function(rubias_output = NULL,
                 dplyr::arrange(mixture_collection, sweep, repunit) %>%
                 dplyr::select(mixture_collection, sweep, repunit, rho)  # reorder columns
               
-              grp_names <-
-                    suppressMessages(fst::read_fst(path = paste0(
-                      path, "/", mixvec[1], "_repunit_trace.fst"
-                    ))) %>%
-                    colnames() %>%
-                    {
-                      .[which(!. %in% c("chain", "sweep"))]
-                    }
+              grp_names <- repunit_trace$repunit %>% unique()
               
               #~~~~~~~~~~~~~~~~
               ## Summary statistics ----
@@ -377,14 +356,7 @@ summarize_rubias_base_eval <- function(rubias_output = NULL,
                 dplyr::mutate(rho = rho - d_rho) %>%  # subtract d_rho
                 dplyr::select(-d_rho)
               
-              grp_names <-
-                    suppressMessages(fst::read_fst(path = paste0(
-                      path, "/", mixvec[1], "_repunit_trace.fst"
-                    ))) %>%
-                    colnames() %>%
-                    {
-                      .[which(!. %in% c("sweep", "chain"))]
-                    }
+              grp_names <- repunit_trace$repunit %>% unique()
               
               #~~~~~~~~~~~~~~~~
               ## Summary statistics ----
@@ -511,6 +483,7 @@ summarize_rubias_base_eval <- function(rubias_output = NULL,
             cl = cl,
             X = 1:length(mixvec),
             FUN = function(i) {
+              
               mixture <- mixvec[i]
               
               if (file_type == "csv") {
@@ -527,7 +500,6 @@ summarize_rubias_base_eval <- function(rubias_output = NULL,
                 
               }
               
-                
               repunit_trace <- repunit_trace_mix %>%
                 dplyr::select(-chain) %>% 
                 tidyr::pivot_longer(-sweep,
@@ -574,13 +546,7 @@ summarize_rubias_base_eval <- function(rubias_output = NULL,
                 dplyr::mutate(pb_rho = rho - d_rho) %>%  # subtract d_rho
                 dplyr::select(-d_rho)
               
-              grp_names <- suppressMessages(fst::read_fst(path = paste0(
-                      path, "/", mixvec[1], "_repunit_trace.fst"
-                    ))) %>%
-                    colnames() %>%
-                    {
-                      .[which(!. %in% c("sweep", "chain"))]
-                    }
+              grp_names <- repunit_trace$repunit %>% unique()
               
               #~~~~~~~~~~~~~~~~
               ## Summary statistics ----
@@ -722,8 +688,7 @@ summarize_rubias_base_eval <- function(rubias_output = NULL,
                   method
                 )
               
-            }
-          ) %>% dplyr::bind_rows()
+            }) %>% dplyr::bind_rows()
         
         parallel::stopCluster(cl)
         
