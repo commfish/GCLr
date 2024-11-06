@@ -5,13 +5,10 @@
 \title{Summarize \code{rubias} Baseline Evaluation Tests}
 \usage{
 summarize_rubias_base_eval(
+  rubias_output = NULL,
   mixvec,
   sample_sizes,
   method = c("MCMC", "PB", "both")[1],
-  group_names = NULL,
-  group_names_new = NULL,
-  groupvec = NULL,
-  groupvec_new = NULL,
   path = "rubias/output",
   alpha = 0.1,
   burn_in = 5000,
@@ -28,20 +25,6 @@ summarize_rubias_base_eval(
 
 \item{method}{A character vector of length 1 indicating the \pkg{rubias} output to summarize:
 "MCMC" (summarize MCMC output), "PB" (summarize bias corrected output), "both" (summarize both outputs); (default = "MCMC)}
-
-\item{group_names}{An optional character vector of group names, used to sort \code{repunit} as a factor, passes through
-to \code{\link[=custom_comb_rubias_output]{custom_comb_rubias_output()}} (default = \code{NULL}). If \code{NULL}, \code{group_names} comes from \code{repunit_trace} output files.}
-
-\item{group_names_new}{An optional character vector of new \code{group_names}, used to roll up groups from fine-scale \code{repunit} to broad-scale
-\code{repunit} for bias correction, passes through to \code{\link[=custom_comb_rubias_output]{custom_comb_rubias_output()}} (default = \code{NULL}).}
-
-\item{groupvec}{An optional numeric vector indicating the group affiliation of each pop in the baseline \code{sillyvec}, used if
-accessing \code{collection_trace} output files to re-summarize to new groups (default = \code{NULL}). If \code{NULL}, \code{group_names} comes
-from \code{repunit_trace} output files.}
-
-\item{groupvec_new}{An optional numeric vector indicating the new broad-scale group affiliation of each fine-scale group,
-used if accessing \code{repunit_trace} output files to re-summarize fine-scale groups to broad-scale groups with bias correction
-(\code{method = "PB"}; default = \code{NULL}). If \code{NULL}, \code{group_names} comes from \code{repunit_trace} output files.}
 
 \item{path}{A character vector of where to find output from each mixture as a .csv or .fst file (created by \code{\link[=run_rubias_base_eval]{run_rubias_base_eval()}};
 default is "rubias/output").}
@@ -88,12 +71,12 @@ A list with the following 2 components:
 }
 }
 \description{
-Thus function is a wrapper for \code{\link[=custom_comb_rubias_output]{custom_comb_rubias_output()}} to summarize \pkg{rubias} output from baseline
+Thus function summarizes \pkg{rubias} output from baseline
 evaluation tests after running \code{\link[=run_rubias_base_eval]{run_rubias_base_eval()}}.
 }
 \details{
 Thus function is the final step in baseline evaluations tests using \pkg{rubias}. The normal workflow uses: \code{\link[=base_eval_sample_sizes]{base_eval_sample_sizes()}}
-to determine leave-one-out sample sizes for tests, then \code{\link[=create_rubias_base_eval]{create_rubias_base_eval()}} generates the necessary \pkg{rubias} .csv files, which
+to determine test mixture sample sizes, then \code{\link[=create_rubias_base_eval]{create_rubias_base_eval()}} generates the necessary \pkg{rubias} files, which
 are then analyzed/run in parallel by \code{\link[=run_rubias_base_eval]{run_rubias_base_eval()}} to create output files, and finally summarized by \code{\link[=summarize_rubias_base_eval]{summarize_rubias_base_eval()}}.
 This function has the option of summarizing fst or csv mixture output files. fst files are compressed so they read into R faster, which speeds up the mixture summary process.
 }
@@ -114,7 +97,6 @@ GCLr::summarize_rubias_base_eval(mixvec = mixvec, path = path, sample_sizes = sa
 
 }
 \seealso{
-\code{\link[=custom_comb_rubias_output]{custom_comb_rubias_output()}}
 \code{\link[=base_eval_sample_sizes]{base_eval_sample_sizes()}}
 \code{\link[=create_rubias_base_eval]{create_rubias_base_eval()}}
 \code{\link[=run_rubias_base_eval]{run_rubias_base_eval()}}
