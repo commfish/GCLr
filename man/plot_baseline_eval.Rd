@@ -8,6 +8,7 @@ plot_baseline_eval(
   summary,
   file,
   method = c("MCMC", "PB", "both"),
+  group_names = NULL,
   test_groups = NULL,
   group_colors = NULL
 )
@@ -23,6 +24,8 @@ plot_baseline_eval(
 \item{"PB" (plot bias corrected output)}
 \item{"both" (plot both outputs)}
 }}
+
+\item{group_names}{An optional character vector of group names, used to order \code{repunit} as a factor. The order of group_names will derterine the order of the plots.}
 
 \item{test_groups}{A character vector of group names to include in the plots. This also sets the order in which they are plotted. If \code{test_groups} is not supplied, all test groups in \code{summary} will be plotted (see details).}
 
