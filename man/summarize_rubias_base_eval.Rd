@@ -5,7 +5,6 @@
 \title{Summarize \code{rubias} Baseline Evaluation Tests}
 \usage{
 summarize_rubias_base_eval(
-  rubias_output = NULL,
   mixvec,
   sample_sizes,
   method = c("MCMC", "PB", "both")[1],
