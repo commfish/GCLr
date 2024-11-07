@@ -18,8 +18,7 @@ custom_comb_rubias_output(
   threshold = 5e-07,
   plot_trace = TRUE,
   ncores = 4,
-  file_type = c("fst", "csv")[2],
-  eval_out = FALSE
+  file_type = c("fst", "csv")[2]
 )
 }
 \arguments{
@@ -52,8 +51,6 @@ currently can NOT do bias correction if not using the same repunits that were ru
 \item{ncores}{A numeric vector of length one indicating the number of cores to use (ncores is only used when is.null(rubias_output) == TRUE).}
 
 \item{file_type}{The file type of the mixture input files, either "fst" or "csv" (default: "csv")(see details).}
-
-\item{eval_out}{Logical switch indicating if the output is for baseline evaluation tests when summarizing with \code{summarize_rubias_base_eval()} (default = FALSE). See details.}
 }
 \value{
 A tibble with 10 fields for each mixture and repunit (reporting group).
@@ -88,7 +85,6 @@ the groupvec to go from fine-scale to broad-scale groups, and \code{group_names_
 Compatible with multichain output.
 
 This function has the option of summarizing fst or csv mixture output files. fst files are compressed so they read into R faster, which speeds up the mixture summary process.
-The \code{eval_out} argument is only intended for use when this function is called on by \code{summarize_rubias_base_eval()}, and should never to be changed from the default.
 }
 \examples{
 \dontrun{
@@ -96,7 +92,4 @@ load("V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/OLD rubias/out
 lynncanal_2015_SW26_27.sum <- custom_comb_rubias_output(rubias_output = lynncanal_test.out, group_names = LynnCanal_groups7, bias_corr = TRUE)
 }
 
-}
-\seealso{
-custom_comb_bayes_output()
 }
