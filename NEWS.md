@@ -1,3 +1,5 @@
+# GCLr 0.8.0
+
 ## Enhancements
 `custom_comb_rubias_output` - added ability to summarize '.fst' rubias output files and a progress bar that appears while building the repunit trace from files.
 
