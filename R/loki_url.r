@@ -21,11 +21,11 @@ loki_url <- function(test.db = FALSE){
     
   }else{
     
-    host <- "soaora7-scan.us1.ocm.s7134325.oraclecloudatcustomer.com"
+    host <- "soaocip-ovpnc-scan.exa.sjcprod.oraclevcn.com"
     
     port <- "1521"
     
-    svc <- "dfgcfresp.us1.ocm.s7134325.oraclecloudatcustomer.com"
+    svc <- "DFGGCLP.exa.sjcprod.oraclevcn.com"
     
     protocol <-"jdbc:oracle:thin:"
     
