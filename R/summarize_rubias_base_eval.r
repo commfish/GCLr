@@ -8,7 +8,7 @@
 #' @param sample_sizes A tibble produced by [GCLr::base_eval_sample_sizes()] containing the following variables: 
 #' `test_group`, `scenario`, `repunit`, and `samps`.
 #' @param method A character vector of length 1 indicating the \pkg{rubias} output to summarize: 
-#' "MCMC" (summarize MCMC output), "PB" (summarize bias corrected output), "both" (summarize both outputs); (default = "MCMC)
+#' "MCMC" (summarize MCMC output), "PB" (summarize bias corrected output), "both" (summarize both outputs); (default = "MCMC")
 #' @param path A character vector of where to find output from each mixture as a .csv or .fst file (created by [GCLr::run_rubias_base_eval()]; 
 #' default is "rubias/output").
 #' @param alpha A numeric vector of length 1 specifying credibility intervals (default is 0.1, which gives 90% CIs (i.e., 5% and 95%)).
@@ -70,7 +70,7 @@
 #'                              tidyr::separate(files, into = c("mixture", NA), sep = "_repunit_trace.csv") %>% 
 #'                              dplyr::pull(mixture))
 #' 
-#' GCLr::summarize_rubias_base_eval(mixvec = mixvec, path = path, sample_sizes = sample_sizes, ncores = parallel::detectCores())
+#' eval_output <- GCLr::summarize_rubias_base_eval(mixvec = mixvec, path = path, sample_sizes = sample_sizes, ncores = parallel::detectCores(), file_type = "csv")
 #' 
 #' }
 #' 
@@ -94,6 +94,16 @@ summarize_rubias_base_eval <- function(
     )
     
   }
+  
+  if (length(list.files(path = path, pattern = paste0(".", file_type))) == 0) {
+    stop(
+      paste0(
+        "There are no files with `file_type` .",
+        file_type,
+        " output in `path`, hoser!!!"
+      )
+    )
+  }  # catch file_type errors before checking all `mixvec` since that step can be slow
   
   if (!is.null(mixvec) &
       !all(sapply(mixvec, function(mixture) {
@@ -158,7 +168,7 @@ summarize_rubias_base_eval <- function(
               }
               
               repunit_trace <- repunit_trace_mix %>%
-                dplyr::select(-chain) %>%
+                dplyr::select(-tidyselect::any_of("chain")) %>%  # old functions didn't include multichain
                 tidyr::pivot_longer(-sweep,
                                     names_to = "repunit",
                                     values_to = "rho") %>%  # wide to tall
@@ -311,7 +321,7 @@ summarize_rubias_base_eval <- function(
               }
               
               repunit_trace <- repunit_trace_mix %>%
-                dplyr::select(-chain) %>%
+                dplyr::select(-tidyselect::any_of("chain")) %>%  # old functions didn't include multichain
                 tidyr::pivot_longer(-sweep,
                                     names_to = "repunit",
                                     values_to = "rho") %>%  # wide to tall
@@ -501,7 +511,7 @@ summarize_rubias_base_eval <- function(
               }
               
               repunit_trace <- repunit_trace_mix %>%
-                dplyr::select(-chain) %>% 
+                dplyr::select(-tidyselect::any_of("chain")) %>%  # old functions didn't include multichain
                 tidyr::pivot_longer(-sweep,
                                     names_to = "repunit",
                                     values_to = "rho") %>%  # wide to tall
@@ -726,4 +736,4 @@ summarize_rubias_base_eval <- function(
       
       return(list(estimates = estimates_out, summary_stats = summary_stats))
       
-    }
+}

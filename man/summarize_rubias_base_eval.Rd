@@ -23,7 +23,7 @@ summarize_rubias_base_eval(
 \code{test_group}, \code{scenario}, \code{repunit}, and \code{samps}.}
 
 \item{method}{A character vector of length 1 indicating the \pkg{rubias} output to summarize:
-"MCMC" (summarize MCMC output), "PB" (summarize bias corrected output), "both" (summarize both outputs); (default = "MCMC)}
+"MCMC" (summarize MCMC output), "PB" (summarize bias corrected output), "both" (summarize both outputs); (default = "MCMC")}
 
 \item{path}{A character vector of where to find output from each mixture as a .csv or .fst file (created by \code{\link[=run_rubias_base_eval]{run_rubias_base_eval()}};
 default is "rubias/output").}
@@ -90,7 +90,7 @@ mixvec <- suppressWarnings(tibble::tibble(files = list.files(path, pattern = "_r
                              tidyr::separate(files, into = c("mixture", NA), sep = "_repunit_trace.csv") \%>\% 
                              dplyr::pull(mixture))
 
-GCLr::summarize_rubias_base_eval(mixvec = mixvec, path = path, sample_sizes = sample_sizes, ncores = parallel::detectCores())
+eval_output <- GCLr::summarize_rubias_base_eval(mixvec = mixvec, path = path, sample_sizes = sample_sizes, ncores = parallel::detectCores(), file_type = "csv")
 
 }
 

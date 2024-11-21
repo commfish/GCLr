@@ -6,7 +6,7 @@
 #' @param file the file path including '.pdf' extension for saving the baseline evaluation plots 
 #' @param method A character string indicating the `rubias` output to summarize. Select one of three choices: 
 #'    \itemize{
-#'       \item {"MCMC"(plot MCMC output)}
+#'       \item {"MCMC"(plot MCMC output); default}
 #'       \item{"PB" (plot bias corrected output)}
 #'       \item{"both" (plot both outputs)}
 #'       }
@@ -50,7 +50,7 @@
 #' }
 #'
 #' @export
-plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both"), group_names = NULL, test_groups = NULL, group_colors = NULL){
+plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both")[1], group_names = NULL, test_groups = NULL, group_colors = NULL){
   
   # Check methods
   method_check <- summary$estimates$method %>% 
