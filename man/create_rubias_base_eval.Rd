@@ -74,11 +74,11 @@ groupvec <- GCLr::ex_baseline \%>\%
   factor() \%>\%
   as.numeric()
 
-loci <- GCLr::ex_LocusControl$locusnames
+loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)]
 
 sample_sizes <- GCLr::base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5)
 
-GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8)
+GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = 8, LocusCtl = GCLr::ex_LocusControl)
 
 }
 

@@ -45,6 +45,8 @@
 #' 
 #' @param file_type The file type of the baseline and mixture input files, either "fst" or "csv" (default: "fst")(see details).
 #'
+#' @param out_file_type The file type for the output files, either "fst" or "csv" (default: "fst")(see details).
+#'
 #' @details "MCMC" estimates mixing proportions and individual posterior probabilities of assignment through Markov-chain Monte Carlo conditional on the reference allele frequencies, while "PB" does the same with a parametric bootstrapping correction, and "BR" runs MCMC sweeps while simulating reference allele frequencies using the genotypes of mixture individuals and allocations from the previous sweep. All methods default to a uniform 1/(# collections or RUs) prior for the mixing proportions.
 #'          The function can read in .csv or .fst files.  .fst files are compressed, so they save hard drive space, and they are faster to save and read back into R. .csv is also an option to make the function backwards compatible with older analyzes that produced .csv files.
 #' 
@@ -72,7 +74,7 @@
 #'    
 #' @export
 run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", method = "MCMC", alle_freq_prior = list(const_scaled = 1), pi_prior = NA, 
-                                  pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100, prelim_reps = NULL, prelim_burn_in = NULL, sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1, seed = 56, ncores = parallel::detectCores(), file_type = c("fst", "csv")[1]){
+                                  pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100, prelim_reps = NULL, prelim_burn_in = NULL, sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1, seed = 56, ncores = parallel::detectCores(), file_type = c("fst", "csv")[1], out_file_type = c("fst", "csv")[1]){
  
   start_time <- Sys.time()
   
@@ -105,9 +107,9 @@ run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.pa
       
       if(file_type == "csv"){
         
-        mixture <- readr::read_csv(file = paste0(mix.path, "/", scn, ".mix.csv")) 
+        mixture <- readr::read_csv(file = paste0(mix.path, "/", scn, ".mix.csv"), col_types = cols(.default = "c")) 
         
-        baseline <- readr::read_csv(file = paste0(base.path, "/", scn, ".base.csv"))
+        baseline <- readr::read_csv(file = paste0(base.path, "/", scn, ".base.csv"), col_types = cols(.default = "c"))
         
       }
       
@@ -128,7 +130,8 @@ run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.pa
                          sample_theta = sample_int_Pi, 
                          pi_prior_sum = pi_prior_sum, 
                          file = out.path, 
-                         seed = seed)
+                         seed = seed,
+                         out_file_type = out_file_type)
       
     }
     

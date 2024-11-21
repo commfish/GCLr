@@ -10,7 +10,8 @@ create_rubias_base(
   group_names,
   groupvec,
   file = "rubias/baseline",
-  baseline_name
+  baseline_name,
+  out_file_type = c("fst", "csv")[2]
 )
 }
 \arguments{
@@ -22,18 +23,20 @@ create_rubias_base(
 
 \item{groupvec}{A numeric vector indicating the reporting group affiliation of each population in \code{sillyvec}, where \code{length(groupvec) == length(sillyvec)}.}
 
-\item{file}{A character vector of where to save the baseline as ".csv" file (see details).}
+\item{file}{A character vector of where to save the baseline as ".csv" or ".fst" file (see details).}
 
-\item{baseline_name}{A character vector of what to name the baseline ".csv" file (see details).}
+\item{baseline_name}{A character vector of what to name the baseline file (see details).}
+
+\item{out_file_type}{The file type for the output files, either "fst" or "csv" (default: "csv")(see details).}
 }
 \value{
-A dataframe in \pkg{rubias} baseline format and writes out a ".csv" file of the baseline.
+A dataframe in \pkg{rubias} baseline format and writes out a ".csv" or ".fst" file of the baseline.
 }
 \description{
 This function creates the baseline dataframe needed for \pkg{rubias}.
 }
 \details{
-This function saves the baseline as a ".csv" file for posterity. To read in these ".csv" files, use \code{readr::read_csv(file = file, col_types = cols(.default = "c")} to make sure all columns are character vectors (if homozygous for T, it will become a logical vector).
+This function saves the baseline as a ".csv" or ".fst" file for posterity. .fst files are compressed and speed up the reading and writing process; however, they cannot be visually inspected. To read in the ".csv" files, use \code{readr::read_csv(file = file, col_types = cols(.default = "c")} to make sure all columns are character vectors (if homozygous for T, it will become a logical vector).
 }
 \examples{
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)

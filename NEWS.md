@@ -1,3 +1,22 @@
+# GCLr 0.8.0
+
+## Enhancements
+`custom_comb_rubias_output` - added ability to summarize '.fst' rubias output files and a progress bar that appears while building the repunit trace from files.
+
+`summarize_rubias_base_eval` - previously this function called on
+custom_comb_rubias_output() to get the eval estimates; however, evaluations with thousands of test mixtures were taking a long time (days) to summarize, and sometimes it would never finish. Now this is a stand alone function that is reduced down to only what is need for summarizing baseline evaluation mixtures. The parallel process for summarizing the evaluation output has been streamlined to work much faster. Now large numbers of mixtures can be summarize in minutes and the function shows a progress bar. Added ability to summarize '.fst' rubias output files.
+
+`create_rubias_base` - added optional '.fst' output file
+
+`create_rubias_mix` - added optional '.fst' output file
+
+`plot_baseline_eval` - added optional 'group_names' argument to make sure groups are plotted in the correct order.
+
+## Bug fixes
+`base_eval_sample_sizes` - the sample sizes returned by this function are now rounded to the nearest whole number. 
+
+`create_rubias_base_eval` - the example code has been corrected so it will work properly. When reading in mixture and baseline csv files, the col_types now default to character to avoid incorrect col_types errors in rubias.
+
 # GCLr 0.7.0
 
 ## New additions
