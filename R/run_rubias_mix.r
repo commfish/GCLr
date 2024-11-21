@@ -22,12 +22,15 @@
 #' @param file A character string representing the file path to save output. Default is "rubias/output".
 #' @param seed An integer specifying the random seed for reproducibility. Default is 56.
 #' @param nchains Run multiple chains for \pkg{rubias}. Default = 1 for running single `rubias`.
-#'
+#' @param out_file_type The file type for the output files, either "fst" or "csv" (default: "csv")(see details).
+#' 
 #' @return A list containing the results of the \pkg{rubias} mixture analysis, including estimated mixture proportions, allele frequencies, and other relevant information.
 #'
 #' @details This function performs the \pkg{rubias} mixture analysis by estimating the proportions of each reference group in the mixture samples 
 #' and the allele frequencies of each reference group. It uses the provided method for estimation, such as Markov Chain Monte Carlo (MCMC) 
-#' or parametric bootstrap (PB) for uncertainty quantification. The output is saved as .csv files for further analysis and visualization.
+#' or parametric bootstrap (PB) for uncertainty quantification. The output can be saved as .csv or .fst files for further analysis and visualization. 
+#' Using .fst files will speed up the mixture summary process in [GCLr::custom_comb_rubias_output] because they are compressed so they read and write faster. 
+#' The only down side to using .fst files is that they cannot be visually inspected like you can with .csv files.
 #'
 #' The `reference` and `mixture` data frames should have the same structure with matching variable names. The `group_names` should represent the 
 #' names of reference groups, and these names should correspond to the unique values in the `repunit` column of the `reference` data frame.
@@ -35,7 +38,7 @@
 #' The `pi_prior` argument allows users to specify prior information for mixture proportions. It should be a data frame or tibble with two variables, 
 #' 'collection' and 'pi_param', representing the collection name and prior parameter for the mixture proportions, respectively.
 #'
-#' When the method is set to "PB" (parametric bootstrap), the function also saves parametric bootstrap bias corrections in separate .csv files.
+#' When the method is set to "PB" (parametric bootstrap), the function also saves parametric bootstrap bias corrections in separate .csv/.fst files.
 #'
 #' @seealso \code{\link{rubias::infer_mixture}}
 #'
@@ -53,7 +56,7 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
                            pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100,
                            prelim_reps = NULL, prelim_burn_in = NULL,
                            sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1,
-                           file = "rubias/output", seed = 56, nchains = 1) {
+                           file = "rubias/output", seed = 56, nchains = 1, out_file_type = c("fst", "csv")[2]) {
   
   if(!dir.exists(file)) {stop("the file path to save output does not exist!")}
   
@@ -170,7 +173,16 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   } # else
   
   # Save output ----
-  message("Saving output as .csv files")
+  if(out_file_type == "csv"){
+    
+    message("Saving output as .csv files")
+    
+  }else{
+    
+    message("Saving output as .fst files")
+    
+  }
+  
   mix_sillys <- unique(mixture$collection)
   baseline_pops <- unique(reference$collection)  # correctly ordered
   
@@ -187,7 +199,15 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
         dplyr::select(sweep, chain, collection, pi) %>%
         tidyr::pivot_wider(names_from = collection, values_from = pi)  # make wide
       
-      readr::write_csv(x = mix_prop_trace_wide_pi, file = paste0(file, "/", mixture, "_collection_trace.csv"))
+      if(out_file_type == "csv"){
+        
+        readr::write_csv(x = mix_prop_trace_wide_pi, file = paste0(file, "/", mixture, "_collection_trace.csv"))
+        
+      }else{
+        
+        fst::write_fst(x = mix_prop_trace_wide_pi, path =  paste0(file, "/", mixture, "_collection_trace.fst"))
+        
+        }
       
     }))
     
@@ -209,7 +229,15 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
         dplyr::select(sweep, chain, repunit, rho) %>%
         tidyr::pivot_wider(names_from = repunit, values_from = rho)  # make wide
       
-      readr::write_csv(x = mix_prop_trace_wide_rho, file = paste0(file, "/", mixture, "_repunit_trace.csv"))
+      if(out_file_type == "csv"){
+        
+        readr::write_csv(x = mix_prop_trace_wide_rho, file = paste0(file, "/", mixture, "_repunit_trace.csv"))
+      
+        }else{
+          
+          fst::write_fst(x = mix_prop_trace_wide_rho, path = paste0(file, "/", mixture, "_repunit_trace.fst"))
+          
+      }
       
     }))
     
@@ -227,8 +255,16 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
       indiv_posteriors <- rubias_out$indiv_posteriors %>%
         dplyr::filter(mixture_collection == mixture)
       
-      readr::write_csv(x = indiv_posteriors, file = paste0(file, "/", mixture, "_indiv_posteriors.csv"))
-    }))
+      if(out_file_type == "csv"){
+        
+        readr::write_csv(x = indiv_posteriors, file = paste0(file, "/", mixture, "_indiv_posteriors.csv"))
+        
+      }else{
+        
+        fst::write_fst(x = indiv_posteriors, path = paste0(file, "/", mixture, "_indiv_posteriors.fst"))
+      }
+      
+      }))
     
   })
   
@@ -246,10 +282,20 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
         bias_corr <- rubias_out$bootstrapped_proportions %>%
           dplyr::filter(mixture_collection == mixture)
         
-        readr::write_csv(x = bias_corr, file = paste0(file, "/", mixture, "_bias_corr.csv"))
+        if(out_file_type == "csv"){
+          
+          readr::write_csv(x = bias_corr, file = paste0(file, "/", mixture, "_bias_corr.csv"))
+          
+        }else{
+          
+          fst::write_fst(x = bias_corr, path = paste0(file, "/", mixture, "_bias_corr.fst"))
+          
+        }
         
       } ))
+      
     })
+    
     message("   time: ", sprintf("%.2f", time_bias["elapsed"]), 
             " seconds")
     message("Run method = 'PB' with defualt nchains = 1. It is the way.")

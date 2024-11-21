@@ -1,6 +1,6 @@
 Package: GCLr
 Title: Genetic Analysis Tools
-Version: 0.7.0
+Version: 0.8.0
 Authors@R: 
     person("Andy", "Barclay", , "andy.barclay@alaska.gov", role = c("aut", "cre"))
 Description: Genetic analysis tools to streamline genetic data analyses performed by Gene Conservation Lab (GCL) staff.
@@ -9,6 +9,7 @@ Imports:
     ape,
     parallel,
     doParallel,
+    pbapply,
     RJDBC,
     lubridate,
     foreach,

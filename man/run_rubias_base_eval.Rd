@@ -25,7 +25,8 @@ run_rubias_base_eval(
   pi_prior_sum = 1,
   seed = 56,
   ncores = parallel::detectCores(),
-  file_type = c("fst", "csv")[1]
+  file_type = c("fst", "csv")[1],
+  out_file_type = c("fst", "csv")[1]
 )
 }
 \arguments{
@@ -70,6 +71,8 @@ run_rubias_base_eval(
 \item{ncores}{A numeric vector of length one indicating the number of cores to use (default: 4)}
 
 \item{file_type}{The file type of the baseline and mixture input files, either "fst" or "csv" (default: "fst")(see details).}
+
+\item{out_file_type}{The file type for the output files, either "fst" or "csv" (default: "fst")(see details).}
 }
 \value{
 This function breaks up the \emph{rubias} output by mixture_collection and for each mixture the following are saved as .csv or .fst files:

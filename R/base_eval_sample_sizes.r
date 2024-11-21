@@ -69,7 +69,7 @@ base_eval_sample_sizes <- function(sillyvec, group_names, groupvec, mixsize, sce
     
     lapply(gscn, function(p){ 
       
-      rs <- mixsize*p
+      rs <- round(mixsize*p, digits = 0)
       
       nr <- as.numeric(mixsize - rs)
       

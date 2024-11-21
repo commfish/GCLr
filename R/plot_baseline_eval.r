@@ -6,10 +6,11 @@
 #' @param file the file path including '.pdf' extension for saving the baseline evaluation plots 
 #' @param method A character string indicating the `rubias` output to summarize. Select one of three choices: 
 #'    \itemize{
-#'       \item {"MCMC"(plot MCMC output)}
+#'       \item {"MCMC"(plot MCMC output); default}
 #'       \item{"PB" (plot bias corrected output)}
 #'       \item{"both" (plot both outputs)}
 #'       }
+#' @param group_names An optional character vector of group names, used to order `repunit` as a factor. The order of group_names will derterine the order of the plots.  
 #' @param test_groups A character vector of group names to include in the plots. This also sets the order in which they are plotted. If \code{test_groups} is not supplied, all test groups in \code{summary} will be plotted (see details).
 #' @param group_colors A character vector of R \code{colors()} the same length as \code{test_groups}. If \code{group_colors} is not supplied, colors will be automatically selected using \code{rainbow()}.
 #' 
@@ -49,7 +50,7 @@
 #' }
 #'
 #' @export
-plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both"), test_groups = NULL, group_colors = NULL){
+plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both")[1], group_names = NULL, test_groups = NULL, group_colors = NULL){
   
   # Check methods
   method_check <- summary$estimates$method %>% 
@@ -107,6 +108,26 @@ plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both"), 
     
   }
   
+  # If group_names, factor test_group variable so plots are ordered correctly, 
+  # else use the order that they occur in the summary.
+  if(!is.null(group_names)){
+    
+    summary$estimates <- summary$estimates %>% 
+      dplyr::mutate(test_group = factor(test_group, levels = group_names))
+    
+    summary$summary_stats <- summary$summary_stats %>% 
+      dplyr::mutate(test_group = factor(test_group, levels = group_names))
+    
+  }else{
+    
+    summary$estimates <- summary$estimates %>% 
+      dplyr::mutate(test_group = factor(test_group, levels = unique(test_group)))
+    
+    summary$summary_stats <- summary$summary_stats %>% 
+      dplyr::mutate(test_group = factor(test_group, levels = unique(test_group)))
+    
+  }
+  
   pdf(file, height = 9, width=13)   
   
   # Both methods
@@ -116,10 +137,9 @@ plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both"), 
       
       plot <- summary$estimates %>%
         dplyr::filter(method==meth, test_group==repunit) %>% 
-        dplyr::filter(test_group %in% test_groups) %>% 
         dplyr::left_join(summary$summary_stats, by = c("test_group", "method")) %>%
-        dplyr::mutate(test_group = factor(test_group, levels = unique(as.character(test_group))),
-                      repunit = factor(repunit, levels = unique(as.character(repunit)))) %>% 
+        dplyr::mutate(repunit = factor(repunit, levels = levels(test_group))) %>% 
+        dplyr::filter(test_group %in% test_groups) %>%  
         ggplot2::ggplot(ggplot2::aes(x = true_proportion, y = mean, colour = repunit)) +
         ggplot2::geom_point() +
         ggplot2::geom_linerange(ggplot2::aes(ymin = lo5CI, ymax = hi95CI))+
@@ -149,10 +169,9 @@ plot_baseline_eval <- function(summary, file, method = c("MCMC", "PB", "both"), 
     
     plot <- summary$estimates %>%
       dplyr::filter(method==meth, test_group==repunit) %>% 
-      dplyr::filter(test_group %in% test_groups) %>% 
       dplyr::left_join(summary$summary_stats, by = c("test_group", "method")) %>%
-      dplyr::mutate(test_group = factor(test_group, levels = unique(as.character(test_group))),
-                    repunit = factor(repunit, levels = unique(as.character(repunit)))) %>% 
+      dplyr::mutate(repunit = factor(repunit, levels = levels(test_group))) %>% 
+      dplyr::filter(test_group %in% test_groups) %>% 
       ggplot2::ggplot(ggplot2::aes(x = true_proportion, y = mean, colour = test_group)) +
       ggplot2::geom_point() +
       ggplot2::geom_linerange(ggplot2::aes(ymin = lo5CI, ymax = hi95CI))+

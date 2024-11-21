@@ -17,15 +17,16 @@ custom_comb_rubias_output(
   bias_corr = FALSE,
   threshold = 5e-07,
   plot_trace = TRUE,
-  ncores = 4
+  ncores = 4,
+  file_type = c("fst", "csv")[2]
 )
 }
 \arguments{
 \item{rubias_output}{Output list object from \code{run_rubias_mix()} or \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}.}
 
-\item{mixvec}{Character vector of mixture sillys, used to read in output .csv files if \code{rubias_output = NULL}.}
+\item{mixvec}{Character vector of mixture sillys, used to read in output .csv/,fst files if \code{rubias_output = NULL}.}
 
-\item{group_names}{Character vector of group_names, used to sort repunit as a factor, can get from .csv.}
+\item{group_names}{Character vector of group_names, used to sort repunit as a factor, can get from .csv/.fst.}
 
 \item{group_names_new}{Character vector of new group_names, used to roll up groups from fine-scale to broad-scale for bias correction
 if specified, \code{groupvec_new} must be = length(group_names_new).}
@@ -34,7 +35,7 @@ if specified, \code{groupvec_new} must be = length(group_names_new).}
 
 \item{groupvec_new}{A numeric vector indicating the new group affiliation of each group, used if resummarizing fine-scale groups to broad-scale groups with bias correction.}
 
-\item{path}{Character vector of where to find output from each mixture as a .csv (created by \code{run_rubias_mix()}).}
+\item{path}{Character vector of where to find output from each mixture as a .csv or .fst file (created by \code{run_rubias_mix()}).}
 
 \item{alpha}{Numeric constant specifying credibility intervals, default is 0.1, which gives 90\% CIs (i.e., 5\% and 95\%).}
 
@@ -48,6 +49,8 @@ currently can NOT do bias correction if not using the same repunits that were ru
 \item{plot_trace}{Logical switch, when on will create a trace plot for each mixture and repunit (reporting group).}
 
 \item{ncores}{A numeric vector of length one indicating the number of cores to use (ncores is only used when is.null(rubias_output) == TRUE).}
+
+\item{file_type}{The file type of the mixture input files, either "fst" or "csv" (default: "csv")(see details).}
 }
 \value{
 A tibble with 10 fields for each mixture and repunit (reporting group).
@@ -65,29 +68,30 @@ A tibble with 10 fields for each mixture and repunit (reporting group).
 }
 }
 \description{
-This function computes summary statistics from \pkg{rubias} output, similar to \code{CustomCombineBAYESOutput}.
-However, output is a tibble with \code{mixture_collection} as a column, instead of each mixture as its own list.
-It can take either the \code{rubias_output} list object from \code{run_rubias_mix()} or \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}},
-OR it can read in the .csv files created by \code{run_rubias_mix()}.
+This function computes summary statistics from \pkg{rubias} output, similar to \code{custom_comb_bayes_output()}.
+Output is a single tibble with \code{mixture_collection} as a column. It can take either the \code{rubias_output} list
+object from \code{run_rubias_mix()} or \code{\link[rubias:infer_mixture]{rubias::infer_mixture()}}, OR it can read in the .csv or .fst output files
+created by \code{run_rubias_mix()}.
 }
 \details{
-NOTE: Currently this function only allows bias correction for the reporting groups run in the mixture.
-It cannot do bias correction for different baseline groupvecs because the current \pkg{rubias} output only
-gives the bias-corrected means for each \code{mixture_collection} and \code{repunit} (i.e., \code{rho}, not \code{pi}).
+This function has the option of summarizing .csv (human readable) or .fst (machine readable) mixture output files.
+Using .fst files speeds up the mixture summary process, as .fst files are compressed so they read into R faster and take up less space.
 
-UPDATE: This function CAN do bias correction if you are rolling up groups from fine-scale to broad-scale.
-To use this functionality, specify \code{group_names} as the original, fine-scale groups, \code{groupvec_new} as
-the groupvec to go from fine-scale to broad-scale groups, and \code{group_names_new} as the broad-scale groups
-(i.e., length(groupvec_new) = length(group_names), and max(groupvec_new) == length(group_names_new))
-Compatible with multichain output.
+Currently this function only allows bias correction (\code{method = "PB"}) for the reporting groups run
+in the mixture OR if you are rolling up groups from fine-scale to broad-scale. It cannot do bias correction
+for splitting into finer groups because the current \pkg{rubias} output only gives the bias-corrected means
+for each \code{mixture_collection} and \code{repunit} (i.e., \code{rho}, not \code{pi}). If you are planning to use \code{method = "PB"},
+it is recommended that you use \code{run_rubias_mix()} with your finest scale reporting groups. To roll up groups
+from fine-scale to broad-scale, specify \code{group_names} as the original, fine-scale groups used in \code{run_rubias_mix()},
+\code{groupvec_new} as the groupvec to go from fine-scale to broad-scale groups, and \code{group_names_new} as the
+broad-scale groups (i.e., \code{length(groupvec_new) == length(group_names)}, and \code{max(groupvec_new) == length(group_names_new)}).
+
+This function is compatible with multichain output.
 }
 \examples{
 \dontrun{
-load("V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/OLD rubias/output/test/custom_comb_rubias_output_test.RData")
+load("V:/Analysis/1_SEAK/Sockeye/Mixture/Lynn Canal Inseason/2018/OLD rubias/output/test/custom_combine_rubias_output_test.RData")
 lynncanal_2015_SW26_27.sum <- custom_comb_rubias_output(rubias_output = lynncanal_test.out, group_names = LynnCanal_groups7, bias_corr = TRUE)
 }
 
-}
-\seealso{
-custom_comb_bayes_output()
 }
