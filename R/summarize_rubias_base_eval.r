@@ -89,38 +89,17 @@ summarize_rubias_base_eval <- function(
   
   # Error catching ----
   if (ncores > parallel::detectCores()) {
-    stop(
-      "'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine"
-    )
-    
+    stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine"    )
   }
   
   if (length(list.files(path = path, pattern = paste0(".", file_type))) == 0) {
-    stop(
-      paste0(
-        "There are no files with `file_type` .",
-        file_type,
-        " output in `path`, hoser!!!"
-      )
-    )
+    stop(paste0("There are no files with `file_type` .", file_type, " output in `path`, `file_type` must be 'csv' or 'fst'"))
   }  # catch file_type errors before checking all `mixvec` since that step can be slow
   
-  if (!is.null(mixvec) &
-      !all(sapply(mixvec, function(mixture) {
-        any(grepl(
-          pattern = mixture,
-          x = list.files(path = path, pattern = paste0(".", file_type))
-        ))
-      }))) {
-    stop(
-      paste0(
-        "Not all mixtures in `mixvec` have .",
-        file_type,
-        " output in `path`, hoser!!!"
-      )
-    )
+  if (!is.null(mixvec) & !all(sapply(mixvec, function(mixture) {any(grepl(pattern = mixture, x = list.files(path = path, pattern = paste0(".", file_type))))} ))) {
+    stop(paste0("Not all mixtures in `mixvec` have .", file_type, " output in `path`, hoser!!!"))
   }
-      
+  
       p_objects <-
         c(
           "mixvec",
@@ -159,7 +138,7 @@ summarize_rubias_base_eval <- function(
                     path, "/", mixture, "_repunit_trace.csv"
                   )))
                 
-              } else{
+              } else {
                 repunit_trace_mix <-
                   suppressMessages(fst::read_fst(path = paste0(
                     path, "/", mixture, "_repunit_trace.fst"
@@ -312,7 +291,7 @@ summarize_rubias_base_eval <- function(
                     path, "/", mixture, "_repunit_trace.csv"
                   )))
                 
-              } else{
+              } else {
                 repunit_trace_mix <-
                   suppressMessages(fst::read_fst(path = paste0(
                     path, "/", mixture, "_repunit_trace.fst"
@@ -336,7 +315,7 @@ summarize_rubias_base_eval <- function(
                     path, "/", mixture, "_bias_corr.csv"
                   )))
                 
-              } else{
+              } else {
                 bias_corr <-
                   suppressMessages(fst::read_fst(path = paste0(
                     path, "/", mixture, "_bias_corr.fst"
@@ -526,7 +505,7 @@ summarize_rubias_base_eval <- function(
                     path, "/", mixture, "_bias_corr.csv"
                   )))
                 
-              } else{
+              } else {
                 bias_corr <-
                   suppressMessages(fst::read_fst(path = paste0(
                     path, "/", mixture, "_bias_corr.fst"
