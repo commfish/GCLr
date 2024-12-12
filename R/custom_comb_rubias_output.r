@@ -188,7 +188,7 @@ custom_comb_rubias_output <-
       parallel::clusterExport(cl = cl, varlist = c("file_type", "path", "mixvec"), envir = environment())
       parallel::clusterEvalQ(cl = cl,library(tidyverse))
       
-      repunit_trace <- pbapply::pblapply(cl = cl, X = 1:length(mixvec), FUN = function(i){
+      collection_trace <- pbapply::pblapply(cl = cl, X = 1:length(mixvec), FUN = function(i){
         
         mixture <- mixvec[i]
         
