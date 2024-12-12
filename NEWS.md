@@ -1,3 +1,8 @@
+# GCLr 0.8.1
+
+## Bug fixes
+`custom_comb_rubias_output` - fixed issue where an error would occur when resummarizing from the collection_trace output.
+
 # GCLr 0.8.0
 
 ## Enhancements
