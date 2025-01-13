@@ -1,4 +1,9 @@
 # GCLr 0.9.0
+## Enhancements
+`run_rubias_base_eval` - updated parallel loop so it can run on all cores regardless of the number of reporting groups being tested and added a progress bar.
+
+## New additions
+`get_collection_info` - this function pulls a collection information report from Loki
 
 # GCLr 0.8.1
 
