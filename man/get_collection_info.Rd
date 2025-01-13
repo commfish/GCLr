@@ -18,31 +18,31 @@ get_collection_info(
 )
 }
 \arguments{
-\item{file}{the file path, including .csv extension, for writing out a csv file of the output. (default = NULL)}
+\item{file}{The file path, including .csv extension, for writing out a csv file of the output. (default = NULL)}
 
-\item{username}{your state user name}
+\item{username}{Your state user name}
 
-\item{password}{your password used to access LOKI; see Eric Lardizabal if you need to set up a password}
+\item{password}{Your password used to access LOKI; see Eric Lardizabal if you need to set up a password}
 
-\item{location.pmatch}{logical; whether to use partial matching for location (default = FALSE)}
+\item{location.pmatch}{Logical; whether to use partial matching for location (default = FALSE)}
 
-\item{sampled}{was the collection sampled? Choices: "Yes" or "No" (default = NULL); Variations of Yes and No will also work: "yes", "Y", "y", "no", "N", "n"}
+\item{sampled}{Pull only sampled (Yes) or unsampled (No) collection information. Choices: "Yes" or "No" (default = NULL); Variations of Yes and No will also work: "yes", "Y", "y", "no", "N", "n"}
 
-\item{common_name}{the common name exactly the way it is spelled in Loki (e.g., "Salmon, Sockeye") (default = NULL)}
+\item{common_name}{The common name exactly the way it is spelled in Loki (e.g., "Salmon, Sockeye") (default = NULL)}
 
-\item{collection_type}{type of collection. Choices: "Baseline", "Experimental", "Forensics", "Mark Recapture", "Mixture", "N/A", "Species ID" (default = NULL)}
+\item{collection_type}{Type of collection. Choices: "Baseline", "Experimental", "Forensics", "Mark Recapture", "Mixture", "N/A", "Species ID" (default = NULL)}
 
-\item{region}{the region name exactly the way it is spelled in Loki (default = NULL)}
+\item{region}{The region name exactly the way it is spelled in Loki (default = NULL)}
 
-\item{quadrant}{the quadrant name exactly the way it is spelled in Loki (default = NULL)}
+\item{quadrant}{The quadrant name exactly the way it is spelled in Loki (default = NULL)}
 
-\item{location}{the location name exactly the way it is spelled in Loki (default = NULL)}
+\item{location}{The location name exactly the way it is spelled in Loki (default = NULL)}
 }
 \value{
 The function outputs a tibble of collection information and writes out an optional csv file
 }
 \description{
-This function connects to LOKI and pulls a collections information report.
+This function connects to LOKI and pulls a collection information report.
 }
 \details{
 This function only requires username and password arguments to work. If a file path is supplied, then a csv file of the collection information will be written.
@@ -50,8 +50,7 @@ The remaining arguments, except location.pmatch, are filters. All filters can ac
 When supplying a region and quadrant, the quadrant must be contained within the region or the function will stop and list the allowable quadrant values for the region.
 When location.pmatch = FALSE, the location names must be spelled the same as in Loki. If a location name doesn't exist in Loki, the function will stop and an error message will list out the locations that don't exist.
 When location.pmatch = TRUE, the function will find collections with location names containing text that matches the supplied location names. Using the location.pmatch argument can be useful if you don't know the exact spelling of the location names you are looking for.
-If no collection location names contain the supplied location text strings, the function will stop and give an error message.
-The remaining arguments are filters. If no filters are supplied then information for all collections in Loki will be pulled.
+If no collection location names contain the supplied location text string(s), the function will stop and give an error message.
 }
 \note{
 The counts in the 'Bulk remaining' column may not be accurate for some collections.

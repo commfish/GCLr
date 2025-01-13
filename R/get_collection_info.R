@@ -1,17 +1,17 @@
 #' Get Collection Information
 #' 
-#' This function connects to LOKI and pulls a collections information report.
+#' This function connects to LOKI and pulls a collection information report.
 #' 
-#' @param file the file path, including .csv extension, for writing out a csv file of the output. (default = NULL)
-#' @param username your state user name
-#' @param password your password used to access LOKI; see Eric Lardizabal if you need to set up a password
-#' @param location.pmatch logical; whether to use partial matching for location (default = FALSE)
-#' @param sampled was the collection sampled? Choices: "Yes" or "No" (default = NULL); Variations of Yes and No will also work: "yes", "Y", "y", "no", "N", "n"
-#' @param common_name the common name exactly the way it is spelled in Loki (e.g., "Salmon, Sockeye") (default = NULL)
-#' @param collection_type type of collection. Choices: "Baseline", "Experimental", "Forensics", "Mark Recapture", "Mixture", "N/A", "Species ID" (default = NULL)
-#' @param region the region name exactly the way it is spelled in Loki (default = NULL)
-#' @param quadrant the quadrant name exactly the way it is spelled in Loki (default = NULL)
-#' @param location the location name exactly the way it is spelled in Loki (default = NULL)
+#' @param file The file path, including .csv extension, for writing out a csv file of the output. (default = NULL)
+#' @param username Your state user name
+#' @param password Your password used to access LOKI; see Eric Lardizabal if you need to set up a password
+#' @param location.pmatch Logical; whether to use partial matching for location (default = FALSE)
+#' @param sampled Pull only sampled (Yes) or unsampled (No) collection information. Choices: "Yes" or "No" (default = NULL); Variations of Yes and No will also work: "yes", "Y", "y", "no", "N", "n"
+#' @param common_name The common name exactly the way it is spelled in Loki (e.g., "Salmon, Sockeye") (default = NULL)
+#' @param collection_type Type of collection. Choices: "Baseline", "Experimental", "Forensics", "Mark Recapture", "Mixture", "N/A", "Species ID" (default = NULL)
+#' @param region The region name exactly the way it is spelled in Loki (default = NULL)
+#' @param quadrant The quadrant name exactly the way it is spelled in Loki (default = NULL)
+#' @param location The location name exactly the way it is spelled in Loki (default = NULL)
 #' 
 #' @returns The function outputs a tibble of collection information and writes out an optional csv file
 #' 
@@ -25,8 +25,7 @@
 #' When supplying a region and quadrant, the quadrant must be contained within the region or the function will stop and list the allowable quadrant values for the region. 
 #' When location.pmatch = FALSE, the location names must be spelled the same as in Loki. If a location name doesn't exist in Loki, the function will stop and an error message will list out the locations that don't exist.
 #' When location.pmatch = TRUE, the function will find collections with location names containing text that matches the supplied location names. Using the location.pmatch argument can be useful if you don't know the exact spelling of the location names you are looking for.
-#' If no collection location names contain the supplied location text strings, the function will stop and give an error message.
-#' The remaining arguments are filters. If no filters are supplied then information for all collections in Loki will be pulled.
+#' If no collection location names contain the supplied location text string(s), the function will stop and give an error message.
 #' 
 #' @examples
 #' \dontrun{
