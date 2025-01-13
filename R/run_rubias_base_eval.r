@@ -78,38 +78,61 @@ run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.pa
  
   start_time <- Sys.time()
   
-  test_groups <- tests$test_group %>% 
-    unique()
+  mixvec <- tests %>% 
+    dplyr::mutate(mixes = paste(test_group, scenario, sep = "_")) %>% 
+    dplyr::pull(mixes)
+  
+  p_objects <- c(
+                 "mixvec", 
+                 "group_names", 
+                 "gen_start_col", 
+                 "method", 
+                 "alle_freq_prior",
+                 "pi_prior",
+                 "pi_init",
+                 "reps",
+                 "burn_in",
+                 "pb_iter",
+                 "prelim_reps",
+                 "prelim_burn_in",
+                 "sample_theta",
+                 "pi_prior_sum",
+                 "out.path",
+                 "seed",
+                 "out_file_type",
+                 "file_type",
+                 "mix.path", 
+                 "base.path")#Objects needed inside the parallel loop.
   
   # Multicore loop
   cl <- parallel::makePSOCKcluster(ncores)
   
-  doParallel::registerDoParallel(cl, cores = ncores)
+  parallel::clusterExport(cl = cl,
+                          varlist = p_objects,
+                          envir = environment())
   
-  `%dopar%` <- foreach::`%dopar%`
+  parallel::clusterEvalQ(cl = cl, library("GCLr"))
   
-  foreach::foreach(g = test_groups, .export = "run_rubias_mix", .packages = c("tidyverse", "rubias", "readr")) %dopar% {
-    
-    scenario_names <- tests %>% 
-      dplyr::filter(test_group==g) %>% 
-      tidyr::unite(col = "name", test_group, scenario) %>% 
-      dplyr::pull(name)
-    
-    for(scn in scenario_names){
+  pbapply::pbsapply(
+    cl = cl,
+    X = 1:length(mixvec),
+    FUN = function(i) {
+      
+      my.mix <- mixvec[i]
       
       if(file_type == "fst"){
         
-        mixture <- fst::read_fst(path = paste0(mix.path, "/", scn, ".mix.fst")) 
+        mixture <- fst::read_fst(path = paste0(mix.path, "/", my.mix, ".mix.fst")) 
         
-        baseline <- fst::read_fst(path = paste0(base.path, "/", scn, ".base.fst"))
+        baseline <- fst::read_fst(path = paste0(base.path, "/", my.mix, ".base.fst"))
         
       }
       
       if(file_type == "csv"){
         
-        mixture <- readr::read_csv(file = paste0(mix.path, "/", scn, ".mix.csv"), col_types = cols(.default = "c")) 
+        mixture <- readr::read_csv(file = paste0(mix.path, "/", my.mix, ".mix.csv"), col_types = readr::cols(.default = "c")) 
         
-        baseline <- readr::read_csv(file = paste0(base.path, "/", scn, ".base.csv"), col_types = cols(.default = "c"))
+        baseline <- readr::read_csv(file = paste0(base.path, "/", my.mix, ".base.csv"), col_types = readr::cols(.default = "c"))
         
       }
       
@@ -133,13 +156,11 @@ run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.pa
                          seed = seed,
                          out_file_type = out_file_type)
       
-    }
-    
-  }# end multicore loop
+    })# end multicore loop
   
   parallel::stopCluster(cl)
   
-  message(paste0("Analysis complete!! The test mixture output filese are located in this folder: ", out.path))
+  message(paste0("Analysis complete!! The test mixture output files are located in this folder: ", out.path))
   
   Sys.time()-start_time
   
