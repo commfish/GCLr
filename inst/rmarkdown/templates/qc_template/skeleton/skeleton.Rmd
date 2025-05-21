@@ -715,7 +715,7 @@ This is a good spot to interpret the results above and provide a summary of the 
 
 This concludes the QC script. Let's save the RData.
 ```{r savedata}
-save.image(file = paste0(dirqc, project,"_QC.RData"))
+save.image(file = paste0(dirqc, "/", project,"_QC.RData"))
 ```
 
 # Save Document
