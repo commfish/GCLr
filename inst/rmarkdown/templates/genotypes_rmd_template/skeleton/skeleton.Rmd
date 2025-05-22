@@ -1,0 +1,62 @@
+---
+title: "Genoptypes Report for Genotypers"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+creator: "Chase Jalbert"
+---
+
+# Introduction
+
+This is an interactive R Markdown Notebook detailing setup and use of the genotypes report function. This function pulls a genotypes report from LOKI and writes the data to a formatted Excel file on your desktop.
+
+When you execute code within the notebook, results will appear under the code. Each chunk of code can be run by clicking the *Run* button within the chunk (i.e., green arrow at the top right of each chunk) or by placing your cursor on the specific line you wish to run and pressing *Ctrl+Enter*.
+
+# Setup
+
+First, we'll source the genotypes report functions. This loads our custom function and installs/loads all necessary R packages. 
+
+*Please do not edit the code directly below or move `GenotypeReportFunctions.r` from it's location on V:*
+
+```{r setup}
+source(file = "V:/Lab/Genotyping/R Files/GenotypeReportFunctions.r")
+```
+
+## User Inputs
+
+*Here is where you need to supply a few inputs.*
+
+You'll need the project name (case_specific), your LOKI username, and your LOKI password. Type them in the "" below, run the line(s) or entire chunk after you've entered them, and you'll be ready to run the function. 
+
+```{r user-inputs}
+# One or more project names as spelled in LOKI. Note that this can be a single project or multiple projects separated by a comma, for example: c("S219") OR c("P014","P015","P016")
+lab_project_name = "P088"
+
+# Your LOKI username. For example: "csjalbert"
+loki_username = "hahoyt"
+
+# Your LOKI password. For example: "12345"
+.loki_password = ""
+```
+
+# Generate the report!
+
+Now that you assigned all the required inputs you can simply run this, without changing anything, to get your report. It may take a bit of time depending on the size of the project.
+
+After running the function, the dataset will show up below the chunk - if this looks wrong (e.g., wrong project or empty), double check your inputs since the file will be wrong too.
+
+
+```{r report}
+GenotypeReport.GCL(
+  project_name = lab_project_name, 
+  sillyvec = NULL,
+  loci = NULL,
+  username = loki_username,
+  password = .loki_password,
+  path = NULL,
+  formatted = TRUE, # change this to FALSE if you want a raw CSV without formatting or extra tabs
+  open.file = FALSE
+)
+```
+
+
+You made it - nice work! If you didn't receive any warnings or errors, you should now have a Genotypes Report on your Desktop. If you're not seeing the file, try right clicking on the Desktop and selecting "refresh" from the drop-down menu.
+
