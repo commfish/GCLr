@@ -363,22 +363,6 @@ qc_table(project_sillys_n)
 
 This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the project extractions! 
 
-# Select QC Fish
-
-Now that a project has been vetted and you're happy with it, you can select high-quality fish for QC analysis. The function below ignores any duplicates, low quality, or wrong species, leaving a subset of high-quality fish. Using high quality fish ensures that there will be power during the QC. 
-*XXX Andy's new function should replace "sample" here.*
-```{r select_qc_fish}
-if (select.list( choices = c("Yes", "No"), preselect = "No", multiple = FALSE, title = "Select QC fish now?", graphics = TRUE) == "Yes") {
-  print("Selecting the highest quality fish that you've ever seen... ")
-  qc_fish <- sample(100)
-} else{
-  print("Not selecting QC fish at this time.")
-  qc_fish <- NA_integer_
-}
-
-qc_fish
-```
-
 # Project Data Analysis Summary
 
 This is a good spot to interpret the results above and provide a summary of the project data. Specifically, how did it look, did you notice anything odd, are you continuing with QC, did you select QC fish, etc.
@@ -698,6 +682,43 @@ conflicts_by_locus_qc <- conflicts_by_locus %>%
 
 conflicts_by_locus_qc %>% 
   qc_table()
+```
+
+## QC Bounce Excel Workbook
+
+Create QC bounce excel file and add alternate species individuals to individual conflict table if they exist.
+
+```{r}
+
+rm(LocusControl)
+
+GCLr::qc_bounce(QC_directory = dirqc, project = project, username = username, password = .password) 
+
+rm(.password) #ditch password since no longer needed
+
+if(any(species %in% c("chum", "sockeye")) & any(loci %in% alt_markers) & any(loci %in% failed_markers) & nrow(alt_indivs) > 0){
+  
+  bounce_file <-  paste0(dirqc, "/", project, "QC_bounce.xlsx") # Bounce filename
+  
+  ind_conflicts0 <- readxl::read_xlsx(path = bounce_file, sheet = "Conflicts by individual") # Get individual conflicts
+
+  ind_conflicts <- dplyr::left_join(ind_conflicts0, alt_indivs %>% 
+                                      dplyr::filter(alternate == TRUE), by = c("SillySource" = "silly_fish")
+                                    ) %>% 
+    tidyr::replace_na(replace = list(failure = 0, alternate = 0, non_missing_alt = 0)) # Join individual conflicts with alternate species individuals
+  
+  wb <- xlsx::loadWorkbook(file = bounce_file) # Load QC bounce workbook
+  
+  xlsx::removeSheet(wb, sheetName = "Conflicts by individual") # Remove existing sheet
+  
+  mySheet <- xlsx::createSheet(wb, sheetName = "Conflicts by individual") # Create new sheet
+  
+  xlsx::addDataFrame(ind_conflicts, mySheet, startRow=nrow(ind_conflicts)+2) # Add sheet to workbook
+  
+  xlsx::saveWorkbook(wb, file = bounce_file) # Save workbook
+
+}
+
 ```
 
 # QC Data Analysis Summary
