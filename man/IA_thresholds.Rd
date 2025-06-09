@@ -16,7 +16,7 @@ IA_thresholds(
 \arguments{
 \item{sa_input}{the unmodified output object from  \link[rubias:self_assign]{rubias::self_assign}}
 
-\item{rates}{optional; the unmodified output object from \link{loo_roc_rate_calc} created using the supplied \code{sa_input}. If left \code{NULL}, the rates will be calculated from \code{sa_input}. Supplying a rates object will make this function run a lot faster.}
+\item{rates}{optional; the unmodified output object from \link{loo_rate_calc} created using the supplied \code{sa_input}. If left \code{NULL}, the rates will be calculated from \code{sa_input}. Supplying a rates object will make this function run a lot faster.}
 
 \item{min_rec}{the recall cutoff; default = 0.80}
 
@@ -42,7 +42,7 @@ is then used to filter out samples with lower top assignments to reduce the numb
 results from \code{rubias::self_assign()}and summarizes the number of true positives (TP), false negatives (FN), false positives (FP) at different assignment thresholds,
 and calculates the recall and precision at each threshold and returns a tibble of minimum and maximum assignment thresholds for
 each reporting group where \code{Recall >= min_rec}, \code{Precision >= min_pre}, and the \verb{assignment threshold >= min_thres}.
-TPR and precision are are calculated from the loo results with \link{loo_roc_rate_calc} and defined as follows:\itemize{
+TPR and precision are are calculated from the loo results with \link{loo_rate_calc} and defined as follows:\itemize{
 \item \eqn{Recall = TP / (TP + FN)} Recall is also know at the true positive rate.
 \item \eqn{Precision = TP / (TP + FP)}
 \item {Where, \emph{TP} = number of true positive top assignments,

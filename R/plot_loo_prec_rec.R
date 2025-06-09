@@ -5,7 +5,7 @@
 #' 
 #' @param sa_input the unmodified output object from [rubias::self_assign]
 #' 
-#' @param rates optional; the unmodified output object from [GCLr::loo_roc_rate_calc] created using the supplied sa_input. If left NULL, the rates will be calculated from sa_input. Supplying a rates object will make this function run a lot faster.
+#' @param rates optional; the unmodified output object from [GCLr::loo_rate_calc] created using the supplied sa_input. If left NULL, the rates will be calculated from sa_input. Supplying a rates object will make this function run a lot faster.
 #' 
 #' @param group_colors a vector of colors the same length as the number of groups in the input file (i.e., `input$repunit %>% unique()`).
 #' 
@@ -31,7 +31,7 @@
 #' @details Details about the leave-one-out analysis (loo) can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
 #'          in Moran and Anderson (2018). Citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock 
 #'          identification model. Canadian Journal of Fisheries and Aquatic Sciences, 76(4): 551–560.
-#'          Recall and precision are are calculated from the loo results with [GCLr::loo_roc_rate_calc] and defined as follows:\itemize{ 
+#'          Recall and precision are are calculated from the loo results with [GCLr::loo_rate_calc] and defined as follows:\itemize{ 
 #'          \item \eqn{Recall = TP / (TP + FN)} Recall is also know at the true positive rate.
 #'          \item \eqn{Precision = TP / (TP + FP)}
 #'          \item {Where, *TP* = number of true positive top assignments, 
@@ -50,7 +50,7 @@
 #'              
 #' @note The plots produced by this function are not intended for publications; however, the code within this function can be copied and modified to produce plots tailored for publications.            
 #'   
-#' @seealso [GCLr::loo_roc_rate_calc]     
+#' @seealso [GCLr::loo_rate_calc]     
 #'                
 #' @examples
 #' sa_input <- rubias::self_assign(reference = GCLr::ex_baseline, gen_start_col = 5)

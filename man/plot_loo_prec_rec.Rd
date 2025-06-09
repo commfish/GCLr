@@ -20,7 +20,7 @@ plot_loo_prec_rec(
 \arguments{
 \item{sa_input}{the unmodified output object from \link[rubias:self_assign]{rubias::self_assign}}
 
-\item{rates}{optional; the unmodified output object from \link{loo_roc_rate_calc} created using the supplied sa_input. If left NULL, the rates will be calculated from sa_input. Supplying a rates object will make this function run a lot faster.}
+\item{rates}{optional; the unmodified output object from \link{loo_rate_calc} created using the supplied sa_input. If left NULL, the rates will be calculated from sa_input. Supplying a rates object will make this function run a lot faster.}
 
 \item{group_colors}{a vector of colors the same length as the number of groups in the input file (i.e., \code{input$repunit \%>\% unique()}).}
 
@@ -61,7 +61,7 @@ in an interactive plot that can be used to assess reporting groups and assignmen
 Details about the leave-one-out analysis (loo) can be found on the \pkg{rubias} GitHub page: \url{https://github.com/eriqande/rubias} or
 in Moran and Anderson (2018). Citation: Moran, B.M. and E.C. Anderson. 2019. Bayesian inference from the conditional genetic stock
 identification model. Canadian Journal of Fisheries and Aquatic Sciences, 76(4): 551–560.
-Recall and precision are are calculated from the loo results with \link{loo_roc_rate_calc} and defined as follows:\itemize{
+Recall and precision are are calculated from the loo results with \link{loo_rate_calc} and defined as follows:\itemize{
 \item \eqn{Recall = TP / (TP + FN)} Recall is also know at the true positive rate.
 \item \eqn{Precision = TP / (TP + FP)}
 \item {Where, \emph{TP} = number of true positive top assignments,
@@ -82,5 +82,5 @@ plots[[1]] # This is how you would look at the first plot in the list
      
 }
 \seealso{
-\link{loo_roc_rate_calc}
+\link{loo_rate_calc}
 }

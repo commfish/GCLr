@@ -4,7 +4,13 @@
 \alias{locus_stats}
 \title{Calculate Basic Locus Statistics}
 \usage{
-locus_stats(sillyvec, loci, ncores = 4, LocusCtl = LocusControl)
+locus_stats(
+  data = NULL,
+  sillyvec = NULL,
+  loci = NULL,
+  ncores = parallel::detectCores(),
+  LocusCtl = LocusControl
+)
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes without the ".gcl" extension.}
@@ -21,6 +27,8 @@ A tibble with 1 row per locus in \code{loci} + "Overall" and the following 4 col
 \itemize{
 \item \code{locus}: locus name
 \item \code{Ho}: observed heterozygosity calculated by \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
+\item \code{Hs}: observed gene diversity calculated by \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
+\item \code{Ar}: allelic richness calculated by \code{\link[hierfstat:allelic.richness]{hierfstat::allelic.richness()}}
 \item \code{Fis}: Fis calculated by \code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
 \item \code{Fst}: Fst calculated by \code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
 }
@@ -29,13 +37,22 @@ A tibble with 1 row per locus in \code{loci} + "Overall" and the following 4 col
 This function calculates basic locus statistics (Ho, Fis, Fst) for each locus across collections (silly code).
 }
 \details{
-This function uses \code{\link[hierfstat:hierfstat]{hierfstat::hierfstat()}} to calculate locus statistics for Ho, Fis, and Fst.
+This function uses \code{\link[hierfstat:hierfstat]{hierfstat::hierfstat()}} to calculate locus statistics for Ho, Hs, Ar, Fis, and Fst. If a hierfstat data object is supplied (recommended), sillyvec and loci objects
+are not needed, and the function runs a lot faster.  If a hierfstat data object is not supplied (i.e., data = NULL) and sillyvec and loci objects are supplied, the
+function will create a temporary hierfstat data object to calculate the locus statistics. The hierfstat data object produced by this function is not assigned to your workspace, so it's best
+to create a data object using \code{\link[=create_hierfstat_data]{create_hierfstat_data()}} if you want to use the object for something else.
 }
 \examples{
   
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
-  
-GCLr::locus_stats(sillyvec = sillyvec, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl )
+
+loci <- ((get(paste0(sillyvec[1], ".gcl")) \%>\% names())[-c(1:19)])[seq(1, 185, by = 2)]
+
+dat <- GCLr::create_hierfstat_data(sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
+
+GCLr::locus_stats(data = dat, sillyvec = NULL, loci = NULL, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying data object
+
+GCLr::locus_stats(data = NULL, sillyvec = sillyvec, loci = loci, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying sillyvec and loci
 
 }
 \seealso{
