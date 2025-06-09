@@ -52,6 +52,12 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
     
   }
   
+  if(is.null(data) & is.null(sillyvec) & is.null(loci)){
+    
+    stop("Please supply a hierfstat data object or sillyvec and loci objects.")
+    
+    }
+    
   start.time <- Sys.time()
   
   ploidy <- LocusCtl$ploidy[loci]
@@ -68,7 +74,7 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
       
       stop("sillyvec and loci must be supplied when data = NULL.")
       
-      }else( dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = ncores, LocusCtl = LocusCtl))
+      }else(dat <- GCLr::create_hierfstat_data(sillyvec = sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = ncores, LocusCtl = LocusCtl))
     
     )
  
