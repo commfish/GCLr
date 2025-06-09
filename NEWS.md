@@ -1,3 +1,5 @@
+# GCLr 0.10.0
+
 ## Enhancements
 `locus_stats` - added option to supply a hierfstat data object and added observed gene diversity (Hs) and allelic richness (Ar) to the output.
 `qc_template` - removed the code chunk that selects QC fish (not used) and added a code chunk to the end of the markdown to produce a QC bounce workbook with alternate species individuals included in the individual conflicts table if any are found.
