@@ -296,6 +296,41 @@ project_sillys_n %>%
   qc_table() # view sample size table
 ```
 
+### Contamination (Heterozygosity > +/- 3.5 modified Z-score)
+
+Calculate individual heterozygosities and modified z-scores as a proxy for contamination.
+
+*Note that for QC purposes we are not removing any fish, just noting how many per silly. We need to retain all fish, as they may be helpful in resolving conflicts later.*
+```{r}
+# Function to calculate median absolute deviation (MAD)
+mad <- function(x) {
+  median(abs(x - median(x)))
+}
+
+(proj_het <- GCLr::calc_ind_het(sillyvec = project_sillys) %>% 
+   dplyr::group_by(silly) %>%  # cutoffs are specific to each silly!
+   dplyr::mutate(
+     modified_z_score = 0.6745 * (het - median(het)) / mad(het),
+     outlier = dplyr::case_when(abs(modified_z_score) > 3.5 ~ TRUE, TRUE ~ FALSE)
+   ) %>%
+   dplyr::ungroup()
+)
+```
+
+Plot distribution of heterozygosity by project silly, noting outliers that are likely contaminated.
+```{r warning=FALSE}
+proj_het %>% 
+  ggplot2::ggplot(ggplot2::aes(x = het, fill = outlier)) +
+  ggplot2::geom_histogram(binwidth = 5 / length(LocusControl$locusnames)) +
+  ggplot2::facet_wrap(~silly) +
+  ggplot2::xlim(0, 1) +
+  ggplot2::scale_fill_manual(name = "Outlier", values = c("TRUE" = "black", "FALSE" = "grey60")) +
+  ggplot2::xlab("Individual Heterozygosity") +
+  ggplot2::ylab("Frequency") +
+  ggplot2::ggtitle("Individual Heterozygosity by SILLY") +
+  ggplot2::theme_bw(base_size = 14) 
+```
+
 ### Duplicate check.
 
 Remove duplicate individuals within the same collection. Typically we specify duplicates as a pair of individuals that share \>=95% of genotypes. 
@@ -537,8 +572,38 @@ The next step is to conduct QA of the QC extractions. We're not calculating the 
 ```{r qc_rm_miss}
 miss_loci_qc <- GCLr::remove_ind_miss_loci(sillyvec = qc_sillys, proportion = 0.8)
 ```
-  
-### Duplicate check on high conflict individuals
+
+### Contamination (Heterozygosity > +/- 3.5 modified Z-score)
+
+Calculate individual heterozygosity and modified z-scores as a proxy for contamination.
+
+*Note that for QC purposes we are not removing any fish, just noting how many per silly. We need to retain all fish, as they may be helpful in resolving conflicts later.*
+```{r}
+(qc_het <- calc_ind_het(sillyvec = qc_sillys) %>% 
+   dplyr::group_by(silly) %>%  # cutoffs are specific to each silly!
+   dplyr::mutate(
+     modified_z_score = 0.6745 * (het - median(het)) / mad(het),
+     outlier = dplyr::case_when(abs(modified_z_score) > 3.5 ~ TRUE, TRUE ~ FALSE)
+   ) %>%
+   dplyr::ungroup()
+)
+```
+
+Plot distribution of heterozygosity by project silly, noting outliers that are likely contaminated.
+```{r warning=FALSE}
+qc_het %>% 
+  ggplot2::ggplot(ggplot2::aes(x = het, fill = outlier)) +
+  ggplot2::geom_histogram(binwidth = 5 / length(LocusControl$locusnames)) +
+  ggplot2::facet_wrap(~silly) +
+  ggplot2::xlim(0, 1) +
+  ggplot2::scale_fill_manual(name = "Outlier", values = c("TRUE" = "black", "FALSE" = "grey60")) +
+  ggplot2::xlab("Individual Heterozygosity") +
+  ggplot2::ylab("Frequency") +
+  ggplot2::ggtitle("Individual Heterozygosity by SILLY") +
+  ggplot2::theme_bw(base_size = 14) 
+```
+
+## Duplicate check on high conflict individuals
 
 The last step in the process is to perform a duplicate check on any individuals which show a high degree of conflicts.
 ```{r qc_conflict_rate}
@@ -576,9 +641,49 @@ dup_check_results <- GCLr:::dupcheck_qc_conflicts(conflicts = conflicts, conflic
 ```
 
 We can take a look at the duplicate check results. Note that if the section above notes that there are no individuals with > 10% loci with conflicts between project and qc, this table will say "Not applicable".
-```{r dup_check_view}
-dup_check_results %>% 
+*Note - removing samples flagged as contaminated (heterozygosity outliers) in either project or QC.*
+```{r dup_check_no_contamination_view}
+dup_check_results %>%
+  dplyr::filter(!(Keysillyvial %in% (qc_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource)))) %>%  # remove contaminated QC fish
+  dplyr::filter(!(Betweensillyvial %in% (proj_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource)))) %>%  # remove contaminated project fish
   qc_table()
+```
+
+## QC Power
+
+Do we still have sufficient QC power after discounting missing loci and contaminated individuals in the project and QC? 
+
+How many legit project + QC fish per DNA plate?
+```{r}
+# pool all QC
+GCLr::pool_collections(collections = qc_sillys,
+                       loci = loci,
+                       newname = "qc_all") 
+
+# remove contaminated QC fish
+qc_all.gcl <- qc_all.gcl %>% 
+  dplyr::filter(!(SillySource %in% (qc_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource))))
+
+# pool all project
+GCLr::pool_collections(collections = project_sillys,
+                       loci = loci,
+                       newname = "project_all")
+
+# remove contaminated project fish
+project_all.gcl <- project_all.gcl %>% 
+  dplyr::filter(!(SillySource %in% (proj_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource))))
+
+# count of legit project AND QC fish per PLATE_ID
+qc_all.gcl %>% 
+  dplyr::mutate(SillySource = stringr::str_remove_all(string = SillySource, pattern = "qc")) %>%  # remove qc from SillySource for join
+  dplyr::select(SillySource) %>% 
+  dplyr::inner_join(y = project_all.gcl %>% dplyr::select(SillySource, PLATE_ID), by = "SillySource") %>%  # inner join surviving project + QC fish
+  tidyr::separate(col = SillySource, into = c("silly", "fish_id"), sep = "_") %>% 
+  dplyr::group_by(PLATE_ID) %>% 
+  dplyr::summarise(n = dplyr::n(),  # how many fish per plate?
+                   FISH_IDs = paste(c(fish_id), collapse = ", ")) %>%  # list all fish IDs
+  dplyr::filter(n < 8) %>%  # only show plates w/o all 8 QC fish
+  dplyr::arrange(PLATE_ID)
 ```
 
 This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the QC extractions! 
