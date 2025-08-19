@@ -19,7 +19,7 @@ plot_rubias_IA_zscores(path, mixnames, bins = 30, out_file = NULL)
 a histogram of z-scores for each mixture in \code{mixnames}
 }
 \description{
-This function reads in a \code{rubias} individual posteriors csv file produced by \code{\link[=run_rubias_mix]{run_rubias_mix()}} and produces a histogram of the individual assignment (IA) z-scores.
+This function reads in a \code{rubias} individual posteriors csv file produced by \code{\link[=run_rubias_mix]{run_rubias_mix()}} and produces a histogram of the individual assignment (IA) z-scores. Significant outliers indicate mixture individuals not from any of the baseline populations (i.e., wrong species or missing baseline population).
 }
 \examples{
 \dontrun{

@@ -1,6 +1,6 @@
 #' Plot distribution of `rubias` individual assignment z-scores.
 #' 
-#' This function reads in a `rubias` individual posteriors csv file produced by [GCLr::run_rubias_mix()] and produces a histogram of the individual assignment (IA) z-scores.
+#' This function reads in a `rubias` individual posteriors csv file produced by [GCLr::run_rubias_mix()] and produces a histogram of the individual assignment (IA) z-scores. Significant outliers indicate mixture individuals not from any of the baseline populations (i.e., wrong species or missing baseline population).
 #' 
 #' @param mixnames A character vector of mixture names to include in the IA summary.
 #' @param path Character vector of where to find output from each mixture as a .csv (created by [GCLr::run_rubias_mix()]).
@@ -20,9 +20,6 @@
 #' @export
 plot_rubias_IA_zscores <- function(path, mixnames, bins = 30, out_file = NULL){
   
-  mixnames <- ind_assign$mixture_collection %>% 
-    unique()
-  
   plots <- pbapply::pblapply(mixnames, function(mix){
     
     mix.assign <- readr::read_csv(file = paste0(path, "/", mix, "_indiv_posteriors.csv"), show_col_types = FALSE)
@@ -39,14 +36,16 @@ plot_rubias_IA_zscores <- function(path, mixnames, bins = 30, out_file = NULL){
   }) %>% purrr::set_names(mixnames)
   
   if(!is.null(out_file)){
-    
-    print(paste0("Saving a PDF of z-score histograms to: '", normalizePath(out_file), "'"))
-    
+
     pdf(file = out_file)
-    
-    plots
-    
+
+    for(p in plots) {
+      print(p)
+    }
+
     dev.off()
+
+    print(paste0("Saving a PDF of z-score histograms to: '", normalizePath(out_file), "'"))
     
   }
   
