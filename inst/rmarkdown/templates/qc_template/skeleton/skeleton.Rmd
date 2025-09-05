@@ -129,9 +129,8 @@ for (silly in paste0(project_sillys,".gcl")) {
   assign(new_silly_name, get(silly))
 }
 
-rm(.password) #ditch password since no longer needed
-
 loci <- LocusControl$locusnames # grab list of loci for use later
+
 ```
 
 ## Calculate Failure Rate
@@ -396,6 +395,174 @@ project_sillys_n <- project_sillys_n %>%
 qc_table(project_sillys_n)
 ```
 
+
+### Genotyping rates plots
+
+Check for missing samples in the tissue table.  
+```{r tissued_data}
+
+tissue_data <- GCLr::get_tissue_data(sillyvec = project_sillys, username = username, password = .password, import.vars = FALSE)
+
+missing_tissue <- tissue_data %>% 
+  dplyr::filter(IS_MISSING_PAIRED_DATA_EXISTS == "j") %>% 
+  dplyr::select(SILLY_CODE, FK_FISH_ID) %>% 
+  dplyr::mutate(SILLY_ID = paste0(SILLY_CODE, "_", FK_FISH_ID)) %>% 
+  dplyr::pull(SILLY_ID)
+
+if(length(missing_tissue) == 0){message("There are no missing samples in the project sillys")}
+
+```
+
+Create genotyping success rate object for plotting. Missing, contaminated, and wrong species samples will be given a 0% genotyping success rate in the interactive genotyping rate plots.
+```{r genotyping_rates}
+
+proj_geno <- lapply(project_sillys, function(silly){
+  
+  get(paste0(silly, "_raw.gcl"))
+  
+}) %>% 
+  dplyr::bind_rows() 
+
+wrong_spp <- alt_indivs %>% 
+  dplyr::filter(alternate == TRUE) %>% 
+  dplyr::pull(silly_fish)
+
+contam <- proj_het %>% 
+  dplyr::filter(outlier == TRUE) %>% 
+  dplyr::pull(SillySource)
+
+make_zero <- c(wrong_spp, contam, missing_tissue) %>% 
+  unique()
+  
+proj_geno_rates0 <- proj_geno %>%  
+  dplyr::select(COLLECTION_ID, SILLY_CODE, FK_FISH_ID, PLATE_ID, all_of(loci)) %>% 
+  tidyr::pivot_longer(dplyr::all_of(loci), names_to = "locus", values_to = "geno") %>% 
+  dplyr::group_by(COLLECTION_ID, SILLY_CODE, FK_FISH_ID, PLATE_ID) %>% 
+  tidyr::replace_na(list(geno = "0")) %>% 
+  dplyr::mutate(`Count of 0` = stringr::str_count(geno,"0") %>% sum()) %>% 
+  tidyr::pivot_wider(names_from = locus, values_from = geno) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::mutate(success_rate = 1-(`Count of 0`/length(loci)), SILLY_ID = paste(SILLY_CODE, FK_FISH_ID, sep = "_")) %>% 
+  dplyr::select(SILLY_CODE, FK_FISH_ID, SILLY_ID, PLATE_ID, `Count of 0`, success_rate) 
+
+
+if(length(make_zero) > 0){
+  
+  proj_geno_rates <- proj_geno_rates0 %>% 
+    dplyr::mutate(success_rate = dplyr::case_when(SILLY_ID %in% make_zero ~ 0,
+                                                  TRUE~success_rate)) %>% 
+    dplyr::select(SILLY_ID, PLATE_ID, success_rate)
+    
+
+  
+}else{
+  
+  proj_geno_rates <- proj_geno_rates0 %>% 
+    dplyr::select(SILLY_ID, PLATE_ID, success_rate)
+  
+}
+
+```
+Get extraction data and join with proj_geno_rates
+```{r extraction_info}
+
+plate_ids <- proj_geno_rates$PLATE_ID %>% unique()
+
+extraction_info <- GCLr::get_extraction_info(plate_ids = plate_ids, username = username, password = .password) %>% 
+  dplyr::mutate(SILLY_ID = paste0(SILLY_CODE, "_", FISH_NO)) %>% 
+  dplyr::select(WELL_NO, PLATE_ID = FK_PLATE_ID, SILLY_ID)
+
+rm(.password) #ditch password since no longer needed
+
+# This object contains adjusted success rate for each extraction plate in the project.
+plot_data <- proj_geno_rates %>% 
+  dplyr::left_join(extraction_info, by = c("SILLY_ID", "PLATE_ID")) %>% 
+  tidyr::separate(SILLY_ID, into = c("silly", "sample"), sep = "_") %>% 
+  dplyr::rename(plate = PLATE_ID, well = WELL_NO, GenotypeRate = success_rate)
+
+```
+This is a function is for saving plate heatmaps as an interactive html file.
+```{r save_tags}
+
+
+save_tags <- function (tags, file, selfcontained = TRUE, libdir = "./lib") 
+{
+  if (is.null(libdir)){
+    libdir <- paste(tools::file_path_sans_ext(basename(file)), 
+                    "_files", sep = "")
+  }
+  htmltools::save_html(tags, file = file, libdir = libdir)
+  if (selfcontained) {
+    
+    htmlwidgets:::pandoc_self_contained_html(file, file)
+    unlink(libdir, recursive = TRUE)
+  }
+  return(htmltools::tags$iframe(src= file, height = "400px", width = "100%", style="border:0;"))
+}
+
+```
+
+These plots can be used to help select high-quality samples for the QC analysis
+```{r genotype_rate_plots}
+if(!require("pacman")) install.packages("pacman");library(pacman) # install and load pacman
+p_load(htmltools, htmlwidgets, tools) # load or install+load required packages.
+
+#create platemap for plotting. Make the standard QC wells stand out with bigger circles and a red outline.
+platemap_genotypeRate_singleSNP <- plot_data %>% 
+  tidyr::separate(col = well, 
+           into = c("Row", "Column"), 
+           sep = "(?<=[A-Z])(?=[0-9])", #split between upper case letter and number
+           convert = TRUE,
+           remove = FALSE) %>% 
+  dplyr::mutate(Row = factor(Row, levels = paste(rev(LETTERS)))) %>% 
+  dplyr::mutate(size = dplyr::case_when(well %in% c("A3", "B4", "C5", "D6", "E7", "F8", "G9", "H10")~ 30,
+                                 TRUE~20),
+                outline = dplyr::case_when(well %in% c("A3", "B4", "C5", "D6", "E7", "F8", "G9", "H10")~ "#FF0000",
+                                 TRUE~"#2c7bb6"))
+
+#list of unique plates in project
+plate_list <- sort(plate_ids)
+
+
+# plot genotype rate for each plate separately using an lapply to subset the dataset for each plate
+plots <- lapply(seq_along(plate_list), function(i) {
+  subset(platemap_genotypeRate_singleSNP, platemap_genotypeRate_singleSNP$plate==plate_list[i]) %>% 
+    plotly::plot_ly(type = "scatter", # type of plot 
+            mode = "markers", # show as points
+            x = ~Column, # x variable
+            y = ~Row, # y variable
+            marker = list(size =~size, # size of points, normal QC wells will have bigger circles
+                          line = list(color = ~outline),
+                          cmax = 1, cmin = 0, # color range - hard coded 0-1
+                          color = ~GenotypeRate,# coloring according to genotype
+                          colorscale = list(c(0, 0.5, 0.70, 0.80, 1), # set breaks for colors
+                                            c("#d7191c", "#fdae61", "#ffffbf", "#ffffbf", "#2c7bb6")), # color at each break
+                          showscale = TRUE),# show the scale for the plot (i.e., legend, 0 - 1)
+            text = ~paste(silly, "_", sample), # this text will show up in the hover bubble
+            # generate hover text by pasting in text from above, adding a few line breaks with html coding (e.g.,italics, bold, breaks), genotype rate, and finally dropping extra junk
+            hovertemplate = ~paste(
+              "<b>%{text}</b><br>",
+              "GenotypeRate: ", round(GenotypeRate,2),
+              "<extra></extra>"), # remove the "trace" from beside hover bubble
+            width = 1500, #  plot width
+            height = 1000) %>% #  plot height
+    plotly::layout(xaxis = list(title = "Plate Column",
+                        tickmode = "linear"), # title for axis and setting to fixed ticks
+           yaxis = list(title = "Plate Row",
+                        tickmode = "linear"), # title for axis and setting to fixed ticks
+           title = ~paste("Plate Number:", plate_list[i]), # main plot title
+           margin = list(l = 50, r = 50, b = 200, t = 50, pad = 20)) # plot margins (space around plot axes) l = left; r = right; t = top; b = bottom
+})
+
+# generate an interactive html with plots.
+save_tags(plots, file = paste0(dirqc, "/", project, "_FilteredGenotypeRatePlots.html"), selfcontained = TRUE)
+
+message(paste0("Extraction plate genotyping rate heatmaps have been save to: ", dirqc, "/", project, "_FilteredGenotypeRatePlots.html" ))
+
+```
+
+
+Now that a project has been vetted and you're happy with it, you can select high-quality fish for QC analysis.
 This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the project extractions! 
 
 # Project Data Analysis Summary
