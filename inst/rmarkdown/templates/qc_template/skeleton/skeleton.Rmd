@@ -254,6 +254,9 @@ if (any(species %in% c("chum", "sockeye")) & any(loci %in% alt_markers) & any(lo
   # update sample size table with NA if does not meet species or loci criteria
   project_sillys_n <- project_sillys_n %>%
     dplyr::mutate(wrong_spp = NA_integer_)
+  
+  alt_indivs <- NULL
+  
 }
 ```
 
@@ -423,16 +426,26 @@ proj_geno <- lapply(project_sillys, function(silly){
 }) %>% 
   dplyr::bind_rows() 
 
-wrong_spp <- alt_indivs %>% 
-  dplyr::filter(alternate == TRUE) %>% 
-  dplyr::pull(silly_fish)
-
 contam <- proj_het %>% 
   dplyr::filter(outlier == TRUE) %>% 
   dplyr::pull(SillySource)
 
+if(!is.null(alt_indivs)){
+  
+  wrong_spp <- alt_indivs %>% 
+  dplyr::filter(alternate == TRUE) %>% 
+  dplyr::pull(silly_fish)
+
 make_zero <- c(wrong_spp, contam, missing_tissue) %>% 
   unique()
+
+}else{
+  
+      make_zero <- c(contam, missing_tissue) %>% 
+  unique()
+
+}
+  
   
 proj_geno_rates0 <- proj_geno %>%  
   dplyr::select(COLLECTION_ID, SILLY_CODE, FK_FISH_ID, PLATE_ID, all_of(loci)) %>% 
