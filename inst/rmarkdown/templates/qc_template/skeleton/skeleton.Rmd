@@ -151,7 +151,9 @@ failure_rate$silly_failure_rate %>%
 
 And here is a plot showing those data. 
 ```{r fail_rate_silly_plot}
+
 failure_rate$plot_silly_failure_rate
+
 ```
 
 ### Failure Rate by Locus
@@ -255,7 +257,7 @@ if (any(species %in% c("chum", "sockeye")) & any(loci %in% alt_markers) & any(lo
   project_sillys_n <- project_sillys_n %>%
     dplyr::mutate(wrong_spp = NA_integer_)
   
-  alt_indivs <- NULL
+  alt_indivs <- tibble::tibble(silly_fish = character(0), alternate = logical(0))
   
 }
 ```
@@ -430,7 +432,6 @@ contam <- proj_het %>%
   dplyr::filter(outlier == TRUE) %>% 
   dplyr::pull(SillySource)
 
-if(!is.null(alt_indivs)){
   
   wrong_spp <- alt_indivs %>% 
   dplyr::filter(alternate == TRUE) %>% 
@@ -439,13 +440,6 @@ if(!is.null(alt_indivs)){
 make_zero <- c(wrong_spp, contam, missing_tissue) %>% 
   unique()
 
-}else{
-  
-      make_zero <- c(contam, missing_tissue) %>% 
-  unique()
-
-}
-  
   
 proj_geno_rates0 <- proj_geno %>%  
   dplyr::select(COLLECTION_ID, SILLY_CODE, FK_FISH_ID, PLATE_ID, all_of(loci)) %>% 
@@ -602,7 +596,7 @@ Pro-tip: click here, wait no here (I kid, anywhere around here works...), and pr
 Move onto the QC genotypes now. 
 ```{r qc_genos}
 qc_files <-
-  list.files(path = "Genotype Data Files", pattern = ".csv", full.names = TRUE, recursive = FALSE)
+  list.files(path = paste0(dirqc, "/Genotype Data Files"), pattern = ".csv", full.names = TRUE, recursive = FALSE)
 
 if (project_type %in% c("TaqMan", "uSat","GT-seq")) {
   GCLr::read_qc_geno(qc_csv_filepaths = qc_files, type = project_type)
@@ -613,6 +607,7 @@ if (project_type %in% c("TaqMan", "uSat","GT-seq")) {
 qc_sillys_n <- GCLr::silly_n(sillyvec = qc_sillys)
 
 qc_sillys_n
+
 ```
     
 ## Read in Conflict Report
@@ -620,7 +615,7 @@ qc_sillys_n
 Now read in the conflict report. 
 *Note - old conflict reports have "0" for mitochondrial conflicts while the new has " " for mitochondrial conflicts, we will refer to them as "Homo-Homo".*
 ```{r concordance_files}
-qc_concordance_report_file <- list.files(path = "Conflict Reports", pattern = "Concordance", full.names = TRUE)
+qc_concordance_report_file <- list.files(path = paste0(dirqc, "/Conflict Reports"), pattern = "Concordance", full.names = TRUE)
 
 qc_concordance_report_file #verify it found the file(s)! If this is empty, it will not work.
 
@@ -636,7 +631,7 @@ The next step is to summarize the conflicts. This will be done a few ways - by p
 First, we'll take a look at the number of conflicts by plate:
 ```{r conflict_plate}
 conflicts_by_plate <- combined_conflicts %>% 
-  dplyr::group_by(plate_id, concordance_type) %>%
+  dplyr::group_by(plate_id, concordance_type, fish_id) %>%
   dplyr::summarise(n = dplyr::n(), .groups = "keep" ) %>%
   tidyr::pivot_wider(names_from = "concordance_type", values_from = "n",values_fill = 0, names_expand = TRUE) %>% 
   dplyr::mutate(Conflict = sum(`Het-Het`, `Het-Homo`, `Homo-Het`, `Homo-Homo`)) %>%
@@ -759,7 +754,7 @@ Calculate individual heterozygosity and modified z-scores as a proxy for contami
 
 *Note that for QC purposes we are not removing any fish, just noting how many per silly. We need to retain all fish, as they may be helpful in resolving conflicts later.*
 ```{r}
-(qc_het <- calc_ind_het(sillyvec = qc_sillys) %>% 
+(qc_het <- GCLr::calc_ind_het(sillyvec = qc_sillys) %>% 
    dplyr::group_by(silly) %>%  # cutoffs are specific to each silly!
    dplyr::mutate(
      modified_z_score = 0.6745 * (het - median(het)) / mad(het),
@@ -973,9 +968,11 @@ conflicts_by_locus_qc %>%
 
 Create QC bounce excel file and add alternate species individuals to individual conflict table if they exist.
 
-```{r}
+```{r qc_bounce}
 
 rm(LocusControl)
+
+.password <- readLines(con = "//DFGANCRDC01.dfg.alaska.local/Genetics/Anchorage/Analysis/R files/usr.pw")[2] # LOKI password
 
 GCLr::qc_bounce(QC_directory = dirqc, project = project, username = username, password = .password) 
 
