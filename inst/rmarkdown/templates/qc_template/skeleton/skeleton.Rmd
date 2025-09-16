@@ -133,6 +133,33 @@ loci <- LocusControl$locusnames # grab list of loci for use later
 
 ```
 
+If the project type is TaqMan or GT-seq and the project species is Chinook, the following chunk checks to see if microsatellites were run on the project and drops them from the SILLY.gcl objects and LocusControl. Otherwise, the chunk outputs "Not applicable"
+```{r remove_uSATs}
+
+if(species == "chinook" & any(project_type %in% c("TaqMan", "GT-seq"))){
+  
+  #Get the microsat loci
+  uSatloci <- c(loci[grepl("v1", loci)], paste0(loci[grepl("v1", loci)], ".1"))
+  
+  # Loop through the project sillys and drop microsat loci
+  for(silly in paste0(project_sillys, ".gcl")){
+    
+    mod <- get(silly) %>% 
+      dplyr::select(-tidyr::all_of(uSatloci))
+    
+    assign(x = silly, value = mod)
+    
+  }
+  
+  loci <- loci[!grepl("v1", loci)]
+  
+  LocusControl <- LocusControl %>% 
+    dplyr::filter(locusnames %in% loci)
+  
+}else("Not applicable")
+
+```
+
 ## Calculate Failure Rate
 
 Now we can calculate the failure rate of the project.
@@ -818,10 +845,14 @@ dup_check_results <- GCLr:::dupcheck_qc_conflicts(conflicts = conflicts, conflic
 We can take a look at the duplicate check results. Note that if the section above notes that there are no individuals with > 10% loci with conflicts between project and qc, this table will say "Not applicable".
 *Note - removing samples flagged as contaminated (heterozygosity outliers) in either project or QC.*
 ```{r dup_check_no_contamination_view}
-dup_check_results %>%
-  dplyr::filter(!(Keysillyvial %in% (qc_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource)))) %>%  # remove contaminated QC fish
-  dplyr::filter(!(Betweensillyvial %in% (proj_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource)))) %>%  # remove contaminated project fish
-  qc_table()
+if(any("x" %in% names(dup_check_results))){
+  
+  dup_check_results %>%
+    dplyr::filter(!(Keysillyvial %in% (qc_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource)))) %>%  # remove contaminated QC fish
+    dplyr::filter(!(Betweensillyvial %in% (proj_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource)))) %>%  # remove contaminated project fish
+    qc_table()
+  
+}else{dup_check_results}
 ```
 
 ## QC Power
