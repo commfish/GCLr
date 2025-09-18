@@ -845,7 +845,7 @@ dup_check_results <- GCLr:::dupcheck_qc_conflicts(conflicts = conflicts, conflic
 We can take a look at the duplicate check results. Note that if the section above notes that there are no individuals with > 10% loci with conflicts between project and qc, this table will say "Not applicable".
 *Note - removing samples flagged as contaminated (heterozygosity outliers) in either project or QC.*
 ```{r dup_check_no_contamination_view}
-if(any("x" %in% names(dup_check_results))){
+if(!any("x" %in% names(dup_check_results))){
   
   dup_check_results %>%
     dplyr::filter(!(Keysillyvial %in% (qc_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource)))) %>%  # remove contaminated QC fish
