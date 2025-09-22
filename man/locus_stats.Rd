@@ -27,17 +27,17 @@ A tibble with 1 row per locus in \code{loci} + "Overall" and the following 4 col
 \itemize{
 \item \code{locus}: locus name
 \item \code{Ho}: observed heterozygosity calculated by \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
-\item \code{Hs}: observed gene diversity calculated by \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
+\item \code{Hs}: gene diversity calculated by \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
 \item \code{Ar}: allelic richness calculated by \code{\link[hierfstat:allelic.richness]{hierfstat::allelic.richness()}}
 \item \code{Fis}: Fis calculated by \code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
 \item \code{Fst}: Fst calculated by \code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
 }
 }
 \description{
-This function calculates basic locus statistics (Ho, Fis, Fst) for each locus across collections (silly code).
+This function calculates basic locus statistics for each locus across collections (silly code).
 }
 \details{
-This function uses \code{\link[hierfstat:hierfstat]{hierfstat::hierfstat()}} to calculate locus statistics for Ho, Hs, Ar, Fis, and Fst. If a hierfstat data object is supplied (recommended), sillyvec and loci objects
+This function uses \pkg{hierfstat} to calculate locus statistics for Ho, Hs, Ar, Fis, and Fst. If a hierfstat data object is supplied (recommended), sillyvec and loci objects
 are not needed, and the function runs a lot faster.  If a hierfstat data object is not supplied (i.e., data = NULL) and sillyvec and loci objects are supplied, the
 function will create a temporary hierfstat data object to calculate the locus statistics. The hierfstat data object produced by this function is not assigned to your workspace, so it's best
 to create a data object using \code{\link[=create_hierfstat_data]{create_hierfstat_data()}} if you want to use the object for something else.
@@ -56,8 +56,8 @@ GCLr::locus_stats(data = NULL, sillyvec = sillyvec, loci = loci, ncores = parall
 
 }
 \seealso{
-\code{\link[hierfstat:hierfstat]{hierfstat::hierfstat()}}
 \code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
 \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
+\code{\link[hierfstat:allelic.richness]{hierfstat::allelic.richness()}}
 \code{\link[=create_hierfstat_data]{create_hierfstat_data()}}
 }

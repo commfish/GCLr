@@ -1,7 +1,7 @@
 #' @title Calculate Basic Locus Statistics
 #' 
 #' @description
-#' This function calculates basic locus statistics (Ho, Fis, Fst) for each locus across collections (silly code).
+#' This function calculates basic locus statistics for each locus across collections (silly code).
 #' 
 #' @param sillyvec A character vector of silly codes without the ".gcl" extension.
 #' @param loci A character vector of locus names.
@@ -13,22 +13,22 @@
 #'     \itemize{
 #'       \item \code{locus}: locus name
 #'       \item \code{Ho}: observed heterozygosity calculated by [hierfstat::basic.stats()]
-#'       \item \code{Hs}: observed gene diversity calculated by [hierfstat::basic.stats()]
+#'       \item \code{Hs}: gene diversity calculated by [hierfstat::basic.stats()]
 #'       \item \code{Ar}: allelic richness calculated by [hierfstat::allelic.richness()]
 #'       \item \code{Fis}: Fis calculated by [hierfstat::varcomp()]
 #'       \item \code{Fst}: Fst calculated by [hierfstat::varcomp()]
 #'       }       
 #'       
 #' @details
-#' This function uses [hierfstat::hierfstat()] to calculate locus statistics for Ho, Hs, Ar, Fis, and Fst. If a hierfstat data object is supplied (recommended), sillyvec and loci objects
+#' This function uses \pkg{hierfstat} to calculate locus statistics for Ho, Hs, Ar, Fis, and Fst. If a hierfstat data object is supplied (recommended), sillyvec and loci objects
 #' are not needed, and the function runs a lot faster.  If a hierfstat data object is not supplied (i.e., data = NULL) and sillyvec and loci objects are supplied, the
 #' function will create a temporary hierfstat data object to calculate the locus statistics. The hierfstat data object produced by this function is not assigned to your workspace, so it's best 
 #' to create a data object using [GCLr::create_hierfstat_data()] if you want to use the object for something else.
 #' 
 #' @seealso 
-#' [hierfstat::hierfstat()]
 #' [hierfstat::varcomp()]
 #' [hierfstat::basic.stats()]
+#' [hierfstat::allelic.richness()]
 #' [GCLr::create_hierfstat_data()]
 #' 
 #' @examples
@@ -128,25 +128,45 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
   MyTable <- dplyr::bind_rows(MyTable0, Overall) 
   
   #Observed Heterozygosity
-  Hovec <- apply(hierfstat::basic.stats(dat[, c("pop", loci[ploidy==2])])$Ho, 1, mean, na.rm = TRUE)
+  Hovec <- apply(hierfstat::basic.stats(dat[, c("pop", loci[ploidy==2])])$Ho, 1, mean, na.rm = TRUE) 
   
   Ho <- tibble::tibble(locus = c(loci[ploidy==2], "Overall"), Ho = c(Hovec, mean(Hovec, na.rm = TRUE)))
   
-  #Observed gene diversity
-  Hsvec <- apply(hierfstat::basic.stats(dat[, c("pop", loci[ploidy==2])])$Hs, 1, mean, na.rm = TRUE)
+  #Gene diversity
   
-  Hs <- tibble::tibble(locus = c(loci[ploidy==2], "Overall"), Hs = c(Hsvec, mean(Hsvec, na.rm = TRUE)))
+  if(any(ploidy==2)){ # Diploid
+    
+    Hsvec_dip <- hierfstat::basic.stats(dat[, c("pop", loci[ploidy == 2])])$perloc[loci[ploidy == 2], ]$Hs %>% purrr::set_names(loci[ploidy==2])
+  
+  }else{Hsvec_dip <- NULL}
+  
+  if(any(ploidy==1)){ # Haploid
+    
+    Hsvec_hap <-  hierfstat::basic.stats(dat[, c("pop", loci[ploidy == 1])], diploid = FALSE)$perloc[loci[ploidy == 1], ]$Hs %>% purrr::set_names(loci[ploidy==1])
+    
+  }else{Hsvec_hap <- NULL}
+  
+  Hsvec <- c(Hsvec_dip, Hsvec_hap)[loci]
+  
+  Hs <- tibble::tibble(locus = c(loci, "Overall"), Hs = c(Hsvec, mean(Hsvec, na.rm = TRUE)))
   
   #Allelic richness
-  Ar <- lapply(loci, function(locus){
+  
+  if(any(ploidy==2)){ # Diploid
     
-    my.dat <- dat %>% dplyr::select(pop, spop, all_of(locus))
+    Arvec_dip <- hierfstat::allelic.richness(dat[, c("pop", loci[ploidy == 2])])$Ar %>% rowMeans( na.rm = TRUE)
     
-    x <- apply((hierfstat::allelic.richness(my.dat, diploid = ploidy[locus]==2)$Ar)[locus,], 1, mean)
+  }else{Arvec_dip <- NULL}
+  
+  if(any(ploidy==1)){ # Haploid
     
-    tibble::tibble(locus = locus, Ar = x)
+    Arvec_hap <- hierfstat::allelic.richness(dat[, c("pop", loci[ploidy == 1])])$Ar %>% rowMeans( na.rm = TRUE)
     
-  }) %>% dplyr::bind_rows()
+  }else{Arvec_hap <- NULL}
+  
+  Arvec <- c(Arvec_dip, Arvec_hap)[loci]
+  
+  Ar <- tibble::tibble(locus = c(loci, "Overall"), Ar = c(Arvec, mean(Arvec, na.rm = TRUE)))
   
   #Join varcomp summary with Ho, Hs, and Ar
   output <- MyTable %>% 
