@@ -1,8 +1,8 @@
 # GCLr 0.10.0
 
 ## Enhancements
-`locus_stats` - added option to supply a hierfstat data object and added observed gene diversity (Hs) and allelic richness (Ar) to the output.
-`qc_template` - removed the code chunk that selects QC fish (not used) and added a code chunk to the end of the markdown to produce a QC bounce workbook with alternate species individuals included in the individual conflicts table if any are found; add individual heterozygosity to flag contaminated samples; add chunk to calculate QC power (how many project fish and QC fish have legit genotypes for QC analysis?).
+`locus_stats` - added option to supply a hierfstat data object and added gene diversity (Hs) and allelic richness (Ar) to the output.
+`qc_template` - removed the code chunk that selects QC fish (not used) and added a code chunk to the end of the markdown to produce a QC bounce workbook with alternate species individuals included in the individual conflicts table if any are found; added individual heterozygosity to flag contaminated samples; added chunk to calculate QC power (how many project fish and QC fish have legit genotypes for QC analysis?); added code chunk to remove microsatellite loci from the project data if the project type is TaqMan or GT-seq and the species is chinook; added code chunk to produce genotyping rates plot to end of project analysis to help select samples for QC analysis.
 
 ## New additions
 `plot_rubias_IA_zscores` - This function reads in a rubias individual posteriors csv file produced by run_rubias_mix() and produces a histogram of the individual assignment (IA) z-scores.
