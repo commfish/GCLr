@@ -157,13 +157,25 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
   
   if(any(ploidy==2)){ # Diploid
     
-    Arvec_dip <- hierfstat::allelic.richness(dat[, c("pop", loci[ploidy == 2])], diploid = TRUE)$Ar %>% rowMeans( na.rm = TRUE)
+    Arvec_dip <- hierfstat::allelic.richness(dat[, c("pop", loci[ploidy == 2])], diploid = TRUE)$Ar %>% 
+      rowMeans( na.rm = TRUE)
     
   }else{Arvec_dip <- NULL}
   
   if(any(ploidy==1)){ # Haploid
     
-    Arvec_hap <- hierfstat::allelic.richness(dat[, c("pop", loci[ploidy == 1])], diploid = FALSE)$Ar %>% rowMeans( na.rm = TRUE)
+    hap.loci <- loci[ploidy == 1]
+    
+    Arvec_hap <- hierfstat::allelic.richness(dat[, c("pop", hap.loci)], diploid = FALSE)$Ar %>% 
+      rowMeans(na.rm = TRUE)
+    
+    # When there is a single haploid locus, hierfstat::allelic.richness inserts a dummy.loc as a placeholder and also replaces any dashes in the locus name with periods.
+    # This if statement drops the dummy.loc and sets the correct locus name.
+    if(length(hap.loci)==1){ 
+      
+      Arvec_hap <- purrr::set_names(Arvec_hap[1], hap.loci) 
+      
+    }
     
   }else{Arvec_hap <- NULL}
   
