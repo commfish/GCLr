@@ -157,13 +157,13 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
   
   if(any(ploidy==2)){ # Diploid
     
-    Arvec_dip <- hierfstat::allelic.richness(dat[, c("pop", loci[ploidy == 2])])$Ar %>% rowMeans( na.rm = TRUE)
+    Arvec_dip <- hierfstat::allelic.richness(dat[, c("pop", loci[ploidy == 2])], diploid = TRUE)$Ar %>% rowMeans( na.rm = TRUE)
     
   }else{Arvec_dip <- NULL}
   
   if(any(ploidy==1)){ # Haploid
     
-    Arvec_hap <- hierfstat::allelic.richness(dat[, c("pop", loci[ploidy == 1])])$Ar %>% rowMeans( na.rm = TRUE)
+    Arvec_hap <- hierfstat::allelic.richness(dat[, c("pop", loci[ploidy == 1])], diploid = FALSE)$Ar %>% rowMeans( na.rm = TRUE)
     
   }else{Arvec_hap <- NULL}
   
