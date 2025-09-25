@@ -67,7 +67,9 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
     
     dat <- data
     
-    loci <- names(data)[-c(1:2)]
+    loci <- data_test %>% 
+      dplyr::select(-any_of(c("region", "pop", "spop"))) %>% 
+      names()
     
   } else(
     
