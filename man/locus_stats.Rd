@@ -13,6 +13,8 @@ locus_stats(
 )
 }
 \arguments{
+\item{data}{a hierfstat data object (default = NULL)}
+
 \item{sillyvec}{A character vector of silly codes without the ".gcl" extension.}
 
 \item{loci}{A character vector of locus names.}
