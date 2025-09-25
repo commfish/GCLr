@@ -61,8 +61,6 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
     
   start.time <- Sys.time()
   
-  ploidy <- LocusCtl$ploidy[loci]
-  
   if(!is.null(data)){
     
     dat <- data
@@ -81,6 +79,8 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
     
     )
  
+  ploidy <- LocusCtl$ploidy[loci]
+  
   cl <- parallel::makePSOCKcluster(ncores)
   
   doParallel::registerDoParallel(cl, cores = ncores) #Start cluster  
