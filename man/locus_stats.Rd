@@ -13,14 +13,13 @@ locus_stats(
 )
 }
 \arguments{
-\item{data}{a hierfstat data object (default = NULL)}
+\item{data}{a hierfstat data object (default = NULL).}
 
-\item{sillyvec}{A character vector of silly codes without the ".gcl" extension.}
+\item{sillyvec}{A character vector of silly codes without the ".gcl" extension (default = NULL).}
 
-\item{loci}{A character vector of locus names.}
+\item{loci}{A character vector of locus names (default = NULL).}
 
-\item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).
-The number of cores cannot exceeds the number on your device (\code{\link[parallel:detectCores]{parallel::detectCores()}}).}
+\item{ncores}{ncores A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = parallel::detectCores())}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}} (default = LocusControl).}
 }
@@ -29,10 +28,10 @@ A tibble with 1 row per locus in \code{loci} + "Overall" and the following 4 col
 \itemize{
 \item \code{locus}: locus name
 \item \code{Ho}: observed heterozygosity calculated by \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
-\item \code{Hs}: gene diversity calculated by \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
+\item \code{Hs}: gene diversity (a.k.a. expected heterozygosity) calculated by \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
 \item \code{Ar}: allelic richness calculated by \code{\link[hierfstat:allelic.richness]{hierfstat::allelic.richness()}}
-\item \code{Fis}: Fis calculated by \code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
-\item \code{Fst}: Fst calculated by \code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
+\item \code{Fis}: Weir and Cockerham (1984) Fis calculated by \code{\link[hierfstat:wc]{hierfstat::wc()}}
+\item \code{Fst}: Weir and Cockerham (1984) Fst calculated by \code{\link[hierfstat:wc]{hierfstat::wc()}}
 }
 }
 \description{
@@ -58,7 +57,7 @@ GCLr::locus_stats(data = NULL, sillyvec = sillyvec, loci = loci, ncores = parall
 
 }
 \seealso{
-\code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
+\code{\link[hierfstat:wc]{hierfstat::wc()}}
 \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
 \code{\link[hierfstat:allelic.richness]{hierfstat::allelic.richness()}}
 \code{\link[=create_hierfstat_data]{create_hierfstat_data()}}

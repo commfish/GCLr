@@ -3,21 +3,20 @@
 #' @description
 #' This function calculates basic locus statistics for each locus across collections (silly code).
 #' 
-#' @param data a hierfstat data object (default = NULL)
-#' @param sillyvec A character vector of silly codes without the ".gcl" extension.
-#' @param loci A character vector of locus names.
-#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
-#' The number of cores cannot exceeds the number on your device ([parallel::detectCores()]).
+#' @param data a hierfstat data object (default = NULL).
+#' @param sillyvec A character vector of silly codes without the ".gcl" extension (default = NULL).
+#' @param loci A character vector of locus names (default = NULL).
+#' @param ncores ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = parallel::detectCores())
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
 #'
 #' @returns A tibble with 1 row per locus in `loci` + "Overall" and the following 4 columns:
 #'     \itemize{
 #'       \item \code{locus}: locus name
 #'       \item \code{Ho}: observed heterozygosity calculated by [hierfstat::basic.stats()]
-#'       \item \code{Hs}: gene diversity calculated by [hierfstat::basic.stats()]
+#'       \item \code{Hs}: gene diversity (a.k.a. expected heterozygosity) calculated by [hierfstat::basic.stats()]
 #'       \item \code{Ar}: allelic richness calculated by [hierfstat::allelic.richness()]
-#'       \item \code{Fis}: Fis calculated by [hierfstat::varcomp()]
-#'       \item \code{Fst}: Fst calculated by [hierfstat::varcomp()]
+#'       \item \code{Fis}: Weir and Cockerham (1984) Fis calculated by [hierfstat::wc()]
+#'       \item \code{Fst}: Weir and Cockerham (1984) Fst calculated by [hierfstat::wc()]
 #'       }       
 #'       
 #' @details
@@ -27,7 +26,7 @@
 #' to create a data object using [GCLr::create_hierfstat_data()] if you want to use the object for something else.
 #' 
 #' @seealso 
-#' [hierfstat::varcomp()]
+#' [hierfstat::wc()]
 #' [hierfstat::basic.stats()]
 #' [hierfstat::allelic.richness()]
 #' [GCLr::create_hierfstat_data()]
@@ -81,80 +80,84 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
  
   ploidy <- LocusCtl$ploidy[loci]
   
+  ##### Weir and Cockerham (1984) Fst and Fis. Note: this has to be done for each locus separately to extract the variance components needed for calculating overall FST
   cl <- parallel::makePSOCKcluster(ncores)
   
   doParallel::registerDoParallel(cl, cores = ncores) #Start cluster  
   
-  #Get variance components
-  #Start parallel loop
-  
   `%dopar%` <- foreach::`%dopar%`
   
-  MyVC <- foreach::foreach(locus = loci, .packages = "hierfstat") %dopar% {
+  WC_per.loc <- foreach::foreach(locus = loci, .packages = c("hierfstat", "magrittr", "tibble", "dplyr")) %dopar% {
     
-    diploid <- ploidy[locus]==2
+    p <- ploidy[locus]==2
     
-    if(diploid){
-      
-      VC <- hierfstat::varcomp(dat[, c("pop", locus)], diploid = diploid)$overall
-      
-      table <- tibble::tibble(locus = !!locus, P = VC[1], I = VC[2], G = VC[3])
-      
-    }
+    loc.wc <- hierfstat::wc(dat[, c("pop", locus)], diploid = p)
     
-    if(!diploid){
-      
-      VC <- hierfstat::varcomp(dat[, c("pop", locus)], diploid = diploid)$overall
-      
-      table <- tibble::tibble(locus = !!locus, P = VC[1], I = NA, G = VC[2])
-      
-    } 
+    var_comps <- loc.wc$sigma %>% 
+      tibble::as_tibble() %>% 
+      dplyr::filter(loc == 1)
     
-    table
+    a_comp <- ifelse(p == TRUE, var_comps$siga[1], sum(var_comps$siga))# Among populations variance
     
-  } %>%  dplyr::bind_rows()
+    b_comp <- ifelse(p == TRUE, var_comps$sigb[1], sum(var_comps$sigb))# Among individuals within populations variance
+  
+    c_comp <- ifelse(p == TRUE, var_comps$sigw[1], 0) # Within-individual variance; Haploid loci don't have this component
+    
+    tibble::tibble(locus = locus, Fst = loc.wc$FST, Fis = loc.wc$FIS, a = a_comp, b = b_comp, c = c_comp) %>% 
+      dplyr::mutate(total_var = sum(a, b, c, na.rm = TRUE)) 
+    
+  } %>% bind_rows()
   
   parallel::stopCluster(cl)# Stop cluster
   
-  #Summarize variance components
-  MyTable0 <- MyVC %>% 
-    dplyr::rowwise() %>%  
-    dplyr::mutate(total = sum(c(P,I,G), na.rm = TRUE)) %>% 
-    dplyr::mutate(P = P/total, I = I/total) %>% 
-    dplyr::select(locus, P, I, total) %>% 
-    dplyr::ungroup()
+  #Calculate overall WC Fst and Fis
+  hap.loci <- loci[ploidy == 1] #FIS cannot be calculated for haploid loci, so those will be excluded from the output for that calculation
   
-  Overall <- MyVC %>% 
-    dplyr::summarize(P = sum(P, na.rm = TRUE), I = sum(I, na.rm = TRUE), total = sum(MyTable0$total, na.rm = TRUE)) %>% 
-    dplyr::mutate(locus = "Overall", I = I/total, P = P/total)
+  Fis_overall <- WC_per.loc %>% 
+    dplyr::filter(!locus %in% hap.loci) %>% 
+    dplyr::summarise(Fis = sum(b)/(sum(b)+sum(c)))
+    
+  WC_overall <- WC_per.loc %>% 
+    dplyr::summarise(locus = "Overall", Fst = sum(a)/sum(total_var), Fis = Fis_overall)
   
-  MyTable <- dplyr::bind_rows(MyTable0, Overall) 
+  WC <- dplyr::bind_rows(WC_per.loc %>% dplyr::select(locus, Fis, Fst), WC_overall)
   
-  #Observed Heterozygosity
-  Hovec <- apply(hierfstat::basic.stats(dat[, c("pop", loci[ploidy==2])])$Ho, 1, mean, na.rm = TRUE) 
-  
-  Ho <- tibble::tibble(locus = c(loci[ploidy==2], "Overall"), Ho = c(Hovec, mean(Hovec, na.rm = TRUE)))
-  
-  #Gene diversity
-  
+  ##### Observed Heterozygosity and Expected Heterozygosity (aka Gene Diversity)
   if(any(ploidy==2)){ # Diploid
     
-    Hsvec_dip <- hierfstat::basic.stats(dat[, c("pop", loci[ploidy == 2])])$perloc[loci[ploidy == 2], ]$Hs %>% purrr::set_names(loci[ploidy==2])
+    dip.loci <- loci[ploidy == 2]
+    
+    H_dip <- hierfstat::basic.stats(dat[, c("pop", dip.loci)], diploid = TRUE)$perloc %>% 
+      tibble::as_tibble(rownames = "locus") %>% 
+      dplyr::select(locus, Ho, Hs)
   
-  }else{Hsvec_dip <- NULL}
+  }else{H_dip <- NULL}
   
   if(any(ploidy==1)){ # Haploid
     
-    Hsvec_hap <-  hierfstat::basic.stats(dat[, c("pop", loci[ploidy == 1])], diploid = FALSE)$perloc[loci[ploidy == 1], ]$Hs %>% purrr::set_names(loci[ploidy==1])
+    hap.loci <- loci[ploidy == 1]
     
-  }else{Hsvec_hap <- NULL}
+    H_hap <- hierfstat::basic.stats(dat[, c("pop", hap.loci)], diploid = FALSE)$perloc %>% 
+      tibble::as_tibble(rownames = "locus") %>% 
+      dplyr::select(locus, Ho, Hs)
+    
+    if(length(hap.loci)== 1){ # The structure of basic.stats output is different for a single haploid locus, so have treat those differently.
+    
+      H_hap <- H_hap[1,] %>% 
+        dplyr::mutate(locus = hap.loci)
+      
+    }
+    
+  }else{H_hap <- NULL}
   
-  Hsvec <- c(Hsvec_dip, Hsvec_hap)[loci]
+  H0 <- dplyr::bind_rows(H_dip, H_hap) 
   
-  Hs <- tibble::tibble(locus = c(loci, "Overall"), Hs = c(Hsvec, mean(Hsvec, na.rm = TRUE)))
+  H_overall <- H0 %>% 
+    dplyr::summarize(locus = "Overall", Ho = mean(Ho, na.rm = TRUE),  Hs = mean(Hs, na.rm = TRUE))
   
-  #Allelic richness
+  H <- dplyr::bind_rows(H0, H_overall)
   
+  ##### Allelic richness
   if(any(ploidy==2)){ # Diploid
     
     Arvec_dip <- hierfstat::allelic.richness(dat[, c("pop", loci[ploidy == 2])], diploid = TRUE)$Ar %>% 
@@ -183,12 +186,10 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
   
   Ar <- tibble::tibble(locus = c(loci, "Overall"), Ar = c(Arvec, mean(Arvec, na.rm = TRUE)))
   
-  #Join varcomp summary with Ho, Hs, and Ar
-  output <- MyTable %>% 
-    dplyr::left_join(Ho, by = "locus") %>% 
-    dplyr::left_join(Hs, by = "locus") %>% 
+  ##### Join varcomp summary with Ho, Hs, and Ar
+  output <- WC %>% 
+    dplyr::left_join(H, by = "locus") %>% 
     dplyr::left_join(Ar, by = "locus") %>% 
-    dplyr::mutate(Fis = I, Fst = P) %>% 
     dplyr::select(locus, Ho, Hs, Ar, Fis, Fst)
   
   print(Sys.time() - start.time)
