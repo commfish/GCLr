@@ -91,20 +91,38 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
     
     p <- ploidy[locus]==2
     
-    loc.wc <- hierfstat::wc(dat[, c("pop", locus)], diploid = p)
+    # Check if the locus is fixed. Fixed loci will cause the wc function to bomb because there is zero variation. 
+    nalleles <- dat[ ,locus] %>% 
+      unique() %>% 
+      na.omit() %>% 
+      as.vector() %>% 
+      length()
     
-    var_comps <- loc.wc$sigma %>% 
-      tibble::as_tibble() %>% 
-      dplyr::filter(loc == 1)
+    # If a locus is fixed, make Fst, Fis, and variance components hard zero 
+    if(nalleles == 1){
+      
+
+      tibble::tibble(locus = locus, Fst = 0, Fis = 0, a = 0, b = 0, c = 0) %>% 
+        dplyr::mutate(total_var = sum(a, b, c, na.rm = TRUE)) 
+      
+    }else{
+      
+      loc.wc <- hierfstat::wc(dat[, c("pop", locus)], diploid = p)
+      
+      var_comps <- loc.wc$sigma %>% 
+        tibble::as_tibble() %>% 
+        dplyr::filter(loc == 1)
+      
+      a_comp <- ifelse(p == TRUE, var_comps$siga[1], sum(var_comps$siga))# Among populations variance
+      
+      b_comp <- ifelse(p == TRUE, var_comps$sigb[1], sum(var_comps$sigb))# Among individuals within populations variance
+      
+      c_comp <- ifelse(p == TRUE, var_comps$sigw[1], 0) # Within-individual variance; Haploid loci don't have this component
+      
+      tibble::tibble(locus = locus, Fst = loc.wc$FST, Fis = loc.wc$FIS, a = a_comp, b = b_comp, c = c_comp) %>% 
+        dplyr::mutate(total_var = sum(a, b, c, na.rm = TRUE)) 
     
-    a_comp <- ifelse(p == TRUE, var_comps$siga[1], sum(var_comps$siga))# Among populations variance
-    
-    b_comp <- ifelse(p == TRUE, var_comps$sigb[1], sum(var_comps$sigb))# Among individuals within populations variance
-  
-    c_comp <- ifelse(p == TRUE, var_comps$sigw[1], 0) # Within-individual variance; Haploid loci don't have this component
-    
-    tibble::tibble(locus = locus, Fst = loc.wc$FST, Fis = loc.wc$FIS, a = a_comp, b = b_comp, c = c_comp) %>% 
-      dplyr::mutate(total_var = sum(a, b, c, na.rm = TRUE)) 
+    }
     
   } %>% dplyr::bind_rows()
   
