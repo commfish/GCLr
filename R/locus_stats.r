@@ -106,7 +106,7 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
     tibble::tibble(locus = locus, Fst = loc.wc$FST, Fis = loc.wc$FIS, a = a_comp, b = b_comp, c = c_comp) %>% 
       dplyr::mutate(total_var = sum(a, b, c, na.rm = TRUE)) 
     
-  } %>% bind_rows()
+  } %>% dplyr::bind_rows()
   
   parallel::stopCluster(cl)# Stop cluster
   
