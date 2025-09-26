@@ -118,7 +118,8 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
     dplyr::summarise(Fis = sum(b)/(sum(b)+sum(c)))
     
   WC_overall <- WC_per.loc %>% 
-    dplyr::summarise(locus = "Overall", Fst = sum(a)/sum(total_var), Fis = Fis_overall)
+    dplyr::summarise(locus = "Overall", Fst = sum(a)/sum(total_var)) %>% 
+    dplyr::mutate(Fis = Fis_overall$Fis)
   
   WC <- dplyr::bind_rows(WC_per.loc %>% dplyr::select(locus, Fis, Fst), WC_overall)
   
