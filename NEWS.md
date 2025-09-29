@@ -1,7 +1,7 @@
 # GCLr 0.10.0
 
 ## Enhancements
-`locus_stats` - added option to supply a hierfstat data object and added gene diversity (Hs) and allelic richness (Ar) to the output.
+`locus_stats` - added option to supply a hierfstat data object and added gene diversity (Hs) and allelic richness (Ar) to the output. The function now uses hierfstat::wc instead of hierfstat::varcop to calulate Fst and Fis and hierfstat::basic.stats to calculate Ho and Hs. This change simplified the function and it runs much faster than before.
 `qc_template` - removed the code chunk that selects QC fish (not used) and added a code chunk to the end of the markdown to produce a QC bounce workbook with alternate species individuals included in the individual conflicts table if any are found; added individual heterozygosity to flag contaminated samples; added chunk to calculate QC power (how many project fish and QC fish have legit genotypes for QC analysis?); added code chunk to remove microsatellite loci from the project data if the project type is TaqMan or GT-seq and the species is chinook; added code chunk to produce genotyping rates plot to end of project analysis to help select samples for QC analysis.
 
 ## New additions
