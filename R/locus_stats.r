@@ -107,7 +107,6 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
         as.vector() %>% 
         length()
       
-      
       # If a locus is fixed, make Fst, Fis, and variance components hard zero 
       if(nalleles == 1){
         
@@ -229,6 +228,7 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
       
       BS_dip <- hierfstat::basic.stats(dat[, c("pop", dip.loci)], diploid = TRUE)$perloc %>% 
         tibble::as_tibble(rownames = "locus") %>% 
+        dplyr::mutate(Fis = 1-(Ho/Hs)) %>% # Cannot use hierfstat::wc to calculate Fis with a single pop. Since there's no between-population structure, using Wright's direct estimator is appropriate, which yields the same value as W&C (1984) Fis.
         dplyr::select(locus, Ho, Hs, Fis, Fst)
       
     }else{BS_dip <- NULL}
@@ -238,7 +238,8 @@ locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = para
       hap.loci <- loci[ploidy == 1]
       
       BS_hap <- hierfstat::basic.stats(dat[, c("pop", hap.loci)], diploid = FALSE)$perloc %>% 
-        tibble::as_tibble(rownames = "locus") %>% 
+        tibble::as_tibble(rownames = "locus") %>%
+        dplyr::mutate(Fis = NA) %>% # Make Fis NA for haploid loci since it cannot be calculated
         dplyr::select(locus, Ho, Hs, Fis, Fst)
       
       if(length(hap.loci)== 1){ # The structure of basic.stats output is different for a single haploid locus, so have treat those differently.
