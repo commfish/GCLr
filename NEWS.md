@@ -1,4 +1,19 @@
+# GCLr 0.10.0
+
+## Enhancements
+`locus_stats` - added option to supply a hierfstat data object and added gene diversity (Hs) and allelic richness (Ar) to the output. The function now uses hierfstat::wc instead of hierfstat::varcop to calulate Fst and Fis and hierfstat::basic.stats to calculate Ho and Hs. This change simplified the function and it runs much faster than before.
+`qc_template` - removed the code chunk that selects QC fish (not used) and added a code chunk to the end of the markdown to produce a QC bounce workbook with alternate species individuals included in the individual conflicts table if any are found; added individual heterozygosity to flag contaminated samples; added chunk to calculate QC power (how many project fish and QC fish have legit genotypes for QC analysis?); added code chunk to remove microsatellite loci from the project data if the project type is TaqMan or GT-seq and the species is chinook; added code chunk to produce genotyping rates plot to end of project analysis to help select samples for QC analysis.
+
+## New additions
+`plot_rubias_IA_zscores` - This function reads in a rubias individual posteriors csv file produced by run_rubias_mix() and produces a histogram of the individual assignment (IA) z-scores.
+`calc_ind_het` - This function calculates individual heterozygosity; useful for detecting contaminated samples with GT-seq.
+
+## Documentation
+`IA_thresholds` - replaced loo_roc_rate_calc() (old function name) in the documentation with loo_rate_calc() (new function name)
+`plot_loo_prec_rec` - replaced loo_roc_rate_calc() (old function name) in the documentation with loo_rate_calc() (new function name)
+
 # GCLr 0.9.0
+
 ## Enhancements
 `run_rubias_base_eval` - updated parallel loop so it can run on all cores regardless of the number of reporting groups being tested and added a progress bar.
 

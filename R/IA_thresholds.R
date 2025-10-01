@@ -7,7 +7,7 @@
 #' 
 #' @param sa_input the unmodified output object from  [rubias::self_assign]
 #' 
-#' @param rates optional; the unmodified output object from [GCLr::loo_roc_rate_calc] created using the supplied `sa_input`. If left `NULL`, the rates will be calculated from `sa_input`. Supplying a rates object will make this function run a lot faster.
+#' @param rates optional; the unmodified output object from [GCLr::loo_rate_calc] created using the supplied `sa_input`. If left `NULL`, the rates will be calculated from `sa_input`. Supplying a rates object will make this function run a lot faster.
 #'
 #' @param min_rec the recall cutoff; default = 0.80
 #' 
@@ -24,7 +24,7 @@
 #' results from `rubias::self_assign()`and summarizes the number of true positives (TP), false negatives (FN), false positives (FP) at different assignment thresholds,
 #' and calculates the recall and precision at each threshold and returns a tibble of minimum and maximum assignment thresholds for
 #' each reporting group where `Recall >= min_rec`, `Precision >= min_pre`, and the `assignment threshold >= min_thres`. 
-#' TPR and precision are are calculated from the loo results with [GCLr::loo_roc_rate_calc] and defined as follows:\itemize{ 
+#' TPR and precision are are calculated from the loo results with [GCLr::loo_rate_calc] and defined as follows:\itemize{ 
 #'          \item \eqn{Recall = TP / (TP + FN)} Recall is also know at the true positive rate.
 #'          \item \eqn{Precision = TP / (TP + FP)}
 #'          \item {Where, *TP* = number of true positive top assignments, 

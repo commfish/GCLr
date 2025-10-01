@@ -129,9 +129,35 @@ for (silly in paste0(project_sillys,".gcl")) {
   assign(new_silly_name, get(silly))
 }
 
-rm(.password) #ditch password since no longer needed
-
 loci <- LocusControl$locusnames # grab list of loci for use later
+
+```
+
+If the project type is TaqMan or GT-seq and the project species is Chinook, the following chunk checks to see if microsatellites were run on the project and drops them from the SILLY.gcl objects and LocusControl. Otherwise, the chunk outputs "Not applicable"
+```{r remove_uSATs}
+
+if(species == "chinook" & any(project_type %in% c("TaqMan", "GT-seq"))){
+  
+  #Get the microsat loci
+  uSatloci <- c(loci[grepl("v1", loci)], paste0(loci[grepl("v1", loci)], ".1"))
+  
+  # Loop through the project sillys and drop microsat loci
+  for(silly in paste0(project_sillys, ".gcl")){
+    
+    mod <- get(silly) %>% 
+      dplyr::select(-tidyr::all_of(uSatloci))
+    
+    assign(x = silly, value = mod)
+    
+  }
+  
+  loci <- loci[!grepl("v1", loci)]
+  
+  LocusControl <- LocusControl %>% 
+    dplyr::filter(locusnames %in% loci)
+  
+}else("Not applicable")
+
 ```
 
 ## Calculate Failure Rate
@@ -152,7 +178,9 @@ failure_rate$silly_failure_rate %>%
 
 And here is a plot showing those data. 
 ```{r fail_rate_silly_plot}
+
 failure_rate$plot_silly_failure_rate
+
 ```
 
 ### Failure Rate by Locus
@@ -255,6 +283,9 @@ if (any(species %in% c("chum", "sockeye")) & any(loci %in% alt_markers) & any(lo
   # update sample size table with NA if does not meet species or loci criteria
   project_sillys_n <- project_sillys_n %>%
     dplyr::mutate(wrong_spp = NA_integer_)
+  
+  alt_indivs <- tibble::tibble(silly_fish = character(0), alternate = logical(0))
+  
 }
 ```
 
@@ -294,6 +325,41 @@ Check out the sample size table, after removing the fish with poor quality data
 ```{r samp_size_miss}
 project_sillys_n %>% 
   qc_table() # view sample size table
+```
+
+### Contamination (Heterozygosity > +/- 3.5 modified Z-score)
+
+Calculate individual heterozygosities and modified z-scores as a proxy for contamination.
+
+*Note that for QC purposes we are not removing any fish, just noting how many per silly. We need to retain all fish, as they may be helpful in resolving conflicts later.*
+```{r}
+# Function to calculate median absolute deviation (MAD)
+mad <- function(x) {
+  median(abs(x - median(x)))
+}
+
+(proj_het <- GCLr::calc_ind_het(sillyvec = project_sillys) %>% 
+   dplyr::group_by(silly) %>%  # cutoffs are specific to each silly!
+   dplyr::mutate(
+     modified_z_score = 0.6745 * (het - median(het)) / mad(het),
+     outlier = dplyr::case_when(abs(modified_z_score) > 3.5 ~ TRUE, TRUE ~ FALSE)
+   ) %>%
+   dplyr::ungroup()
+)
+```
+
+Plot distribution of heterozygosity by project silly, noting outliers that are likely contaminated.
+```{r warning=FALSE}
+proj_het %>% 
+  ggplot2::ggplot(ggplot2::aes(x = het, fill = outlier)) +
+  ggplot2::geom_histogram(binwidth = 5 / length(LocusControl$locusnames)) +
+  ggplot2::facet_wrap(~silly) +
+  ggplot2::xlim(0, 1) +
+  ggplot2::scale_fill_manual(name = "Outlier", values = c("TRUE" = "black", "FALSE" = "grey60")) +
+  ggplot2::xlab("Individual Heterozygosity") +
+  ggplot2::ylab("Frequency") +
+  ggplot2::ggtitle("Individual Heterozygosity by SILLY") +
+  ggplot2::theme_bw(base_size = 14) 
 ```
 
 ### Duplicate check.
@@ -361,23 +427,177 @@ project_sillys_n <- project_sillys_n %>%
 qc_table(project_sillys_n)
 ```
 
-This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the project extractions! 
 
-# Select QC Fish
+### Genotyping rates plots
 
-Now that a project has been vetted and you're happy with it, you can select high-quality fish for QC analysis. The function below ignores any duplicates, low quality, or wrong species, leaving a subset of high-quality fish. Using high quality fish ensures that there will be power during the QC. 
-*XXX Andy's new function should replace "sample" here.*
-```{r select_qc_fish}
-if (select.list( choices = c("Yes", "No"), preselect = "No", multiple = FALSE, title = "Select QC fish now?", graphics = TRUE) == "Yes") {
-  print("Selecting the highest quality fish that you've ever seen... ")
-  qc_fish <- sample(100)
-} else{
-  print("Not selecting QC fish at this time.")
-  qc_fish <- NA_integer_
+Check for missing samples in the tissue table.  
+```{r tissued_data}
+
+tissue_data <- GCLr::get_tissue_data(sillyvec = project_sillys, username = username, password = .password, import.vars = FALSE)
+
+missing_tissue <- tissue_data %>% 
+  dplyr::filter(IS_MISSING_PAIRED_DATA_EXISTS == "j") %>% 
+  dplyr::select(SILLY_CODE, FK_FISH_ID) %>% 
+  dplyr::mutate(SILLY_ID = paste0(SILLY_CODE, "_", FK_FISH_ID)) %>% 
+  dplyr::pull(SILLY_ID)
+
+if(length(missing_tissue) == 0){message("There are no missing samples in the project sillys")}
+
+```
+
+Create genotyping success rate object for plotting. Missing, contaminated, and wrong species samples will be given a 0% genotyping success rate in the interactive genotyping rate plots.
+```{r genotyping_rates}
+
+proj_geno <- lapply(project_sillys, function(silly){
+  
+  get(paste0(silly, "_raw.gcl"))
+  
+}) %>% 
+  dplyr::bind_rows() 
+
+contam <- proj_het %>% 
+  dplyr::filter(outlier == TRUE) %>% 
+  dplyr::pull(SillySource)
+
+  
+  wrong_spp <- alt_indivs %>% 
+  dplyr::filter(alternate == TRUE) %>% 
+  dplyr::pull(silly_fish)
+
+make_zero <- c(wrong_spp, contam, missing_tissue) %>% 
+  unique()
+
+  
+proj_geno_rates0 <- proj_geno %>%  
+  dplyr::select(COLLECTION_ID, SILLY_CODE, FK_FISH_ID, PLATE_ID, all_of(loci)) %>% 
+  tidyr::pivot_longer(dplyr::all_of(loci), names_to = "locus", values_to = "geno") %>% 
+  dplyr::group_by(COLLECTION_ID, SILLY_CODE, FK_FISH_ID, PLATE_ID) %>% 
+  tidyr::replace_na(list(geno = "0")) %>% 
+  dplyr::mutate(`Count of 0` = stringr::str_count(geno,"0") %>% sum()) %>% 
+  tidyr::pivot_wider(names_from = locus, values_from = geno) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::mutate(success_rate = 1-(`Count of 0`/length(loci)), SILLY_ID = paste(SILLY_CODE, FK_FISH_ID, sep = "_")) %>% 
+  dplyr::select(SILLY_CODE, FK_FISH_ID, SILLY_ID, PLATE_ID, `Count of 0`, success_rate) 
+
+
+if(length(make_zero) > 0){
+  
+  proj_geno_rates <- proj_geno_rates0 %>% 
+    dplyr::mutate(success_rate = dplyr::case_when(SILLY_ID %in% make_zero ~ 0,
+                                                  TRUE~success_rate)) %>% 
+    dplyr::select(SILLY_ID, PLATE_ID, success_rate)
+    
+
+  
+}else{
+  
+  proj_geno_rates <- proj_geno_rates0 %>% 
+    dplyr::select(SILLY_ID, PLATE_ID, success_rate)
+  
 }
 
-qc_fish
 ```
+Get extraction data and join with proj_geno_rates
+```{r extraction_info}
+
+plate_ids <- proj_geno_rates$PLATE_ID %>% unique()
+
+extraction_info <- GCLr::get_extraction_info(plate_ids = plate_ids, username = username, password = .password) %>% 
+  dplyr::mutate(SILLY_ID = paste0(SILLY_CODE, "_", FISH_NO)) %>% 
+  dplyr::select(WELL_NO, PLATE_ID = FK_PLATE_ID, SILLY_ID)
+
+rm(.password) #ditch password since no longer needed
+
+# This object contains adjusted success rate for each extraction plate in the project.
+plot_data <- proj_geno_rates %>% 
+  dplyr::left_join(extraction_info, by = c("SILLY_ID", "PLATE_ID")) %>% 
+  tidyr::separate(SILLY_ID, into = c("silly", "sample"), sep = "_") %>% 
+  dplyr::rename(plate = PLATE_ID, well = WELL_NO, GenotypeRate = success_rate)
+
+```
+This is a function is for saving plate heatmaps as an interactive html file.
+```{r save_tags}
+
+
+save_tags <- function (tags, file, selfcontained = TRUE, libdir = "./lib") 
+{
+  if (is.null(libdir)){
+    libdir <- paste(tools::file_path_sans_ext(basename(file)), 
+                    "_files", sep = "")
+  }
+  htmltools::save_html(tags, file = file, libdir = libdir)
+  if (selfcontained) {
+    
+    htmlwidgets:::pandoc_self_contained_html(file, file)
+    unlink(libdir, recursive = TRUE)
+  }
+  return(htmltools::tags$iframe(src= file, height = "400px", width = "100%", style="border:0;"))
+}
+
+```
+
+These plots can be used to help select high-quality samples for the QC analysis
+```{r genotype_rate_plots}
+if(!require("pacman")) install.packages("pacman");library(pacman) # install and load pacman
+p_load(htmltools, htmlwidgets, tools) # load or install+load required packages.
+
+#create platemap for plotting. Make the standard QC wells stand out with bigger circles and a red outline.
+platemap_genotypeRate_singleSNP <- plot_data %>% 
+  tidyr::separate(col = well, 
+           into = c("Row", "Column"), 
+           sep = "(?<=[A-Z])(?=[0-9])", #split between upper case letter and number
+           convert = TRUE,
+           remove = FALSE) %>% 
+  dplyr::mutate(Row = factor(Row, levels = paste(rev(LETTERS)))) %>% 
+  dplyr::mutate(size = dplyr::case_when(well %in% c("A3", "B4", "C5", "D6", "E7", "F8", "G9", "H10")~ 30,
+                                 TRUE~20),
+                outline = dplyr::case_when(well %in% c("A3", "B4", "C5", "D6", "E7", "F8", "G9", "H10")~ "#FF0000",
+                                 TRUE~"#2c7bb6"))
+
+#list of unique plates in project
+plate_list <- sort(plate_ids)
+
+
+# plot genotype rate for each plate separately using an lapply to subset the dataset for each plate
+plots <- lapply(seq_along(plate_list), function(i) {
+  subset(platemap_genotypeRate_singleSNP, platemap_genotypeRate_singleSNP$plate==plate_list[i]) %>% 
+    plotly::plot_ly(type = "scatter", # type of plot 
+            mode = "markers", # show as points
+            x = ~Column, # x variable
+            y = ~Row, # y variable
+            marker = list(size =~size, # size of points, normal QC wells will have bigger circles
+                          line = list(color = ~outline),
+                          cmax = 1, cmin = 0, # color range - hard coded 0-1
+                          color = ~GenotypeRate,# coloring according to genotype
+                          colorscale = list(c(0, 0.5, 0.70, 0.80, 1), # set breaks for colors
+                                            c("#d7191c", "#fdae61", "#ffffbf", "#ffffbf", "#2c7bb6")), # color at each break
+                          showscale = TRUE),# show the scale for the plot (i.e., legend, 0 - 1)
+            text = ~paste(silly, "_", sample), # this text will show up in the hover bubble
+            # generate hover text by pasting in text from above, adding a few line breaks with html coding (e.g.,italics, bold, breaks), genotype rate, and finally dropping extra junk
+            hovertemplate = ~paste(
+              "<b>%{text}</b><br>",
+              "GenotypeRate: ", round(GenotypeRate,2),
+              "<extra></extra>"), # remove the "trace" from beside hover bubble
+            width = 1500, #  plot width
+            height = 1000) %>% #  plot height
+    plotly::layout(xaxis = list(title = "Plate Column",
+                        tickmode = "linear"), # title for axis and setting to fixed ticks
+           yaxis = list(title = "Plate Row",
+                        tickmode = "linear"), # title for axis and setting to fixed ticks
+           title = ~paste("Plate Number:", plate_list[i]), # main plot title
+           margin = list(l = 50, r = 50, b = 200, t = 50, pad = 20)) # plot margins (space around plot axes) l = left; r = right; t = top; b = bottom
+})
+
+# generate an interactive html with plots.
+save_tags(plots, file = paste0(dirqc, "/", project, "_FilteredGenotypeRatePlots.html"), selfcontained = TRUE)
+
+message(paste0("Extraction plate genotyping rate heatmaps have been save to: ", dirqc, "/", project, "_FilteredGenotypeRatePlots.html" ))
+
+```
+
+
+Now that a project has been vetted and you're happy with it, you can select high-quality fish for QC analysis.
+This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the project extractions! 
 
 # Project Data Analysis Summary
 
@@ -403,7 +623,7 @@ Pro-tip: click here, wait no here (I kid, anywhere around here works...), and pr
 Move onto the QC genotypes now. 
 ```{r qc_genos}
 qc_files <-
-  list.files(path = "Genotype Data Files", pattern = ".csv", full.names = TRUE, recursive = FALSE)
+  list.files(path = paste0(dirqc, "/Genotype Data Files"), pattern = ".csv", full.names = TRUE, recursive = FALSE)
 
 if (project_type %in% c("TaqMan", "uSat","GT-seq")) {
   GCLr::read_qc_geno(qc_csv_filepaths = qc_files, type = project_type)
@@ -414,6 +634,7 @@ if (project_type %in% c("TaqMan", "uSat","GT-seq")) {
 qc_sillys_n <- GCLr::silly_n(sillyvec = qc_sillys)
 
 qc_sillys_n
+
 ```
     
 ## Read in Conflict Report
@@ -421,7 +642,7 @@ qc_sillys_n
 Now read in the conflict report. 
 *Note - old conflict reports have "0" for mitochondrial conflicts while the new has " " for mitochondrial conflicts, we will refer to them as "Homo-Homo".*
 ```{r concordance_files}
-qc_concordance_report_file <- list.files(path = "Conflict Reports", pattern = "Concordance", full.names = TRUE)
+qc_concordance_report_file <- list.files(path = paste0(dirqc, "/Conflict Reports"), pattern = "Concordance", full.names = TRUE)
 
 qc_concordance_report_file #verify it found the file(s)! If this is empty, it will not work.
 
@@ -437,7 +658,7 @@ The next step is to summarize the conflicts. This will be done a few ways - by p
 First, we'll take a look at the number of conflicts by plate:
 ```{r conflict_plate}
 conflicts_by_plate <- combined_conflicts %>% 
-  dplyr::group_by(plate_id, concordance_type) %>%
+  dplyr::group_by(plate_id, concordance_type, fish_id) %>%
   dplyr::summarise(n = dplyr::n(), .groups = "keep" ) %>%
   tidyr::pivot_wider(names_from = "concordance_type", values_from = "n",values_fill = 0, names_expand = TRUE) %>% 
   dplyr::mutate(Conflict = sum(`Het-Het`, `Het-Homo`, `Homo-Het`, `Homo-Homo`)) %>%
@@ -553,8 +774,38 @@ The next step is to conduct QA of the QC extractions. We're not calculating the 
 ```{r qc_rm_miss}
 miss_loci_qc <- GCLr::remove_ind_miss_loci(sillyvec = qc_sillys, proportion = 0.8)
 ```
-  
-### Duplicate check on high conflict individuals
+
+### Contamination (Heterozygosity > +/- 3.5 modified Z-score)
+
+Calculate individual heterozygosity and modified z-scores as a proxy for contamination.
+
+*Note that for QC purposes we are not removing any fish, just noting how many per silly. We need to retain all fish, as they may be helpful in resolving conflicts later.*
+```{r}
+(qc_het <- GCLr::calc_ind_het(sillyvec = qc_sillys) %>% 
+   dplyr::group_by(silly) %>%  # cutoffs are specific to each silly!
+   dplyr::mutate(
+     modified_z_score = 0.6745 * (het - median(het)) / mad(het),
+     outlier = dplyr::case_when(abs(modified_z_score) > 3.5 ~ TRUE, TRUE ~ FALSE)
+   ) %>%
+   dplyr::ungroup()
+)
+```
+
+Plot distribution of heterozygosity by project silly, noting outliers that are likely contaminated.
+```{r warning=FALSE}
+qc_het %>% 
+  ggplot2::ggplot(ggplot2::aes(x = het, fill = outlier)) +
+  ggplot2::geom_histogram(binwidth = 5 / length(LocusControl$locusnames)) +
+  ggplot2::facet_wrap(~silly) +
+  ggplot2::xlim(0, 1) +
+  ggplot2::scale_fill_manual(name = "Outlier", values = c("TRUE" = "black", "FALSE" = "grey60")) +
+  ggplot2::xlab("Individual Heterozygosity") +
+  ggplot2::ylab("Frequency") +
+  ggplot2::ggtitle("Individual Heterozygosity by SILLY") +
+  ggplot2::theme_bw(base_size = 14) 
+```
+
+## Duplicate check on high conflict individuals
 
 The last step in the process is to perform a duplicate check on any individuals which show a high degree of conflicts.
 ```{r qc_conflict_rate}
@@ -592,9 +843,53 @@ dup_check_results <- GCLr:::dupcheck_qc_conflicts(conflicts = conflicts, conflic
 ```
 
 We can take a look at the duplicate check results. Note that if the section above notes that there are no individuals with > 10% loci with conflicts between project and qc, this table will say "Not applicable".
-```{r dup_check_view}
-dup_check_results %>% 
-  qc_table()
+*Note - removing samples flagged as contaminated (heterozygosity outliers) in either project or QC.*
+```{r dup_check_no_contamination_view}
+if(!any("x" %in% names(dup_check_results))){
+  
+  dup_check_results %>%
+    dplyr::filter(!(Keysillyvial %in% (qc_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource)))) %>%  # remove contaminated QC fish
+    dplyr::filter(!(Betweensillyvial %in% (proj_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource)))) %>%  # remove contaminated project fish
+    qc_table()
+  
+}else{dup_check_results}
+```
+
+## QC Power
+
+Do we still have sufficient QC power after discounting missing loci and contaminated individuals in the project and QC? 
+
+How many legit project + QC fish per DNA plate?
+```{r}
+# pool all QC
+GCLr::pool_collections(collections = qc_sillys,
+                       loci = loci,
+                       newname = "qc_all") 
+
+# remove contaminated QC fish
+qc_all.gcl <- qc_all.gcl %>% 
+  dplyr::filter(!(SillySource %in% (qc_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource))))
+
+# pool all project
+GCLr::pool_collections(collections = project_sillys,
+                       loci = loci,
+                       newname = "project_all")
+
+# remove contaminated project fish
+project_all.gcl <- project_all.gcl %>% 
+  dplyr::filter(!(SillySource %in% (proj_het %>% dplyr::filter(outlier) %>% dplyr::pull(SillySource))))
+
+# count of legit project AND QC fish per PLATE_ID
+qc_all.gcl %>% 
+  dplyr::mutate(SillySource = stringr::str_remove_all(string = SillySource, pattern = "qc")) %>%  # remove qc from SillySource for join
+  dplyr::select(SillySource) %>% 
+  dplyr::inner_join(y = project_all.gcl %>% dplyr::select(SillySource, PLATE_ID), by = "SillySource") %>%  # inner join surviving project + QC fish
+  tidyr::separate(col = SillySource, into = c("silly", "fish_id"), sep = "_") %>% 
+  dplyr::group_by(PLATE_ID) %>% 
+  dplyr::summarise(n = dplyr::n(),  # how many fish per plate?
+                   FISH_IDs = paste(c(fish_id), collapse = ", ")) %>%  # list all fish IDs
+  dplyr::filter(n < 8) %>%  # only show plates w/o all 8 QC fish
+  dplyr::arrange(PLATE_ID)
 ```
 
 This concludes the QA section. At this point, you should have all the information necessary to decide if there are issues with the QC extractions! 
@@ -698,6 +993,45 @@ conflicts_by_locus_qc <- conflicts_by_locus %>%
 
 conflicts_by_locus_qc %>% 
   qc_table()
+```
+
+## QC Bounce Excel Workbook
+
+Create QC bounce excel file and add alternate species individuals to individual conflict table if they exist.
+
+```{r qc_bounce}
+
+rm(LocusControl)
+
+.password <- readLines(con = "//DFGANCRDC01.dfg.alaska.local/Genetics/Anchorage/Analysis/R files/usr.pw")[2] # LOKI password
+
+GCLr::qc_bounce(QC_directory = dirqc, project = project, username = username, password = .password) 
+
+rm(.password) #ditch password since no longer needed
+
+if(any(species %in% c("chum", "sockeye")) & any(loci %in% alt_markers) & any(loci %in% failed_markers) & nrow(alt_indivs) > 0){
+  
+  bounce_file <-  paste0(dirqc, "/", project, "QC_bounce.xlsx") # Bounce filename
+  
+  ind_conflicts0 <- readxl::read_xlsx(path = bounce_file, sheet = "Conflicts by individual") # Get individual conflicts
+
+  ind_conflicts <- dplyr::left_join(ind_conflicts0, alt_indivs %>% 
+                                      dplyr::filter(alternate == TRUE), by = c("SillySource" = "silly_fish")
+                                    ) %>% 
+    tidyr::replace_na(replace = list(failure = 0, alternate = 0, non_missing_alt = 0)) # Join individual conflicts with alternate species individuals
+  
+  wb <- xlsx::loadWorkbook(file = bounce_file) # Load QC bounce workbook
+  
+  xlsx::removeSheet(wb, sheetName = "Conflicts by individual") # Remove existing sheet
+  
+  mySheet <- xlsx::createSheet(wb, sheetName = "Conflicts by individual") # Create new sheet
+  
+  xlsx::addDataFrame(ind_conflicts, mySheet, startRow=nrow(ind_conflicts)+2) # Add sheet to workbook
+  
+  xlsx::saveWorkbook(wb, file = bounce_file) # Save workbook
+
+}
+
 ```
 
 # QC Data Analysis Summary
