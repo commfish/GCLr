@@ -4,20 +4,12 @@
 \alias{calc_ind_het}
 \title{Calculate individual heterozygosity}
 \usage{
-calc_ind_het(
-  sillyvec,
-  loci = LocusControl$locusnames,
-  ncores = 4,
-  LocusCtl = LocusControl
-)
+calc_ind_het(sillyvec, loci = LocusControl$locusnames, LocusCtl = LocusControl)
 }
 \arguments{
 \item{sillyvec}{A character vector of silly codes without the ".gcl" extension.}
 
 \item{loci}{A character vector of locus names; default is all \code{LocusControl$locusnames}.}
-
-\item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).
-If the number of cores exceeds the number on your device, \code{ncores} defaults to \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}} (default = LocusControl).}
 }
@@ -40,7 +32,7 @@ This function calculates individual heterozygosity across all non-\code{NA} dipl
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 loci <- names(GCLr::ex_baseline)[-c(1:4)][c(TRUE, FALSE)]
 
-GCLr::calc_ind_het(sillyvec = sillyvec, loci = loci)
+GCLr::calc_ind_het(sillyvec = sillyvec, loci = loci, LocusCtl = GCLr::ex_LocusControl)
 }
 
 }

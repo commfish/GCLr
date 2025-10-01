@@ -5,8 +5,6 @@
 #' 
 #' @param sillyvec A character vector of silly codes without the ".gcl" extension.
 #' @param loci A character vector of locus names; default is all `LocusControl$locusnames`.
-#' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
-#' If the number of cores exceeds the number on your device, `ncores` defaults to [parallel::detectCores()].
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
 #' 
 #' @returns A tibble with 1 row per individual and the following 6 columns:
@@ -24,48 +22,35 @@
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 #' loci <- names(GCLr::ex_baseline)[-c(1:4)][c(TRUE, FALSE)]
 #' 
-#' GCLr::calc_ind_het(sillyvec = sillyvec, loci = loci)
+#' GCLr::calc_ind_het(sillyvec = sillyvec, loci = loci, LocusCtl = GCLr::ex_LocusControl)
 #' }
 #' 
 #' @export
 calc_ind_het <- 
   function(sillyvec, 
            loci = LocusControl$locusnames, 
-           ncores = 4,
            LocusCtl = LocusControl) {
     
   start.time <- Sys.time() 
   
-  if(!all(loci %in% LocusControl$locusnames)){
+  if(!all(loci %in% LocusCtl$locusnames)){
     
-    stop(paste0("'", setdiff(loci, LocusControl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
-    
-  }
-  
-  if(any(LocusControl$ploidy[loci] != 2)) {
-    
-    message(paste0("Dropping non-diploid loci:\n", paste(names(which(LocusControl$ploidy[loci] != 2)), collapse = "\n")))
-    
-    loci <- setdiff(loci, names(which(LocusControl$ploidy[loci] != 2)))
+    stop(paste0("'", setdiff(loci, LocusCtl$locusnames), "' from argument 'loci' not found in 'LocusControl' object!!!"))
     
   }
   
-  if(ncores > parallel::detectCores()) {
+  if(any(LocusCtl$ploidy[loci] != 2)) {
     
-    stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
+    message(paste0("Dropping non-diploid loci:\n", paste(names(which(LocusCtl$ploidy[loci] != 2)), collapse = "\n")))
+    
+    loci <- setdiff(loci, names(which(LocusCtl$ploidy[loci] != 2)))
     
   }
   
   all.gcl <- sapply(sillyvec, function(silly) {get(paste0(silly, ".gcl"), pos = 1)}, simplify = FALSE)
   
-  cl <- parallel::makePSOCKcluster(ncores)
-  
-  doParallel::registerDoParallel(cl, cores = ncores)
-  
-  `%dopar%` <- foreach::`%dopar%`
-  
   # Start parallel loop
-  het <- foreach::foreach(silly = sillyvec, .packages = c("tidyverse")) %dopar% {
+  het <- lapply(sillyvec, function(silly){
     
     my.gcl <- all.gcl[[silly]]
     
@@ -80,7 +65,7 @@ calc_ind_het <-
     
     dose2 <- my.gcl %>%
       dplyr::select(SillySource, dplyr::all_of(paste0(loci, ".1"))) %>%
-      dplyr::rename_at(vars(paste0(loci, ".1")), ~ loci) %>%
+      dplyr::rename_at(dplyr::vars(paste0(loci, ".1")), ~ loci) %>%
       tidyr::pivot_longer(
         cols = -SillySource,
         names_to = "locus",
@@ -90,7 +75,7 @@ calc_ind_het <-
     
     if(all.equal(dose1$SillySource, dose2$SillySource) & all.equal(dose1$locus, dose2$locus)) {
       
-      my.gcl_tall <- dplyr::bind_cols(dose1, select(dose2, dose2))  # faster
+      my.gcl_tall <- dplyr::bind_cols(dose1, dplyr::select(dose2, dose2))  # faster
       
     } else {
       
@@ -104,10 +89,8 @@ calc_ind_het <-
                        ploci = nloci / length(loci),
                        het = sum(dose1 != dose2) / nloci)
     
-  } %>%
+  }) %>%
     dplyr::bind_rows()
-  
-  parallel::stopCluster(cl)  # end parallel loop
   
   output <- het %>%
     tidyr::separate(
