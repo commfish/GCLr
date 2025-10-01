@@ -14,7 +14,7 @@
 #'       \item \code{locus}: locus name
 #'       \item \code{Ho}: observed heterozygosity calculated by [hierfstat::basic.stats()]
 #'       \item \code{Hs}: gene diversity (a.k.a. expected heterozygosity) calculated by [hierfstat::basic.stats()]
-#'       \item \code{Ar}: allelic richness calculated by [hierfstat::allelic.richness()]
+#'       \item \code{Ar}: allelic richness across populations calculated by [hierfstat::allelic.richness()]
 #'       \item \code{Fis}: Weir and Cockerham (1984) Fis calculated by [hierfstat::wc()]
 #'       \item \code{Fst}: Weir and Cockerham (1984) Fst calculated by [hierfstat::wc()]
 #'       }       
@@ -23,7 +23,9 @@
 #' This function uses \pkg{hierfstat} to calculate locus statistics for Ho, Hs, Ar, Fis, and Fst. If a hierfstat data object is supplied (recommended), sillyvec and loci objects
 #' are not needed, and the function runs a lot faster.  If a hierfstat data object is not supplied (i.e., data = NULL) and sillyvec and loci objects are supplied, the
 #' function will create a temporary hierfstat data object to calculate the locus statistics. The hierfstat data object produced by this function is not assigned to your workspace, so it's best 
-#' to create a data object using [GCLr::create_hierfstat_data()] if you want to use the object for something else.
+#' to create a data object using [GCLr::create_hierfstat_data()] if you want to use the object for something else. This function excludes the region column in the supplied data 
+#' object to produce allelic richness across populations. To produce allelic richness by population group, you will need to run [hierfstat::allelic.richness()] outside of this function and supply region and pop columns.
+#' 
 #' 
 #' @seealso 
 #' [hierfstat::wc()]
