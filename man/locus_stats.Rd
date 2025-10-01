@@ -4,15 +4,22 @@
 \alias{locus_stats}
 \title{Calculate Basic Locus Statistics}
 \usage{
-locus_stats(sillyvec, loci, ncores = 4, LocusCtl = LocusControl)
+locus_stats(
+  data = NULL,
+  sillyvec = NULL,
+  loci = NULL,
+  ncores = parallel::detectCores(),
+  LocusCtl = LocusControl
+)
 }
 \arguments{
-\item{sillyvec}{A character vector of silly codes without the ".gcl" extension.}
+\item{data}{a hierfstat data object (default = NULL).}
 
-\item{loci}{A character vector of locus names.}
+\item{sillyvec}{A character vector of silly codes without the ".gcl" extension (default = NULL).}
 
-\item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).
-The number of cores cannot exceeds the number on your device (\code{\link[parallel:detectCores]{parallel::detectCores()}}).}
+\item{loci}{A character vector of locus names (default = NULL).}
+
+\item{ncores}{ncores A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = parallel::detectCores())}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}} (default = LocusControl).}
 }
@@ -21,26 +28,38 @@ A tibble with 1 row per locus in \code{loci} + "Overall" and the following 4 col
 \itemize{
 \item \code{locus}: locus name
 \item \code{Ho}: observed heterozygosity calculated by \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
-\item \code{Fis}: Fis calculated by \code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
-\item \code{Fst}: Fst calculated by \code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
+\item \code{Hs}: gene diversity (a.k.a. expected heterozygosity) calculated by \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
+\item \code{Ar}: allelic richness across populations calculated by \code{\link[hierfstat:allelic.richness]{hierfstat::allelic.richness()}}
+\item \code{Fis}: Weir and Cockerham (1984) Fis calculated by \code{\link[hierfstat:wc]{hierfstat::wc()}}
+\item \code{Fst}: Weir and Cockerham (1984) Fst calculated by \code{\link[hierfstat:wc]{hierfstat::wc()}}
 }
 }
 \description{
-This function calculates basic locus statistics (Ho, Fis, Fst) for each locus across collections (silly code).
+This function calculates basic locus statistics for each locus across collections (silly code).
 }
 \details{
-This function uses \code{\link[hierfstat:hierfstat]{hierfstat::hierfstat()}} to calculate locus statistics for Ho, Fis, and Fst.
+This function uses \pkg{hierfstat} to calculate locus statistics for Ho, Hs, Ar, Fis, and Fst. If a hierfstat data object is supplied (recommended), sillyvec and loci objects
+are not needed, and the function runs a lot faster.  If a hierfstat data object is not supplied (i.e., data = NULL) and sillyvec and loci objects are supplied, the
+function will create a temporary hierfstat data object to calculate the locus statistics. The hierfstat data object produced by this function is not assigned to your workspace, so it's best
+to create a data object using \code{\link[=create_hierfstat_data]{create_hierfstat_data()}} if you want to use the object for something else. This function excludes the region column in the supplied data
+object to produce allelic richness across populations. To produce allelic richness by population group, you will need to run \code{\link[hierfstat:allelic.richness]{hierfstat::allelic.richness()}} outside of this function and supply region and pop columns.
 }
 \examples{
   
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
-  
-GCLr::locus_stats(sillyvec = sillyvec, loci = GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33)], ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl )
+
+loci <- ((get(paste0(sillyvec[1], ".gcl")) \%>\% names())[-c(1:19)])[seq(1, 185, by = 2)]
+
+dat <- GCLr::create_hierfstat_data(sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
+
+GCLr::locus_stats(data = dat, sillyvec = NULL, loci = NULL, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying data object
+
+GCLr::locus_stats(data = NULL, sillyvec = sillyvec, loci = loci, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying sillyvec and loci
 
 }
 \seealso{
-\code{\link[hierfstat:hierfstat]{hierfstat::hierfstat()}}
-\code{\link[hierfstat:varcomp]{hierfstat::varcomp()}}
+\code{\link[hierfstat:wc]{hierfstat::wc()}}
 \code{\link[hierfstat:basic.stats]{hierfstat::basic.stats()}}
+\code{\link[hierfstat:allelic.richness]{hierfstat::allelic.richness()}}
 \code{\link[=create_hierfstat_data]{create_hierfstat_data()}}
 }
