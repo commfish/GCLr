@@ -14,7 +14,8 @@ custom_comb_msgsi_output(
   nburn = NULL,
   thin = NULL,
   nchains = NULL,
-  keep_burn = NULL
+  keep_burn = NULL,
+  harvest = NULL
 )
 }
 \arguments{
@@ -38,6 +39,9 @@ Same object as \code{\link[Ms.GSI:stratified_estimator_msgsi]{Ms.GSI::stratified
 \item{nchains}{Number of independent MCMC chains used in \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}. Only used if not providing \code{path} to folder containing output .csv files.}
 
 \item{keep_burn}{Boolean to save the burn-in iterations or not used in \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}, default is \code{FALSE}. Only used if not providing \code{path} to folder containing output .csv files.}
+
+\item{harvest}{An optional harvest number for calculating the probability of p = 0 used in \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}. A proportion is considered as 0 if it's less than 5e-7 by default.
+If harvest number is provided, p = 0 is calculated as 0.5 / harvest of that stock (i.e., half a fish). Only used if not providing \code{path} to folder containing output .csv files.}
 }
 \value{
 A tibble with 9 fields.

@@ -16,6 +16,8 @@
 #' @param thin Frequency to thin iterations in the output used in [Ms.GSI::msgsi_mdl()]. Only used if not providing `path` to folder containing output .csv files.
 #' @param nchains Number of independent MCMC chains used in [Ms.GSI::msgsi_mdl()]. Only used if not providing `path` to folder containing output .csv files.
 #' @param keep_burn Boolean to save the burn-in iterations or not used in [Ms.GSI::msgsi_mdl()], default is `FALSE`. Only used if not providing `path` to folder containing output .csv files.
+#' @param harvest An optional harvest number for calculating the probability of p = 0 used in [Ms.GSI::msgsi_mdl()]. A proportion is considered as 0 if it's less than 5e-7 by default. 
+#'                If harvest number is provided, p = 0 is calculated as 0.5 / harvest of that stock (i.e., half a fish). Only used if not providing `path` to folder containing output .csv files.
 #' 
 #' @return A tibble with 9 fields.
 #'   - \code{group}: Character vector of reporting groups specified in `new_pop_info$new_repunit` (factor for ordering, plotting purposes if `group_names_new` provided).
@@ -56,7 +58,8 @@ custom_comb_msgsi_output <- function(mdl_out = NULL,
                                      nburn = NULL,
                                      thin = NULL,
                                      nchains = NULL,
-                                     keep_burn = NULL
+                                     keep_burn = NULL,
+                                     harvest = NULL
 ) {
   
   
@@ -77,6 +80,7 @@ custom_comb_msgsi_output <- function(mdl_out = NULL,
     thin <- msgsi_specs["thin",]
     nchains <- msgsi_specs["nchains",]
     keep_burn <- as.logical(msgsi_specs["keep_burn",])
+    harvest <- msgsi_specs["harvest",]
     
     trace_comb <- readr::read_csv(file = file.path(path, mix, "trace_comb.csv"),
                                   show_col_types = FALSE)
@@ -118,7 +122,7 @@ custom_comb_msgsi_output <- function(mdl_out = NULL,
     lapply(p_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
   )
   
-  summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
+  summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv) {
     
     lapply(combo_file, function(rlist) rlist[keeplist, ]) %>%
       dplyr::bind_rows() %>%
@@ -129,7 +133,8 @@ custom_comb_msgsi_output <- function(mdl_out = NULL,
         sd = stats::sd(value),
         ci.05 = stats::quantile(value, 0.05),
         ci.95 = stats::quantile(value, 0.95),
-        p0 = mean(value < 5e-7),  # need to update to incorporate harvest, like Bobby said; Numeric constant specifying how low stock comp is before assuming 0, used for `P=0` calculation, default is from BAYES/rubias.
+        p0 = {if (is.null(harv)) mean(value < 5e-7)
+          else mean(value < (0.5/ max(1, harv * mean)))},
         .by = name
       ) %>%
       dplyr::mutate(
@@ -153,7 +158,8 @@ custom_comb_msgsi_output <- function(mdl_out = NULL,
     keeplist = keep_list,
     mc_file = mc_pop,
     groupnames = group_names_new,
-    n_ch = nchains
+    n_ch = nchains,
+    harv = harvest
   ) %>% 
     dplyr::mutate(group = factor(x = group, levels = group_names_new))
   
