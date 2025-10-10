@@ -1,3 +1,6 @@
+## New additions
+`custom_comb_msgsi_out` - this function is used to roll up Ms.GSI output from fine-scale to broad-scale groups, similar to `custom_comb_rubias_output`. It works with either the raw Ms.GSI::msgsi_mdl() output list object or saved output .csv files.
+
 # GCLr 0.10.0
 
 ## Enhancements
