@@ -75,12 +75,14 @@ custom_comb_msgsi_output <- function(mdl_out = NULL,
     msgsi_specs <- readr::read_csv(file = file.path(path, mix, "msgsi_specs.csv"),
                                    show_col_types = FALSE) %>%
       tibble::column_to_rownames("name")
+
     nreps <- msgsi_specs["nreps",]
     nburn <- msgsi_specs["nburn",]
     thin <- msgsi_specs["thin",]
     nchains <- msgsi_specs["nchains",]
     keep_burn <- as.logical(msgsi_specs["keep_burn",])
     harvest <- msgsi_specs["harvest",]
+    if(is.na(harvest)) {harvest <- NULL}
     
     trace_comb <- readr::read_csv(file = file.path(path, mix, "trace_comb.csv"),
                                   show_col_types = FALSE)
