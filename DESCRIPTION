@@ -42,7 +42,8 @@ Imports:
     leaflet,
     terra,
     sf,
-    exifr
+    exifr,
+    parallelly
 Depends: R (>= 3.5.0)
 License: `use_gpl3_license()`
 Encoding: UTF-8
