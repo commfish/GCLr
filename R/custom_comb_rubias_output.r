@@ -74,7 +74,7 @@ custom_comb_rubias_output <-
            ) {
 
   # Error catching ----
-  if (ncores > parallel::detectCores()) {
+  if (ncores > parallelly::availableCores()) {
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
   }
     

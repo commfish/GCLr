@@ -20,7 +20,7 @@
 #' @examples
 #' \dontrun{
 #'
-#' select_qc_samps(project = "K215", username = "awbarclay", password = "mypassword", ncores = parallel::detectCores())
+#' select_qc_samps(project = "K215", username = "awbarclay", password = "mypassword", ncores = parallelly::availableCores())
 #'  
 #' }
 #'

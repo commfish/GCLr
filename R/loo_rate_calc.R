@@ -42,7 +42,7 @@
 #' @rdname loo_rate_calc
 #' 
 #' @export 
-loo_rate_calc <- function(data, thres_levels, group_names, ncores = parallel::detectCores()) {
+loo_rate_calc <- function(data, thres_levels, group_names, ncores = parallelly::availableCores()) {
   
   rubias_loo_vars <- c("indiv", "collection", "repunit", "inferred_collection", "inferred_repunit", 
                        "scaled_likelihood", "log_likelihood", "z_score", "n_non_miss_loci", 

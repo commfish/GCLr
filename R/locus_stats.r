@@ -6,7 +6,7 @@
 #' @param data a hierfstat data object (default = NULL).
 #' @param sillyvec A character vector of silly codes without the ".gcl" extension (default = NULL).
 #' @param loci A character vector of locus names (default = NULL).
-#' @param ncores ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = parallel::detectCores())
+#' @param ncores ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = parallelly::availableCores())
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
 #'
 #' @returns A tibble with 1 row per locus in `loci` + "Overall" and the following 4 columns:
@@ -39,16 +39,16 @@
 #' 
 #' loci <- ((get(paste0(sillyvec[1], ".gcl")) %>% names())[-c(1:19)])[seq(1, 185, by = 2)]
 #' 
-#' dat <- GCLr::create_hierfstat_data(sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
+#' dat <- GCLr::create_hierfstat_data(sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = parallelly::availableCores(), LocusCtl = GCLr::ex_LocusControl)
 #' 
-#' GCLr::locus_stats(data = dat, sillyvec = NULL, loci = NULL, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying data object
+#' GCLr::locus_stats(data = dat, sillyvec = NULL, loci = NULL, ncores = parallelly::availableCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying data object
 #'
-#' GCLr::locus_stats(data = NULL, sillyvec = sillyvec, loci = loci, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying sillyvec and loci
+#' GCLr::locus_stats(data = NULL, sillyvec = sillyvec, loci = loci, ncores = parallelly::availableCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying sillyvec and loci
 #' 
 #' @export
-locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = parallel::detectCores(), LocusCtl = LocusControl) {
+locus_stats <- function(data = NULL, sillyvec = NULL, loci = NULL, ncores = parallelly::availableCores(), LocusCtl = LocusControl) {
   
-  if(ncores > parallel::detectCores()) {
+  if(ncores > parallelly::availableCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
     

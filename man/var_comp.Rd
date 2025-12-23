@@ -10,7 +10,7 @@ var_comp(
   groupvec,
   fstatfile = NULL,
   LocusCtl = LocusControl,
-  ncores = parallel::detectCores()
+  ncores = parallelly::availableCores()
 )
 }
 \arguments{

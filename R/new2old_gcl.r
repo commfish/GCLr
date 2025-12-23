@@ -16,7 +16,7 @@
 #' 
 #' sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 #' 
-#' GCLr::new2old_gcl(sillyvec = sillyvec, save_new = TRUE, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
+#' GCLr::new2old_gcl(sillyvec = sillyvec, save_new = TRUE, ncores = parallelly::availableCores(), LocusCtl = GCLr::ex_LocusControl)
 #' 
 #' @export
 new2old_gcl <- function(sillyvec, save_new = FALSE, ncores = 4, LocusCtl = LocusControl){

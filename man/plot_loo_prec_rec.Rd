@@ -14,7 +14,7 @@ plot_loo_prec_rec(
   min_thres = 0.5,
   thres_levels = seq(0.01, 0.99, by = 0.01),
   plots = c("facet", "paired", "both")[3],
-  ncores = parallel::detectCores()
+  ncores = parallelly::availableCores()
 )
 }
 \arguments{
@@ -76,7 +76,7 @@ The plots produced by this function are not intended for publications; however, 
 sa_input <- rubias::self_assign(reference = GCLr::ex_baseline, gen_start_col = 5)
 
 # Plots are returned as a list when more than one plot is produced 
-plots <- GCLr::plot_loo_prec_rec(sa_input, group_colors = c("red", "green", "blue"), by_group = FALSE, min_rec = 0.80, min_pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01), plots = c("facet", "paired", "both")[3], ncores = parallel::detectCores())
+plots <- GCLr::plot_loo_prec_rec(sa_input, group_colors = c("red", "green", "blue"), by_group = FALSE, min_rec = 0.80, min_pre = 0.95, min_thres = 0.50, thres_levels = seq(0.01, 0.99, by = 0.01), plots = c("facet", "paired", "both")[3], ncores = parallelly::availableCores())
 
 plots[[1]] # This is how you would look at the first plot in the list
      

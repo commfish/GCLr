@@ -34,7 +34,7 @@
 #'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
 #'   unique()
 #' 
-#' dist.mat <- GCLr::pairwise_fst(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), ncores = parallel::detectCores())
+#' dist.mat <- GCLr::pairwise_fst(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), ncores = parallelly::availableCores())
 #' 
 #' group_info <- GCLr::ex_baseline %>%
 #'   dplyr::group_by(collection) %>%

@@ -40,7 +40,7 @@
 #' @references Weir, B.S. 1995. Genetic Data Analysis. Sinauer Associates, Inc. Sunderland, MA. (pg 184)
 #' 
 #' @export
-var_comp <- function(sillyvec, loci, groupvec, fstatfile = NULL, LocusCtl = LocusControl, ncores = parallel::detectCores()){
+var_comp <- function(sillyvec, loci, groupvec, fstatfile = NULL, LocusCtl = LocusControl, ncores = parallelly::availableCores()){
 
   names(sillyvec) <- NULL
   

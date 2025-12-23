@@ -24,7 +24,7 @@ create_pwfst_tree(
 \item{nboots}{A numeric value indicating the number of bootstrap iterations (default = 1000).}
 
 \item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).
-The number of cores cannot exceeds the number on your device (\code{\link[parallel:detectCores]{parallel::detectCores()}}).}
+The number of cores cannot exceeds the number on your device (\code{\link[parallelly:availableCores]{parallelly::availableCores()}}).}
 
 \item{returnbootstrapFst}{A logical value indicating whether to return the Fst matrix for each bootstrap iteration (default = \code{FALSE}).}
 
@@ -73,7 +73,7 @@ Depending on the size of your baseline and number of bootstrap iterations, this 
     gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
     unique()
   
-  GCLr::create_pwfst_tree(sillyvec = sillyvec, loci = loci, dir = NULL, nboots = 1000, ncores = parallel::detectCores(), returnbootstrapFst = FALSE)
+  GCLr::create_pwfst_tree(sillyvec = sillyvec, loci = loci, dir = NULL, nboots = 1000, ncores = parallelly::availableCores(), returnbootstrapFst = FALSE)
   
 }
 

@@ -25,6 +25,6 @@ This function checks if all the required objects exist in the environment and co
 
 sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
-GCLr::new2old_gcl(sillyvec = sillyvec, save_new = TRUE, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
+GCLr::new2old_gcl(sillyvec = sillyvec, save_new = TRUE, ncores = parallelly::availableCores(), LocusCtl = GCLr::ex_LocusControl)
 
 }

@@ -30,9 +30,9 @@
 #' dir.create(path = "~/GENEPOP")
 #' 
 #' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = path.expand("~/GENEPOP"), VialNums = TRUE, usat = FALSE, 
-#'                   ncores = parallel::detectCores(), npops = 1, LocusCtl = GCLr::ex_LocusControl) 
+#'                   ncores = parallelly::availableCores(), npops = 1, LocusCtl = GCLr::ex_LocusControl) 
 #' 
-#' LDresults <- GCLr::test_LD(genepopFiles = list.files(path.expand("~/GENEPOP")), path = path.expand("~/GENEPOP"), batches = 14, iterations = 1, ncores = parallel::detectCores())
+#' LDresults <- GCLr::test_LD(genepopFiles = list.files(path.expand("~/GENEPOP")), path = path.expand("~/GENEPOP"), batches = 14, iterations = 1, ncores = parallelly::availableCores())
 #'
 #' GCLr::summarize_LD(LDresults, alpha = 0.05, prop_sign_pops = 0.5)
 #' 

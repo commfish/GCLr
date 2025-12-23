@@ -36,7 +36,7 @@
 #'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
 #'   unique()
 #' 
-#'  GCLr::plot_quick_tree(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), popnames = paste0("Pop", seq(sillyvec)), ncores = parallel::detectCores(), groupvec = groupvec, regioncol = c("red", "green", "blue"), cex = 0.75)
+#'  GCLr::plot_quick_tree(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), popnames = paste0("Pop", seq(sillyvec)), ncores = parallelly::availableCores(), groupvec = groupvec, regioncol = c("red", "green", "blue"), cex = 0.75)
 #'
 #' @export
 plot_quick_tree <- function(sillyvec, loci, inputfile, popnames = NULL, ncores = 4, groupvec = NULL, regioncol = NULL, cex = 1){

@@ -13,7 +13,7 @@
 #'  @param conflict_rate the conflict rate for determining which samples to investigate. This is assigned at the beginning of the QC script.
 #'  @param project_sillys a character vector of silly codes included in the project
 #'  @param LocusCtl an object created by [GCLr::create_locuscontrol()], (default = `LocusControl`)
-#'  @param ncores the number of cores to run in parallel (default = [parallel::detectCores()])
+#'  @param ncores the number of cores to run in parallel (default = [parallelly::availableCores()])
 #'  
 #'  @seealso [GCLr::create_locuscontrol()]
 #'  @seealso [GCLr::dupcheck_among_sillys()]
@@ -26,7 +26,7 @@
 #'  @note this function is only used in the QC script, so it's not exported to the package namespace
 #'  
 #'  @keywords invisible
-dupcheck_qc_conflicts <- function(conflicts, conflict_rate, project_sillys, LocusCtl = LocusControl, ncores = parallel::detectCores()){
+dupcheck_qc_conflicts <- function(conflicts, conflict_rate, project_sillys, LocusCtl = LocusControl, ncores = parallelly::availableCores()){
   
  # Filter for conflicts > conflict_rate
  conflicts_investigate <- conflicts %>%

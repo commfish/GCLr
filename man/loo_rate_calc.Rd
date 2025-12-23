@@ -9,7 +9,7 @@ loo_rate_calc(
   data,
   thres_levels,
   group_names,
-  ncores = parallel::detectCores()
+  ncores = parallelly::availableCores()
 )
 }
 \arguments{

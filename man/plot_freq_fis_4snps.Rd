@@ -47,7 +47,7 @@ If only 1 \code{pch} is supplied it will be recycled for all groups (default \co
 default = 0.5).}
 
 \item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).
-If the number of cores exceeds the number on your device (\code{\link[parallel:detectCores]{parallel::detectCores()}}), then all cores will be used.}
+If the number of cores exceeds the number on your device (\code{\link[parallelly:availableCores]{parallelly::availableCores()}}), then all cores will be used.}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}} (default = LocusControl).}
 

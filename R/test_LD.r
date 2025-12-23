@@ -34,16 +34,16 @@
 #' dir.create(path = "~/GENEPOP")
 #' 
 #' GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = path.expand("~/GENEPOP"), VialNums = TRUE, usat = FALSE, 
-#'                   ncores = parallel::detectCores(), npops = 1, LocusCtl = GCLr::ex_LocusControl) 
+#'                   ncores = parallelly::availableCores(), npops = 1, LocusCtl = GCLr::ex_LocusControl) 
 #' 
-#' GCLr::test_LD(genepopFiles = list.files(path.expand("~/GENEPOP")), path = path.expand("~/GENEPOP"), batches = 14, iterations = 1, ncores = parallel::detectCores())
+#' GCLr::test_LD(genepopFiles = list.files(path.expand("~/GENEPOP")), path = path.expand("~/GENEPOP"), batches = 14, iterations = 1, ncores = parallelly::availableCores())
 #'
 #' }
 #'
 #' @export
-test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, iterations = 5000, ncores = parallel::detectCores() - 1){
+test_LD <- function(path, genepopFiles, dememorizations = 10000, batches = 100, iterations = 5000, ncores = parallelly::availableCores() - 1){
 
-  if(ncores > parallel::detectCores()) {
+  if(ncores > parallelly::availableCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
     
