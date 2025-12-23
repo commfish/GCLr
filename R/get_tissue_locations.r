@@ -89,9 +89,9 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
         # Freezer 99 - acceptable locations are: ###_UppercaseLetter
         UNIT %in% unit[stringr::str_detect(unit, "99")] &
           !stringr::str_detect(string = shelf_id, pattern = "[0-9]{3}_[A-Z]") ~ "wrong",
-        # Warehouse - acceptable locations are: W[1-33]_[1-10]
+        # Warehouse - acceptable locations are: W[1-36]_[1-10]
         UNIT %in% unit[stringr::str_detect(unit, "^(W[A-Z])$")] &
-          !stringr::str_detect(string = shelf_id, pattern = "^([1-9]|1[0-9]|2[0-9]|3[0-3])_([1-9]|10)$") ~ "wrong",
+          !stringr::str_detect(string = shelf_id, pattern = "^([1-9]|1[0-9]|2[0-9]|3[0-6])_([1-9]|10)$") ~ "wrong",
         # Freezer 101,102,103 - acceptable locations are: UppercaseLetter[A-E]_[1-6]
         UNIT %in% unit[stringr::str_detect(unit, "101|102|103")] &
           !stringr::str_detect(string = shelf_id, pattern = "^([A-E])_([1-6])$") ~ "wrong",
