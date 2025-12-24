@@ -1,22 +1,22 @@
-#' Custom Combine \pkg{Ms.GSI} Output
+#' Custom Combine *Ms.GSI* Output
 #'
-#' This function computes summary statistics from \pkg{Ms.GSI} output, similar to `custom_comb_rubias_output()`.
+#' This function computes summary statistics from [*Ms.GSI*](https://github.com/boppingshoe/Ms.GSI) output, similar to `custom_comb_rubias_output()`.
 #' It is primarily used to "roll up" reporting groups from fine-scale to broad-scale.
 #' Output is a single tibble with `mixture` as a column. It can take either the `mdl_out` list 
-#' object from [Ms.GSI::msgsi_mdl()], OR it can read in the .csv output files created by [Ms.GSI::msgsi_mdl()].
+#' object from `Ms.GSI::msgsi_mdl()`, OR it can read in the .csv output files created by `Ms.GSI::msgsi_mdl()`.
 #'
-#' @param mdl_out Output list object from [Ms.GSI::msgsi_mdl()].
-#' @param path Path to \pkg{Ms.GSI} directory containing `mix` folder with output .csv files specified by `file_path` argument in [Ms.GSI::msgsi_mdl()].
+#' @param mdl_out Output list object from `Ms.GSI::msgsi_mdl()`.
+#' @param path Path to \pkg{Ms.GSI} directory containing `mix` folder with output .csv files specified by `file_path` argument in `Ms.GSI::msgsi_mdl()`.
 #' @param mix Character vector of length 1 with mixture silly, used to read in output .csv files if `mdl_out = NULL`.
 #' @param new_pop_info Tibble with 2 columns: `repunit` with existing fine-scale groups and `new_repunit` for rolled up broad-scale groups. 
-#'                     Same object as [Ms.GSI::stratified_estimator_msgsi()] input.
+#'                     Same object as `Ms.GSI::stratified_estimator_msgsi()` input.
 #' @param group_names_new Optional character vector of new group_names for ordering as factor.
-#' @param nreps Total number of iterations (includes burn-ins) used in [Ms.GSI::msgsi_mdl()]. Only used if not providing `path` to folder containing output .csv files.
-#' @param nburn Number of warm-up iterations used in [Ms.GSI::msgsi_mdl()]. Only used if not providing `path` to folder containing output .csv files.
-#' @param thin Frequency to thin iterations in the output used in [Ms.GSI::msgsi_mdl()]. Only used if not providing `path` to folder containing output .csv files.
-#' @param nchains Number of independent MCMC chains used in [Ms.GSI::msgsi_mdl()]. Only used if not providing `path` to folder containing output .csv files.
-#' @param keep_burn Boolean to save the burn-in iterations or not used in [Ms.GSI::msgsi_mdl()], default is `FALSE`. Only used if not providing `path` to folder containing output .csv files.
-#' @param harvest An optional harvest number for calculating the probability of p = 0 used in [Ms.GSI::msgsi_mdl()]. A proportion is considered as 0 if it's less than 5e-7 by default. 
+#' @param nreps Total number of iterations (includes burn-ins) used in `Ms.GSI::msgsi_mdl()`. Only used if not providing `path` to folder containing output .csv files.
+#' @param nburn Number of warm-up iterations used in `Ms.GSI::msgsi_mdl()`. Only used if not providing `path` to folder containing output .csv files.
+#' @param thin Frequency to thin iterations in the output used in `Ms.GSI::msgsi_mdl()`. Only used if not providing `path` to folder containing output .csv files.
+#' @param nchains Number of independent MCMC chains used in `Ms.GSI::msgsi_mdl()`. Only used if not providing `path` to folder containing output .csv files.
+#' @param keep_burn Boolean to save the burn-in iterations or not used in `Ms.GSI::msgsi_mdl()`, default is `FALSE`. Only used if not providing `path` to folder containing output .csv files.
+#' @param harvest An optional harvest number for calculating the probability of p = 0 used in `Ms.GSI::msgsi_mdl()`. A proportion is considered as 0 if it's less than 5e-7 by default. 
 #'                If harvest number is provided, p = 0 is calculated as 0.5 / harvest of that stock (i.e., half a fish). Only used if not providing `path` to folder containing output .csv files.
 #' 
 #' @return A tibble with 9 fields.
