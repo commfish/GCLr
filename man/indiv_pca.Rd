@@ -4,7 +4,7 @@
 \alias{indiv_pca}
 \title{Individual Principal Component Analysis (PCA)}
 \usage{
-indiv_pca(file, groupvec, groups, ncomp = 3)
+indiv_pca(file, groupvec, groups, scale_freqs = FALSE, ncomp = 3)
 }
 \arguments{
 \item{file}{the file path of a GENEPOP file with .gen extension containing individual genotypes. Make sure that each individual in the file has a unique identifier (e.g., popA_1, popA_2, popA_3). If using \code{\link[=gcl2genepop]{gcl2genepop()}} to create the GENEPOP file, set \code{VialNums = TRUE}.}
@@ -12,6 +12,8 @@ indiv_pca(file, groupvec, groups, ncomp = 3)
 \item{groupvec}{A numeric vector indicating the group affiliation of each collection in the GENEPOP file.}
 
 \item{groups}{A character vector of group names with a length equal to the maximum value in \code{groupvec}}
+
+\item{scale_freqs}{A logical vector of length 1 that controls whether individual allele frequencies are scaled (i.e., variance = 1); default = \code{FALSE}. \code{TRUE} gives you DAPC (discriminant analysis of principal components), \code{FALSE} gives you covariance PCA.}
 
 \item{ncomp}{The number of principal coordinates to include in the output (default = 3).}
 }
@@ -31,6 +33,9 @@ This function requires the adegenet and ade4 packages.
 For this function to work properly, the GENEPOP file must have a ".gen" extension (required by \code{\link[adegenet:read.genepop]{adegenet::read.genepop()}}), and
 each individual must have a unique identifier (see "file" argument description). The output of this function can be supplied to \code{\link[=plot_indiv_pca]{plot_indiv_pca()}} to plot the first 3 principal components of the analysis in an interactive 3-dimensional scatter plot.
 The variance explained by each principal coordinate are calculated from the eigen values in the raw PCA output (i.e., (pca.raw$eig)/sum(pca.raw$eig)).
+When \code{scale_freqs} is \code{TRUE} you get DAPC (discriminant analysis of principal components, i.e., how can pre-defined groups best be separated?), which will upweight any rare alleles and can cause individuals with rare alleles to show up as outliers.
+When \code{scale_freqs} is \code{FALSE}, you get normal, covariance PCA (i.e., what are the major axes of overall genetic variation), which will not produce extreme outliers if individuals have rare alleles.
+It is recommended to use covariance PCA to explore population structure and DAPC when groups are known and you want maximal discrimination.
 }
 \examples{
 
@@ -48,7 +53,7 @@ groupvec <- group_info$group \%>\%
   factor(levels = groups) \%>\%
   as.numeric()
 
-indiv_pca(file = file, groupvec = groupvec, groups = groups, ncomp = 3)
+indiv_pca(file = file, groupvec = groupvec, groups = groups, scale_freqs = FALSE, ncomp = 3)
 
 }
 \seealso{
