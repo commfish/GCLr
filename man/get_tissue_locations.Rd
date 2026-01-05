@@ -31,7 +31,7 @@ this function assigns the following objects to your workspace:
 \item \code{bad_locations}: an object consisting of all tissues within Loki, containing unexpected, missing, or otherwise incorrect location information (i.e., SHELF_RACK and/or SLOT)
 }
 
-The this function also writes an Excel workbook to "V:\Lab\Archive Storage\Archive Sample Maps from R" containing the following sheets:
+The this function also writes an Excel workbook to \verb{V:\\Lab\\Archive Storage\\Archive Sample Maps} from R containing the following sheets:
 \itemize{
 \item \code{Map}: a table mapping out all the tissues for a storage unit (this is the same as the tissuemap object)
 \item \code{Tissues per storageID}: a table with the number of tissues per storage ID; tissue counts less than 100 are highlighted in blue.
