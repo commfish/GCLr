@@ -66,15 +66,15 @@
 #' \dontrun{
 #' 
 #'    sample_sizes <- GCLr::base_eval_sample_sizes(sillyvec = sillyvec, group_names = group_names, groupvec = groupvec, scenarios = round(seq(.01, 1, .01), 2), mixsize = 200, maxprop = 0.5, seed = 123)
-#'    GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = parallel::detectCores())
+#'    GCLr::create_rubias_base_eval(sillyvec = sillyvec, group_names = group_names, test_groups = group_names, loci = loci, groupvec = groupvec, sample_sizes = sample_sizes, prprtnl = TRUE, seed = 123, ncores = parallelly::availableCores())
 #'    tests <- sample_sizes %>% group_by(test_group, scenario) %>% summarize(test_group = test_group %>% unique(), scenario = scenario %>% unique(), .groups = "drop_last")
-#'    GCLr::run_rubias_base_eval(tests = tests, group_names = group_names, gen_start_col = 5, base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = parallel::detectCores())
+#'    GCLr::run_rubias_base_eval(tests = tests, group_names = group_names, gen_start_col = 5, base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", seed = 56, ncores = parallelly::availableCores())
 #' 
 #' }
 #'    
 #' @export
 run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", method = "MCMC", alle_freq_prior = list(const_scaled = 1), pi_prior = NA, 
-                                  pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100, prelim_reps = NULL, prelim_burn_in = NULL, sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1, seed = 56, ncores = parallel::detectCores(), file_type = c("fst", "csv")[1], out_file_type = c("fst", "csv")[1]){
+                                  pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100, prelim_reps = NULL, prelim_burn_in = NULL, sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1, seed = 56, ncores = parallelly::availableCores(), file_type = c("fst", "csv")[1], out_file_type = c("fst", "csv")[1]){
  
   start_time <- Sys.time()
   

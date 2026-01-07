@@ -16,7 +16,7 @@
 #' (default = 5000).
 #' @param threshold A numeric vector of length 1 specifying how low stock comp is before assume 0, used for `P=0` calculation, (default = 5e-7).
 #' @param ncores An optional numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
-#' If the number of cores exceeds the number on your device ([parallel::detectCores()]), then all cores will be used. Note that `ncores` is 
+#' If the number of cores exceeds the number on your device ([parallelly::availableCores()]), then all cores will be used. Note that `ncores` is 
 #' only used if `method = "both"`.
 #' @param file_type the file type of the mixture output files .fst (default and faster) or .csv files.
 #'
@@ -70,7 +70,7 @@
 #'                              tidyr::separate(files, into = c("mixture", NA), sep = "_repunit_trace.csv") %>% 
 #'                              dplyr::pull(mixture))
 #' 
-#' eval_output <- GCLr::summarize_rubias_base_eval(mixvec = mixvec, path = path, sample_sizes = sample_sizes, ncores = parallel::detectCores(), file_type = "csv")
+#' eval_output <- GCLr::summarize_rubias_base_eval(mixvec = mixvec, path = path, sample_sizes = sample_sizes, ncores = parallelly::availableCores(), file_type = "csv")
 #' 
 #' }
 #' 
@@ -88,7 +88,7 @@ summarize_rubias_base_eval <- function(
   start_time <- Sys.time()
   
   # Error catching ----
-  if (ncores > parallel::detectCores()) {
+  if (ncores > parallelly::availableCores()) {
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine"    )
   }
   

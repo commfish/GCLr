@@ -9,7 +9,7 @@ dupcheck_qc_conflicts(
   conflict_rate,
   project_sillys,
   LocusCtl = LocusControl,
-  ncores = parallel::detectCores()
+  ncores = parallelly::availableCores()
 )
 }
 \description{
@@ -26,7 +26,7 @@ This function checks samples with conflict rates > \code{conflict_rate} and runs
 @param conflict_rate the conflict rate for determining which samples to investigate. This is assigned at the beginning of the QC script.
 @param project_sillys a character vector of silly codes included in the project
 @param LocusCtl an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = \code{LocusControl})
-@param ncores the number of cores to run in parallel (default = \code{\link[parallel:detectCores]{parallel::detectCores()}})
+@param ncores the number of cores to run in parallel (default = \code{\link[parallelly:availableCores]{parallelly::availableCores()}})
 
 @seealso \code{\link[=create_locuscontrol]{create_locuscontrol()}}
 @seealso \code{\link[=dupcheck_among_sillys]{dupcheck_among_sillys()}}

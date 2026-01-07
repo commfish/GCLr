@@ -136,22 +136,26 @@ loci <- LocusControl$locusnames # grab list of loci for use later
 If the project type is TaqMan or GT-seq and the project species is Chinook, the following chunk checks to see if microsatellites were run on the project and drops them from the SILLY.gcl objects and LocusControl. Otherwise, the chunk outputs "Not applicable"
 ```{r remove_uSATs}
 
-if(species == "chinook" & any(project_type %in% c("TaqMan", "GT-seq"))){
-  
-  #Get the microsat loci
-  uSatloci <- c(loci[grepl("v1", loci)], paste0(loci[grepl("v1", loci)], ".1"))
+Ots_uSATs <- c("Ogo2v1", "Ogo4v1", "Oki100v1", "Omm1080v1", "Ots201bv1", "Ots208bv1", 
+"Ots211v1", "Ots212v2", "Ots213v1", "Ots3Mv1", "Ots9v1", "OtsG474v1", 
+"Ssa408uosv1") #These are the 13 GAPS uSATs
+
+n_uSATs <- match(Ots_uSATs, loci) %>% 
+  length()
+
+if(species == "chinook" & any(project_type %in% c("TaqMan", "GT-seq")) & n_uSATs > 0){
   
   # Loop through the project sillys and drop microsat loci
   for(silly in paste0(project_sillys, ".gcl")){
     
     mod <- get(silly) %>% 
-      dplyr::select(-tidyr::all_of(uSatloci))
+      dplyr::select(-tidyr::all_of(Ots_uSATs))
     
     assign(x = silly, value = mod)
     
   }
   
-  loci <- loci[!grepl("v1", loci)]
+  loci <- loci[-match(Ots_uSATs, loci)]
   
   LocusControl <- LocusControl %>% 
     dplyr::filter(locusnames %in% loci)
@@ -345,7 +349,7 @@ mad <- function(x) {
      outlier = dplyr::case_when(abs(modified_z_score) > 3.5 ~ TRUE, TRUE ~ FALSE)
    ) %>%
    dplyr::ungroup()
-)
+) %>% qc_table()
 ```
 
 Plot distribution of heterozygosity by project silly, noting outliers that are likely contaminated.
@@ -788,7 +792,7 @@ Calculate individual heterozygosity and modified z-scores as a proxy for contami
      outlier = dplyr::case_when(abs(modified_z_score) > 3.5 ~ TRUE, TRUE ~ FALSE)
    ) %>%
    dplyr::ungroup()
-)
+) %>% qc_table()
 ```
 
 Plot distribution of heterozygosity by project silly, noting outliers that are likely contaminated.

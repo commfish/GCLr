@@ -85,7 +85,7 @@ stratified_estimator_rubias <-
            ncores = 4) {
   
   # Error catching ----
-  if(ncores > parallel::detectCores()) {
+  if(ncores > parallelly::availableCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
     
@@ -407,6 +407,15 @@ stratified_estimator_rubias <-
                        loCI = quantile(rho_pi, probs = lo_CI),
                        hiCI = quantile(rho_pi, probs = hi_CI),
                        `P=0` = mean(rho_pi < threshold), .groups = "drop") %>% # summary statistics to return
+      dplyr::mutate(loCI = replace(loCI, which(loCI < 0), 0),
+                    loCI_harv = replace(loCI_harv, which(loCI_harv < 0), 0),
+                    median = replace(median, which(median < 0), 0),
+                    median_harv = replace(median_harv, which(median_harv < 0), 0),
+                    mean = replace(mean, which(mean < 0), 0),
+                    mean_harv = replace(mean_harv, which(mean_harv < 0), 0)) %>% # prevent negative stock comps and harvest from parametric bootstrap
+      dplyr::mutate(hiCI = replace(hiCI, which(hiCI > 1), 1),
+                    median = replace(median, which(median > 1), 1),
+                    mean = replace(mean, which(mean > 1), 1)) %>% # prevent > 1 stock comps from parametric bootstrap
       magrittr::set_colnames(c("stratified_mixture", "repunit",
                                "mean_harv", "sd_harv", "median_harv", 
                                paste0(lo_CI * 100, "%_harv"), paste0(hi_CI * 100, "%_harv"),
@@ -468,8 +477,16 @@ stratified_estimator_rubias <-
                        .groups = "drop") %>% # summary statistics to return
       dplyr::mutate(hiCI_backcalc = replace(hiCI_backcalc, which(hiCI_backcalc > 1), 1),
                     median_backcalc = replace(median_backcalc, which(median_backcalc > 1), 1),
-                    mean_backcalc = replace(mean_backcalc, which(mean_backcalc > 1), 1)) %>% 
-      
+                    mean_backcalc = replace(mean_backcalc, which(mean_backcalc > 1), 1),
+                    loCI = replace(loCI, which(loCI < 0), 0),
+                    loCI_backcalc = replace(loCI_backcalc, which(loCI_backcalc < 0), 0),
+                    loCI_harv = replace(loCI_harv, which(loCI_harv < 0), 0),
+                    median = replace(median, which(median < 0), 0),
+                    median_backcalc = replace(median_backcalc, which(median_backcalc < 0), 0),
+                    median_harv = replace(median_harv, which(median_harv < 0), 0),
+                    mean = replace(mean, which(mean < 0), 0),
+                    mean_backcalc = replace(mean_backcalc, which(mean_backcalc < 0), 0),
+                    mean_harv = replace(mean_harv, which(mean_harv < 0), 0)) %>% # prevent stock comps < 0 or > 1
       magrittr::set_colnames(c("stratified_mixture", "repunit",
                                "mean_harv", "sd_harv", "median_harv", 
                                paste0(lo_CI * 100, "%_harv"), paste0(hi_CI * 100, "%_harv"),

@@ -50,7 +50,7 @@ loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33, 97, 98)]
 dir.create(path = "~/GENEPOP")
 
 GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = path.expand("~/GENEPOP/my_genepop.txt"), VialNums = TRUE, usat = FALSE,
-                  ncores = parallel::detectCores(), npops = NULL, LocusCtl = GCLr::ex_LocusControl)
+                  ncores = parallelly::availableCores(), npops = NULL, LocusCtl = GCLr::ex_LocusControl)
 
 genepop::test_HW(inputFile = path.expand("~/GENEPOP/my_genepop.txt"))
 

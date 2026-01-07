@@ -25,7 +25,7 @@ dupcheck_within_silly(
 
 \item{minproportion}{The proportion of shared non-missing loci that must be shared between individuals to be reported as a matching pair. This is passed through to \link{rubias} as well.}
 
-\item{ncores}{The number of cores to use in a \link[foreach:foreach]{foreach::\%dopar\%} loop. If the number of cores exceeds the number on your device, then \code{ncores} defaults to \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
+\item{ncores}{The number of cores to use in a \link[foreach:foreach]{foreach::\%dopar\%} loop. If the number of cores exceeds the number on your device, then \code{ncores} defaults to \code{\link[parallelly:availableCores]{parallelly::availableCores()}}.}
 
 \item{LocusCtl}{An object created by \link{create_locuscontrol}. Default is \emph{LocusControl}.}
 }

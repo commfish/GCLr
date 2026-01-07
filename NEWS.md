@@ -1,21 +1,47 @@
+# GCLr 0.11.1
+
+## Bug fixes
+
+`stratified_estimator_rubias`- updated to prevent stock comps \< 0 or \> 1 due to parametric bootstrap bias correction
+
+`qc_template.RMD`- modified the "remove uSATs" code chunk so it runs without an error message when species = Chinook.
+
+`parallelly::availableCores` - all GCLr functions that do parallel processing have been updated to use parallelly::availableCores() instead of parallel::detectCores(). On the GCL cluster, cores are assigned by a workload manager and nodes are shared between users, and parallel::detectCores() can give you the incorrect number of cores that can be used.
+
+`custom_comb_msgsi_output` - removed references to the Ms.GSI package in the documentation. Ms.GSI is not a dependency of the GCLr package and the references in the documentation were causing errors when installing GCLr for users that do not have Ms.GSI installed in their R library. Ms.GSI cannot be added as a dependency because it is not on the CRAN and cannot be installed automatically from GitHub.
+
+`get_tissue_location` - updated to detect bad locations with SHELF/RACK numbers up to 36
+
+`indiv_pca` - added a scale_freqs argument to allow users to decide whether to scale allele frequencies or not, and changed default behavior to produce covariance PCA (i.e., scale_freqs = FALSE) instead of discriminant analysis of principal components (DAPC) (i.e., scale_freqs = TRUE)
+
+## Enhancments
+
+`qc_template.RMD`- added table formatting to the contamination chunks so the user can look at more than 100 pages and search for values in the tibble.
+
+`get_tissue_location` - added "tissues per sotrageID" and "storageIDs per slot" tables to the output and changed output file from a .csv to a formatted .xlsx workbook.
+
 # GCLr 0.11.0
 
 ## New additions
+
 `custom_comb_msgsi_out` - this function is used to roll up Ms.GSI output from fine-scale to broad-scale groups, similar to `custom_comb_rubias_output`. It works with either the raw Ms.GSI::msgsi_mdl() output list object or saved output .csv files.
 
 # GCLr 0.10.0
 
 ## Enhancements
+
 `locus_stats` - added option to supply a hierfstat data object and added gene diversity (Hs) and allelic richness (Ar) to the output. The function now uses hierfstat::wc instead of hierfstat::varcop to calulate Fst and Fis and hierfstat::basic.stats to calculate Ho and Hs. This change simplified the function and it runs much faster than before.
 
 `qc_template` - removed the code chunk that selects QC fish (not used) and added a code chunk to the end of the markdown to produce a QC bounce workbook with alternate species individuals included in the individual conflicts table if any are found; added individual heterozygosity to flag contaminated samples; added chunk to calculate QC power (how many project fish and QC fish have legit genotypes for QC analysis?); added code chunk to remove microsatellite loci from the project data if the project type is TaqMan or GT-seq and the species is chinook; added code chunk to produce genotyping rates plot to end of project analysis to help select samples for QC analysis.
 
 ## New additions
+
 `plot_rubias_IA_zscores` - This function reads in a rubias individual posteriors csv file produced by run_rubias_mix() and produces a histogram of the individual assignment (IA) z-scores.
 
 `calc_ind_het` - This function calculates individual heterozygosity; useful for detecting contaminated samples with GT-seq.
 
 ## Documentation
+
 `IA_thresholds` - replaced loo_roc_rate_calc() (old function name) in the documentation with loo_rate_calc() (new function name)
 
 `plot_loo_prec_rec` - replaced loo_roc_rate_calc() (old function name) in the documentation with loo_rate_calc() (new function name)
@@ -23,23 +49,26 @@
 # GCLr 0.9.0
 
 ## Enhancements
+
 `run_rubias_base_eval` - updated parallel loop so it can run on all cores regardless of the number of reporting groups being tested and added a progress bar.
 
 ## New additions
+
 `get_collection_info` - this function pulls a collection information report from Loki
 
 # GCLr 0.8.1
 
 ## Bug fixes
+
 `custom_comb_rubias_output` - fixed issue where an error would occur when resummarizing from the collection_trace output.
 
 # GCLr 0.8.0
 
 ## Enhancements
+
 `custom_comb_rubias_output` - added ability to summarize '.fst' rubias output files and a progress bar that appears while building the repunit trace from files.
 
-`summarize_rubias_base_eval` - previously this function called on
-custom_comb_rubias_output() to get the eval estimates; however, evaluations with thousands of test mixtures were taking a long time (days) to summarize, and sometimes it would never finish. Now this is a stand alone function that is reduced down to only what is need for summarizing baseline evaluation mixtures. The parallel process for summarizing the evaluation output has been streamlined to work much faster. Now large numbers of mixtures can be summarize in minutes and the function shows a progress bar. Added ability to summarize '.fst' rubias output files.
+`summarize_rubias_base_eval` - previously this function called on custom_comb_rubias_output() to get the eval estimates; however, evaluations with thousands of test mixtures were taking a long time (days) to summarize, and sometimes it would never finish. Now this is a stand alone function that is reduced down to only what is need for summarizing baseline evaluation mixtures. The parallel process for summarizing the evaluation output has been streamlined to work much faster. Now large numbers of mixtures can be summarize in minutes and the function shows a progress bar. Added ability to summarize '.fst' rubias output files.
 
 `create_rubias_base` - added optional '.fst' output file
 
@@ -48,7 +77,8 @@ custom_comb_rubias_output() to get the eval estimates; however, evaluations with
 `plot_baseline_eval` - added optional 'group_names' argument to make sure groups are plotted in the correct order.
 
 ## Bug fixes
-`base_eval_sample_sizes` - the sample sizes returned by this function are now rounded to the nearest whole number. 
+
+`base_eval_sample_sizes` - the sample sizes returned by this function are now rounded to the nearest whole number.
 
 `create_rubias_base_eval` - the example code has been corrected so it will work properly. When reading in mixture and baseline csv files, the col_types now default to character to avoid incorrect col_types errors in rubias.
 
@@ -58,7 +88,7 @@ custom_comb_rubias_output() to get the eval estimates; however, evaluations with
 
 `inviv_pca` - reads in a GENEPOP file and performs an individual Principal Component Analysis.
 
-`plot_indiv_pca` - takes the raw output from indiv_pca() and plots the coordinates for the first 3 principal components in an interactive 3-dimensional scatter plot. 
+`plot_indiv_pca` - takes the raw output from indiv_pca() and plots the coordinates for the first 3 principal components in an interactive 3-dimensional scatter plot.
 
 ex_genepop.gen - GENEPOP file for examples; this is the same as ex_genepop.txt, but has the .gen extension required by adegenet::read.genepop()
 
@@ -80,7 +110,7 @@ ex_genepop.gen - GENEPOP file for examples; this is the same as ex_genepop.txt, 
 
 ## Enhancements
 
-`run_rubias_mix()` - This function is now able to run multiple MCMC chains in rubias.	To run multiple chains, set nchains = (pick a number). For single chain, nchain = 1 (default). The output from the function is saved as .csv files that have a new column "chain".	
+`run_rubias_mix()` - This function is now able to run multiple MCMC chains in rubias. To run multiple chains, set nchains = (pick a number). For single chain, nchain = 1 (default). The output from the function is saved as .csv files that have a new column "chain".
 
 `custom_comb_rubias_output()` - updated to summarize multiple chains. Outputs created previously can still be summarized (backwards compatible)
 

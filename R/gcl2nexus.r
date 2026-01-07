@@ -23,7 +23,7 @@
 #'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
 #'   unique()
 #' 
-#' gcl2nexus(sillyvec = sillys, loci = loci, path = path.expand("~/nexusfile.nex"), VialNums = TRUE, PopNames = NULL, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
+#' gcl2nexus(sillyvec = sillys, loci = loci, path = path.expand("~/nexusfile.nex"), VialNums = TRUE, PopNames = NULL, ncores = parallelly::availableCores(), LocusCtl = GCLr::ex_LocusControl)
 #' 
 #' @export
 gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, ncores = 4, LocusCtl = LocusControl){
@@ -37,7 +37,7 @@ gcl2nexus <- function(sillyvec, loci, path, VialNums = TRUE, PopNames = NULL, nc
     }
   
   
-  if(ncores > parallel::detectCores()) {
+  if(ncores > parallelly::availableCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
     

@@ -8,7 +8,7 @@
 #' @param group_names character vector of group names the length of \code{max(groupvec)}
 #' @param groupvec a numeric vector indicating the group affiliation of each pop in `sillyvec`
 #' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
-#' The number of cores cannot exceeds the number on your device ([parallel::detectCores()]).
+#' The number of cores cannot exceeds the number on your device ([parallelly::availableCores()]).
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
 #'
 #' @returns A matrix of F~CT~ values between reporting groups
@@ -45,9 +45,9 @@
 #'  pairwise_fct(sillyvec = sillyvec, loci = loci, group_names = group_names,  groupvec = groupvec, ncores = 20, LocusCtl = GCLr::ex_LocusControl)
 #' 
 #' @export
-pairwise_fct <- function(sillyvec, loci, group_names, groupvec, ncores = parallel::detectCores(), LocusCtl = LocusControl) {
+pairwise_fct <- function(sillyvec, loci, group_names, groupvec, ncores = parallelly::availableCores(), LocusCtl = LocusControl) {
     
-    if(ncores > parallel::detectCores()) {
+    if(ncores > parallelly::availableCores()) {
       
       stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
       

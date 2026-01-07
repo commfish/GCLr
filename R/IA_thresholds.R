@@ -47,7 +47,7 @@ IA_thresholds <- function(sa_input, rates = NULL, min_rec = 0.80, min_pre = 0.95
   
   if(is.null(rates)){
     
-    rates <- GCLr::loo_rate_calc(data = sa_input, thres_levels = seq(0.01, 0.99, by = 0.01), group_names = group_names, ncores = parallel::detectCores())
+    rates <- GCLr::loo_rate_calc(data = sa_input, thres_levels = seq(0.01, 0.99, by = 0.01), group_names = group_names, ncores = parallelly::availableCores())
     
   }
     

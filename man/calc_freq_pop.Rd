@@ -17,7 +17,7 @@ calc_freq_pop(
 \item{loci}{A character vector of locus names; default is all \code{LocusControl$locusnames}.}
 
 \item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).
-If the number of cores exceeds the number on your device, \code{ncores} defaults to \code{\link[parallel:detectCores]{parallel::detectCores()}}.}
+If the number of cores exceeds the number on your device, \code{ncores} defaults to \code{\link[parallelly:availableCores]{parallelly::availableCores()}}.}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}} (default = LocusControl).}
 }

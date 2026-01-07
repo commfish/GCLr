@@ -23,7 +23,7 @@
 #'   gsub(pattern = "*\\.1", x = ., replacement = "") %>%
 #'   unique()
 #' 
-#' GCLr::pairwise_fst(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), ncores = parallel::detectCores())
+#' GCLr::pairwise_fst(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), ncores = parallelly::availableCores())
 #' 
 #' @export
 pairwise_fst <- function(sillyvec, loci, inputfile, popnames = NULL, ncores = 4){

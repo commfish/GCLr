@@ -2,7 +2,7 @@
 % Please edit documentation in R/custom_comb_msgsi_output.r
 \name{custom_comb_msgsi_output}
 \alias{custom_comb_msgsi_output}
-\title{Custom Combine \pkg{Ms.GSI} Output}
+\title{Custom Combine \emph{Ms.GSI} Output}
 \usage{
 custom_comb_msgsi_output(
   mdl_out = NULL,
@@ -19,28 +19,28 @@ custom_comb_msgsi_output(
 )
 }
 \arguments{
-\item{mdl_out}{Output list object from \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}.}
+\item{mdl_out}{Output list object from \code{Ms.GSI::msgsi_mdl()}.}
 
-\item{path}{Path to \pkg{Ms.GSI} directory containing \code{mix} folder with output .csv files specified by \code{file_path} argument in \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}.}
+\item{path}{Path to \pkg{Ms.GSI} directory containing \code{mix} folder with output .csv files specified by \code{file_path} argument in \code{Ms.GSI::msgsi_mdl()}.}
 
 \item{mix}{Character vector of length 1 with mixture silly, used to read in output .csv files if \code{mdl_out = NULL}.}
 
 \item{new_pop_info}{Tibble with 2 columns: \code{repunit} with existing fine-scale groups and \code{new_repunit} for rolled up broad-scale groups.
-Same object as \code{\link[Ms.GSI:stratified_estimator_msgsi]{Ms.GSI::stratified_estimator_msgsi()}} input.}
+Same object as \code{Ms.GSI::stratified_estimator_msgsi()} input.}
 
 \item{group_names_new}{Optional character vector of new group_names for ordering as factor.}
 
-\item{nreps}{Total number of iterations (includes burn-ins) used in \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}. Only used if not providing \code{path} to folder containing output .csv files.}
+\item{nreps}{Total number of iterations (includes burn-ins) used in \code{Ms.GSI::msgsi_mdl()}. Only used if not providing \code{path} to folder containing output .csv files.}
 
-\item{nburn}{Number of warm-up iterations used in \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}. Only used if not providing \code{path} to folder containing output .csv files.}
+\item{nburn}{Number of warm-up iterations used in \code{Ms.GSI::msgsi_mdl()}. Only used if not providing \code{path} to folder containing output .csv files.}
 
-\item{thin}{Frequency to thin iterations in the output used in \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}. Only used if not providing \code{path} to folder containing output .csv files.}
+\item{thin}{Frequency to thin iterations in the output used in \code{Ms.GSI::msgsi_mdl()}. Only used if not providing \code{path} to folder containing output .csv files.}
 
-\item{nchains}{Number of independent MCMC chains used in \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}. Only used if not providing \code{path} to folder containing output .csv files.}
+\item{nchains}{Number of independent MCMC chains used in \code{Ms.GSI::msgsi_mdl()}. Only used if not providing \code{path} to folder containing output .csv files.}
 
-\item{keep_burn}{Boolean to save the burn-in iterations or not used in \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}, default is \code{FALSE}. Only used if not providing \code{path} to folder containing output .csv files.}
+\item{keep_burn}{Boolean to save the burn-in iterations or not used in \code{Ms.GSI::msgsi_mdl()}, default is \code{FALSE}. Only used if not providing \code{path} to folder containing output .csv files.}
 
-\item{harvest}{An optional harvest number for calculating the probability of p = 0 used in \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}. A proportion is considered as 0 if it's less than 5e-7 by default.
+\item{harvest}{An optional harvest number for calculating the probability of p = 0 used in \code{Ms.GSI::msgsi_mdl()}. A proportion is considered as 0 if it's less than 5e-7 by default.
 If harvest number is provided, p = 0 is calculated as 0.5 / harvest of that stock (i.e., half a fish). Only used if not providing \code{path} to folder containing output .csv files.}
 }
 \value{
@@ -58,10 +58,10 @@ A tibble with 9 fields.
 }
 }
 \description{
-This function computes summary statistics from \pkg{Ms.GSI} output, similar to \code{custom_comb_rubias_output()}.
+This function computes summary statistics from \href{https://github.com/boppingshoe/Ms.GSI}{\emph{Ms.GSI}} output, similar to \code{custom_comb_rubias_output()}.
 It is primarily used to "roll up" reporting groups from fine-scale to broad-scale.
 Output is a single tibble with \code{mixture} as a column. It can take either the \code{mdl_out} list
-object from \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}, OR it can read in the .csv output files created by \code{\link[Ms.GSI:msgsi_mdl]{Ms.GSI::msgsi_mdl()}}.
+object from \code{Ms.GSI::msgsi_mdl()}, OR it can read in the .csv output files created by \code{Ms.GSI::msgsi_mdl()}.
 }
 \examples{
 \dontrun{

@@ -8,7 +8,7 @@ locus_stats(
   data = NULL,
   sillyvec = NULL,
   loci = NULL,
-  ncores = parallel::detectCores(),
+  ncores = parallelly::availableCores(),
   LocusCtl = LocusControl
 )
 }
@@ -19,7 +19,7 @@ locus_stats(
 
 \item{loci}{A character vector of locus names (default = NULL).}
 
-\item{ncores}{ncores A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = parallel::detectCores())}
+\item{ncores}{ncores A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = parallelly::availableCores())}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}} (default = LocusControl).}
 }
@@ -50,11 +50,11 @@ sillyvec <- GCLr::base2gcl(GCLr::ex_baseline)
 
 loci <- ((get(paste0(sillyvec[1], ".gcl")) \%>\% names())[-c(1:19)])[seq(1, 185, by = 2)]
 
-dat <- GCLr::create_hierfstat_data(sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)
+dat <- GCLr::create_hierfstat_data(sillyvec, region = NULL, pop = seq_along(sillyvec), loci = loci, ncores = parallelly::availableCores(), LocusCtl = GCLr::ex_LocusControl)
 
-GCLr::locus_stats(data = dat, sillyvec = NULL, loci = NULL, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying data object
+GCLr::locus_stats(data = dat, sillyvec = NULL, loci = NULL, ncores = parallelly::availableCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying data object
 
-GCLr::locus_stats(data = NULL, sillyvec = sillyvec, loci = loci, ncores = parallel::detectCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying sillyvec and loci
+GCLr::locus_stats(data = NULL, sillyvec = sillyvec, loci = loci, ncores = parallelly::availableCores(), LocusCtl = GCLr::ex_LocusControl)#Supplying sillyvec and loci
 
 }
 \seealso{

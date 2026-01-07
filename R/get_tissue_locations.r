@@ -15,11 +15,19 @@
 #'    \item \code{all_tissues}: an object consisting of all tissues Loki, within a storage unit
 #'    \item \code{bad_locations}: an object consisting of all tissues within Loki, containing unexpected, missing, or otherwise incorrect location information (i.e., SHELF_RACK and/or SLOT)
 #'    }
+#'    
+#' The this function also writes an Excel workbook to `V:\Lab\Archive Storage\Archive Sample Maps` from R containing the following sheets:
+#' \itemize{
+#'    \item \code{Map}: a table mapping out all the tissues for a storage unit (this is the same as the tissuemap object)
+#'    \item \code{Tissues per storageID}: a table with the number of tissues per storage ID; tissue counts less than 100 are highlighted in blue.
+#'    \item \code{StorageIDs per slot}: a table with the number of storage IDs per slot
+#'    }
+
+#'    
 #' @details
 #' This function best when run with a single type of unit (e.g., all of B7, all of Warehouse). 
 #' You can combine but the output could get messy due to different shelf naming conventions.
 #' If you set `all_tissues = TRUE` the resulting output will be very large!
-#'    
 #'    
 #' @examples
 #' \dontrun{
@@ -89,9 +97,9 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
         # Freezer 99 - acceptable locations are: ###_UppercaseLetter
         UNIT %in% unit[stringr::str_detect(unit, "99")] &
           !stringr::str_detect(string = shelf_id, pattern = "[0-9]{3}_[A-Z]") ~ "wrong",
-        # Warehouse - acceptable locations are: W[1-33]_[1-10]
+        # Warehouse - acceptable locations are: W[1-36]_[1-10]
         UNIT %in% unit[stringr::str_detect(unit, "^(W[A-Z])$")] &
-          !stringr::str_detect(string = shelf_id, pattern = "^([1-9]|1[0-9]|2[0-9]|3[0-3])_([1-9]|10)$") ~ "wrong",
+          !stringr::str_detect(string = shelf_id, pattern = "^([1-9]|1[0-9]|2[0-9]|3[0-6])_([1-9]|10)$") ~ "wrong",
         # Freezer 101,102,103 - acceptable locations are: UppercaseLetter[A-E]_[1-6]
         UNIT %in% unit[stringr::str_detect(unit, "101|102|103")] &
           !stringr::str_detect(string = shelf_id, pattern = "^([A-E])_([1-6])$") ~ "wrong",
@@ -183,7 +191,8 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
     dplyr::group_modify( ~ {
       .x %>%
         dplyr::mutate(row = dplyr::row_number())
-    }) # experimental magic... - modifies groups, based on previous group_by(); I am simply getting row numbers here
+    }) %>% 
+    dplyr::mutate(row = as.character(row))# experimental magic... - modifies groups, based on previous group_by(); I am simply getting row numbers here
   
   ## Create tissue location map
   tissuemap <- data_map %>%
@@ -201,21 +210,75 @@ get_tissue_locations <- function(unit, username, password, bad_locations = TRUE,
     envir = .GlobalEnv
   )
   
-  ## write a csv of the tissue map to the folder:
-  readr::write_csv(x = tissuemap, file = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/tissuemap_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv"))
+  ## Number of tissues per barcode
+  barcode_tissues <- 
+    dataSubset %>%
+    dplyr::select(silly = SILLY_CODE, tissue = PK_TISSUE_TYPE, fish_ID = FK_FISH_ID, STORAGE_ID, UNIT, SHELF_RACK, SLOT) %>% 
+    dplyr::distinct() %>% 
+    tidyr::unite(col = "UNIT_SHELF_RACK_SLOT", UNIT,SHELF_RACK, SLOT, sep = "_", remove = FALSE) %>% 
+    dplyr::group_by(UNIT, SHELF_RACK, SLOT, UNIT_SHELF_RACK_SLOT, STORAGE_ID) %>% 
+    dplyr::summarize(tissue_count = length(STORAGE_ID), .groups = "drop") %>% 
+    dplyr::mutate(STORAGE_ID = paste0("'", STORAGE_ID))
+    
+  ## Number of barcodes per slot
+  barcodes_per_slot <- 
+    dataSubset %>%
+    dplyr::select(silly = SILLY_CODE, tissue = PK_TISSUE_TYPE, fish_ID = FK_FISH_ID, STORAGE_ID, UNIT, SHELF_RACK, SLOT) %>% 
+    dplyr::distinct() %>% 
+    dplyr::select(UNIT, SHELF_RACK, SLOT, STORAGE_ID) %>% 
+    dplyr::group_by(UNIT, SHELF_RACK, SLOT) %>% 
+    dplyr::summarize(STORAGE_ID_count = length(unique(STORAGE_ID))) %>% 
+    tidyr::unite(col = "UNIT_SHELF_RACK_SLOT", UNIT, SHELF_RACK, SLOT, sep = "_", remove = FALSE) %>% 
+    dplyr::select(UNIT, SHELF_RACK, SLOT, UNIT_SHELF_RACK_SLOT, STORAGE_ID_count)
   
+  ## Create an Excel workbook
+  wb  <- openxlsx::createWorkbook()
+  
+  ## Add sheets to workbook
+  ### Sheet 1 
+  
+  openxlsx::addWorksheet(wb, "Map")
+  
+  openxlsx::writeData(wb, "Map", as.data.frame(tissuemap))
+  
+ 
+  ### Sheet 2
+  openxlsx::addWorksheet(wb, "Tissues per storageID")
+  
+  openxlsx::writeData(wb, "Tissues per storageID", as.data.frame(barcode_tissues))
+  
+ 
+  ## Conditional formatting
+  openxlsx::conditionalFormatting(
+    wb,
+    "Tissues per storageID",
+    cols = 6,
+    rows = 2:(nrow(as.data.frame(barcode_tissues)) + 1),
+    rule = "<100",
+    style = openxlsx::createStyle(bgFill = "deepskyblue")
+  )
+  
+  ### Sheet 3
+  openxlsx::addWorksheet(wb, "StorageIDs per slot")
+  
+  openxlsx::writeData(wb, "StorageIDs per slot", as.data.frame(barcodes_per_slot))
+  
+  
+  ## write a formatted .xlsx file of the tissue map, tissues per barcod, and barcodes per slot to the folder:
+  openxlsx::saveWorkbook(wb, paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/tissuemap_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".xlsx"), overwrite = TRUE)
+
  # Wrap up function 
   stop.time <- Sys.time()
   
   fulltime <- stop.time - start.time
   
   print(fulltime)
-  message(paste0("Map of tissue locations stored in object 'tissuemap' and a CSV was output to V:/Lab/Archive Storage/Archive Sample Maps from R/"))
+  message(paste0("Map of tissue locations stored in object 'tissuemap' and an excel file was output to V:/Lab/Archive Storage/Archive Sample Maps from R/"))
   
   ## If, you said TRUE in setup, then assign the all_data object to your environment. From here you can export or do whatever you want with it.
   if (all_tissues == TRUE) {
     
-    # export CSV of ALL tissues
+    # export xlsx of ALL tissues
     readr::write_csv(x = dataAll, file = paste0("V:/Lab/Archive Storage/Archive Sample Maps from R/all_tissues_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv"))
     
     assign(

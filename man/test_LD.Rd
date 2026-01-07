@@ -10,7 +10,7 @@ test_LD(
   dememorizations = 10000,
   batches = 100,
   iterations = 5000,
-  ncores = parallel::detectCores() - 1
+  ncores = parallelly::availableCores() - 1
 )
 }
 \arguments{
@@ -46,9 +46,9 @@ loci <- GCLr::ex_LocusControl$locusnames[-c(10, 12, 13, 32, 33, 97, 98)]
 dir.create(path = "~/GENEPOP")
 
 GCLr::gcl2genepop(sillyvec = sillyvec, loci = loci, path = path.expand("~/GENEPOP"), VialNums = TRUE, usat = FALSE, 
-                  ncores = parallel::detectCores(), npops = 1, LocusCtl = GCLr::ex_LocusControl) 
+                  ncores = parallelly::availableCores(), npops = 1, LocusCtl = GCLr::ex_LocusControl) 
 
-GCLr::test_LD(genepopFiles = list.files(path.expand("~/GENEPOP")), path = path.expand("~/GENEPOP"), batches = 14, iterations = 1, ncores = parallel::detectCores())
+GCLr::test_LD(genepopFiles = list.files(path.expand("~/GENEPOP")), path = path.expand("~/GENEPOP"), batches = 14, iterations = 1, ncores = parallelly::availableCores())
 
 }
 

@@ -6,7 +6,7 @@
 #' @param sillyvec A character vector of silly codes without the ".gcl" extension.
 #' @param loci A character vector of locus names; default is all `LocusControl$locusnames`.
 #' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
-#' If the number of cores exceeds the number on your device, `ncores` defaults to [parallel::detectCores()].
+#' If the number of cores exceeds the number on your device, `ncores` defaults to [parallelly::availableCores()].
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
 #'
 #' @returns A tibble with the following 6 columns:
@@ -42,7 +42,7 @@ calc_freq_pop <-
     
   }
   
-  if(ncores > parallel::detectCores()) {
+  if(ncores > parallelly::availableCores()) {
     
     stop("'ncores' is greater than the number of cores available on machine\nUse 'detectCores()' to determine the number of cores on your machine")
     

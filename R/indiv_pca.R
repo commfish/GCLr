@@ -8,12 +8,17 @@
 #' 
 #' @param groups A character vector of group names with a length equal to the maximum value in `groupvec`
 #' 
+#' @param scale_freqs A logical vector of length 1 that controls whether individual allele frequencies are scaled (i.e., variance = 1); default = `FALSE`. `TRUE` gives you DAPC (discriminant analysis of principal components), `FALSE` gives you covariance PCA.
+#' 
 #' @param ncomp The number of principal coordinates to include in the output (default = 3).
 #' 
 #' @details This function requires the adegenet and ade4 packages. 
 #' For this function to work properly, the GENEPOP file must have a ".gen" extension (required by [adegenet::read.genepop()]), and 
 #' each individual must have a unique identifier (see "file" argument description). The output of this function can be supplied to [GCLr::plot_indiv_pca()] to plot the first 3 principal components of the analysis in an interactive 3-dimensional scatter plot.
-#' The variance explained by each principal coordinate are calculated from the eigen values in the raw PCA output (i.e., (pca.raw$eig)/sum(pca.raw$eig)). 
+#' The variance explained by each principal coordinate are calculated from the eigen values in the raw PCA output (i.e., (pca.raw$eig)/sum(pca.raw$eig)).
+#' When `scale_freqs` is `TRUE` you get DAPC (discriminant analysis of principal components, i.e., how can pre-defined groups best be separated?), which will upweight any rare alleles and can cause individuals with rare alleles to show up as outliers.
+#' When `scale_freqs` is `FALSE`, you get normal, covariance PCA (i.e., what are the major axes of overall genetic variation), which will not produce extreme outliers if individuals have rare alleles.
+#' It is recommended to use covariance PCA to explore population structure and DAPC when groups are known and you want maximal discrimination.
 #' 
 #' @seealso [ade4::dudi.pca()]
 #' @seealso [GCLr::plot_indiv_pca()]
@@ -41,16 +46,26 @@
 #'   factor(levels = groups) %>%
 #'   as.numeric()
 #' 
-#' indiv_pca(file = file, groupvec = groupvec, groups = groups, ncomp = 3)
+#' indiv_pca(file = file, groupvec = groupvec, groups = groups, scale_freqs = FALSE, ncomp = 3)
 #' 
 #' @export
-indiv_pca <- function(file, groupvec, groups, ncomp = 3){
+indiv_pca <- function(file, groupvec, groups, scale_freqs = FALSE, ncomp = 3){
   
   gp <- adegenet::read.genepop(file = file)
   
-  scaled_freqs <- adegenet::scaleGen(gp, NA.method = "mean")
-  
-  ind_pca <- ade4::dudi.pca(scaled_freqs, center = FALSE, scale = FALSE, scannf = FALSE, nf = ncomp)
+  if(scale_freqs) {
+
+    scaled_freqs <- adegenet::scaleGen(gp, NA.method = "mean")  # scales and centers allele frequencies (i.e., mean = 0, variance = 1)
+    
+    ind_pca <- ade4::dudi.pca(scaled_freqs, center = FALSE, scale = FALSE, scannf = FALSE, nf = ncomp)  # DAPC; alleles contribute equally, used for uSATs
+    
+  } else {
+    
+    raw_freqs <- adegenet::tab(gp, freq=TRUE, NA.method="mean")  # raw allele counts
+    
+    ind_pca <- ade4::dudi.pca(raw_freqs, center=TRUE, scale=FALSE, scannf = FALSE, nf = ncomp)  # covariance PCA based on allele frequencies, rare alleles downweighted; centers each allele (i.e., mean = 0)
+    
+  }
   
   group_info <- (gp@pop %>% janitor::tabyl()) %>% 
     tibble::as_tibble() %>% 

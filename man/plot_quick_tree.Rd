@@ -54,6 +54,6 @@ loci <- GCLr::ex_baseline[,-c(1:5)] \%>\%
   gsub(pattern = "*\\\\.1", x = ., replacement = "") \%>\%
   unique()
 
- GCLr::plot_quick_tree(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), popnames = paste0("Pop", seq(sillyvec)), ncores = parallel::detectCores(), groupvec = groupvec, regioncol = c("red", "green", "blue"), cex = 0.75)
+ GCLr::plot_quick_tree(sillyvec = sillyvec, loci = loci, inputfile = system.file("genepop", "ex_genepop.txt", package = "GCLr"), popnames = paste0("Pop", seq(sillyvec)), ncores = parallelly::availableCores(), groupvec = groupvec, regioncol = c("red", "green", "blue"), cex = 0.75)
 
 }

@@ -36,7 +36,7 @@ default is "rubias/output").}
 \item{threshold}{A numeric vector of length 1 specifying how low stock comp is before assume 0, used for \code{P=0} calculation, (default = 5e-7).}
 
 \item{ncores}{An optional numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).
-If the number of cores exceeds the number on your device (\code{\link[parallel:detectCores]{parallel::detectCores()}}), then all cores will be used. Note that \code{ncores} is
+If the number of cores exceeds the number on your device (\code{\link[parallelly:availableCores]{parallelly::availableCores()}}), then all cores will be used. Note that \code{ncores} is
 only used if \code{method = "both"}.}
 
 \item{file_type}{the file type of the mixture output files .fst (default and faster) or .csv files.}
@@ -90,7 +90,7 @@ mixvec <- suppressWarnings(tibble::tibble(files = list.files(path, pattern = "_r
                              tidyr::separate(files, into = c("mixture", NA), sep = "_repunit_trace.csv") \%>\% 
                              dplyr::pull(mixture))
 
-eval_output <- GCLr::summarize_rubias_base_eval(mixvec = mixvec, path = path, sample_sizes = sample_sizes, ncores = parallel::detectCores(), file_type = "csv")
+eval_output <- GCLr::summarize_rubias_base_eval(mixvec = mixvec, path = path, sample_sizes = sample_sizes, ncores = parallelly::availableCores(), file_type = "csv")
 
 }
 

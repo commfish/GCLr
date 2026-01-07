@@ -20,7 +20,7 @@
 #' @param line.width A numeric vector of length 1 specifying the width of the line connecting the points, used by [ggplot2::geom_line()] 
 #' default = 0.5).
 #' @param ncores A numeric value for the number of cores to use in a \pkg{foreach} `%dopar%` loop (default = 4). 
-#' If the number of cores exceeds the number on your device ([parallel::detectCores()]), then all cores will be used.
+#' If the number of cores exceeds the number on your device ([parallelly::availableCores()]), then all cores will be used.
 #' @param LocusCtl an object created by [GCLr::create_locuscontrol()] (default = LocusControl).
 #'
 #' @returns A tibble of HWE p-values, Fis values, and allele frequencies and a (".pdf") of locus-specific plots:
@@ -77,7 +77,7 @@ plot_freq_fis_4snps <-
 
   }
   
-  if(ncores > parallel::detectCores()) {ncores = parallel::detectCores()}
+  if(ncores > parallelly::availableCores()) {ncores = parallelly::availableCores()}
 
   ploidy <- LocusCtl$ploidy[loci]
 
