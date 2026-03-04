@@ -7,13 +7,16 @@
 #' @param password - your password used to access LOKI - contact Eric Lardizabal if you don't have a password for LOKI
 #' @param file the file path, including .csv extension, for writing out a csv file of the output. (default = NULL)
 #' 
-#' @returns The function outputs a tibble containing the following 5 variables:
+#' @returns The function outputs a tibble containing the following 8 variables:
 #'  \itemize{
 #'         \item \code{WELL_NO}: 
 #'         \item \code{FK_PLATE_ID}: the extraction plate ID
 #'         \item \code{SILLY_CODE}: the collection silly code
 #'         \item \code{FISH_NO}: the collection fish number
 #'         \item \code{TISSUETYPE}: e.g., Axillary Process, Fin, Heart, etc.
+#'         \item \code{FREEZER}: The freezer number
+#'         \item \code{RACK}: The freezer rack
+#'         \item \code{SLOT}: The freezer slot
 #'       }
 #'       
 #' @details
@@ -57,7 +60,7 @@ get_extraction_info <- function(plate_ids = NULL, sillyvec = NULL, username, pas
   
   if(is.null(sillyvec)) {  # pulling by FK_PLATE_ID
     
-    qry_plate_id <- paste("SELECT * FROM AKFINADM.V_GEN_DNA_WELL WHERE FK_PLATE_ID IN (", paste0("'", plate_ids, "'", collapse = ","), ")", sep = "")  # Query
+    qry_plate_id_fish <- paste("SELECT * FROM AKFINADM.V_GEN_DNA_WELL WHERE FK_PLATE_ID IN (", paste0("'", plate_ids, "'", collapse = ","), ")", sep = "")  # Query
     
   } else {  # pulling by SILLY_CODE, first get FK_PLATE_IDs, then pull by FK_PLATE_ID
     
@@ -67,15 +70,22 @@ get_extraction_info <- function(plate_ids = NULL, sillyvec = NULL, username, pas
     
     plate_ids <- unique(dataTmp$FK_PLATE_ID)  # Get all FK_PLATE_IDs
     
-    qry_plate_id <- paste("SELECT * FROM AKFINADM.V_GEN_DNA_WELL WHERE FK_PLATE_ID IN (", paste0("'", plate_ids, "'", collapse = ","), ")", sep = "")  # Query
+    qry_plate_id_fish <- paste("SELECT * FROM AKFINADM.V_GEN_DNA_WELL WHERE FK_PLATE_ID IN (", paste0("'", plate_ids, "'", collapse = ","), ")", sep = "")  # Query
     
   }
+  
+  # Query for extraction plate locations
+  qry_plate_id_plate <- paste("SELECT * FROM AKFINADM.GEN_DNA_EXTRACTION WHERE PLATE_ID IN (", paste0("'", plate_ids, "'", collapse = ","), ")", sep = "")  # Query the table containing freezer locations for each plate ID
+  
+  
+  extraction_info_by_individual0 <- RJDBC::dbGetQuery(con, qry_plate_id_fish)  # Pulling extraction data by fish ID
+  
+  extraction_info_by_plate0 <- RJDBC::dbGetQuery(con, qry_plate_id_plate) # Pulling extraction data by plate ID
 
-  dataAll <- RJDBC::dbGetQuery(con, qry_plate_id)  # Pulling data from LOKI using the connection and wells table data query by FK_PLATE_ID
   
   discon <- RJDBC::dbDisconnect(con) # Disconnect from Loki
   
-  output <- dataAll %>%
+  extraction_info_by_individual <- extraction_info_by_individual0 %>%
     tibble::as_tibble() %>%
     dplyr::select(
       WELL_NO,
@@ -84,7 +94,13 @@ get_extraction_info <- function(plate_ids = NULL, sillyvec = NULL, username, pas
       FISH_NO,
       TISSUETYPE
     )
-
+  
+  extraction_info_by_plate <- extraction_info_by_plate0 %>% 
+    tibble::as_tibble() %>%
+    dplyr::select(FK_PLATE_ID = PLATE_ID, FREEZER, RACK, SLOT)
+  
+  output <- dplyr::left_join(extraction_info_by_individual, extraction_info_by_plate, by = "FK_PLATE_ID")
+  
   if(!is.null(file)){
     
     readr::write_csv(output, file, na = "") # Write out a csv file without NAs

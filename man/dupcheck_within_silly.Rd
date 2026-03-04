@@ -23,7 +23,7 @@ dupcheck_within_silly(
 
 \item{minnonmissing}{The proportion of loci that a pair must share non-missing data in order to be reported.}
 
-\item{minproportion}{The proportion of shared non-missing loci that must be shared between individuals to be reported as a matching pair. This is passed through to \link{rubias} as well.}
+\item{minproportion}{The proportion of shared non-missing loci that must be shared between individuals to be reported as a matching pair. This is passed through to \link[rubias:rubias]{rubias::rubias} as well.}
 
 \item{ncores}{The number of cores to use in a \link[foreach:foreach]{foreach::\%dopar\%} loop. If the number of cores exceeds the number on your device, then \code{ncores} defaults to \code{\link[parallelly:availableCores]{parallelly::availableCores()}}.}
 

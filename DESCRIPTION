@@ -1,6 +1,6 @@
 Package: GCLr
 Title: Genetic Analysis Tools
-Version: 0.11.1
+Version: 0.11.2
 Authors@R: 
     person("Andy", "Barclay", , "andy.barclay@alaska.gov", role = c("aut", "cre"))
 Description: Genetic analysis tools to streamline genetic data analyses performed by Gene Conservation Lab (GCL) staff.
@@ -48,7 +48,7 @@ Depends: R (>= 3.5.0)
 License: `use_gpl3_license()`
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 LazyData: true
 URL: https://github.com/commfish/GCLr
 Logo: man//figures//logo.png

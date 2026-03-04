@@ -13,7 +13,7 @@ gcl2fstat(sillyvec, loci, path, ncores = 4, LocusCtl = LocusControl)
 
 \item{path}{The full file path to write out the FSTAT file including ".dat" extension; with "\\" or "/" separator between folders.}
 
-\item{ncores}{The number of cores for multithreading using \code{\link[=doParallel]{doParallel()}} and \code{\link[=foreach]{foreach()}}. Default is 4.}
+\item{ncores}{The number of cores for multithreading using \code{\link[doParallel:doParallel-package]{doParallel::doParallel()}} and \code{\link[foreach:foreach]{foreach::foreach()}}. Default is 4.}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
