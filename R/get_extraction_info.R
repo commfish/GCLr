@@ -99,7 +99,7 @@ get_extraction_info <- function(plate_ids = NULL, sillyvec = NULL, username, pas
     tibble::as_tibble() %>%
     dplyr::select(FK_PLATE_ID = PLATE_ID, FREEZER, RACK, SLOT)
   
-  output <- left_join(extraction_info_by_individual, extraction_info_by_plate, by = "FK_PLATE_ID")
+  output <- dplyr::left_join(extraction_info_by_individual, extraction_info_by_plate, by = "FK_PLATE_ID")
   
   if(!is.null(file)){
     
