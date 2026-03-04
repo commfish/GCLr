@@ -27,10 +27,10 @@ create_hierfstat_data(
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }
 \value{
-This function returns a \link{hierfstat} data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
+This function returns a \link[hierfstat:hierfstat]{hierfstat::hierfstat} data object containing region (if supplied), population, sub-population numbers, and genotypes in single-column format.
 }
 \description{
-This function creates a \code{hierfstat} data object using the provided inputs. The \code{hierfstat} data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as \code{\link[=varcomp]{varcomp()}} and \code{\link[=varcomp.glob]{varcomp.glob()}} from the \code{hierfstat} package.
+This function creates a \code{hierfstat} data object using the provided inputs. The \code{hierfstat} data object contains information about region (if supplied), population, sub-population numbers, and genotypes in single-column format. The object is used for computing hierarchical F statistics using functions such as \code{\link[=varcomp]{varcomp()}} and \code{\link[hierfstat:varcomp.glob]{hierfstat::varcomp.glob()}} from the \code{hierfstat} package.
 }
 \examples{
 newbase <- GCLr::ex_baseline \%>\% tidyr::separate(indiv, into = c("collection", NA), remove = FALSE)

@@ -25,7 +25,7 @@ gcl2nexus(
 
 \item{PopNames}{Optional character vector the same length as \code{sillyvec} to give populations new names. If NULL, \code{PopNames} defaults to \code{sillyvec}.}
 
-\item{ncores}{The number of cores for multithreading using \code{\link[=doParallel]{doParallel()}} and \code{\link[=foreach]{foreach()}}. Default is 4.}
+\item{ncores}{The number of cores for multithreading using \code{\link[doParallel:doParallel-package]{doParallel::doParallel()}} and \code{\link[foreach:foreach]{foreach::foreach()}}. Default is 4.}
 
 \item{LocusCtl}{an object created by \code{\link[=create_locuscontrol]{create_locuscontrol()}}, (default = LocusControl)}
 }

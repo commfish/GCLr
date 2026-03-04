@@ -27,7 +27,7 @@ When setting \code{npops}, \code{path} is the folder were the generic genepop fi
 
 \item{usat}{Logical; whether the data are from microsatellites (TRUE) or not (FALSE). This is included because GENEPOP only accepts numeric alleles; SNP alleles have to be converted from character to numeric, and microsatellite alleles are already numeric.}
 
-\item{ncores}{The number of cores for multithreading using \code{\link[=doParallel]{doParallel()}} and \code{\link[=foreach]{foreach()}}. Default is 4.}
+\item{ncores}{The number of cores for multithreading using \code{\link[doParallel:doParallel-package]{doParallel::doParallel()}} and \code{\link[foreach:foreach]{foreach::foreach()}}. Default is 4.}
 
 \item{npops}{Optional; the number of populations for each file. If supplied, multiple files with generic file names will be written out, with \code{npops} per file (see details).}
 
