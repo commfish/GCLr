@@ -17,7 +17,6 @@
 #'         \item \code{FREEZER}: The freezer number
 #'         \item \code{RACK}: The freezer rack
 #'         \item \code{SLOT}: The freezer slot
-#'         
 #'       }
 #'       
 #' @details

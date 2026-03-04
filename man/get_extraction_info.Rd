@@ -34,9 +34,7 @@ The function outputs a tibble containing the following 8 variables:
 \item \code{FREEZER}: The freezer number
 \item \code{RACK}: The freezer rack
 \item \code{SLOT}: The freezer slot
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{  \}
-}\if{html}{\out{</div>}}
+}
 }
 \description{
 This function connects to LOKI and pulls the well information for each DNA extraction plate.
