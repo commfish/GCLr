@@ -1,3 +1,5 @@
+# GCLr 0.11.2
+
 ## Enhancments
 `get_extraction_info` - added the freezer location (i.e., RACK and SLOT) to the output 
 
