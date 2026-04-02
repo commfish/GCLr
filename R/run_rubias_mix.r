@@ -87,13 +87,13 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   
   rubias_version <- packageVersion("rubias")
   
-  if(rubias_version < '0.4.0' & is.null(pi_prior)){
+  if(rubias_version < '0.4.0' & any(is.null(pi_prior))){
     
     pi_prior <- NA
     
   }
   
-  if(rubias_version >= '0.4.0' & is.na(pi_prior)){
+  if(rubias_version >= '0.4.0' & any(is.na(pi_prior))){
     
     pi_prior <- NULL
     
