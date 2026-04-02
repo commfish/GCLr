@@ -78,31 +78,6 @@ run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.pa
  
   start_time <- Sys.time()
   
-  if(!is.null(pi_prior) && !any(is.na(pi_prior))){
-    
-    if(!is.data.frame(pi_prior)|sum(names(pi_prior) %in% c("collection", "pi_param")) < 2 ){
-      
-      stop("pi_prior must be data frame or tibble with two variables 'collection' and 'pi_param'")
-      
-    }
-  }
-  
-  # Rubias versions before version 0.4.0 used NA as the defalult for pi_prior, now the default is NULL. This makes the function backwards compatible.
-  
-  rubias_version <- packageVersion("rubias")
-  
-  if(rubias_version < '0.4.0' & is.null(pi_prior)){
-    
-    pi_prior <- NA
-    
-  }
-  
-  if(rubias_version >= '0.4.0' & is.na(pi_prior)){
-    
-    pi_prior <- NULL
-    
-  }
-  
   mixvec <- tests %>% 
     dplyr::mutate(mixes = paste(test_group, scenario, sep = "_")) %>% 
     dplyr::pull(mixes)
