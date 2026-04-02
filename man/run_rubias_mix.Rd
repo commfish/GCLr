@@ -11,7 +11,7 @@ run_rubias_mix(
   gen_start_col,
   method = "MCMC",
   alle_freq_prior = list(const_scaled = 1),
-  pi_prior = NA,
+  pi_prior = NULL,
   pi_init = NULL,
   reps = 25000,
   burn_in = 5000,
@@ -40,7 +40,7 @@ run_rubias_mix(
 
 \item{alle_freq_prior}{A list with a single element named 'const_scaled', specifying the constant scaling for the prior on allele frequencies. Default is 1.}
 
-\item{pi_prior}{A data frame or tibble with two variables 'collection' and 'pi_param', specifying the prior information for mixture proportions. Default is NA.}
+\item{pi_prior}{A data frame or tibble with two variables 'collection' and 'pi_param', specifying the prior information for mixture proportions. Default is NULL.}
 
 \item{pi_init}{A matrix or data frame with initial values for mixture proportions. Default is NULL.}
 

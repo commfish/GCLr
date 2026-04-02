@@ -9,7 +9,7 @@
 #' @param gen_start_col An integer specifying the starting column for genotype data in the data frames.
 #' @param method The method used for estimation. Default is "MCMC".
 #' @param alle_freq_prior A list with a single element named 'const_scaled', specifying the constant scaling for the prior on allele frequencies. Default is 1.
-#' @param pi_prior A data frame or tibble with two variables 'collection' and 'pi_param', specifying the prior information for mixture proportions. Default is NA.
+#' @param pi_prior A data frame or tibble with two variables 'collection' and 'pi_param', specifying the prior information for mixture proportions. Default is NULL.
 #' @param pi_init A matrix or data frame with initial values for mixture proportions. Default is NULL.
 #' @param reps An integer specifying the number of MCMC repetitions. Default is 25000.
 #' @param burn_in An integer specifying the number of MCMC burn-in iterations. Default is 5000.
@@ -52,7 +52,7 @@
 #' 
 #' @export
 run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, method = "MCMC",
-                           alle_freq_prior = list(const_scaled = 1), pi_prior = NA, 
+                           alle_freq_prior = list(const_scaled = 1), pi_prior = NULL, 
                            pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100,
                            prelim_reps = NULL, prelim_burn_in = NULL,
                            sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1,
@@ -74,13 +74,28 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
     
   }
   
-  if(!is.na(pi_prior) %>% as.vector() %>% unique()){
+  if(!is.null(pi_prior) && !any(is.na(pi_prior))){
     
     if(!is.data.frame(pi_prior)|sum(names(pi_prior) %in% c("collection", "pi_param")) < 2 ){
       
       stop("pi_prior must be data frame or tibble with two variables 'collection' and 'pi_param'")
       
     }
+  }
+  
+  # Rubias versions before version 0.4.0 used NA as the defalult for pi_prior, now the default is NULL. This makes the function backwards compatible.
+  
+  rubias_version <- packageVersion("rubias")
+  
+  if(rubias_version < '0.4.0' & any(is.null(pi_prior))){
+    
+    pi_prior <- NA
+    
+  }
+  
+  if(rubias_version >= '0.4.0' & any(is.na(pi_prior))){
+    
+    pi_prior <- NULL
     
   }
   
