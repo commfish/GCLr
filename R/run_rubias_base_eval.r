@@ -19,7 +19,7 @@
 #' 
 #' @param alle_freq_prior a one-element named list specifying the prior to be used when generating Dirichlet parameters for genotype likelihood calculations. Valid methods include "const", "scaled_const", and "empirical". See [rubias::list_diploid_params()] for method details. (default: `list(const_scaled = 1)`)
 #' 
-#' @param pi_prior The prior to be added to the collection allocations, in order to generate pseudo-count Dirichlet parameters for the simulation of new pi vectors in MCMC. Default value of NA leads to the calculation of a symmetrical prior based on pi_prior_sum. To provide other values to certain collections, you can pass in a data frame with two columns, "collection" listing the relevant collection, and "pi_param" listing the desired prior for that collection (see [GCLr::create_prior()]. Specific priors may be listed for as few as one collection. The special collection name "DEFAULT_PI" is used to set the prior for all collections not explicitly listed; if no "DEFAULT_PI" is given, it is taken to be 1/(# collections).
+#' @param pi_prior The prior to be added to the collection allocations, in order to generate pseudo-count Dirichlet parameters for the simulation of new pi vectors in MCMC. Default value of NULL leads to the calculation of a symmetrical prior based on pi_prior_sum. To provide other values to certain collections, you can pass in a data frame with two columns, "collection" listing the relevant collection, and "pi_param" listing the desired prior for that collection (see [GCLr::create_prior()]. Specific priors may be listed for as few as one collection. The special collection name "DEFAULT_PI" is used to set the prior for all collections not explicitly listed; if no "DEFAULT_PI" is given, it is taken to be 1/(# collections).
 #' 
 #' @param pi_init The initial value to use for the mixing proportion of collections. This lets the user start the chain from a specific value of the mixing proportion vector. If pi_init is NULL (the default) then the mixing proportions are all initialized to be equal. Otherwise, you pass in a data frame with one column named "collection" and the other named "pi_init" (see [GCLr::random_inits()]. Every value in the pi_init column must be strictly positive (> 0), and a value must be given for every collection. If they sum to more than one the values will be normalized to sum to one.
 #' 
@@ -73,10 +73,35 @@
 #' }
 #'    
 #' @export
-run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", method = "MCMC", alle_freq_prior = list(const_scaled = 1), pi_prior = NA, 
+run_rubias_base_eval <- function(tests, group_names, gen_start_col = 5,  base.path = "rubias/baseline", mix.path = "rubias/mixture", out.path = "rubias/output", method = "MCMC", alle_freq_prior = list(const_scaled = 1), pi_prior = NULL, 
                                   pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100, prelim_reps = NULL, prelim_burn_in = NULL, sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1, seed = 56, ncores = parallelly::availableCores(), file_type = c("fst", "csv")[1], out_file_type = c("fst", "csv")[1]){
  
   start_time <- Sys.time()
+  
+  if(!is.null(pi_prior) && !any(is.na(pi_prior))){
+    
+    if(!is.data.frame(pi_prior)|sum(names(pi_prior) %in% c("collection", "pi_param")) < 2 ){
+      
+      stop("pi_prior must be data frame or tibble with two variables 'collection' and 'pi_param'")
+      
+    }
+  }
+  
+  # Rubias versions before version 0.4.0 used NA as the defalult for pi_prior, now the default is NULL. This makes the function backwards compatible.
+  
+  rubias_version <- packageVersion("rubias")
+  
+  if(rubias_version < '0.4.0' & is.null(pi_prior)){
+    
+    pi_prior <- NA
+    
+  }
+  
+  if(rubias_version >= '0.4.0' & is.na(pi_prior)){
+    
+    pi_prior <- NULL
+    
+  }
   
   mixvec <- tests %>% 
     dplyr::mutate(mixes = paste(test_group, scenario, sep = "_")) %>% 
