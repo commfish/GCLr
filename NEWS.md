@@ -1,5 +1,11 @@
 # GCLr 0.11.3
 
+## Bug fixes
+
+`run_rubias_mix` - changed default for pi_prior argument from NA to NULL to work with rubias versions >= 0.4.0. Added code to make the function backwards compatible with older versions of rubias and old code with NA set for the pi_prior.
+
+`run_rubias_base_eval` - changed default for pi_prior argument from NA to NULL for consistency with the default for rubias versions >= 0.4.0.
+
 # GCLr 0.11.2
 
 ## Enhancments
