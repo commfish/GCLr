@@ -13,7 +13,7 @@ run_rubias_base_eval(
   out.path = "rubias/output",
   method = "MCMC",
   alle_freq_prior = list(const_scaled = 1),
-  pi_prior = NA,
+  pi_prior = NULL,
   pi_init = NULL,
   reps = 25000,
   burn_in = 5000,
@@ -46,7 +46,7 @@ run_rubias_base_eval(
 
 \item{alle_freq_prior}{a one-element named list specifying the prior to be used when generating Dirichlet parameters for genotype likelihood calculations. Valid methods include "const", "scaled_const", and "empirical". See \code{\link[rubias:list_diploid_params]{rubias::list_diploid_params()}} for method details. (default: \code{list(const_scaled = 1)})}
 
-\item{pi_prior}{The prior to be added to the collection allocations, in order to generate pseudo-count Dirichlet parameters for the simulation of new pi vectors in MCMC. Default value of NA leads to the calculation of a symmetrical prior based on pi_prior_sum. To provide other values to certain collections, you can pass in a data frame with two columns, "collection" listing the relevant collection, and "pi_param" listing the desired prior for that collection (see \code{\link[=create_prior]{create_prior()}}. Specific priors may be listed for as few as one collection. The special collection name "DEFAULT_PI" is used to set the prior for all collections not explicitly listed; if no "DEFAULT_PI" is given, it is taken to be 1/(# collections).}
+\item{pi_prior}{The prior to be added to the collection allocations, in order to generate pseudo-count Dirichlet parameters for the simulation of new pi vectors in MCMC. Default value of NULL leads to the calculation of a symmetrical prior based on pi_prior_sum. To provide other values to certain collections, you can pass in a data frame with two columns, "collection" listing the relevant collection, and "pi_param" listing the desired prior for that collection (see \code{\link[=create_prior]{create_prior()}}. Specific priors may be listed for as few as one collection. The special collection name "DEFAULT_PI" is used to set the prior for all collections not explicitly listed; if no "DEFAULT_PI" is given, it is taken to be 1/(# collections).}
 
 \item{pi_init}{The initial value to use for the mixing proportion of collections. This lets the user start the chain from a specific value of the mixing proportion vector. If pi_init is NULL (the default) then the mixing proportions are all initialized to be equal. Otherwise, you pass in a data frame with one column named "collection" and the other named "pi_init" (see \code{\link[=random_inits]{random_inits()}}. Every value in the pi_init column must be strictly positive (> 0), and a value must be given for every collection. If they sum to more than one the values will be normalized to sum to one.}
 
