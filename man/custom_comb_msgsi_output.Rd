@@ -59,7 +59,8 @@ A tibble with 9 fields.
 }
 \description{
 This function computes summary statistics from \href{https://github.com/boppingshoe/Ms.GSI}{\emph{Ms.GSI}} output, similar to \code{custom_comb_rubias_output()}.
-It is primarily used to "roll up" reporting groups from fine-scale to broad-scale.
+It is primarily used to "roll up" reporting groups from fine-scale to broad-scale using the infinite pool GSI model.
+If you ran \emph{Ms.GSI} with harvest data and want to use the stock-specific total catch output, you should use \code{Ms.GSI::stratified_estimator_msgsi} to roll up groups.
 Output is a single tibble with \code{mixture} as a column. It can take either the \code{mdl_out} list
 object from \code{Ms.GSI::msgsi_mdl()}, OR it can read in the .csv output files created by \code{Ms.GSI::msgsi_mdl()}.
 }

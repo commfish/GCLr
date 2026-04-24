@@ -1,7 +1,8 @@
 #' Custom Combine *Ms.GSI* Output
 #'
 #' This function computes summary statistics from [*Ms.GSI*](https://github.com/boppingshoe/Ms.GSI) output, similar to `custom_comb_rubias_output()`.
-#' It is primarily used to "roll up" reporting groups from fine-scale to broad-scale.
+#' It is primarily used to "roll up" reporting groups from fine-scale to broad-scale using the infinite pool GSI model.
+#' If you ran *Ms.GSI* with harvest data and want to use the stock-specific total catch output, you should use `Ms.GSI::stratified_estimator_msgsi` to roll up groups.
 #' Output is a single tibble with `mixture` as a column. It can take either the `mdl_out` list 
 #' object from `Ms.GSI::msgsi_mdl()`, OR it can read in the .csv output files created by `Ms.GSI::msgsi_mdl()`.
 #'
@@ -62,6 +63,7 @@ custom_comb_msgsi_output <- function(mdl_out = NULL,
                                      harvest = NULL
 ) {
   
+  message("NOTE: this function resummarizes results based on the 'infinite pool' model, not 'stock-specific total catch'.\nIf you want to use `stock-specific total catch`, please use Ms.GSI::stratified_estimator_msgsi to roll up groups.")
   
   if (is.null(mdl_out) & is.null(path)) {
     stop("`Either provide a Ms.GSI output or a valid `path` to folders containing output .csv files for each mixture.")
@@ -87,6 +89,17 @@ custom_comb_msgsi_output <- function(mdl_out = NULL,
     trace_comb <- readr::read_csv(file = file.path(path, mix, "trace_comb.csv"),
                                   show_col_types = FALSE)
     
+    # make backwards compatible with Ms.GSI v0.0.0.9000
+    if("chain" %in% names(trace_comb)) {
+      trace_comb <- trace_comb %>% 
+        dplyr::rename(ch = chain)  # this column got renamed
+    }
+    
+    if("grpvec" %in% names(grp_info)) {
+      grp_info <- grp_info %>% 
+        dplyr::select(-grpvec)  # this column got dropped
+    }
+    
   } else {
     grp_info <- mdl_out$comb_groups
     trace_comb <- mdl_out$trace_comb
@@ -102,20 +115,20 @@ custom_comb_msgsi_output <- function(mdl_out = NULL,
   }  # used to order groups as a factor
   
   trace_comb_new_grp <- trace_comb %>% 
-    tidyr::pivot_longer(cols = -c(itr, chain), names_to = "collection", values_to = "rho") %>% 
+    tidyr::pivot_longer(cols = -c(itr, ch), names_to = "collection", values_to = "rho") %>% 
     dplyr::left_join(y = grp_info, by = "collection") %>%  # get combined collections to repunit
     dplyr::left_join(y = new_pop_info, by = "repunit") %>%  # get new repunit from new_pop_info, same as in Ms.GSI::stratified_estimator_msgsi
     dplyr::mutate(repunit = new_repunit) %>% 
-    dplyr::select(-new_repunit, -grpvec) %>% 
-    dplyr::group_by(chain, itr, repunit) %>%  # roll up from collection (populations) to new repunits
+    dplyr::select(-new_repunit) %>% 
+    dplyr::group_by(ch, itr, repunit) %>%  # roll up from collection (populations) to new repunits
     dplyr::summarise(rho = sum(rho), .groups = "drop") %>% 
     tidyr::pivot_wider(names_from = repunit, values_from = rho)
   
   # need to create `p_combo` from trace_comb so I can make `mc_pop`
   p_combo <- lapply(seq(nchains), function(chn) {
     trace_comb_new_grp %>% 
-      dplyr::filter(chain == chn) %>% 
-      dplyr::select(-itr, -chain)
+      dplyr::filter(ch == chn) %>% 
+      dplyr::select(-itr, -ch)
   })
   
   keep_list <- ((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn)))[!((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn))) %% thin] / thin  # these are from Ms.GSI::msgsi_mdl input parameters, also saved as msgsi_specs.csv
