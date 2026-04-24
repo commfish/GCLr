@@ -1,3 +1,9 @@
+# GCLr 0.11.4
+
+## Bug fixes
+
+`custom_comb_msgsi_output` - updated to work with Ms.GSI versions >= 0.1.0. Added code to make the function backwards compatible with older versions of Ms.GSI.
+
 # GCLr 0.11.3
 
 ## Bug fixes
