@@ -1,3 +1,9 @@
+# GCLr 0.11.5
+
+## Bug fixes
+
+`custom_comb_msgsi_output` - updated `P=0` calculation to divide by total harvest, not stock-specific harvest. This matches the updated in Ms.GSI v0.1.1.
+
 # GCLr 0.11.4
 
 ## Bug fixes
