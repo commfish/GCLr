@@ -1,3 +1,5 @@
+# GCLr 0.12.0
+
 ## Enhancments
 Updated `run_rubias_mix` and `stratified_estimator_rubias` so they can run the new features SSTC and "stock proportion < 1/N" in *rubias*. To run SSTC in *rubias*, users will input harvest numbers (and CV's if available) in `run_rubias_mix`, and `stratified_estimator_rubias` will summarize stock specific harvest using SSTC output. "stock proportion < 1/N" information is included in the summary as `z0`.
 
