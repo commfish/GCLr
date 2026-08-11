@@ -1017,7 +1017,7 @@ if(any(species %in% c("chum", "sockeye")) & any(loci %in% alt_markers) & any(loc
   
   bounce_file <-  paste0(dirqc, "/", project, "QC_bounce.xlsx") # Bounce filename
   
-  ind_conflicts0 <- readxl::read_xlsx(path = bounce_file, sheet = "Conflicts by individual") # Get individual conflicts
+  ind_conflicts0 <- readxl::read_xlsx(path = bounce_file, sheet = "Conflicts by individual", col_types = c("text", rep("numeric", 3))) # Get individual conflicts, set col_types if no conflicts
 
   ind_conflicts <- dplyr::left_join(ind_conflicts0, alt_indivs %>% 
                                       dplyr::filter(alternate == TRUE), by = c("SillySource" = "silly_fish")
