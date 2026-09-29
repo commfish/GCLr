@@ -56,6 +56,7 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
                            pi_init = NULL, reps = 25000, burn_in = 5000, pb_iter = 100,
                            prelim_reps = NULL, prelim_burn_in = NULL,
                            sample_int_Pi = 10, sample_theta = TRUE, pi_prior_sum = 1,
+                           mixvec = NULL, catchvec = NULL, cv = 0,
                            file = "rubias/output", seed = 56, nchains = 1, out_file_type = c("fst", "csv")[2]) {
   
   if(!dir.exists(file)) {stop("the file path to save output does not exist!")}
@@ -83,7 +84,7 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
     }
   }
   
-  # Rubias versions before version 0.4.0 used NA as the defalult for pi_prior, now the default is NULL. This makes the function backwards compatible.
+  # Rubias versions before version 0.4.0 used NA as the default for pi_prior, now the default is NULL. This makes the function backwards compatible.
   
   rubias_version <- packageVersion("rubias")
   
@@ -101,6 +102,19 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   
   if (method == "PB" & nchains > 1) {
     nchains <- 1L
+  }
+  
+  if (is.null(catchvec)) {
+    total_catches <- NULL
+  } else {
+    n_catch <- ifelse(cv == 0, 1, 5000)
+    mix_collect <- unique(mixture$collection)
+    
+    if (any(is.na(match(mix_collect, mixvec)))) {
+      stop("Names in mixvec did not match the names in mixture collection.")
+    }
+    
+    total_catches <- make_harv_tbl(mixvec, catchvec, cv, n = n_catch, seed = seed)
   }
   
   # Run infer mixture ----
@@ -123,7 +137,8 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
         prelim_burn_in = prelim_burn_in,
         sample_int_Pi = sample_int_Pi,
         sample_theta = sample_theta,
-        pi_prior_sum = pi_prior_sum
+        pi_prior_sum = pi_prior_sum,
+        total_catch_tib = total_catches
       )
     
     rubias_out$mix_prop_traces <-
@@ -133,6 +148,23 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
     rubias_out$indiv_posteriors <-
       rubias_out$indiv_posteriors %>% 
       dplyr::select(-missing_loci)  # remove this unnecessary list object
+    
+    if (!is.null(catchvec)) {
+      rubias_out$stock_specific_total_catch_traces <-
+        rubias_out$stock_specific_total_catch_traces %>%
+        dplyr::filter(sweep %in% seq.int(0, reps - 1, by = sample_int_Pi)) %>% # sstc outout in rubias 0.4.1 wasn't thinned
+        dplyr::mutate(chain = 1)
+      
+      rubias_out$posterior_predictive_remaining_catch_traces <-
+        rubias_out$posterior_predictive_remaining_catch_traces %>%
+        dplyr::filter(sweep %in% seq.int(0, reps - 1, by = sample_int_Pi)) %>% # pprc outout in rubias 0.4.1 wasn't thinned
+        dplyr::mutate(chain = 1)
+      
+      rubias_out$allocation_count_traces <-
+        rubias_out$allocation_count_traces %>%
+        dplyr::filter(sweep %in% seq.int(0, reps - 1, by = sample_int_Pi)) %>% # ac outout in rubias 0.4.1 wasn't thinned
+        dplyr::mutate(chain = 1)
+    }
     
   } else {
     chains <- seq(nchains)
@@ -159,7 +191,8 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
         prelim_burn_in = prelim_burn_in,
         sample_int_Pi = sample_int_Pi,
         sample_theta = sample_theta,
-        pi_prior_sum = pi_prior_sum)
+        pi_prior_sum = pi_prior_sum,
+        total_catch_tib = total_catches)
       } # dorng
     
     parallel::stopCluster(cl)
@@ -184,6 +217,29 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
       dplyr::group_by(mixture_collection, indiv, repunit, collection,
                       log_likelihood, z_score, n_non_miss_loci, n_miss_loci) %>%
       dplyr::summarise(PofZ = mean(PofZ), .groups = "drop")
+    
+    if (!is.null(catchvec)) {
+      rubias_out$stock_specific_total_catch_traces <-
+        lapply(1:nchains, function(i) {
+          dplyr::mutate(rubias_out00[[i]]$stock_specific_total_catch_traces, chain = i) %>%
+            dplyr::filter(sweep %in% seq.int(0, reps - 1, by = sample_int_Pi))
+        }) %>%
+        dplyr::bind_rows()
+      
+      rubias_out$posterior_predictive_remaining_catch_traces <-
+        lapply(1:nchains, function(i) {
+          dplyr::mutate(rubias_out00[[i]]$posterior_predictive_remaining_catch_traces, chain = i) %>%
+            dplyr::filter(sweep %in% seq.int(0, reps - 1, by = sample_int_Pi))
+        }) %>%
+        dplyr::bind_rows()
+      
+      rubias_out$allocation_count_traces <-
+        lapply(1:nchains, function(i) {
+          dplyr::mutate(rubias_out00[[i]]$allocation_count_traces, chain = i) %>%
+            dplyr::filter(sweep %in% seq.int(0, reps - 1, by = sample_int_Pi))
+        }) %>%
+        dplyr::bind_rows()
+    }
     
   } # else
   
@@ -286,6 +342,37 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   message("   time: ", sprintf("%.2f", time_indiv_posteriors["elapsed"]), 
           " seconds")
   
+  ## Save stock_specific_total_catch_traces ----
+  if (!is.null(catchvec)) {
+    message("  saving SSTC posteriors.", appendLF = FALSE)
+    
+    time_sstc <- system.time({
+      invisible(sapply(mix_sillys, function(mixture){
+        
+        sstc_trace <- rubias_out$stock_specific_total_catch_traces %>%
+          dplyr::left_join(rubias_out$posterior_predictive_remaining_catch_traces, by = c("mixture_collection", "sweep", "repunit", "collection", "chain")) %>%
+          dplyr::left_join(rubias_out$allocation_count_traces, by = c("mixture_collection", "sweep", "repunit", "collection", "chain")) %>%
+          dplyr::filter(mixture_collection == mixture)
+        
+        if (out_file_type == "csv") {
+          
+          readr::write_csv(x = sstc_trace,
+                           file = paste0(file, "/", mixture, "_sstc_trace.csv"))
+          
+        } else {
+          
+          fst::write_fst(x = sstc_trace,
+                         path = paste0(file, "/", mixture, "_sstc_trace.fst"))
+          
+        }
+        
+      }))
+      
+    })
+    
+    message("   time: ", sprintf("%.2f", time_sstc["elapsed"]), " seconds")
+  }
+  
   ## Save bootstrapped_proportions ----
   if(method == "PB") {
     
@@ -318,4 +405,27 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   
   return(rubias_out)
   
+}
+
+#' Generate harvest number using a lognormal distribution. This function is used in `run_rubias_mix()` to generate a total catch tibble.
+#'
+#' @param mixvec A vector of mixture names.
+#' @param catchvec A vector of harvest means.
+#' @param cv A vector of harvest cv's.
+#' @param n Number of sample draws.
+#' @param seed Optional random seed.
+#'
+#' @return a total catch tibble for rubias run.
+#'
+#' @examples
+#' tot_harv <- make_harv_tbl(mixvec = c("a", "b", "c"), catchvec = c(500, 40, 100), cv = 0, n = 5)
+#'
+#' @noRd
+make_harv_tbl <- function(mixvec, catchvec, cv, n = 5000, seed = NULL) {
+  lnvar <- log(cv^2 + 1)
+  lnmean <- log(catchvec) - lnvar / 2
+  if (!is.null(seed)) set.seed(seed)
+  tibble::tibble(collection = mixvec,
+                 tot_catch = purrr::map2(lnmean, lnvar,
+                                         \(x, y) stats::rlnorm(n, x, sqrt(y))))
 }
