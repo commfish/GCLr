@@ -17,7 +17,9 @@
 #' @details 
 #' The HWLER input file can contain only mixture individuals, only baseline individuals, or a combination of mixture and baseline individuals depending on the type of analysis you are doing. 
 #' 
-#' @seealso See HWLER manual for additional details: [HWLER manual](system.file("HWLER", "HWLER_manual.doc", package = "GCLr"))
+#' @seealso
+#' For additional details, run the following code in your console to bring up the HWLER manual: 
+#' \code{utils::browseURL(system.file("HWLER", "HWLER_manual.doc", package = "GCLr"))}
 #' 
 #' @examples
 #' \dontrun{

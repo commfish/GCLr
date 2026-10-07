@@ -59,6 +59,6 @@ GCLr::read_genepop_hwe(file =  path.expand("~/GENEPOP/my_genepop.txt.P"), sillyv
 }
 \seealso{
 \code{\link[genepop:genepop-package]{genepop::genepop-package()}}
-\code{\link[genepop:Hardy-Weinberg]{genepop::test_HW()}}
+\code{\link[genepop:test_HW]{genepop::test_HW()}}
 \code{\link[=gcl2genepop]{gcl2genepop()}}
 }

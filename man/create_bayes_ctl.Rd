@@ -98,5 +98,6 @@ create_bayes_ctl(sillyvec, loci, mixvec, baseline_name, nreps, nchains, groupvec
 
 }
 \seealso{
-See bayes manual for addtional details:  \link{BAYES manual}(system.file("BAYES", "MANUAL.DOC", package = "GCLr"))
+For additional details, run the following code in your console to bring up the BAYES manual:
+\code{utils::browseURL(system.file("BAYES", "MANUAL.DOC", package = "GCLr"))}
 }

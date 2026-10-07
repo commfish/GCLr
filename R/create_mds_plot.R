@@ -6,7 +6,7 @@
 #' 
 #' @param dist.mat pairwise distance matrix
 #' 
-#' @param pop_names a character vector of population names corresponding to each population in `dist.mat` to add hover labels to the points on the plot, if no names are supplied the labels will default to dimnames(dist.mat)[[1]]
+#' @param pop_names a character vector of population names corresponding to each population in `dist.mat` to add hover labels to the points on the plot, if no names are supplied the labels will default to \code{dimnames(dist.mat)[[1]]}
 #' 
 #' @param groupvec A numeric vector indicating the group affiliation of each population in `dist.mat`
 #' 

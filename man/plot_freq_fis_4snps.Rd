@@ -43,7 +43,7 @@ If only 1 \code{pch} is supplied it will be recycled for all groups (default \co
 
 \item{pval.digits}{A numeric vector of length 1 specifying the number of digits to show for HWE p-values (default = 2).}
 
-\item{line.width}{A numeric vector of length 1 specifying the width of the line connecting the points, used by \code{\link[ggplot2:geom_path]{ggplot2::geom_line()}}
+\item{line.width}{A numeric vector of length 1 specifying the width of the line connecting the points, used by \code{\link[ggplot2:geom_line]{ggplot2::geom_line()}}
 default = 0.5).}
 
 \item{ncores}{A numeric value for the number of cores to use in a \pkg{foreach} \verb{\%dopar\%} loop (default = 4).

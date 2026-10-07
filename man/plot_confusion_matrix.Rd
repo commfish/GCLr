@@ -23,9 +23,9 @@ plot_confusion_matrix(
 
 \item{pop_names}{an optional vector of population names used to keep pops in order; if NULL, the pops will be ordered alphabetically.}
 
-\item{high_color}{the color used for high "mean scale likelihood" values by \code{\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradient()}}. Either supply hexadecimal or R color name from \code{\link[=colors]{colors()}}.}
+\item{high_color}{the color used for high "mean scale likelihood" values by \code{\link[ggplot2:scale_fill_gradient]{ggplot2::scale_fill_gradient()}}. Either supply hexadecimal or R color name from \code{\link[=colors]{colors()}}.}
 
-\item{low_color}{The color used for low values by \code{\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradient()}}. Either supply hexadecimal or color name from \code{\link[=colors]{colors()}}.}
+\item{low_color}{The color used for low values by \code{\link[ggplot2:scale_fill_gradient]{ggplot2::scale_fill_gradient()}}. Either supply hexadecimal or color name from \code{\link[=colors]{colors()}}.}
 
 \item{text_color}{The color used by \code{\link[ggplot2:geom_text]{ggplot2::geom_text()}} to color the Mean Scaled Likelihood values on the plot.}
 }

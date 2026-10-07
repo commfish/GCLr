@@ -21,6 +21,9 @@ run_rubias_mix(
   sample_int_Pi = 10,
   sample_theta = TRUE,
   pi_prior_sum = 1,
+  mixvec = NULL,
+  catchvec = NULL,
+  cv = 0,
   file = "rubias/output",
   seed = 56,
   nchains = 1,
@@ -59,6 +62,12 @@ run_rubias_mix(
 \item{sample_theta}{A logical value indicating whether to save MCMC samples for allele frequencies. Default is TRUE.}
 
 \item{pi_prior_sum}{A numeric value specifying the sum constraint for the Dirichlet prior on mixture proportions. Default is 1.}
+
+\item{mixvec}{Character vector of sillies that identify the mixtures being run in \emph{rubias}. This is only needed if running \emph{rubias} using the SSTC method.}
+
+\item{catchvec}{Numeric vector of harvest for each mixture, must be in the same order as \code{mixvec}. This is only needed if running the SSTC method in \emph{rubias}.}
+
+\item{cv}{Numeric vector of harvest estimate coefficients of variation for each mixture, must be the same order as \code{mixvec}. Only for catch numbers with CVs. This is only needed if running the SSTC method in \emph{rubias}.}
 
 \item{file}{A character string representing the file path to save output. Default is "rubias/output".}
 

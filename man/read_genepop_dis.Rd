@@ -35,7 +35,7 @@ This function reads in output from a \code{genepop} Linkage Disequilibrium test 
 Designed and tested on Genepop v4.8.3. If the LD (".DIS) file contains tests for only 1 populations, the tibble will not contain an "Overall" column.
 P-values with "No contingency table" are replaced with "1" and p-values = "0" are replaced with 1 / (n_Batches x n_Iterations per batch).
 
-This function can is called on by \code{\link[=test_LD]{test_LD()}}, but it can also be used standalone to summarize a "*.DIS" files produced by running the LD tests using the GENEPOP GUI or \code{\link[genepop:Linkage]{genepop::test_LD()}} in R.
+This function can is called on by \code{\link[=test_LD]{test_LD()}}, but it can also be used standalone to summarize a "*.DIS" files produced by running the LD tests using the GENEPOP GUI or \code{\link[genepop:test_LD]{genepop::test_LD()}} in R.
 }
 \examples{
 \dontrun{
@@ -55,6 +55,6 @@ GCLr::read_genepop_dis(file = "my_genepop.dis")
 }
 \seealso{
 \code{\link[genepop:genepop-package]{genepop::genepop-package()}}
-\code{\link[genepop:Linkage]{genepop::test_LD()}}
+\code{\link[genepop:test_LD]{genepop::test_LD()}}
 \code{\link[=test_LD]{test_LD()}}
 }

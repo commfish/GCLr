@@ -25,8 +25,7 @@ chain. Default is NULL.}
 allocate to each group in the chain initialization matrix. Default is 0.9.}
 
 \item{type}{Character (optional). The type of initialization to be performed.
-Possible values are "BAYES" for \link{BAYES} or "rubias" for \link[rubias:rubias]{rubias::rubias}
-modeling. Default is "BAYES".}
+Possible values are "BAYES" or "rubias" modeling. Default is "BAYES".}
 }
 \value{
 A matrix or a list of tibbles, depending on the chosen \code{type}, where

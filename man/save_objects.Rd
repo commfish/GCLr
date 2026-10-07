@@ -18,11 +18,11 @@ default is \code{FALSE} for backwards compatibility.}
 All objects are saved as "object.txt" or "object.rds"
 }
 \description{
-This function saves R objects with either \code{\link[base:dput]{base::dput()}} or \code{\link[base:readRDS]{base::saveRDS()}}.
+This function saves R objects with either \code{\link[base:dput]{base::dput()}} or \code{\link[base:saveRDS]{base::saveRDS()}}.
 }
 \details{
 \code{\link[base:dput]{base::dput()}} saves object code to a text file.
-\code{\link[base:readRDS]{base::saveRDS()}} saves objects in rds format, which is a compressed format - saves and reads back into R much faster than a text file.
+\code{\link[base:saveRDS]{base::saveRDS()}} saves objects in rds format, which is a compressed format - saves and reads back into R much faster than a text file.
 }
 \examples{
 LocusControl <- GCLr::ex_LocusControl
@@ -38,5 +38,5 @@ GCLr::save_objects(objects = c("LocusControl", "pairwisefst"), path = path.expan
 \seealso{
 \code{\link[base:dput]{base::dput()}}
 
-\code{\link[base:readRDS]{base::saveRDS()}}
+\code{\link[base:saveRDS]{base::saveRDS()}}
 }

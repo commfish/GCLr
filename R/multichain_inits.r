@@ -13,8 +13,7 @@
 #' @param prop Numeric (optional). The proportion of the prior distribution to
 #'   allocate to each group in the chain initialization matrix. Default is 0.9.
 #' @param type Character (optional). The type of initialization to be performed.
-#'   Possible values are "BAYES" for [BAYES] or "rubias" for [rubias]
-#'   modeling. Default is "BAYES".
+#'   Possible values are "BAYES" or "rubias" modeling. Default is "BAYES".
 #'
 #' @return A matrix or a list of tibbles, depending on the chosen `type`, where
 #'   rows represent different populations and columns represent different chains.
