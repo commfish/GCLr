@@ -21,7 +21,7 @@ create_mds_plot(
 
 \item{dist.mat}{pairwise distance matrix}
 
-\item{pop_names}{a character vector of population names corresponding to each population in \code{dist.mat} to add hover labels to the points on the plot, if no names are supplied the labels will default to dimnames(dist.mat)[\link{1}]}
+\item{pop_names}{a character vector of population names corresponding to each population in \code{dist.mat} to add hover labels to the points on the plot, if no names are supplied the labels will default to \code{dimnames(dist.mat)[[1]]}}
 
 \item{groupvec}{A numeric vector indicating the group affiliation of each population in \code{dist.mat}}
 

@@ -4,7 +4,7 @@
 #'
 #' @param sillyvec a character vector of baseline sillys included in the input file. Leave this `NULL` if no baseline individuals are present in the input file.
 #' @param loci  character vector of the loci used to produce the baseline and mixture files.
-#' @param input The mixture and/or baseline input file name without the extension. This file can contain mixture data only, baseline data only, or a combination mixture and baseline. (see [HWLER manual](system.file("HWLER", "HWLER_manual.doc", package = "GCLr")) for more details) 
+#' @param input The mixture and/or baseline input file name without the extension. This file can contain mixture data only, baseline data only, or a combination mixture and baseline.
 #' @param nsamples a vector specifying the number of samples for each chain
 #' @param nchains the number of MCMC chains to analyze the mixtures
 #' @param dir the directory path where the control files will be saved
@@ -30,8 +30,10 @@
 #'     \item Sample the Dirichlet mass parameter
 #'     }
 #'     
-#' @seealso See HWLER manual for additional details: [HWLER manual](system.file("HWLER", "HWLER_manual.doc", package = "GCLr"))
-#'     
+#' @seealso
+#' For additional details, run the following code in your console to bring up the HWLER manual: 
+#' \code{utils::browseURL(system.file("HWLER", "HWLER_manual.doc", package = "GCLr"))}
+
 #' @returns Writes out HWLER control (.ctl) files.
 #'
 #' @examples

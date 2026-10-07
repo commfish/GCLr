@@ -1,6 +1,6 @@
 #' Load R Objects
 #'
-#' This function loads R objects saved with [dput()] or [saveRDS()], serving as a wrapper for [dget()] and [readRDS()].
+#' This function loads R objects saved with [dput()] or [base::saveRDS()], serving as a wrapper for [dget()] and [base::readRDS()].
 #'
 #' @param path A character vector specifying the path where the objects to load reside.
 #' @param pattern Optional character vector argument to manually specify a pattern (i.e., specific object or regular expression). Accepts a list of patterns if you want to load multiple objects (e.g., \code{c("pattern1", "pattern2")}).

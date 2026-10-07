@@ -20,5 +20,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Andy Barclay \email{andy.barclay@alaska.gov}
 
+Authors:
+\itemize{
+  \item Andy Barclay \email{andy.barclay@alaska.gov}
+}
+
 }
 \keyword{internal}

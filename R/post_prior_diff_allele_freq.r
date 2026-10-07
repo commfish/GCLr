@@ -28,7 +28,9 @@
 #'
 #' @note To run this function, you must have the baseline silly (.gcl objects) and LocusControl loaded in your current workspace and have BAYES frequency files for each chain of the mixture you are interested in.
 #' 
-#' @seealso See [BAYES manual](system.file("BAYES", "MANUAL.DOC", package = "GCLr")) for additional details.
+#' @seealso 
+#' For additional details, run the following code in your console to bring up the BAYES manual: 
+#' \code{utils::browseURL(system.file("BAYES", "MANUAL.DOC", package = "GCLr"))}
 #' 
 #' @returns a list containing 3 elements:
 #'   \itemize{

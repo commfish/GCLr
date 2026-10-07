@@ -35,7 +35,7 @@ A summarized tibble with the following columns:
 }
 }
 \description{
-This function performs LD testing using \code{\link[genepop:Linkage]{genepop::test_LD()}} in parallel. It takes a list of \code{genepop} files with n populations per file and tests for LD. The results are combined into a single summary object containing p-values for each locus pair and population.
+This function performs LD testing using \code{\link[genepop:test_LD]{genepop::test_LD()}} in parallel. It takes a list of \code{genepop} files with n populations per file and tests for LD. The results are combined into a single summary object containing p-values for each locus pair and population.
 }
 \examples{
 \dontrun{
@@ -54,7 +54,7 @@ GCLr::test_LD(genepopFiles = list.files(path.expand("~/GENEPOP")), path = path.e
 
 }
 \seealso{
-\code{\link[genepop:Linkage]{genepop::test_LD()}}
+\code{\link[genepop:test_LD]{genepop::test_LD()}}
 
 \code{\link[=read_genepop_dis]{read_genepop_dis()}}
 

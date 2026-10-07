@@ -83,5 +83,6 @@ post_prior_diff_allele_freq(sillyvec = PopNames69, group_names = Groups, groupve
 
 }
 \seealso{
-See \link{BAYES manual}(system.file("BAYES", "MANUAL.DOC", package = "GCLr")) for additional details.
+For additional details, run the following code in your console to bring up the BAYES manual:
+\code{utils::browseURL(system.file("BAYES", "MANUAL.DOC", package = "GCLr"))}
 }

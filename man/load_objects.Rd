@@ -17,7 +17,7 @@ load_objects(path, pattern = NULL, rds = FALSE)
 A character vector of the objects loaded into the workspace.
 }
 \description{
-This function loads R objects saved with \code{\link[=dput]{dput()}} or \code{\link[=saveRDS]{saveRDS()}}, serving as a wrapper for \code{\link[=dget]{dget()}} and \code{\link[=readRDS]{readRDS()}}.
+This function loads R objects saved with \code{\link[=dput]{dput()}} or \code{\link[base:saveRDS]{base::saveRDS()}}, serving as a wrapper for \code{\link[=dget]{dget()}} and \code{\link[base:readRDS]{base::readRDS()}}.
 }
 \examples{
 \dontrun{

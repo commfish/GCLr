@@ -24,7 +24,7 @@ create_hwler_ctl(
 
 \item{loci}{character vector of the loci used to produce the baseline and mixture files.}
 
-\item{input}{The mixture and/or baseline input file name without the extension. This file can contain mixture data only, baseline data only, or a combination mixture and baseline. (see \link{HWLER manual}(system.file("HWLER", "HWLER_manual.doc", package = "GCLr")) for more details)}
+\item{input}{The mixture and/or baseline input file name without the extension. This file can contain mixture data only, baseline data only, or a combination mixture and baseline.}
 
 \item{nsamples}{a vector specifying the number of samples for each chain}
 
@@ -72,5 +72,6 @@ HWLERControlFile.GCL(sillyvec = PopNames69, loci = loci34, input = "myHWLER.inpu
 }
 }
 \seealso{
-See HWLER manual for additional details: \link{HWLER manual}(system.file("HWLER", "HWLER_manual.doc", package = "GCLr"))
+For additional details, run the following code in your console to bring up the HWLER manual:
+\code{utils::browseURL(system.file("HWLER", "HWLER_manual.doc", package = "GCLr"))}
 }

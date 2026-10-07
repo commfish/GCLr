@@ -36,5 +36,6 @@ The HWLER input file can contain only mixture individuals, only baseline individ
 
 }
 \seealso{
-See HWLER manual for additional details: \link{HWLER manual}(system.file("HWLER", "HWLER_manual.doc", package = "GCLr"))
+For additional details, run the following code in your console to bring up the HWLER manual:
+\code{utils::browseURL(system.file("HWLER", "HWLER_manual.doc", package = "GCLr"))}
 }

@@ -35,6 +35,10 @@
 #'   
 #' @returns This function writes out bayes control (.ctl) files to `dir`
 #' 
+#' @seealso 
+#' For additional details, run the following code in your console to bring up the BAYES manual: 
+#' \code{utils::browseURL(system.file("BAYES", "MANUAL.DOC", package = "GCLr"))}
+#' 
 #' @examples
 #' \dontrun{
 #' sillyvec <- c("KSUSC18FW", "KSUSCN18", "KSUSC19FW", "KSUSCN19")
@@ -55,7 +59,6 @@
 #' create_bayes_ctl(sillyvec, loci, mixvec, baseline_name, nreps, nchains, groupvec, priorvec, initmat, dir, seeds, thin, mixfortran, basefortran, switches)
 #' }
 #' 
-#' @seealso See bayes manual for addtional details:  [BAYES manual](system.file("BAYES", "MANUAL.DOC", package = "GCLr"))
 #' @export
 create_bayes_ctl <- function(sillyvec, loci, mixvec, baseline_name, nreps = 40000, nchains, groupvec, priorvec, initmat, dir, seeds = matrix(sample(seq(10000), 3 * nchains), nrow = 3), thin = c(1, 1, 1), mixfortran, basefortran, switches = "F T F T F T F", LocusCtl = LocusControl) {
 

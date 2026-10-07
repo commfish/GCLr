@@ -19,6 +19,9 @@
 #' @param sample_int_Pi An integer specifying the interval to save MCMC samples of mixture proportions. Default is 10.
 #' @param sample_theta A logical value indicating whether to save MCMC samples for allele frequencies. Default is TRUE.
 #' @param pi_prior_sum A numeric value specifying the sum constraint for the Dirichlet prior on mixture proportions. Default is 1.
+#' @param mixvec Character vector of sillies that identify the mixtures being run in *rubias*. This is only needed if running *rubias* using the SSTC method.
+#' @param catchvec Numeric vector of harvest for each mixture, must be in the same order as `mixvec`. This is only needed if running the SSTC method in *rubias*.
+#' @param cv Numeric vector of harvest estimate coefficients of variation for each mixture, must be the same order as `mixvec`. Only for catch numbers with CVs. This is only needed if running the SSTC method in *rubias*.
 #' @param file A character string representing the file path to save output. Default is "rubias/output".
 #' @param seed An integer specifying the random seed for reproducibility. Default is 56.
 #' @param nchains Run multiple chains for \pkg{rubias}. Default = 1 for running single `rubias`.

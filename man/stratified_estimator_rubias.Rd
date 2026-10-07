@@ -7,9 +7,11 @@
 stratified_estimator_rubias(
   rubias_output = NULL,
   mixvec = NULL,
-  group_names = NULL,
+  naive = FALSE,
   catchvec = NULL,
+  cv = NULL,
   newname = NULL,
+  group_names = NULL,
   group_names_new = NULL,
   groupvec = NULL,
   groupvec_new = NULL,
@@ -18,7 +20,6 @@ stratified_estimator_rubias(
   burn_in = 5000,
   bias_corr = FALSE,
   threshold = 5e-07,
-  cv = NULL,
   ncores = 4
 )
 }
@@ -27,11 +28,15 @@ stratified_estimator_rubias(
 
 \item{mixvec}{Character vector of mixture sillies, used to read in output .csv files if \code{rubias_output = NULL}.}
 
-\item{group_names}{Character vector of group_names, used to sort repunit as a factor, can get from .csv.}
+\item{naive}{Default is FALSE for using stock-specific total catch output to summarize harvest and stock proportions. Set it as TRUE if you want the summary done by the old way (stock-specific harvets = harvest * stock proportion), or you are using fishing effort instead of catch number.}
 
 \item{catchvec}{Numeric vector of harvest for each strata, must be in the same order as \code{mixvec}.}
 
+\item{cv}{Numeric vector of harvest estimate coefficients of variation for each stratum, must be the same order as \code{mixvec}. (Only for catch numbers with CVs).}
+
 \item{newname}{Character vector of length 1 specifying the name of the stratified estimate.}
+
+\item{group_names}{Character vector of group_names, used to sort repunit as a factor, can get from .csv.}
 
 \item{group_names_new}{Character vector of new group_names, used to roll up groups from fine-scale to broad-scale for bias correction.}
 
@@ -50,8 +55,7 @@ currently can NOT do bias correction if not using the same repunits that were ru
 
 \item{threshold}{Numeric constant specifying how low stock comp is before assuming 0, used for \code{P=0} calculation, default is from BAYES.}
 
-\item{cv}{Numeric vector of harvest estimate coefficients of variation for each stratum, must be the same order as \code{mixvec}.
-(Only for catch numbers with CVs).}
+\item{ncores}{The number of CPU cores utilized in this operation.}
 }
 \value{
 Returns a tibble with 13 fields (18 if with CVs) for each repunit (reporting group).

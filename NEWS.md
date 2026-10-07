@@ -1,3 +1,13 @@
+# GCLr 0.12.1
+
+## Bug fixes
+
+Updated and added new arguments to documentation for `run_rubias_mix()`.
+
+Removed broken links to internal manuals for BAYES and HWLER. A script is now provided in the documentation (of regarding functions) so users can paste and run the script on their console. Manuals are then opened using the apps on users' computer.
+
+Updated outstanding documentation for various functions.
+
 # GCLr 0.12.0
 
 ## Enhancments
