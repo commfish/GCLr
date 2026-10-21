@@ -407,9 +407,9 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   
 }
 
-#' Drawing random discrete numbers for harvest from negative binomial distribution, discretization lognormal disribution or rounding lognormal distribution by ceiling decimal. This function generates a total catch tibble and is used in the `run_rubias_mix()` function.
+#' Drawing random discrete numbers for a harvest from a negative binomial distribution, a discretized lognormal disribution, or a lognormal distribution and ceiling the decimal. This function generates a total catch tibble and is used in the `run_rubias_mix()` function.
 #' 
-#' Drawing discrete numbers using a negative binomial random generator is computationally efficient, but would only work when the variance is greater than the mean. When variance is less than or equal to the mean, a method to discretize lognormal distribution is used to draw random numbers. However, the discretization is memory intensive and would take a long time (or even crash the job!) when the mean is large (e.g., in tens of millions). In those occasions with large harvest means, random discrete numbers are drawn from a lognormal distribution and ceiling the decimal (i.e., harvest cannot be zero). However, this method may alter the mathematical properties by violating the continuous assumption of the lognormal distribution.
+#' Drawing discrete numbers using a negative binomial random generator is computationally efficient, but would only work when the variance is greater than the mean. When the variance is less than or equal to the mean, a method to discretize lognormal distribution is used to draw random numbers. However, the discretization is memory intensive and would take a long time (or even crash the job!) when the mean is large (e.g., in tens of millions). In those occasions with large harvest means, random discrete numbers are drawn from a lognormal distribution and ceiling the decimal (i.e., harvest cannot be zero). However, this method may alter the mathematical properties by violating the continuous assumption of the lognormal distribution.
 #'
 #' @param mixvec A vector of mixture names.
 #' @param catchvec A vector of harvest means.
