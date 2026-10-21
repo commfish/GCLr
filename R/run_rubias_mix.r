@@ -19,9 +19,6 @@
 #' @param sample_int_Pi An integer specifying the interval to save MCMC samples of mixture proportions. Default is 10.
 #' @param sample_theta A logical value indicating whether to save MCMC samples for allele frequencies. Default is TRUE.
 #' @param pi_prior_sum A numeric value specifying the sum constraint for the Dirichlet prior on mixture proportions. Default is 1.
-#' @param mixvec Character vector of sillies that identify the mixtures being run in *rubias*. This is only needed if running *rubias* using the SSTC method.
-#' @param catchvec Numeric vector of harvest for each mixture, must be in the same order as `mixvec`. This is only needed if running the SSTC method in *rubias*.
-#' @param cv Numeric vector of harvest estimate coefficients of variation for each mixture, must be the same order as `mixvec`. Only for catch numbers with CVs. This is only needed if running the SSTC method in *rubias*.
 #' @param file A character string representing the file path to save output. Default is "rubias/output".
 #' @param seed An integer specifying the random seed for reproducibility. Default is 56.
 #' @param nchains Run multiple chains for \pkg{rubias}. Default = 1 for running single `rubias`.
@@ -410,7 +407,9 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
   
 }
 
-#' Generate harvest number using a lognormal distribution. This function is used in `run_rubias_mix()` to generate a total catch tibble.
+#' Drawing random discrete numbers for a harvest from a negative binomial distribution, a discretized lognormal disribution, or a lognormal distribution and ceiling the decimal. This function generates a total catch tibble and is used in the `run_rubias_mix()` function.
+#' 
+#' Drawing discrete numbers using a negative binomial random generator is computationally efficient, but would only work when the variance is greater than the mean. When the variance is less than or equal to the mean, a method to discretize lognormal distribution is used to draw random numbers. However, the discretization is memory intensive and would take a long time (or even crash the job!) when the mean is large (e.g., in tens of millions). In those occasions with large harvest means, random discrete numbers are drawn from a lognormal distribution and ceiling the decimal (i.e., harvest cannot be zero). However, this method may alter the mathematical properties by violating the continuous assumption of the lognormal distribution.
 #'
 #' @param mixvec A vector of mixture names.
 #' @param catchvec A vector of harvest means.
@@ -423,12 +422,57 @@ run_rubias_mix <- function(reference, mixture, group_names, gen_start_col, metho
 #' @examples
 #' tot_harv <- make_harv_tbl(mixvec = c("a", "b", "c"), catchvec = c(500, 40, 100), cv = 0, n = 5)
 #'
-#' @noRd
+#' @export
 make_harv_tbl <- function(mixvec, catchvec, cv, n = 5000, seed = NULL) {
-  lnvar <- log(cv^2 + 1)
-  lnmean <- log(catchvec) - lnvar / 2
+  
   if (!is.null(seed)) set.seed(seed)
   tibble::tibble(collection = mixvec,
-                 tot_catch = purrr::map2(lnmean, lnvar,
-                                         \(x, y) stats::rlnorm(n, x, sqrt(y))))
+                 tot_catch = purrr::map2(catchvec, cv,
+                                         \(x, y) simulate_discrete_lognormal(n, catch = x, cv = y, seed = seed)))
+  
 }
+
+#' Generate discrete numbers for `make_harv_tbl()`.
+#'
+#' @param n Number of sample draws.
+#' @param catch Harvest mean.
+#' @param cv Harvest cv.
+#' @param seed Optional random seed.
+#'
+#' @return Random generation for discrete harvest numbers.
+#'
+#' @noRd
+#' 
+simulate_discrete_lognormal <- function(n, catch, cv, seed) {
+  
+  variance <- (cv * catch)^2
+  
+  if (!is.null(seed)) set.seed(seed)
+  
+  if (variance > catch) {
+    stats::rnbinom(n, mu = catch, size = (catch^2) / (variance - catch))
+  } else {
+    sigma <- sqrt(log(cv^2 + 1))
+    mu <- log(catch) - sigma^2 / 2
+    
+    # Dynamically find where 99.9999% of the distribution ends
+    max_k <- as.integer(qlnorm(0.999999, meanlog = mu, sdlog = sigma))
+    
+    # Protect against memory explosion
+    if (max_k > 1e7) {
+      stats::rlnorm(n, meanlog = mu, sdlog = sigma) |> ceiling() |> as.integer()
+    } else {
+      k_vals <- 0:max_k
+      pmf <- stats::plnorm(k_vals + 1, mu, sigma) - stats::plnorm(k_vals, mu, sigma)
+      # pmf <- pmf / sum(pmf)
+      sample(k_vals + 1, size = n, replace = TRUE, prob = pmf) |> as.integer() # catch cannot be 0
+    }
+  }
+  
+}
+
+
+
+
+
+

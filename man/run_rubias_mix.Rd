@@ -63,12 +63,6 @@ run_rubias_mix(
 
 \item{pi_prior_sum}{A numeric value specifying the sum constraint for the Dirichlet prior on mixture proportions. Default is 1.}
 
-\item{mixvec}{Character vector of sillies that identify the mixtures being run in \emph{rubias}. This is only needed if running \emph{rubias} using the SSTC method.}
-
-\item{catchvec}{Numeric vector of harvest for each mixture, must be in the same order as \code{mixvec}. This is only needed if running the SSTC method in \emph{rubias}.}
-
-\item{cv}{Numeric vector of harvest estimate coefficients of variation for each mixture, must be the same order as \code{mixvec}. Only for catch numbers with CVs. This is only needed if running the SSTC method in \emph{rubias}.}
-
 \item{file}{A character string representing the file path to save output. Default is "rubias/output".}
 
 \item{seed}{An integer specifying the random seed for reproducibility. Default is 56.}

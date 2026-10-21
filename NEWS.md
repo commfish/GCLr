@@ -1,3 +1,9 @@
+# GCLr 0.12.2
+
+## Bug fixes
+
+Updated `make_harv_tbl()`: Drawing random discrete numbers for a harvest from a negative binomial distribution, a discretized lognormal disribution, or a lognormal distribution and ceiling the decimal. This function generates a total catch tibble and is used in the `run_rubias_mix()` function. See function document for more details.
+
 # GCLr 0.12.1
 
 ## Bug fixes
